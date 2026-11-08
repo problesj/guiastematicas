@@ -1,0 +1,88 @@
+/*
+ * Tema base de Guías temáticas · Bibliotecas UCN.
+ * Colores del manual de normas gráficas de la UCN (conversión RGB a HEX, pendiente de confirmar con Comunicaciones).
+ * Los valores se exponen como variables para que el panel de tema (fase 6) pueda sobrescribirlos.
+ */
+:root {
+    --color-principal: #ac6d33;        /* Pantone 471 C: enlaces, botones, marca */
+    --color-principal-oscuro: #8a5528; /* hover y foco */
+    --color-principal-suave: #caa987;  /* 471 C al 60 %: bordes y fondos, nunca texto */
+    --color-azul: #7e9bc0;             /* Pantone 652 C: solo como fondo, nunca texto sobre blanco */
+    --color-texto: #1d1d1b;
+    --color-texto-secundario: #555;
+    --color-gris: #a4a5a5;             /* Cool Gray 7 C */
+    --color-fondo: #ffffff;
+    --color-fondo-suave: #f7f1ea;
+    --color-pie: #2b2b2a;
+    --fuente: 'Source Sans 3', 'Source Sans Pro', system-ui, sans-serif;
+    --ancho-maximo: 72rem;
+    --radio: 0.5rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: var(--fuente);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-texto);
+    background: var(--color-fondo);
+}
+
+a { color: var(--color-principal); }
+a:hover { color: var(--color-principal-oscuro); }
+:focus-visible { outline: 3px solid var(--color-principal); outline-offset: 2px; }
+
+.contenedor { max-width: var(--ancho-maximo); margin: 0 auto; padding: 0 1rem; }
+
+.saltar { position: absolute; left: -999px; }
+.saltar:focus { left: 1rem; top: 1rem; background: #fff; padding: 0.5rem 1rem; z-index: 10; }
+.solo-lectores { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* Barra superior con enlaces institucionales */
+.barra-superior { background: var(--color-azul); font-size: 0.875rem; }
+.barra-superior__interior { display: flex; justify-content: space-between; gap: 1rem; padding-top: 0.4rem; padding-bottom: 0.4rem; }
+.barra-superior a { color: var(--color-texto); text-decoration: none; margin-right: 1rem; }
+.barra-superior a:hover { text-decoration: underline; }
+.idiomas a { margin: 0 0 0 0.75rem; font-weight: 600; }
+.idiomas a[aria-current="true"] { text-decoration: underline; }
+
+/* Cabecera */
+.cabecera { border-bottom: 4px solid var(--color-principal); }
+.cabecera__interior { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 1rem; padding-bottom: 1rem; }
+.marca { display: flex; flex-direction: column; text-decoration: none; }
+.marca__institucion { font-size: 0.875rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-principal); }
+.marca__titulo { font-size: 1.5rem; font-weight: 700; color: var(--color-texto); }
+.menu { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+.menu a { color: var(--color-texto); font-weight: 600; text-decoration: none; }
+.menu a:hover { color: var(--color-principal); }
+
+/* Portada */
+.portada { background: var(--color-fondo-suave); padding: 3rem 0; }
+.portada h1 { margin: 0 0 0.5rem; font-size: 2.25rem; line-height: 1.2; }
+.portada__bajada { margin: 0 0 1.5rem; color: var(--color-texto-secundario); font-size: 1.125rem; }
+.buscador { display: flex; gap: 0.5rem; max-width: 40rem; }
+.buscador input { flex: 1; min-width: 0; padding: 0.75rem 1rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); }
+.buscador button, .boton {
+    padding: 0.75rem 1.25rem; font: inherit; font-weight: 600; color: #fff;
+    background: var(--color-principal); border: 0; border-radius: var(--radio); cursor: pointer;
+}
+.buscador button:hover, .boton:hover { background: var(--color-principal-oscuro); }
+
+/* Tarjetas */
+.tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.5rem; padding-top: 2.5rem; padding-bottom: 3rem; }
+.tarjeta { border: 1px solid var(--color-principal-suave); border-top: 4px solid var(--color-principal); border-radius: var(--radio); padding: 1.25rem 1.5rem; }
+.tarjeta h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+.tarjeta p { margin: 0; color: var(--color-texto-secundario); }
+
+/* Pie */
+.pie { background: var(--color-pie); color: #f2f2f2; padding: 2rem 0; font-size: 0.9375rem; }
+.pie__interior { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; }
+.pie p { margin: 0; }
+.pie a { color: #f2f2f2; }
+
+@media (max-width: 40rem) {
+    .portada h1 { font-size: 1.75rem; }
+    .buscador { flex-direction: column; }
+}

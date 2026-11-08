@@ -1,0 +1,23 @@
+sitio:
+  titulo: Guías temáticas
+  institucion: Bibliotecas UCN
+  saltar_contenido: Saltar al contenido
+  enlaces_ucn: Enlaces UCN
+  idioma: Idioma
+menu:
+  principal: Menú principal
+  guias: Guías por materia
+  bases_datos: Bases de datos A-Z
+  personal: Bibliotecarios
+inicio:
+  titulo: Guías temáticas
+  bajada: Recursos seleccionados por bibliotecarios para cada área de estudio.
+  buscar_etiqueta: Buscar guías y recursos
+  buscar_placeholder: Busca una materia, una base de datos o un tema
+  buscar: Buscar
+  secciones: Secciones principales
+  guias_texto: Guías con bases de datos, libros y consejos de búsqueda para cada carrera y asignatura.
+  bases_texto: Lista completa de bases de datos suscritas, con filtros por materia y formato.
+  personal_texto: Bibliotecarios especialistas por materia y cómo contactarlos.
+pie:
+  sedes: Antofagasta y Coquimbo

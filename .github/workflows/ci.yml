@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  pruebas:
+    name: Pruebas (PHP 8.5, MySQL 8.4)
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: guias_test
+          MYSQL_USER: guias
+          MYSQL_PASSWORD: guias
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      # Doctrine añade el sufijo _test en el entorno de pruebas.
+      DATABASE_URL: "mysql://guias:guias@127.0.0.1:3306/guias?serverVersion=8.4.11&charset=utf8mb4"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: intl, pdo_mysql, zip, gd, ldap, apcu
+          tools: composer:v2
+          coverage: none
+
+      - name: Instalar dependencias
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Revisar sintaxis
+        run: |
+          php bin/console lint:yaml config translations --parse-tags
+          php bin/console lint:twig templates
+          php bin/console lint:container
+
+      - name: Migraciones y esquema
+        run: |
+          php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=test
+          php bin/console doctrine:schema:validate --env=test
+
+      - name: PHPUnit
+        run: php bin/phpunit
+
+      - name: Auditoría de seguridad de dependencias
+        run: composer audit
+
+  docker:
+    name: Imagen de desarrollo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir y levantar el entorno
+        run: |
+          docker compose up -d --build
+          docker compose exec -T app composer install --no-interaction --no-progress
+          docker compose exec -T app chown -R www-data:www-data var
+          for i in $(seq 1 30); do curl -fsS http://localhost:8080/salud && exit 0; sleep 2; done
+          docker compose logs app
+          exit 1

@@ -1,0 +1,23 @@
+sitio:
+  titulo: Research guides
+  institucion: UCN Libraries
+  saltar_contenido: Skip to content
+  enlaces_ucn: UCN links
+  idioma: Language
+menu:
+  principal: Main menu
+  guias: Guides by subject
+  bases_datos: A-Z databases
+  personal: Librarians
+inicio:
+  titulo: Research guides
+  bajada: Resources selected by librarians for each field of study.
+  buscar_etiqueta: Search guides and resources
+  buscar_placeholder: Search for a subject, a database or a topic
+  buscar: Search
+  secciones: Main sections
+  guias_texto: Guides with databases, books and search tips for every program and course.
+  bases_texto: Full list of subscribed databases, filterable by subject and format.
+  personal_texto: Subject specialist librarians and how to contact them.
+pie:
+  sedes: Antofagasta and Coquimbo
