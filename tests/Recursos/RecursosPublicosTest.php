@@ -115,6 +115,38 @@ final class RecursosPublicosTest extends WebTestCase
         }
     }
 
+    public function testLaListaSeMuestraPorPaginas(): void
+    {
+        $materia = self::crearMateria('Medicina', 'medicina');
+        for ($i = 1; $i <= 12; ++$i) {
+            self::recurso(\sprintf('Recurso %02d', $i), "https://recurso$i.org", ['addMateria' => $materia]);
+        }
+
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos?por_pagina=10&materia=medicina');
+        self::assertCount(10, $crawler->filter('.recurso'));
+        self::assertSelectorTextContains('.resultados', '12');
+        self::assertSelectorTextContains('.paginacion-cantidad__resumen', 'Mostrando 1–10 de 12');
+        self::assertSame('10', $crawler->filter('#por-pagina option[selected]')->attr('value'));
+        // El selector conserva los filtros.
+        self::assertSame('medicina', $crawler->filter('.paginacion-cantidad input[name="materia"]')->attr('value'));
+
+        $siguiente = $crawler->filter('.paginacion a[rel="next"]')->attr('href');
+        self::assertStringContainsString('pagina=2', $siguiente);
+        self::assertStringContainsString('por_pagina=10', $siguiente);
+        self::assertStringContainsString('materia=medicina', $siguiente);
+
+        $crawler = $this->cliente->request('GET', $siguiente);
+        self::assertSame(['Recurso 11', 'Recurso 12'], $crawler->filter('.recurso__titulo a')->each(fn ($n) => $n->text()));
+        self::assertSame('Página 2', $crawler->filter('.paginacion a[aria-current="page"]')->text());
+
+        // Una página fuera de rango muestra la última; una cantidad no permitida usa la predeterminada (25).
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos?por_pagina=10&pagina=99');
+        self::assertCount(2, $crawler->filter('.recurso'));
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos?por_pagina=7');
+        self::assertCount(12, $crawler->filter('.recurso'));
+        self::assertCount(0, $crawler->filter('.paginacion'));
+    }
+
     public function testLaDireccionAntiguaRedirige(): void
     {
         $scopus = self::recurso('Scopus', 'https://www.scopus.com');

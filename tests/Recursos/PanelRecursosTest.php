@@ -53,6 +53,27 @@ final class PanelRecursosTest extends WebTestCase
         self::assertTrue($jstor->isRequiereProxy());
     }
 
+    public function testElListadoDelPanelSePagina(): void
+    {
+        for ($i = 1; $i <= 30; ++$i) {
+            self::em()->persist((new Recurso())->setTitulo(\sprintf('Recurso %02d', $i))->setUrl("https://recurso$i.org"));
+        }
+        self::em()->flush();
+        $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));
+
+        $crawler = $this->cliente->request('GET', '/es/panel/recursos');
+        self::assertCount(25, $crawler->filter('.tabla tbody tr'));
+        self::assertSelectorTextContains('.paginacion-cantidad__resumen', 'Mostrando 1–25 de 30');
+
+        $crawler = $this->cliente->submit($crawler->filter('.paginacion-cantidad')->form(['por_pagina' => '50']));
+        self::assertCount(30, $crawler->filter('.tabla tbody tr'));
+        self::assertCount(0, $crawler->filter('.paginacion'));
+
+        $crawler = $this->cliente->request('GET', '/es/panel/recursos?q=Recurso&por_pagina=10&pagina=3');
+        self::assertStringStartsWith('Recurso 21', $crawler->filter('.tabla tbody tr td')->first()->text());
+        self::assertStringContainsString('q=Recurso', $crawler->filter('.paginacion a[rel="prev"]')->attr('href'));
+    }
+
     public function testLosDatosBibliograficosSeValidanYDependenDelTipo(): void
     {
         $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));

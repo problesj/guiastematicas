@@ -427,3 +427,11 @@ pais:
   completados: "{0}The list was already complete.|{1}1 country added.|]1,Inf[%count% countries added."
   ayuda: List of ISO 3166-1 countries and territories used for authors and publishers.
   vacio: No countries. Use «Complete ISO list» to load them.
+paginacion:
+  etiqueta: Result pages
+  mostrando: Showing %desde%–%hasta% of %total%
+  por_pagina: Per page
+  aplicar: Apply
+  anterior: « Previous
+  siguiente: Next »
+  pagina: Page

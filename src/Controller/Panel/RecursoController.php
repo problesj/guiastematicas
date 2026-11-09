@@ -7,6 +7,7 @@ namespace App\Controller\Panel;
 use App\Entity\Recurso;
 use App\Enum\TipoRecurso;
 use App\Form\RecursoType;
+use App\Paginacion\Pagina;
 use App\Repository\EditorialRepository;
 use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
@@ -44,9 +45,10 @@ final class RecursoController extends AbstractController
     public function listado(Request $request, RecursoRepository $recursos): Response
     {
         $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
+        [$numero, $porPagina] = Pagina::leerParametros($request);
 
         return $this->render('panel/recursos/listado.html.twig', [
-            'recursos' => $recursos->listadoAdministracion($texto),
+            'pagina' => $recursos->listadoAdministracion($numero, $porPagina, $texto),
             'q' => $texto,
         ]);
     }
