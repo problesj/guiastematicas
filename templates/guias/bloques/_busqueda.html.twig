@@ -1,0 +1,11 @@
+{% if hay_buscador_primo() %}
+    <form class="buscador buscador--bloque" role="search" action="{{ path('catalogo', {_locale: guia.idioma}) }}" method="get" target="_blank">
+        <label for="catalogo-{{ bloque.id }}">{{ bloque.dato('texto') ?? 'bloque.busqueda_etiqueta'|trans }}</label>
+        <div class="buscador__fila">
+            <input id="catalogo-{{ bloque.id }}" name="q" type="search" required placeholder="{{ 'bloque.busqueda_placeholder'|trans }}">
+            <button type="submit">{{ 'inicio.buscar'|trans }}</button>
+        </div>
+    </form>
+{% elseif vista_previa %}
+    <p class="campo__ayuda">{{ 'bloque.busqueda_sin_configurar'|trans }}</p>
+{% endif %}

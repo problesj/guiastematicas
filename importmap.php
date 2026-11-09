@@ -22,4 +22,14 @@ return [
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
+    // Copias locales (assets/lib): CKEditor 5 49.1.0 (GPL 2+, ver LICENSE.md) y SortableJS 1.15.7 (MIT).
+    'ckeditor5' => [
+        'path' => './assets/lib/ckeditor5/ckeditor5.js',
+    ],
+    'ckeditor5/translations/es.js' => [
+        'path' => './assets/lib/ckeditor5/translations/es.js',
+    ],
+    'sortablejs' => [
+        'path' => './assets/lib/sortablejs/sortable.esm.js',
+    ],
 ];

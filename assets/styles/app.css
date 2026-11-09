@@ -286,3 +286,90 @@ a:hover { color: var(--color-principal-oscuro); }
 .paginacion a[aria-current="page"] { color: #fff; background: var(--color-principal); border-color: var(--color-principal); font-weight: 600; }
 .paginacion span[aria-hidden="true"] { border-color: transparent; }
 .paginacion span[aria-disabled="true"] { color: var(--color-texto-secundario); opacity: 0.6; }
+
+/* Guías temáticas: vista pública */
+.migas { margin: 0 0 1rem; font-size: 0.9375rem; color: var(--color-texto-secundario); }
+.lista-guias { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 1rem; }
+.lista-guias__guia { padding: 1rem 1.25rem; border: 1px solid var(--color-principal-suave); border-left: 4px solid var(--color-principal); border-radius: var(--radio); }
+.lista-guias__guia h2 { margin: 0; font-size: 1.25rem; }
+.lista-guias__guia p { margin: 0.375rem 0 0; }
+.lista-guias__meta { font-size: 0.9375rem; color: var(--color-texto-secundario); }
+.filtros--guias { grid-template-columns: 2fr 1fr auto; }
+.guia__cabecera { margin-bottom: 1.5rem; }
+.guia__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1rem; margin: 0; font-size: 0.9375rem; color: var(--color-texto-secundario); }
+.guia__pestanas ul { margin: 0; padding: 0; list-style: none; }
+.guia__pestanas a { display: block; padding: 0.6rem 1rem; color: var(--color-texto); font-weight: 600; text-decoration: none; }
+.guia__pestanas a:hover { color: var(--color-principal-oscuro); background: var(--color-fondo-suave); }
+.guia__pestanas a[aria-current="page"] { color: var(--color-principal-oscuro); }
+.guia--pestanas .guia__pestanas ul { display: flex; flex-wrap: wrap; gap: 0.25rem; border-bottom: 2px solid var(--color-principal-suave); }
+.guia--pestanas .guia__pestanas a { border-radius: var(--radio) var(--radio) 0 0; margin-bottom: -2px; border-bottom: 2px solid transparent; }
+.guia--pestanas .guia__pestanas a[aria-current="page"] { border-bottom-color: var(--color-principal); background: var(--color-fondo-suave); }
+.guia--pestanas .guia__contenido { padding-top: 1.5rem; }
+.guia--menu_lateral .guia__cuerpo { display: grid; grid-template-columns: 15rem 1fr; gap: 2rem; align-items: start; }
+.guia--menu_lateral .guia__pestanas { position: sticky; top: 1rem; border-left: 2px solid var(--color-principal-suave); }
+.guia--menu_lateral .guia__pestanas a { margin-left: -2px; border-left: 2px solid transparent; }
+.guia--menu_lateral .guia__pestanas a[aria-current="page"] { border-left-color: var(--color-principal); background: var(--color-fondo-suave); }
+.guia__contenido { min-width: 0; }
+.guia__titulo-pestana { margin: 0 0 1rem; font-size: 1.625rem; }
+.guia__seccion { margin: 0 0 2rem; }
+.guia__seccion > h3 { margin: 0 0 0.75rem; padding-bottom: 0.25rem; font-size: 1.375rem; border-bottom: 2px solid var(--color-principal-suave); }
+.bloque { margin: 0 0 1.5rem; }
+.bloque__titulo { margin: 0 0 0.5rem; font-size: 1.125rem; }
+.bloque__texto { overflow-wrap: anywhere; }
+.bloque__texto > :first-child { margin-top: 0; }
+.bloque__texto h4, .bloque__texto h5 { margin: 1.25rem 0 0.5rem; }
+.bloque__texto blockquote { margin: 1rem 0; padding: 0.25rem 1rem; border-left: 4px solid var(--color-principal-suave); color: var(--color-texto-secundario); }
+.bloque__texto table { border-collapse: collapse; }
+.bloque__texto td, .bloque__texto th { padding: 0.4rem 0.6rem; border: 1px solid #e4dccf; }
+.bloque__recursos { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.5rem; }
+.bloque__recursos a[target="_blank"]::after { content: "\2197"; content: "\2197" / ""; margin-left: 0.25em; font-size: 0.8em; }
+.bloque__descripcion { margin: 0.4rem 0 0; color: var(--color-texto-secundario); }
+.bloque--perfil .persona { padding: 1rem; background: var(--color-fondo-suave); border-radius: var(--radio); max-width: 32rem; }
+.buscador--bloque { display: block; max-width: 40rem; padding: 1rem 1.25rem; background: var(--color-fondo-suave); border-radius: var(--radio); }
+.buscador__fila { display: flex; gap: 0.5rem; margin-top: 0.375rem; }
+
+/* Guías temáticas: editor del panel */
+.etiqueta--publicada { color: #fff; background: #2e7d32; border-color: #2e7d32; }
+.etiqueta--borrador { background: #f3d9a4; border-color: #e0bd73; }
+.editor-guia__estado { margin: 0.25rem 0 0; color: var(--color-texto-secundario); }
+.editor-guia__pestanas { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin: 1rem 0 0; border-bottom: 2px solid var(--color-principal-suave); }
+.editor-guia__lista-pestanas { display: flex; flex-wrap: wrap; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.editor-guia__lista-pestanas li { display: flex; align-items: center; gap: 0.25rem; padding: 0 0.5rem; margin-bottom: -2px; border-bottom: 2px solid transparent; border-radius: var(--radio) var(--radio) 0 0; }
+.editor-guia__lista-pestanas li:has(a[aria-current="page"]) { background: var(--color-fondo-suave); border-bottom-color: var(--color-principal); }
+.editor-guia__lista-pestanas a { display: block; padding: 0.6rem 0.25rem; color: var(--color-texto); font-weight: 600; text-decoration: none; }
+.editor-guia__nueva-pestana, .editor-guia__nueva-seccion { display: flex; gap: 0.5rem; padding-bottom: 0.5rem; }
+.editor-guia__nueva-pestana input, .editor-guia__nueva-seccion input, .editor-seccion__titulo input, .editor-guia__opciones input { min-width: 0; padding: 0.45rem 0.6rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); }
+.editor-guia__pestana { padding: 1.25rem 0 0; }
+.editor-guia__barra { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.editor-guia__barra h2 { margin: 0; }
+.editor-guia__opciones summary { cursor: pointer; color: var(--color-principal); }
+.editor-guia__opciones form { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+.editor-guia__secciones { display: grid; gap: 1.25rem; margin-bottom: 1.25rem; }
+.editor-seccion { padding: 1rem 1.25rem; border: 1px solid var(--color-principal-suave); border-radius: var(--radio); background: #fff; }
+.editor-seccion__cabecera { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.editor-seccion__titulo { display: flex; flex: 1; align-items: center; gap: 0.75rem; min-width: 14rem; }
+.editor-seccion__titulo input { flex: 1; font-size: 1.125rem; font-weight: 700; }
+.editor-seccion__bloques { display: grid; gap: 0.5rem; min-height: 2.5rem; margin: 0 0 0.75rem; padding: 0.375rem; list-style: none; border: 1px dashed #e4dccf; border-radius: var(--radio); }
+.editor-bloque { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; background: var(--color-fondo-suave); border: 1px solid #e4dccf; border-radius: var(--radio); }
+.editor-bloque__resumen { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; }
+.editor-bloque__resumen small { flex-basis: 100%; color: var(--color-texto-secundario); overflow-wrap: anywhere; }
+.asa { flex: none; cursor: grab; padding: 0.125rem 0.25rem; font-size: 1.125rem; line-height: 1; color: var(--color-texto-secundario); user-select: none; }
+.asa:active { cursor: grabbing; }
+.ordenar-fantasma { opacity: 0.4; }
+.ordenar-elegido { box-shadow: 0 4px 12px rgb(0 0 0 / 0.15); }
+.editor-seccion__agregar summary { list-style: none; cursor: pointer; }
+.editor-seccion__agregar summary::-webkit-details-marker { display: none; }
+.editor-seccion__agregar ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; }
+.editor-seccion__agregar a { display: block; height: 100%; padding: 0.6rem 0.75rem; color: var(--color-texto); text-decoration: none; border: 1px solid var(--color-principal-suave); border-radius: var(--radio); }
+.editor-seccion__agregar a:hover { background: var(--color-fondo-suave); }
+.editor-seccion__agregar small { display: block; color: var(--color-texto-secundario); }
+.zona-peligro { margin-top: 2.5rem; padding: 1rem 1.25rem; border: 1px solid #e6b3ae; border-radius: var(--radio); background: #fdf6f5; }
+.zona-peligro h2 { margin: 0 0 0.5rem; font-size: 1.125rem; color: #b3261e; }
+.ck-editor__editable_inline { min-height: 16rem; }
+
+@media (max-width: 48rem) {
+    .guia--menu_lateral .guia__cuerpo { grid-template-columns: 1fr; gap: 1rem; }
+    .guia--menu_lateral .guia__pestanas { position: static; }
+    .filtros--guias { grid-template-columns: 1fr; }
+}
+.ck-content { font-family: var(--fuente); font-size: 1rem; }

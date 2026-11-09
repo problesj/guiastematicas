@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'guias.titulo'|trans }}{% endblock %}
+
+{% block body %}
+    {% set idioma = app.request.locale %}
+    <section class="contenedor pagina">
+        <h1>{{ 'guias.titulo'|trans }}</h1>
+        <p class="pagina__bajada">{{ 'guias.bajada'|trans }}</p>
+
+        <form method="get" action="{{ path('guias') }}" class="filtros filtros--guias" role="search">
+            <div class="campo filtros__texto">
+                <label for="q">{{ 'guias.buscar'|trans }}</label>
+                <input type="search" id="q" name="q" value="{{ filtro.q }}" placeholder="{{ 'guias.buscar_placeholder'|trans }}">
+            </div>
+            <div class="campo">
+                <label for="materia">{{ 'bases.materia'|trans }}</label>
+                <select id="materia" name="materia">
+                    <option value="">{{ 'bases.todas_materias'|trans }}</option>
+                    {% for m in materias %}
+                        <option value="{{ m.slug }}" {% if filtro.materia and filtro.materia.id == m.id %}selected{% endif %}>{{ m.nombreTraducido(idioma) }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filtros__acciones">
+                <button type="submit" class="boton">{{ 'bases.filtrar'|trans }}</button>
+                {% if filtro.q or filtro.materia %}<a href="{{ path('guias') }}">{{ 'bases.limpiar'|trans }}</a>{% endif %}
+            </div>
+        </form>
+
+        <p class="resultados" role="status">{{ 'guias.resultados'|trans({'%count%': guias|length}) }}</p>
+        {% if guias is empty %}
+            <p>{{ ((filtro.q or filtro.materia) ? 'guias.sin_resultados' : 'guias.vacio')|trans }}</p>
+        {% else %}
+            <ul class="lista-guias">
+                {% for guia in guias %}
+                    <li class="lista-guias__guia" lang="{{ guia.idioma }}">
+                        <h2><a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}">{{ guia.titulo }}</a>{% if guia.idioma != idioma %} <span class="insignia">{{ guia.idioma|upper }}</span>{% endif %}</h2>
+                        {% if guia.descripcion %}<p>{{ guia.descripcion }}</p>{% endif %}
+                        <p class="lista-guias__meta">
+                            {% for m in guia.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
+                            {% if guia.responsable %}<span>{{ guia.responsable.nombreCompleto }}</span>{% endif %}
+                        </p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+{% endblock %}

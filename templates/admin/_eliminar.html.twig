@@ -1,5 +1,5 @@
-{# Botón de eliminar con confirmación. Parámetros: ruta, id, token, nombre. #}
-<form method="post" action="{{ path(ruta, {id: id}) }}" class="en-linea"
+{# Botón de eliminar con confirmación. Parámetros: ruta, id, token, nombre y, opcionales, extra_ruta (más parámetros de la ruta). #}
+<form method="post" action="{{ path(ruta, {id: id}|merge(extra_ruta ?? {})) }}" class="en-linea"
       data-controller="confirmar" data-action="submit->confirmar#preguntar"
       data-confirmar-mensaje-value="{{ 'formulario.confirmar_eliminar'|trans({'%nombre%': nombre}) }}">
     <input type="hidden" name="_token" value="{{ csrf_token(token) }}">

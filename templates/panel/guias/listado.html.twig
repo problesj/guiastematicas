@@ -1,0 +1,50 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.guias'|trans }}{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado-accion">
+        <h1>{{ 'panel.guias'|trans }}</h1>
+        {% if is_granted('ROLE_EDITOR') %}<a class="boton" href="{{ path('panel_guia_nueva') }}">{{ 'guia.nueva'|trans }}</a>{% endif %}
+    </div>
+
+    <form method="get" class="filtro" role="search">
+        <label for="q" class="solo-lectores">{{ 'guias.buscar'|trans }}</label>
+        <input type="search" id="q" name="q" value="{{ q }}" placeholder="{{ 'guias.buscar_placeholder'|trans }}" class="filtro__texto">
+        <button type="submit" class="boton boton--secundario">{{ 'guias.buscar'|trans }}</button>
+    </form>
+
+    {% if guias is empty %}
+        <p>{{ (is_granted('ROLE_EDITOR') ? 'guia.vacio_editor' : 'guia.vacio_colaborador')|trans }}</p>
+    {% else %}
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'guia.titulo'|trans }}</th>
+                        <th scope="col">{{ 'guia.estado'|trans }}</th>
+                        <th scope="col">{{ 'guia.responsable'|trans }}</th>
+                        <th scope="col">{{ 'guia.actualizada'|trans }}</th>
+                        <th scope="col">{{ 'guia.visitas'|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for guia in guias %}
+                        <tr>
+                            <td><a href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ guia.titulo }}</a> <small>{{ guia.idioma|upper }}</small></td>
+                            <td><span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span></td>
+                            <td>{{ guia.responsable ? guia.responsable.nombreCompleto : '—' }}</td>
+                            <td>{{ guia.actualizadaEn|date('d-m-Y H:i') }}</td>
+                            <td>{{ guia.visitas }}</td>
+                            <td class="tabla__acciones">
+                                <a href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ guia.titulo }}</span></a>
+                                {% if guia.publicada %}<a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}" target="_blank" rel="noopener">{{ 'guia.ver_publicada'|trans }}</a>{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

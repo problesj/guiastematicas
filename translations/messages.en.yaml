@@ -57,6 +57,8 @@ panel:
   paises: Countries
   autores: Authors
   editoriales: Publishers
+  guias: Research guides
+  guias_texto: Create and edit guides with tabs, sections and blocks.
   bienvenida: Hello, %nombre%
   bienvenida_texto: Manage your profile here and, depending on your role, the site's accounts and data.
   perfil_texto: Your position, photo, contact details and subjects of expertise.
@@ -435,3 +437,121 @@ paginacion:
   anterior: « Previous
   siguiente: Next »
   pagina: Page
+idioma:
+  es: Spanish
+  en: English
+estado_guia:
+  borrador: Draft
+  publicada: Published
+disposicion_guia:
+  pestanas: Tabs above the content
+  menu_lateral: Side menu
+tipo_bloque:
+  texto: Text
+  texto_ayuda: Formatted text with links, lists and tables.
+  recursos: Library resources
+  recursos_ayuda: List of databases, journals, books or other resources from the A-Z list.
+  perfil: Librarian profile
+  perfil_ayuda: Contact card of a person from the directory.
+  video: Video
+  video_ayuda: Embedded YouTube or Vimeo video.
+  busqueda: Catalog search
+  busqueda_ayuda: Search box that sends the query to Primo VE.
+guias:
+  titulo: Guides by subject
+  bajada: Research guides prepared by librarians, with resources, search tips and contacts for each area.
+  buscar: Search guides
+  buscar_placeholder: Guide title or topic
+  resultados: "{0}No guides.|{1}1 guide|]1,Inf[%count% guides"
+  vacio: No guides have been published yet.
+  sin_resultados: No published guides match those filters.
+guia:
+  nueva: New guide
+  crear: Create guide
+  creada: Guide created. Add tabs, sections and blocks.
+  guardada: Guide details saved.
+  datos: Guide details
+  grupo_datos: General details
+  titulo: Title
+  slug: Address
+  slug_ayuda: Last part of the public address (/guias/...). If left empty, it is built from the title.
+  slug_repetido: Another guide already uses this address.
+  slug_no_valido: Use only unaccented lowercase letters, numbers and hyphens.
+  descripcion: Short description
+  descripcion_ayuda: Shown in the list of guides. Up to 500 characters.
+  idioma: Guide language
+  traduccion: Version in the other language
+  traduccion_ayuda: If the guide exists in the other language, link it so the ES/EN switch goes from one to the other.
+  sin_traduccion: (none)
+  disposicion: Tab layout
+  materias: Subjects
+  coeditores: Co-editors
+  coeditores_ayuda: They can edit the content but cannot publish or change these details.
+  responsable: Owner
+  sin_responsable: (no owner)
+  estado: Status
+  actualizada: Updated
+  visitas: Visits
+  ver_publicada: View published
+  vista_previa: Preview
+  publicar: Publish
+  despublicar: Back to draft
+  publicada: The guide is published.
+  despublicada: The guide is a draft again and no longer appears on the public site.
+  eliminar_titulo: Delete the guide
+  eliminar_ayuda: Its tabs, sections and blocks are deleted. Linked resources and profiles are not changed.
+  eliminada: Guide deleted.
+  vacio_editor: You have no guides yet. Create the first one with «New guide».
+  vacio_colaborador: You have not been added as a co-editor of any guide yet.
+  pestana_inicial: Home
+  pestanas: Guide tabs
+  nueva_pestana: New tab
+  agregar: Add
+  opciones_pestana: Tab options
+  renombrar: Rename
+  pestana_eliminada: Tab deleted.
+  sin_pestanas: This guide has no tabs. Add one to get started.
+  titulo_seccion: Section title
+  seccion_sin_titulo: (untitled section)
+  nueva_seccion: New section
+  nueva_seccion_placeholder: Title of the new section (optional)
+  agregar_seccion: Add section
+  seccion_eliminada: Section deleted.
+  agregar_bloque: Add block
+  bloque_guardado: Block saved.
+  bloque_eliminado: Block deleted.
+  arrastrar: Drag to reorder
+  ayuda_arrastrar: Drag tabs, sections and blocks by the ⠿ icon to change their order. Blocks can also be moved to another section.
+  error_orden: The new order could not be saved. The page will reload.
+  aviso_vista_previa: "Preview (%estado%): this is how the published guide will look."
+  volver_editor: Back to the editor
+  migas: Breadcrumb
+  sin_contenido: This guide has no content yet.
+bloque:
+  nuevo: "New block: %tipo%"
+  editar: "Edit block: %tipo%"
+  titulo: Block title
+  titulo_ayuda: Optional.
+  texto: Text
+  recursos: Resources
+  recursos_elegidos: Selected resources
+  recursos_ayuda: Search by title and pick from the list. Use the arrows to order them.
+  buscar_recurso: Search resource by title
+  sin_recursos: No resources.
+  recursos_vacio: This block has no available resources.
+  mostrar_descripcion: Show each resource's description
+  resumen_recursos: "{0}No resources|{1}1 resource|]1,Inf[%count% resources"
+  perfil: Person
+  elegir_persona: Choose a person
+  perfil_obligatorio: Choose a person.
+  perfil_no_disponible: The person in this block is no longer active.
+  video: Video
+  video_url: Video link
+  video_url_ayuda: YouTube or Vimeo address, e.g. https://www.youtube.com/watch?v=...
+  video_no_valido: The link must be a YouTube or Vimeo video.
+  video_descripcion: Description
+  busqueda_texto: Text about the search box
+  busqueda_texto_ayuda: Optional, e.g. «Search books and articles in the UCN Libraries catalog».
+  busqueda_etiqueta: Search the UCN Libraries catalog
+  busqueda_placeholder: Title, author or subject
+  busqueda_sin_configurar: The search box will not be shown until Primo VE is configured (PRIMO_URL and PRIMO_VID).

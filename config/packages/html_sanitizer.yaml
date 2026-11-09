@@ -1,0 +1,14 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            # Texto enriquecido de los bloques de guías (CKEditor): solo etiquetas seguras, sin scripts ni estilos.
+            app.contenido_guia:
+                allow_safe_elements: true
+                allow_relative_links: false
+                allowed_link_schemes: ['http', 'https', 'mailto']
+                allowed_media_schemes: ['http', 'https']
+                force_https_urls: false
+                drop_elements: ['img']
+                force_attributes:
+                    a:
+                        rel: noopener noreferrer

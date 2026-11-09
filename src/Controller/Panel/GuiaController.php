@@ -1,0 +1,498 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Panel;
+
+use App\Entity\Bloque;
+use App\Entity\Guia;
+use App\Entity\Pestana;
+use App\Entity\Recurso;
+use App\Entity\Seccion;
+use App\Entity\Usuario;
+use App\Enum\TipoBloque;
+use App\Form\BloqueType;
+use App\Form\GuiaType;
+use App\Repository\GuiaRepository;
+use App\Repository\RecursoRepository;
+use App\Security\GuiaVoter;
+use App\Servicio\BloquesGuia;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+/**
+ * Editor de guías del panel. El responsable y los coeditores editan el contenido (pestañas, secciones y bloques);
+ * publicar, cambiar los datos o eliminar es del responsable (editor) y de los administradores (ver GuiaVoter).
+ */
+#[Route('/{_locale}/panel/guias', requirements: ['_locale' => 'es|en'])]
+final class GuiaController extends AbstractController
+{
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly BloquesGuia $bloques,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.contenido_guia')]
+        private readonly HtmlSanitizerInterface $saneador,
+        private readonly TranslatorInterface $traductor,
+    ) {
+    }
+
+    #[Route('', name: 'panel_guias', methods: ['GET'])]
+    public function listado(Request $request, GuiaRepository $guias, #[CurrentUser] Usuario $usuario): Response
+    {
+        $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
+
+        return $this->render('panel/guias/listado.html.twig', [
+            'guias' => $guias->editablesPor($usuario, $this->isGranted('ROLE_ADMINISTRADOR'), $texto),
+            'q' => $texto,
+        ]);
+    }
+
+    #[Route('/nueva', name: 'panel_guia_nueva', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_EDITOR')]
+    public function nueva(Request $request, #[CurrentUser] Usuario $usuario): Response
+    {
+        $guia = (new Guia())->setResponsable($usuario)->setIdioma($request->getLocale());
+        $formulario = $this->createForm(GuiaType::class, $guia, ['administrador' => $this->isGranted('ROLE_ADMINISTRADOR')]);
+        $formulario->handleRequest($request);
+
+        if ($formulario->isSubmitted() && $formulario->isValid()) {
+            // Toda guía nace con una pestaña "Inicio" y una sección vacía, lista para agregar bloques.
+            $inicio = new Pestana($this->trans('guia.pestana_inicial', $guia->getIdioma()));
+            $guia->agregarPestana($inicio);
+            $inicio->agregarSeccion(new Seccion());
+            $this->em->persist($guia);
+            $this->em->flush();
+            $this->addFlash('exito', 'guia.creada');
+
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId()]);
+        }
+
+        return $this->render('panel/guias/datos.html.twig', [
+            'formulario' => $formulario,
+            'guia' => null,
+        ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
+    }
+
+    #[Route('/{id<\d+>}/datos', name: 'panel_guia_datos', methods: ['GET', 'POST'])]
+    #[IsGranted(GuiaVoter::GESTIONAR, 'guia')]
+    public function datos(Request $request, Guia $guia): Response
+    {
+        $formulario = $this->createForm(GuiaType::class, $guia, ['administrador' => $this->isGranted('ROLE_ADMINISTRADOR')]);
+        $formulario->handleRequest($request);
+
+        if ($formulario->isSubmitted() && $formulario->isValid()) {
+            $this->em->flush();
+            $this->addFlash('exito', 'guia.guardada');
+
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId()]);
+        }
+
+        return $this->render('panel/guias/datos.html.twig', [
+            'formulario' => $formulario,
+            'guia' => $guia,
+        ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
+    }
+
+    /** Página principal del editor: pestañas, secciones y bloques de la pestaña elegida. */
+    #[Route('/{id<\d+>}', name: 'panel_guia_editar', methods: ['GET'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function editar(Request $request, Guia $guia): Response
+    {
+        $pestana = $this->pestanaElegida($guia, $request->query->getInt('pestana'));
+
+        return $this->render('panel/guias/editor.html.twig', [
+            'guia' => $guia,
+            'pestana' => $pestana,
+            'tipos_bloque' => TipoBloque::cases(),
+        ]);
+    }
+
+    #[Route('/{id<\d+>}/vista-previa', name: 'panel_guia_vista_previa', methods: ['GET'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function vistaPrevia(Request $request, Guia $guia): Response
+    {
+        $pestana = $this->pestanaElegida($guia, $request->query->getInt('pestana'));
+
+        return $this->render('guias/ver.html.twig', ['guia' => $guia, 'pestana' => $pestana, 'vista_previa' => true]);
+    }
+
+    #[Route('/{id<\d+>}/publicar', name: 'panel_guia_publicar', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::GESTIONAR, 'guia')]
+    public function publicar(Request $request, Guia $guia): Response
+    {
+        if ($this->tokenValido($request, 'publicar-guia-'.$guia->getId())) {
+            $publicar = !$guia->isPublicada();
+            $publicar ? $guia->publicar() : $guia->despublicar();
+            $this->em->flush();
+            $this->addFlash('exito', $publicar ? 'guia.publicada' : 'guia.despublicada');
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId()]);
+    }
+
+    #[Route('/{id<\d+>}/eliminar', name: 'panel_guia_eliminar', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::GESTIONAR, 'guia')]
+    public function eliminar(Request $request, Guia $guia): Response
+    {
+        if ($this->tokenValido($request, 'eliminar-guia-'.$guia->getId())) {
+            $guia->setTraduccion(null);
+            $this->em->remove($guia);
+            $this->em->flush();
+            $this->addFlash('exito', 'guia.eliminada');
+        }
+
+        return $this->redirectToRoute('panel_guias');
+    }
+
+    // ---- Pestañas ----
+
+    #[Route('/{id<\d+>}/pestanas', name: 'panel_guia_pestana_nueva', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function nuevaPestana(Request $request, Guia $guia): Response
+    {
+        $titulo = mb_substr(trim($request->getPayload()->getString('titulo')), 0, 100);
+        if (!$this->tokenValido($request, 'editar-guia-'.$guia->getId()) || '' === $titulo) {
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId()]);
+        }
+        $pestana = new Pestana($titulo);
+        $guia->agregarPestana($pestana);
+        $pestana->agregarSeccion(new Seccion());
+        $this->guardar($guia);
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
+    }
+
+    #[Route('/{id<\d+>}/pestanas/{pestana<\d+>}/renombrar', name: 'panel_guia_pestana_renombrar', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function renombrarPestana(Request $request, Guia $guia, #[MapEntity(id: 'pestana')] Pestana $pestana): Response
+    {
+        $this->comprobarPertenencia($guia, $pestana->getGuia());
+        $titulo = mb_substr(trim($request->getPayload()->getString('titulo')), 0, 100);
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId()) && '' !== $titulo) {
+            $pestana->setTitulo($titulo);
+            $this->guardar($guia);
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
+    }
+
+    #[Route('/{id<\d+>}/pestanas/{pestana<\d+>}/eliminar', name: 'panel_guia_pestana_eliminar', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function eliminarPestana(Request $request, Guia $guia, #[MapEntity(id: 'pestana')] Pestana $pestana): Response
+    {
+        $this->comprobarPertenencia($guia, $pestana->getGuia());
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+            $guia->removePestana($pestana);
+            $this->renumerar($guia->getPestanas());
+            $this->guardar($guia);
+            $this->addFlash('exito', 'guia.pestana_eliminada');
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId()]);
+    }
+
+    // ---- Secciones ----
+
+    #[Route('/{id<\d+>}/pestanas/{pestana<\d+>}/secciones', name: 'panel_guia_seccion_nueva', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function nuevaSeccion(Request $request, Guia $guia, #[MapEntity(id: 'pestana')] Pestana $pestana): Response
+    {
+        $this->comprobarPertenencia($guia, $pestana->getGuia());
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+            $pestana->agregarSeccion(new Seccion(mb_substr($request->getPayload()->getString('titulo'), 0, 150)));
+            $this->guardar($guia);
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
+    }
+
+    #[Route('/{id<\d+>}/secciones/{seccion<\d+>}/renombrar', name: 'panel_guia_seccion_renombrar', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function renombrarSeccion(Request $request, Guia $guia, #[MapEntity(id: 'seccion')] Seccion $seccion): Response
+    {
+        $this->comprobarPertenencia($guia, $seccion->getGuia());
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+            $seccion->setTitulo(mb_substr($request->getPayload()->getString('titulo'), 0, 150));
+            $this->guardar($guia);
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $seccion->getPestana()?->getId(), '_fragment' => 'seccion-'.$seccion->getId()]);
+    }
+
+    #[Route('/{id<\d+>}/secciones/{seccion<\d+>}/eliminar', name: 'panel_guia_seccion_eliminar', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function eliminarSeccion(Request $request, Guia $guia, #[MapEntity(id: 'seccion')] Seccion $seccion): Response
+    {
+        $this->comprobarPertenencia($guia, $seccion->getGuia());
+        $pestana = $seccion->getPestana();
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+            $pestana->removeSeccion($seccion);
+            $this->renumerar($pestana->getSecciones());
+            $this->guardar($guia);
+            $this->addFlash('exito', 'guia.seccion_eliminada');
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
+    }
+
+    // ---- Bloques ----
+
+    #[Route('/{id<\d+>}/secciones/{seccion<\d+>}/bloques/{tipo}', name: 'panel_guia_bloque_nuevo', methods: ['GET', 'POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function nuevoBloque(Request $request, Guia $guia, #[MapEntity(id: 'seccion')] Seccion $seccion, TipoBloque $tipo): Response
+    {
+        $this->comprobarPertenencia($guia, $seccion->getGuia());
+
+        return $this->formularioBloque($request, $guia, new Bloque($tipo), $seccion);
+    }
+
+    #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/editar', name: 'panel_guia_bloque_editar', methods: ['GET', 'POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function editarBloque(Request $request, Guia $guia, #[MapEntity(id: 'bloque')] Bloque $bloque): Response
+    {
+        $this->comprobarPertenencia($guia, $bloque->getGuia());
+
+        return $this->formularioBloque($request, $guia, $bloque, $bloque->getSeccion());
+    }
+
+    #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/eliminar', name: 'panel_guia_bloque_eliminar', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function eliminarBloque(Request $request, Guia $guia, #[MapEntity(id: 'bloque')] Bloque $bloque): Response
+    {
+        $this->comprobarPertenencia($guia, $bloque->getGuia());
+        $seccion = $bloque->getSeccion();
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+            $seccion->removeBloque($bloque);
+            $this->renumerar($seccion->getBloques());
+            $this->guardar($guia);
+            $this->addFlash('exito', 'guia.bloque_eliminado');
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $seccion->getPestana()?->getId(), '_fragment' => 'seccion-'.$seccion->getId()]);
+    }
+
+    /**
+     * Nuevo orden tras arrastrar y soltar. Cuerpo JSON: {"tipo": "pestanas"|"secciones"|"bloques", "padre": id, "ids": [...]}.
+     * Para secciones el padre es la pestaña y para bloques la sección (un bloque puede pasar a otra sección de la guía).
+     */
+    #[Route('/{id<\d+>}/ordenar', name: 'panel_guia_ordenar', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function ordenar(Request $request, Guia $guia): Response
+    {
+        if (!$this->isCsrfTokenValid('editar-guia-'.$guia->getId(), (string) $request->headers->get('X-CSRF-Token'))) {
+            return new JsonResponse(['error' => 'token'], 403);
+        }
+        $datos = json_decode($request->getContent(), true);
+        $ids = \is_array($datos) && \is_array($datos['ids'] ?? null) ? array_values(array_filter($datos['ids'], 'is_int')) : null;
+        $padre = \is_array($datos) ? ($datos['padre'] ?? null) : null;
+        if (null === $ids) {
+            return new JsonResponse(['error' => 'datos'], 400);
+        }
+
+        $pestanas = $guia->getPestanas()->toArray();
+        $secciones = array_merge([], ...array_map(fn (Pestana $p) => $p->getSecciones()->toArray(), $pestanas));
+        $bloques = array_merge([], ...array_map(fn (Seccion $s) => $s->getBloques()->toArray(), $secciones));
+        $porId = fn (array $lista) => array_combine(array_map(fn ($e) => $e->getId(), $lista), $lista);
+
+        switch ($datos['tipo'] ?? null) {
+            case 'pestanas':
+                $this->aplicarOrden($porId($pestanas), $ids);
+                break;
+            case 'secciones':
+                $pestana = $porId($pestanas)[$padre] ?? null;
+                if (null === $pestana) {
+                    return new JsonResponse(['error' => 'padre'], 400);
+                }
+                $this->aplicarOrden($porId($pestana->getSecciones()->toArray()), $ids);
+                break;
+            case 'bloques':
+                $seccion = $porId($secciones)[$padre] ?? null;
+                if (null === $seccion) {
+                    return new JsonResponse(['error' => 'padre'], 400);
+                }
+                $todos = $porId($bloques);
+                foreach ($ids as $posicion => $id) {
+                    if (isset($todos[$id])) {
+                        $todos[$id]->setSeccion($seccion)->setPosicion($posicion);
+                    }
+                }
+                break;
+            default:
+                return new JsonResponse(['error' => 'tipo'], 400);
+        }
+        $this->guardar($guia);
+
+        return new Response(null, 204);
+    }
+
+    /** Sugerencias para el selector de recursos de un bloque. */
+    #[Route('/buscar-recursos', name: 'panel_guias_buscar_recursos', methods: ['GET'])]
+    public function buscarRecursos(Request $request, RecursoRepository $recursos): JsonResponse
+    {
+        $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
+        if (mb_strlen($texto) < 2) {
+            return $this->json([]);
+        }
+
+        return $this->json(array_map(fn (Recurso $r) => [
+            'id' => $r->getId(),
+            'nombre' => $r->getTitulo(),
+            'detalle' => $this->traductor->trans($r->getTipo()->etiqueta()).($r->isVisible() ? '' : ' · '.$this->traductor->trans('recurso.oculto')),
+        ], $recursos->listadoAdministracion(1, 15, $texto)->elementos));
+    }
+
+    private function formularioBloque(Request $request, Guia $guia, Bloque $bloque, Seccion $seccion): Response
+    {
+        $tipo = $bloque->getTipo();
+        $formulario = $this->createForm(BloqueType::class, $this->datosFormulario($bloque), ['tipo' => $tipo]);
+        $formulario->handleRequest($request);
+
+        if ($formulario->isSubmitted() && $formulario->isValid()) {
+            $datos = $formulario->getData();
+            $bloque->setTitulo($datos['titulo'] ?? null)->setContenido($this->contenido($tipo, $datos));
+            if (null === $bloque->getId()) {
+                $seccion->agregarBloque($bloque);
+            }
+            $this->guardar($guia);
+            $this->addFlash('exito', 'guia.bloque_guardado');
+
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $seccion->getPestana()?->getId(), '_fragment' => 'bloque-'.$bloque->getId()]);
+        }
+
+        return $this->render('panel/guias/bloque.html.twig', [
+            'formulario' => $formulario,
+            'guia' => $guia,
+            'bloque' => $bloque,
+            'seccion' => $seccion,
+        ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
+    }
+
+    /** @return array<string, mixed> */
+    private function datosFormulario(Bloque $bloque): array
+    {
+        $datos = ['titulo' => $bloque->getTitulo()];
+
+        return $datos + match ($bloque->getTipo()) {
+            TipoBloque::Texto => ['html' => $bloque->dato('html')],
+            TipoBloque::Recursos => [
+                'recursos' => json_encode(array_map(
+                    fn (Recurso $r) => ['id' => $r->getId(), 'nombre' => $r->getTitulo()],
+                    $this->bloques->recursos($bloque, false),
+                ), \JSON_UNESCAPED_UNICODE),
+                'descripcion' => (bool) $bloque->dato('descripcion', true),
+            ],
+            TipoBloque::Perfil => ['usuario' => $this->bloques->perfil($bloque)],
+            TipoBloque::Video => ['url' => $bloque->dato('url'), 'descripcion' => $bloque->dato('descripcion')],
+            TipoBloque::Busqueda => ['texto' => $bloque->dato('texto')],
+        };
+    }
+
+    /**
+     * @param array<string, mixed> $datos
+     *
+     * @return array<string, mixed>
+     */
+    private function contenido(TipoBloque $tipo, array $datos): array
+    {
+        return match ($tipo) {
+            TipoBloque::Texto => ['html' => $this->saneador->sanitize((string) ($datos['html'] ?? ''))],
+            TipoBloque::Recursos => [
+                'ids' => $this->idsRecursos((string) ($datos['recursos'] ?? '')),
+                'descripcion' => (bool) ($datos['descripcion'] ?? false),
+            ],
+            TipoBloque::Perfil => ['usuario' => $datos['usuario'] instanceof Usuario ? $datos['usuario']->getId() : null],
+            TipoBloque::Video => ['url' => $datos['url'] ?? null, 'descripcion' => trim((string) ($datos['descripcion'] ?? '')) ?: null],
+            TipoBloque::Busqueda => ['texto' => trim((string) ($datos['texto'] ?? '')) ?: null],
+        };
+    }
+
+    /** @return list<int> ids de recursos existentes, en el orden elegido y sin repetir */
+    private function idsRecursos(string $json): array
+    {
+        $elegidos = json_decode($json, true);
+        $ids = [];
+        foreach (\is_array($elegidos) ? \array_slice($elegidos, 0, 200) : [] as $elegido) {
+            if (\is_array($elegido) && \is_int($elegido['id'] ?? null)) {
+                $ids[$elegido['id']] = true;
+            }
+        }
+        if ([] === $ids) {
+            return [];
+        }
+        $existentes = array_flip(array_map(fn (Recurso $r) => $r->getId(), $this->em->getRepository(Recurso::class)->findBy(['id' => array_keys($ids)])));
+
+        return array_values(array_filter(array_keys($ids), fn (int $id) => isset($existentes[$id])));
+    }
+
+    private function pestanaElegida(Guia $guia, int $id): ?Pestana
+    {
+        foreach ($guia->getPestanas() as $pestana) {
+            if ($pestana->getId() === $id) {
+                return $pestana;
+            }
+        }
+
+        return $guia->getPestanas()->first() ?: null;
+    }
+
+    /**
+     * @param array<int, Pestana|Seccion> $porId
+     * @param list<int>                   $ids
+     */
+    private function aplicarOrden(array $porId, array $ids): void
+    {
+        $posicion = 0;
+        foreach ($ids as $id) {
+            if (isset($porId[$id])) {
+                $porId[$id]->setPosicion($posicion++);
+                unset($porId[$id]);
+            }
+        }
+        foreach ($porId as $resto) { // los que no vinieron quedan al final
+            $resto->setPosicion($posicion++);
+        }
+    }
+
+    /** @param iterable<Pestana|Seccion|Bloque> $elementos */
+    private function renumerar(iterable $elementos): void
+    {
+        $lista = [...$elementos];
+        usort($lista, fn ($a, $b) => $a->getPosicion() <=> $b->getPosicion());
+        foreach ($lista as $i => $elemento) {
+            $elemento->setPosicion($i);
+        }
+    }
+
+    private function comprobarPertenencia(Guia $guia, ?Guia $duena): void
+    {
+        if ($duena !== $guia) {
+            throw $this->createNotFoundException();
+        }
+    }
+
+    private function guardar(Guia $guia): void
+    {
+        $guia->tocar();
+        $this->em->flush();
+    }
+
+    private function tokenValido(Request $request, string $id): bool
+    {
+        return $this->isCsrfTokenValid($id, $request->getPayload()->getString('_token'));
+    }
+
+    private function trans(string $clave, string $idioma): string
+    {
+        return $this->traductor->trans($clave, [], null, $idioma);
+    }
+}

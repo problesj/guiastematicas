@@ -1,0 +1,6 @@
+{% set persona = perfil_del_bloque(bloque) %}
+{% if persona %}
+    {% include 'personal/_tarjeta.html.twig' with {persona: persona} %}
+{% elseif vista_previa %}
+    <p class="campo__ayuda">{{ 'bloque.perfil_no_disponible'|trans }}</p>
+{% endif %}

@@ -1,0 +1,14 @@
+{% set recursos = recursos_del_bloque(bloque) %}
+{% if recursos is empty %}
+    {% if vista_previa %}<p class="campo__ayuda">{{ 'bloque.recursos_vacio'|trans }}</p>{% endif %}
+{% else %}
+    <ul class="bloque__recursos">
+        {% for recurso in recursos %}
+            <li>
+                <a href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener">{{ recurso.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+                <small>{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}{% if recurso.acceso.value == 'abierto' %} · {{ 'tipo_acceso.abierto'|trans }}{% endif %}</small>
+                {% if bloque.dato('descripcion', true) and recurso.descripcionTraducida(guia.idioma) %}<p>{{ recurso.descripcionTraducida(guia.idioma) }}</p>{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

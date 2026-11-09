@@ -67,7 +67,7 @@ Para Google, crear un "ID de cliente OAuth" de tipo aplicación web en Google Cl
 `https://<dominio>/conectar/google/verificar`. El ejemplo de cada variable está en [.env](.env).
 
 Roles: **Administrador** (usuarios, departamentos, materias y todo el sitio), **Editor** (crea y publica sus guías)
-y **Colaborador** (edita las guías que le compartan). Las guías llegan en la fase 4.
+y **Colaborador** (edita las guías que le compartan como coeditor).
 
 ## Recursos bibliográficos A-Z y proxy AccesUM
 
@@ -115,3 +115,27 @@ buscan sin distinguir mayúsculas ni tildes y se crean solo si no existen (`App\
 
 Además de Excel, la importación acepta archivos **BibTeX (.bib)** y **RIS (.ris)** exportados desde Zotero, Mendeley,
 EndNote, Google Académico, Scopus o Web of Science (`App\Servicio\Importacion\LectorBibliografia`).
+
+## Guías temáticas (editor)
+
+Las guías se crean en **Panel → Guías temáticas** y se ven en `/es/guias` (lista por materia) y `/es/guias/{slug}`.
+Cada guía tiene pestañas, cada pestaña secciones y cada sección bloques. Pestañas, secciones y bloques se ordenan
+arrastrando el ícono ⠿ (SortableJS); un bloque puede pasar a otra sección. La guía se muestra con pestañas arriba o
+con menú lateral, según se elija en sus datos.
+
+| Bloque | Contenido |
+| --- | --- |
+| Texto | Editor CKEditor 5; el HTML se sanea en el servidor (`config/packages/html_sanitizer.yaml`) |
+| Recursos | Recursos bibliográficos elegidos de la lista A-Z, en el orden indicado, con o sin descripción |
+| Perfil | Ficha de un bibliotecario del directorio |
+| Video | YouTube o Vimeo |
+| Búsqueda en el catálogo | Caja de búsqueda que abre Primo VE (`PRIMO_URL` y `PRIMO_VID` en `.env.local`) |
+
+Permisos: un **Editor** crea guías y es su responsable (edita datos, publica y elimina); los **coeditores** que elija
+editan el contenido. El **Administrador** edita todas y puede cambiar el responsable. Una guía nace en borrador y solo se
+ve en la vista previa del panel hasta que se publica.
+
+Idiomas: cada guía está en un idioma (español o inglés). La versión en el otro idioma es otra guía enlazada en
+**Datos de la guía → Traducción**; el selector ES/EN del sitio lleva de una a otra.
+
+CKEditor 5 (licencia GPL 2+) y SortableJS (MIT) están copiados en `assets/lib/`, sin depender de un CDN.
