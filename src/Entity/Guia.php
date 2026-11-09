@@ -63,6 +63,14 @@ class Guia
     #[ORM\Column(length: 20, enumType: DisposicionGuia::class)]
     private DisposicionGuia $disposicion = DisposicionGuia::Pestanas;
 
+    /** Imagen de cabecera (archivo dentro de public/uploads/guias). */
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $banner = null;
+
+    /** Ícono de la guía en listados y cabecera (archivo dentro de public/uploads/guias). */
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $icono = null;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Usuario $responsable = null;
@@ -225,6 +233,30 @@ class Guia
     public function setDisposicion(DisposicionGuia $disposicion): static
     {
         $this->disposicion = $disposicion;
+
+        return $this;
+    }
+
+    public function getBanner(): ?string
+    {
+        return $this->banner;
+    }
+
+    public function setBanner(?string $banner): static
+    {
+        $this->banner = $banner;
+
+        return $this;
+    }
+
+    public function getIcono(): ?string
+    {
+        return $this->icono;
+    }
+
+    public function setIcono(?string $icono): static
+    {
+        $this->icono = $icono;
 
         return $this;
     }

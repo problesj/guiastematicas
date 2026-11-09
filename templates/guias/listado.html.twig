@@ -35,12 +35,15 @@
             <ul class="lista-guias">
                 {% for guia in guias %}
                     <li class="lista-guias__guia" lang="{{ guia.idioma }}">
+                        {% if guia.icono %}<img class="lista-guias__icono" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="56" height="56" loading="lazy">{% else %}<span class="lista-guias__icono lista-guias__icono--vacio" aria-hidden="true">{{ guia.titulo|first|upper }}</span>{% endif %}
+                        <div class="lista-guias__texto">
                         <h2><a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}">{{ guia.titulo }}</a>{% if guia.idioma != idioma %} <span class="insignia">{{ guia.idioma|upper }}</span>{% endif %}</h2>
                         {% if guia.descripcion %}<p>{{ guia.descripcion }}</p>{% endif %}
                         <p class="lista-guias__meta">
                             {% for m in guia.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
                             {% if guia.responsable %}<span>{{ guia.responsable.nombreCompleto }}</span>{% endif %}
                         </p>
+                        </div>
                     </li>
                 {% endfor %}
             </ul>

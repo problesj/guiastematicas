@@ -16,6 +16,7 @@ use App\Form\GuiaType;
 use App\Repository\GuiaRepository;
 use App\Repository\RecursoRepository;
 use App\Security\GuiaVoter;
+use App\Servicio\AlmacenImagenesGuia;
 use App\Servicio\BloquesGuia;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -43,6 +44,7 @@ final class GuiaController extends AbstractController
         #[Autowire(service: 'html_sanitizer.sanitizer.app.contenido_guia')]
         private readonly HtmlSanitizerInterface $saneador,
         private readonly TranslatorInterface $traductor,
+        private readonly AlmacenImagenesGuia $imagenes,
     ) {
     }
 
@@ -70,6 +72,7 @@ final class GuiaController extends AbstractController
             $inicio = new Pestana($this->trans('guia.pestana_inicial', $guia->getIdioma()));
             $guia->agregarPestana($inicio);
             $inicio->agregarSeccion(new Seccion());
+            $this->imagenes->aplicarFormulario($formulario, $guia);
             $this->em->persist($guia);
             $this->em->flush();
             $this->addFlash('exito', 'guia.creada');
@@ -91,6 +94,7 @@ final class GuiaController extends AbstractController
         $formulario->handleRequest($request);
 
         if ($formulario->isSubmitted() && $formulario->isValid()) {
+            $this->imagenes->aplicarFormulario($formulario, $guia);
             $this->em->flush();
             $this->addFlash('exito', 'guia.guardada');
 
@@ -148,6 +152,7 @@ final class GuiaController extends AbstractController
             $guia->setTraduccion(null);
             $this->em->remove($guia);
             $this->em->flush();
+            $this->imagenes->eliminarDe($guia);
             $this->addFlash('exito', 'guia.eliminada');
         }
 

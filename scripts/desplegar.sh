@@ -30,7 +30,7 @@ php bin/console cache:clear
 php bin/console cache:warmup
 
 # Fotos del personal (se respaldan con scripts/respaldar.sh).
-install -d public/uploads/personal
+install -d public/uploads/personal public/uploads/guias
 chown -R www-data:www-data var public/assets public/uploads
 systemctl reload php8.5-fpm
 

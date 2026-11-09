@@ -15,14 +15,17 @@ use App\Repository\UsuarioRepository;
 use App\Servicio\GeneradorSlug;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** Datos generales de una guía. "administrador" habilita elegir el responsable. */
 final class GuiaType extends AbstractType
@@ -86,6 +89,27 @@ final class GuiaType extends AbstractType
                 'by_reference' => false,
                 'help' => 'guia.coeditores_ayuda',
             ]);
+
+        // Imágenes: no se mapean; el controlador las guarda con AlmacenImagenesGuia. Sin SVG (podría llevar scripts).
+        $guia = $options['data'] ?? null;
+        foreach (['Banner' => ['4M', 6000, 'guia.banner_ayuda'], 'Icono' => ['1M', 2000, 'guia.icono_ayuda']] as $campo => [$tamano, $maximo, $ayuda]) {
+            $builder->add('archivo'.$campo, FileType::class, [
+                'label' => 'guia.'.strtolower($campo),
+                'mapped' => false,
+                'required' => false,
+                'help' => $ayuda,
+                'attr' => ['accept' => 'image/jpeg,image/png,image/webp'],
+                'constraints' => [new Assert\Image(
+                    maxSize: $tamano,
+                    mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+                    maxWidth: $maximo,
+                    maxHeight: $maximo,
+                )],
+            ]);
+            if ($guia instanceof Guia && null !== $guia->{'get'.$campo}()) {
+                $builder->add('eliminar'.$campo, CheckboxType::class, ['label' => 'guia.eliminar_'.strtolower($campo), 'mapped' => false, 'required' => false]);
+            }
+        }
 
         // Sin dirección escrita, se arma con el título ("Química general" → quimica-general).
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $evento): void {

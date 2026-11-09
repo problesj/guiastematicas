@@ -466,6 +466,15 @@ guias:
   vacio: Todavía no hay guías publicadas.
   sin_resultados: No hay guías publicadas con esos filtros.
 guia:
+  grupo_imagenes: Imágenes
+  banner: Imagen de cabecera (banner)
+  banner_ayuda: JPG, PNG o WebP de hasta 4 MB. Se muestra arriba de la guía, recortada a 4:1 (recomendado 1600 × 400 px).
+  banner_actual: Banner actual
+  eliminar_banner: Quitar el banner
+  icono: Ícono de la guía
+  icono_ayuda: JPG, PNG o WebP de hasta 1 MB, cuadrado (recomendado 256 × 256 px). Se muestra en la lista de guías y junto al título.
+  icono_actual: Ícono actual
+  eliminar_icono: Quitar el ícono
   nueva: Nueva guía
   crear: Crear guía
   creada: Guía creada. Agrega pestañas, secciones y bloques.

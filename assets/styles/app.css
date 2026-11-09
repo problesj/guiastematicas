@@ -373,3 +373,21 @@ a:hover { color: var(--color-principal-oscuro); }
     .filtros--guias { grid-template-columns: 1fr; }
 }
 .ck-content { font-family: var(--fuente); font-size: 1rem; }
+
+/* Guías: banner e ícono */
+.guia__cabecera--banner { margin-top: -0.5rem; }
+.guia__banner { display: block; width: 100%; height: auto; aspect-ratio: 4 / 1; object-fit: cover; margin-bottom: 1.25rem; border-radius: var(--radio); }
+.guia__titular { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+.guia__titular h1 { margin: 0; }
+.guia__icono { flex: none; width: 64px; height: 64px; object-fit: cover; border-radius: var(--radio); }
+.lista-guias__guia { display: flex; gap: 1rem; align-items: flex-start; }
+.lista-guias__texto { flex: 1; min-width: 0; }
+.lista-guias__icono { flex: none; width: 56px; height: 56px; object-fit: cover; border-radius: var(--radio); }
+.lista-guias__icono--vacio { display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff; background: var(--color-principal); }
+.icono-tabla { width: 28px; height: 28px; object-fit: cover; border-radius: 4px; vertical-align: middle; }
+.vista-imagen { display: block; margin-bottom: 0.5rem; border: 1px solid #e4dccf; border-radius: var(--radio); }
+.vista-imagen--banner { width: 100%; aspect-ratio: 4 / 1; object-fit: cover; }
+.vista-imagen--icono { width: 96px; height: 96px; object-fit: cover; }
+@media (max-width: 40rem) {
+    .guia__icono { width: 48px; height: 48px; }
+}

@@ -131,6 +131,8 @@ con menú lateral, según se elija en sus datos.
 | Video | YouTube o Vimeo |
 | Búsqueda en el catálogo | Caja de búsqueda que abre Primo VE (`PRIMO_URL` y `PRIMO_VID` en `.env.local`) |
 
+Cada guía puede llevar una imagen de cabecera (banner, 4:1) y un ícono cuadrado, que se guardan en `public/uploads/guias` (JPG, PNG o WebP; sin SVG).
+
 Permisos: un **Editor** crea guías y es su responsable (edita datos, publica y elimina); los **coeditores** que elija
 editan el contenido. El **Administrador** edita todas y puede cambiar el responsable. Una guía nace en borrador y solo se
 ve en la vista previa del panel hasta que se publica.
