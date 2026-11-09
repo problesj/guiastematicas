@@ -20,6 +20,15 @@
             {{ form_row(formulario.descripcion) }}
             {{ form_row(formulario.descripcionEn) }}
         </fieldset>
+        <fieldset data-controller="campos-tipo" data-campos-tipo-selector-value="#{{ formulario.tipo.vars.id }}">
+            <legend>{{ 'recurso.grupo_bibliograficos'|trans }}</legend>
+            <p class="campo__ayuda" data-campos-tipo-target="vacio" hidden>{{ 'recurso.sin_bibliograficos'|trans }}</p>
+            <div class="formulario__columnas">
+                {% for campo in campos_bibliograficos %}
+                    <div data-campos-tipo-target="campo" data-tipos="{{ tipos_por_campo[campo]|join(' ') }}">{{ form_row(formulario[campo]) }}</div>
+                {% endfor %}
+            </div>
+        </fieldset>
         <fieldset>
             <legend>{{ 'recurso.materias'|trans }}</legend>
             {{ form_row(formulario.materias, {label: false}) }}

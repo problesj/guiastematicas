@@ -5,7 +5,7 @@
         <div class="contenedor">
             <h1>{{ 'inicio.titulo'|trans }}</h1>
             <p class="portada__bajada">{{ 'inicio.bajada'|trans }}</p>
-            <form class="buscador" role="search" action="{{ path('bases_datos') }}" method="get">
+            <form class="buscador" role="search" action="{{ path('recursos') }}" method="get">
                 <label for="q" class="solo-lectores">{{ 'inicio.buscar_etiqueta'|trans }}</label>
                 <input id="q" name="q" type="search" placeholder="{{ 'inicio.buscar_placeholder'|trans }}">
                 <button type="submit">{{ 'inicio.buscar'|trans }}</button>
@@ -19,7 +19,7 @@
             <p>{{ 'inicio.guias_texto'|trans }}</p>
         </article>
         <article class="tarjeta">
-            <h2><a href="{{ path('bases_datos') }}">{{ 'menu.bases_datos'|trans }}</a></h2>
+            <h2><a href="{{ path('recursos') }}">{{ 'menu.bases_datos'|trans }}</a></h2>
             <p>{{ 'inicio.bases_texto'|trans }}</p>
         </article>
         <article class="tarjeta">

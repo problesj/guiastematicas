@@ -17,6 +17,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date as FechaExcel;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Validator\Constraints\Isbn;
+use Symfony\Component\Validator\Constraints\Issn;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Importa la lista A-Z desde Excel (.xlsx, .xls, .ods) o CSV.
@@ -34,13 +37,44 @@ final class ImportadorRecursos
         'requiere_proxy' => ['proxy', 'requiereproxy', 'accesum', 'viaproxy', 'usaproxy', 'accesoremoto'],
         'descripcion' => ['descripcion', 'description', 'resumen', 'contenido', 'descripcionespanol'],
         'descripcion_en' => ['descripcionen', 'descripcioningles', 'descriptionen', 'englishdescription'],
-        'proveedor' => ['proveedor', 'editor', 'editorial', 'plataforma', 'vendor', 'publisher'],
+        'proveedor' => ['proveedor', 'plataforma', 'vendor', 'proveedoroplataforma'],
         'tipo' => ['tipo', 'formato', 'type', 'tipoderecurso'],
         'acceso' => ['acceso', 'tipodeacceso', 'access', 'licencia'],
         'materias' => ['materias', 'materia', 'areas', 'area', 'disciplinas', 'disciplina', 'subjects', 'carreras', 'carrera'],
         'nombres_alternativos' => ['nombresalternativos', 'alias', 'siglas', 'otrosnombres'],
         'visible' => ['visible', 'activo', 'activa', 'mostrar', 'publicado'],
         'prueba_hasta' => ['pruebahasta', 'finprueba', 'finperiododeprueba', 'trialuntil'],
+        // Datos bibliográficos: se guardan solo si corresponden al tipo (ver TipoRecurso::campos()).
+        'autores' => ['autores', 'autor', 'autoria', 'responsables', 'authors', 'author'],
+        'editorial' => ['editorial', 'editor', 'casaeditora', 'publisher'],
+        'anio' => ['ano', 'anio', 'anodeedicion', 'anoedicion', 'anodepublicacion', 'year', 'publicationyear'],
+        'isbn' => ['isbn', 'isbnimpreso', 'printisbn'],
+        'eisbn' => ['eisbn', 'isbne', 'isbnelectronico', 'onlineisbn', 'electronicisbn'],
+        'issn' => ['issn', 'issnimpreso', 'printissn'],
+        'eissn' => ['eissn', 'issne', 'issnelectronico', 'onlineissn', 'electronicissn'],
+        'disponible_desde' => ['disponibledesde', 'fechadedisponibilidad', 'fechadisponibilidad', 'accesodesde', 'coberturadesde', 'availablefrom'],
+        'codigo_norma' => ['codigonorma', 'codigodelanorma', 'numerodenorma', 'standardnumber', 'standardcode'],
+        'organismo' => ['organismo', 'organismoemisor', 'entidademisora', 'issuingbody'],
+    ];
+
+    /** Columna del archivo => setter de Recurso, para los campos de texto libre. */
+    private const array CAMPOS_TEXTO = [
+        'descripcion' => ['setDescripcion', 3000],
+        'descripcion_en' => ['setDescripcionEn', 3000],
+        'proveedor' => ['setProveedor', 120],
+        'nombres_alternativos' => ['setNombresAlternativos', 255],
+        'autores' => ['setAutores', 500],
+        'editorial' => ['setEditorial', 150],
+        'codigo_norma' => ['setCodigoNorma', 60],
+        'organismo' => ['setOrganismo', 120],
+    ];
+
+    /** Columna => [setter, restricción] para los identificadores que se validan; uno no válido se descarta con aviso. */
+    private const array IDENTIFICADORES = [
+        'isbn' => ['setIsbn', 'isbn'],
+        'eisbn' => ['setEisbn', 'isbn'],
+        'issn' => ['setIssn', 'issn'],
+        'eissn' => ['setEissn', 'issn'],
     ];
 
     public const int MAXIMO_FILAS = 5000;
@@ -57,6 +91,7 @@ final class ImportadorRecursos
         private readonly EntityManagerInterface $em,
         private readonly ProxyAccesum $proxy,
         private readonly GeneradorSlug $slugs,
+        private readonly ValidatorInterface $validador,
     ) {
     }
 
@@ -128,10 +163,16 @@ final class ImportadorRecursos
             $recurso = $fila->existente ?? new Recurso();
             $d = $fila->datos;
             $recurso->setTitulo($d['titulo'])->setUrl($d['url'])->setRequiereProxy($d['requiere_proxy']);
-            foreach (['descripcion' => 'setDescripcion', 'descripcion_en' => 'setDescripcionEn', 'proveedor' => 'setProveedor', 'nombres_alternativos' => 'setNombresAlternativos'] as $campo => $metodo) {
+            foreach (self::CAMPOS_TEXTO + self::IDENTIFICADORES as $campo => [$metodo]) {
                 if (\array_key_exists($campo, $d)) {
                     $recurso->{$metodo}($d[$campo]);
                 }
+            }
+            if (\array_key_exists('anio', $d)) {
+                $recurso->setAnio($d['anio']);
+            }
+            if (\array_key_exists('disponible_desde', $d)) {
+                $recurso->setDisponibleDesde($d['disponible_desde']);
             }
             if (isset($d['tipo'])) {
                 $recurso->setTipo($d['tipo']);
@@ -145,6 +186,11 @@ final class ImportadorRecursos
             if (\array_key_exists('prueba_hasta', $d)) {
                 $recurso->setPruebaHasta($d['prueba_hasta']);
             }
+            // En listas de bases de datos la columna "Editorial" suele ser el proveedor.
+            if (null !== $recurso->getEditorial() && !$recurso->getTipo()->usaCampo('editorial') && null === $recurso->getProveedor()) {
+                $recurso->setProveedor(mb_substr($recurso->getEditorial(), 0, 120));
+            }
+            $recurso->limpiarCamposNoAplicables();
 
             foreach ($fila->materias as $nombre) {
                 $clave = self::normalizar($nombre);
@@ -244,16 +290,22 @@ final class ImportadorRecursos
 
         $traiaProxy = $this->interpretarUrl($fila, $url);
 
-        foreach (['descripcion', 'descripcion_en', 'proveedor', 'nombres_alternativos'] as $campo) {
+        foreach (self::CAMPOS_TEXTO as $campo => [, $largo]) {
             if (isset($columnas[$campo])) {
-                $fila->datos[$campo] = $valor($campo);
+                $texto = $valor($campo);
+                $fila->datos[$campo] = null === $texto ? null : mb_substr($texto, 0, $largo);
             }
         }
-        if (isset($fila->datos['proveedor']) && mb_strlen($fila->datos['proveedor']) > 120) {
-            $fila->datos['proveedor'] = mb_substr($fila->datos['proveedor'], 0, 120);
+        foreach (self::IDENTIFICADORES as $campo => [, $tipoIdentificador]) {
+            if (isset($columnas[$campo])) {
+                $fila->datos[$campo] = $this->interpretarIdentificador($valor($campo), $tipoIdentificador, $fila);
+            }
         }
-        if (isset($fila->datos['nombres_alternativos']) && mb_strlen($fila->datos['nombres_alternativos']) > 255) {
-            $fila->datos['nombres_alternativos'] = mb_substr($fila->datos['nombres_alternativos'], 0, 255);
+        if (isset($columnas['anio'])) {
+            $fila->datos['anio'] = self::interpretarAnio($valor('anio'), $fila);
+        }
+        if (isset($columnas['disponible_desde'])) {
+            $fila->datos['disponible_desde'] = $this->interpretarFecha($hoja, $columnas['disponible_desde'].$n, $fila);
         }
 
         if (null !== $tipo = $valor('tipo')) {
@@ -316,6 +368,37 @@ final class ImportadorRecursos
         }
 
         return $traiaProxy;
+    }
+
+    /** Devuelve el ISBN o ISSN si es válido; si no, lo descarta con un aviso (la fila se importa igual). */
+    private function interpretarIdentificador(?string $valor, string $tipo, FilaImportacion $fila): ?string
+    {
+        if (null === $valor) {
+            return null;
+        }
+        $limpio = strtoupper((string) preg_replace('/\s+/', '', $valor));
+        $restriccion = 'isbn' === $tipo ? new Isbn() : new Issn();
+        if (\count($this->validador->validate($limpio, $restriccion)) > 0) {
+            $fila->avisos[] = 'importacion.aviso_'.$tipo.'|'.$valor;
+
+            return null;
+        }
+
+        return $limpio;
+    }
+
+    /** Acepta "2021" o una fecha de la que se toma el año (4 dígitos entre 1450 y 2100). */
+    private static function interpretarAnio(?string $valor, FilaImportacion $fila): ?int
+    {
+        if (null === $valor) {
+            return null;
+        }
+        if (1 === preg_match('/\b(1[4-9]\d{2}|20\d{2}|2100)\b/', $valor, $coincidencia) && (int) $coincidencia[1] >= 1450) {
+            return (int) $coincidencia[1];
+        }
+        $fila->avisos[] = 'importacion.aviso_anio|'.$valor;
+
+        return null;
     }
 
     private function interpretarFecha(Worksheet $hoja, string $coordenada, FilaImportacion $fila): ?\DateTimeImmutable

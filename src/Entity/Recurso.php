@@ -15,7 +15,10 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Recurso electrónico de la lista A-Z (base de datos, plataforma de revistas o libros, repositorio, etc.).
+ * Recurso bibliográfico electrónico de la lista A-Z (base de datos, revista, libro, norma, repositorio, etc.).
+ *
+ * Los datos bibliográficos (autores, ISBN, ISSN, año...) dependen del tipo: ver TipoRecurso::campos().
+ * Los que no corresponden al tipo se vacían al guardar (limpiarCamposNoAplicables).
  *
  * Se guarda la URL original; si requiereProxy está marcado, el enlace público se arma con el prefijo de
  * AccesUM configurado en PROXY_URL (ver App\Servicio\ProxyAccesum).
@@ -74,6 +77,51 @@ class Recurso
     /** Fin del periodo de prueba (solo para acceso "prueba"); después deja de mostrarse. */
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $pruebaHasta = null;
+
+    /** Autores o responsables, separados por punto y coma (libros, multimedia). */
+    #[ORM\Column(length: 500, nullable: true)]
+    #[Assert\Length(max: 500)]
+    private ?string $autores = null;
+
+    /** Editorial o editor (libros, revistas). Distinto del proveedor o plataforma de acceso. */
+    #[ORM\Column(length: 150, nullable: true)]
+    #[Assert\Length(max: 150)]
+    private ?string $editorial = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Isbn(message: 'recurso.isbn_no_valido')]
+    private ?string $isbn = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Isbn(message: 'recurso.isbn_no_valido')]
+    private ?string $eisbn = null;
+
+    /** Año de edición o publicación (libros, normas, multimedia). */
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Assert\Range(min: 1450, max: 2100)]
+    private ?int $anio = null;
+
+    #[ORM\Column(length: 9, nullable: true)]
+    #[Assert\Issn(message: 'recurso.issn_no_valido')]
+    private ?string $issn = null;
+
+    #[ORM\Column(length: 9, nullable: true)]
+    #[Assert\Issn(message: 'recurso.issn_no_valido')]
+    private ?string $eissn = null;
+
+    /** Fecha desde la cual la UCN tiene acceso al contenido (revistas, bases de datos). */
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $disponibleDesde = null;
+
+    /** Código de la norma, p. ej. "NCh 433" o "ISO 9001:2015". */
+    #[ORM\Column(length: 60, nullable: true)]
+    #[Assert\Length(max: 60)]
+    private ?string $codigoNorma = null;
+
+    /** Organismo que emite la norma, p. ej. INN, ISO, IEEE. */
+    #[ORM\Column(length: 120, nullable: true)]
+    #[Assert\Length(max: 120)]
+    private ?string $organismo = null;
 
     #[ORM\Column(options: ['default' => true])]
     private bool $visible = true;
@@ -247,6 +295,185 @@ class Recurso
         $this->pruebaHasta = $pruebaHasta;
 
         return $this;
+    }
+
+    public function getAutores(): ?string
+    {
+        return $this->autores;
+    }
+
+    public function setAutores(?string $autores): static
+    {
+        $this->autores = self::textoONulo($autores);
+
+        return $this;
+    }
+
+    public function getEditorial(): ?string
+    {
+        return $this->editorial;
+    }
+
+    public function setEditorial(?string $editorial): static
+    {
+        $this->editorial = self::textoONulo($editorial);
+
+        return $this;
+    }
+
+    public function getIsbn(): ?string
+    {
+        return $this->isbn;
+    }
+
+    public function setIsbn(?string $isbn): static
+    {
+        $this->isbn = self::normalizarIsbn($isbn);
+
+        return $this;
+    }
+
+    public function getEisbn(): ?string
+    {
+        return $this->eisbn;
+    }
+
+    public function setEisbn(?string $eisbn): static
+    {
+        $this->eisbn = self::normalizarIsbn($eisbn);
+
+        return $this;
+    }
+
+    public function getAnio(): ?int
+    {
+        return $this->anio;
+    }
+
+    public function setAnio(?int $anio): static
+    {
+        $this->anio = $anio;
+
+        return $this;
+    }
+
+    public function getIssn(): ?string
+    {
+        return $this->issn;
+    }
+
+    public function setIssn(?string $issn): static
+    {
+        $this->issn = self::normalizarIssn($issn);
+
+        return $this;
+    }
+
+    public function getEissn(): ?string
+    {
+        return $this->eissn;
+    }
+
+    public function setEissn(?string $eissn): static
+    {
+        $this->eissn = self::normalizarIssn($eissn);
+
+        return $this;
+    }
+
+    public function getDisponibleDesde(): ?\DateTimeImmutable
+    {
+        return $this->disponibleDesde;
+    }
+
+    public function setDisponibleDesde(?\DateTimeImmutable $disponibleDesde): static
+    {
+        $this->disponibleDesde = $disponibleDesde;
+
+        return $this;
+    }
+
+    public function getCodigoNorma(): ?string
+    {
+        return $this->codigoNorma;
+    }
+
+    public function setCodigoNorma(?string $codigoNorma): static
+    {
+        $this->codigoNorma = self::textoONulo($codigoNorma);
+
+        return $this;
+    }
+
+    public function getOrganismo(): ?string
+    {
+        return $this->organismo;
+    }
+
+    public function setOrganismo(?string $organismo): static
+    {
+        $this->organismo = self::textoONulo($organismo);
+
+        return $this;
+    }
+
+    /**
+     * Datos bibliográficos con valor, en el orden del tipo, listos para mostrar.
+     *
+     * @return array<string, string> clave de traducción (recurso.<clave>) => valor
+     */
+    public function getDatosBibliograficos(): array
+    {
+        $datos = [];
+        foreach ($this->tipo->campos() as $campo) {
+            $valor = $this->{$campo};
+            if (null === $valor) {
+                continue;
+            }
+            $clave = strtolower((string) preg_replace('/(?<!^)[A-Z]/', '_$0', $campo));
+            $datos[$clave] = $valor instanceof \DateTimeImmutable ? $valor->format('d-m-Y') : (string) $valor;
+        }
+
+        return $datos;
+    }
+
+    /** Vacía los datos bibliográficos que no corresponden al tipo (p. ej. un ISBN que quedó al cambiar de Libro a Revista). */
+    public function limpiarCamposNoAplicables(): static
+    {
+        foreach (TipoRecurso::CAMPOS_BIBLIOGRAFICOS as $campo) {
+            if (!$this->tipo->usaCampo($campo)) {
+                $this->{$campo} = null;
+            }
+        }
+
+        return $this;
+    }
+
+    private static function textoONulo(?string $texto): ?string
+    {
+        $texto = null === $texto ? null : trim($texto);
+
+        return '' === $texto ? null : $texto;
+    }
+
+    /** Quita espacios y deja la X final en mayúscula; conserva los guiones. */
+    private static function normalizarIsbn(?string $isbn): ?string
+    {
+        $isbn = self::textoONulo($isbn);
+
+        return null === $isbn ? null : strtoupper((string) preg_replace('/\s+/', '', $isbn));
+    }
+
+    /** Deja el ISSN como 1234-567X cuando trae 8 caracteres sin guion. */
+    private static function normalizarIssn(?string $issn): ?string
+    {
+        $issn = self::textoONulo($issn);
+        if (null === $issn) {
+            return null;
+        }
+        $issn = strtoupper((string) preg_replace('/\s+/', '', $issn));
+
+        return 1 === preg_match('/^\d{7}[\dX]$/', $issn) ? substr($issn, 0, 4).'-'.substr($issn, 4) : $issn;
     }
 
     public function isVisible(): bool

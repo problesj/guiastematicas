@@ -69,9 +69,10 @@ Para Google, crear un "ID de cliente OAuth" de tipo aplicación web en Google Cl
 Roles: **Administrador** (usuarios, departamentos, materias y todo el sitio), **Editor** (crea y publica sus guías)
 y **Colaborador** (edita las guías que le compartan). Las guías llegan en la fase 4.
 
-## Bases de datos A-Z y proxy AccesUM
+## Recursos bibliográficos A-Z y proxy AccesUM
 
-La lista pública está en `/es/bases-de-datos`. Editores y administradores la gestionan en **Panel → Bases de datos**,
+La lista pública está en `/es/recursos-bibliograficos` (la dirección antigua `/es/bases-de-datos` redirige).
+Editores y administradores la gestionan en **Panel → Recursos bibliográficos**,
 uno a uno o importando el Excel (**Importar desde Excel**). La importación muestra una vista previa antes de guardar,
 reconoce los encabezados en español o inglés y ofrece una plantilla descargable. Un recurso que ya existe (misma URL o
 mismo título) se actualiza en vez de duplicarse.
@@ -82,4 +83,16 @@ Cada recurso guarda su URL original y la marca "requiere proxy". El enlace públ
 - plantilla: `PROXY_URL=https://proxy.ucn.cl/login?qurl={url}` (se reemplaza `{url}` por la URL codificada).
 
 Si el Excel trae las URL con el prefijo del proxy, la importación lo quita y marca "requiere proxy".
-Los clics de salida (`/bases-de-datos/{id}/ir`) se cuentan por recurso.
+Los clics de salida (`/recursos/{id}/ir`) se cuentan por recurso.
+
+Cada tipo de recurso tiene sus propios datos bibliográficos (definidos en `TipoRecurso::campos()`):
+
+| Tipo | Datos |
+| --- | --- |
+| Libros | Autores, editorial, año de edición, ISBN, e-ISBN |
+| Revistas | Editorial, ISSN, e-ISSN, disponible desde |
+| Base de datos | Disponible desde |
+| Normas | Código de la norma, organismo emisor, año |
+| Multimedia | Autores, año |
+
+El formulario muestra solo los del tipo elegido, valida ISBN e ISSN, y al guardar vacía los que no corresponden.

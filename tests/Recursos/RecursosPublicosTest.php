@@ -12,7 +12,7 @@ use App\Tests\CreaDatosTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-final class BasesDatosTest extends WebTestCase
+final class RecursosPublicosTest extends WebTestCase
 {
     use CreaDatosTrait;
 
@@ -46,7 +46,7 @@ final class BasesDatosTest extends WebTestCase
         self::recurso('Oculto', 'https://oculto.org', ['setVisible' => false]);
         self::recurso('Prueba vencida', 'https://vencida.org', ['setAcceso' => TipoAcceso::Prueba, 'setPruebaHasta' => new \DateTimeImmutable('-1 day')]);
 
-        $crawler = $this->cliente->request('GET', '/es/bases-de-datos');
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos');
         self::assertResponseIsSuccessful();
         self::assertSame(['PubMed', 'Scopus', 'Springer eBooks'], $crawler->filter('.recurso__titulo a')->each(fn ($n) => $n->text()));
         // Los enlaces a las bases se abren en una ventana nueva, con aviso para lectores de pantalla.
@@ -55,17 +55,17 @@ final class BasesDatosTest extends WebTestCase
         // Solo las letras con recursos son enlaces.
         self::assertSame(['Todas', 'P', 'S'], $crawler->filter('.indice-az a')->each(fn ($n) => $n->text()));
 
-        $crawler = $this->cliente->request('GET', '/es/bases-de-datos?letra=s');
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos?letra=s');
         self::assertCount(2, $crawler->filter('.recurso'));
 
-        $crawler = $this->cliente->request('GET', '/es/bases-de-datos?q=elsevier');
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos?q=elsevier');
         self::assertSame(['Scopus'], $crawler->filter('.recurso__titulo a')->each(fn ($n) => $n->text()));
 
-        $crawler = $this->cliente->request('GET', '/en/bases-de-datos?materia=medicina&acceso=abierto');
+        $crawler = $this->cliente->request('GET', '/en/recursos-bibliograficos?materia=medicina&acceso=abierto');
         self::assertSame(['PubMed'], $crawler->filter('.recurso__titulo a')->each(fn ($n) => $n->text()));
         self::assertSelectorTextContains('.resultados', '1 resource');
 
-        $crawler = $this->cliente->request('GET', '/es/bases-de-datos?tipo=libros');
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos?tipo=libros');
         self::assertSame(['Springer eBooks'], $crawler->filter('.recurso__titulo a')->each(fn ($n) => $n->text()));
     }
 
@@ -74,10 +74,10 @@ final class BasesDatosTest extends WebTestCase
         $scopus = self::recurso('Scopus', 'https://www.scopus.com');
         $scielo = self::recurso('SciELO', 'https://www.scielo.cl', ['setRequiereProxy' => false]);
 
-        $this->cliente->request('GET', '/bases-de-datos/'.$scopus->getId().'/ir');
+        $this->cliente->request('GET', '/recursos/'.$scopus->getId().'/ir');
         self::assertResponseRedirects('https://accesum.ucn.cl/login?url=https://www.scopus.com');
 
-        $this->cliente->request('GET', '/bases-de-datos/'.$scielo->getId().'/ir');
+        $this->cliente->request('GET', '/recursos/'.$scielo->getId().'/ir');
         self::assertResponseRedirects('https://www.scielo.cl');
 
         self::em()->clear();
@@ -88,8 +88,41 @@ final class BasesDatosTest extends WebTestCase
     {
         $oculto = self::recurso('Oculto', 'https://oculto.org', ['setVisible' => false]);
 
-        $this->cliente->request('GET', '/bases-de-datos/'.$oculto->getId().'/ir');
+        $this->cliente->request('GET', '/recursos/'.$oculto->getId().'/ir');
 
         self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testMuestraYBuscaLosDatosBibliograficos(): void
+    {
+        self::recurso('Introducción a la programación', 'https://ebooks.org/1', [
+            'setTipo' => TipoRecurso::Libros, 'setAutores' => 'Pérez, Ana', 'setIsbn' => '978-956-11-2345-8', 'setAnio' => 2021,
+        ]);
+        self::recurso('Revista Médica de Chile', 'https://revista.cl', ['setTipo' => TipoRecurso::Revistas, 'setIssn' => '00349887']);
+
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Recursos bibliográficos');
+        $datos = $crawler->filter('.recurso__datos')->each(fn ($n) => $n->text());
+        self::assertStringContainsString('ISBN978-956-11-2345-8', $datos[0]);
+        self::assertStringContainsString('Año de edición2021', $datos[0]);
+        self::assertStringContainsString('ISSN0034-9887', $datos[1]);
+
+        foreach (['978-956-11-2345-8' => 'Introducción a la programación', 'pérez' => 'Introducción a la programación', '0034-9887' => 'Revista Médica de Chile'] as $busqueda => $esperado) {
+            $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos?q='.rawurlencode($busqueda));
+            self::assertSame([$esperado], $crawler->filter('.recurso__titulo a')->each(fn ($n) => $n->text()), $busqueda);
+        }
+    }
+
+    public function testLaDireccionAntiguaRedirige(): void
+    {
+        $scopus = self::recurso('Scopus', 'https://www.scopus.com');
+
+        $this->cliente->request('GET', '/en/bases-de-datos?letra=S');
+        self::assertResponseRedirects('/en/recursos-bibliograficos?letra=S', 301);
+
+        // Los enlaces de salida antiguos siguen funcionando.
+        $this->cliente->request('GET', '/bases-de-datos/'.$scopus->getId().'/ir');
+        self::assertResponseRedirects('https://accesum.ucn.cl/login?url=https://www.scopus.com');
     }
 }

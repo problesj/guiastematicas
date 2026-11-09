@@ -120,6 +120,51 @@ final class ImportadorRecursosTest extends KernelTestCase
         self::assertNotNull(self::em()->getRepository(Materia::class)->findOneBy(['slug' => 'enfermeria']));
     }
 
+    public function testImportaDatosBibliograficosSegunElTipo(): void
+    {
+        $importador = $this->importador();
+        $filas = $importador->leer($this->excel([
+            ['Título', 'URL', 'Tipo', 'Autor', 'Editorial', 'Año', 'ISBN', 'ISBN electrónico', 'ISSN', 'e-ISSN', 'Fecha de disponibilidad', 'Código de la norma', 'Organismo emisor'],
+            ['Introducción a la programación', 'https://ebooks.org/1', 'Libro electrónico', 'Pérez, Ana; Soto, Luis', 'Editorial Universitaria', '2021', '978-956-11-2345-8', '978 956 11 2345 0', '', '', '', '', ''],
+            ['Revista Médica de Chile', 'https://revista.cl', 'Revista', '', 'Sociedad Médica', '', '9780131103627', '', '00349887', '0717-6163', '01-01-2000', '', ''],
+            ['Hormigón', 'https://inn.cl', 'Norma', '', '', '2016', '', '', '', '', '', 'NCh 170', 'INN'],
+            ['Scopus', 'https://www.scopus.com', 'Base de datos', '', 'Elsevier', '', '', '', '', '', '01-01-1996', '', ''],
+        ]));
+
+        [$libro, $revista, $norma, $base] = $filas;
+        self::assertSame(2021, $libro->datos['anio']);
+        self::assertSame('978-956-11-2345-8', $libro->datos['isbn']);
+        // e-ISBN con dígito verificador incorrecto: se descarta con aviso y la fila se importa igual.
+        self::assertNull($libro->datos['eisbn']);
+        self::assertContains('importacion.aviso_isbn|978 956 11 2345 0', $libro->avisos);
+        self::assertTrue($libro->esValida());
+
+        $importador->aplicar($filas);
+        self::em()->clear();
+        $repo = self::em()->getRepository(Recurso::class);
+
+        $libro = $repo->findOneBy(['titulo' => 'Introducción a la programación']);
+        self::assertSame('Pérez, Ana; Soto, Luis', $libro->getAutores());
+        self::assertSame('Editorial Universitaria', $libro->getEditorial());
+        self::assertSame(2021, $libro->getAnio());
+
+        $revista = $repo->findOneBy(['titulo' => 'Revista Médica de Chile']);
+        self::assertSame('0034-9887', $revista->getIssn());
+        self::assertSame('0717-6163', $revista->getEissn());
+        self::assertSame('2000-01-01', $revista->getDisponibleDesde()?->format('Y-m-d'));
+        // Un ISBN no corresponde a una revista: no se guarda.
+        self::assertNull($revista->getIsbn());
+
+        $norma = $repo->findOneBy(['titulo' => 'Hormigón']);
+        self::assertSame(['codigo_norma' => 'NCh 170', 'organismo' => 'INN', 'anio' => '2016'], $norma->getDatosBibliograficos());
+
+        // En una base de datos la columna "Editorial" pasa a ser el proveedor.
+        $base = $repo->findOneBy(['titulo' => 'Scopus']);
+        self::assertSame('Elsevier', $base->getProveedor());
+        self::assertNull($base->getEditorial());
+        self::assertSame('1996-01-01', $base->getDisponibleDesde()?->format('Y-m-d'));
+    }
+
     public function testUsaElHipervinculoDelTituloSiNoHayColumnaUrl(): void
     {
         $libro = new Spreadsheet();

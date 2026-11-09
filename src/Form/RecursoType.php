@@ -14,10 +14,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class RecursoType extends AbstractType
@@ -58,7 +61,27 @@ final class RecursoType extends AbstractType
                 'expanded' => true,
                 'required' => false,
             ])
-            ->add('visible', CheckboxType::class, ['label' => 'recurso.visible', 'required' => false]);
+            ->add('visible', CheckboxType::class, ['label' => 'recurso.visible', 'required' => false])
+            // Datos bibliográficos: el formulario muestra solo los del tipo elegido (ver TipoRecurso::campos()).
+            ->add('autores', TextType::class, ['label' => 'recurso.autores', 'required' => false, 'help' => 'recurso.autores_ayuda'])
+            ->add('editorial', TextType::class, ['label' => 'recurso.editorial', 'required' => false])
+            ->add('anio', IntegerType::class, ['label' => 'recurso.anio', 'required' => false, 'attr' => ['min' => 1450, 'max' => 2100]])
+            ->add('isbn', TextType::class, ['label' => 'recurso.isbn', 'required' => false])
+            ->add('eisbn', TextType::class, ['label' => 'recurso.eisbn', 'required' => false])
+            ->add('issn', TextType::class, ['label' => 'recurso.issn', 'required' => false, 'attr' => ['placeholder' => '1234-5678']])
+            ->add('eissn', TextType::class, ['label' => 'recurso.eissn', 'required' => false, 'attr' => ['placeholder' => '1234-5678']])
+            ->add('disponibleDesde', DateType::class, [
+                'label' => 'recurso.disponible_desde',
+                'widget' => 'single_text',
+                'input' => 'datetime_immutable',
+                'required' => false,
+                'help' => 'recurso.disponible_desde_ayuda',
+            ])
+            ->add('codigoNorma', TextType::class, ['label' => 'recurso.codigo_norma', 'required' => false, 'attr' => ['placeholder' => 'NCh 433']])
+            ->add('organismo', TextType::class, ['label' => 'recurso.organismo', 'required' => false, 'attr' => ['placeholder' => 'INN, ISO, IEEE']])
+            ->addEventListener(FormEvents::SUBMIT, function (FormEvent $evento): void {
+                $evento->getData()?->limpiarCamposNoAplicables();
+            });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

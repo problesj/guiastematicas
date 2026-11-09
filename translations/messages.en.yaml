@@ -7,7 +7,7 @@ sitio:
 menu:
   principal: Main menu
   guias: Guides by subject
-  bases_datos: A-Z databases
+  bases_datos: Library resources
   personal: Librarians
   acceso: Staff login
   panel: My dashboard
@@ -16,11 +16,11 @@ inicio:
   titulo: Research guides
   bajada: Resources selected by librarians for each field of study.
   buscar_etiqueta: Search guides and resources
-  buscar_placeholder: Search for a subject, a database or a topic
+  buscar_placeholder: Search for a subject, a resource or a topic
   buscar: Search
   secciones: Main sections
-  guias_texto: Guides with databases, books and search tips for every program and course.
-  bases_texto: Full list of subscribed databases, filterable by subject and format.
+  guias_texto: Guides with databases, journals, books and search tips for every program and course.
+  bases_texto: Databases, journals, e-books and standards, filterable by subject and type.
   personal_texto: Subject specialist librarians and how to contact them.
 pie:
   sedes: Antofagasta and Coquimbo
@@ -44,7 +44,7 @@ sede:
   coquimbo: Coquimbo
 panel:
   contenido: Content
-  recursos: Databases
+  recursos: Library resources
   recursos_texto: A-Z list, Excel import and AccesUM proxy.
   menu: Dashboard menu
   inicio: Home
@@ -180,12 +180,12 @@ tipo_acceso:
   abierto: Open access
   prueba: On trial
 bases:
-  titulo: A-Z databases
-  bajada: Databases, e-journals and e-books subscribed by UCN Libraries, plus open access resources.
+  titulo: A-Z library resources
+  bajada: Databases, journals, e-books, standards and other resources subscribed by UCN Libraries or open access.
   indice: Alphabetical index
   todas: All
   buscar: Search
-  buscar_placeholder: Name, provider or topic
+  buscar_placeholder: Title, author, ISBN, ISSN or topic
   materia: Subject
   todas_materias: All subjects
   tipo: Type
@@ -229,9 +229,23 @@ recurso:
   oculto: Hidden
   prueba_vencida: Trial ended
   clics: Clicks
+  grupo_bibliograficos: Bibliographic details
+  sin_bibliograficos: This resource type has no additional bibliographic details.
+  autores: Authors
+  autores_ayuda: Separated by semicolons.
+  editorial: Publisher
+  anio: Year of publication
+  isbn: ISBN
+  eisbn: e-ISBN
+  issn: ISSN
+  eissn: e-ISSN
+  disponible_desde: Available from
+  disponible_desde_ayuda: Date from which the content is accessible.
+  codigo_norma: Standard code
+  organismo: Issuing body
 importacion:
   titulo: Import from Excel
-  bajada: Upload the database list as Excel (.xlsx, .xls), OpenDocument (.ods) or CSV. Before saving you will see what will be created, what will be updated and which rows have errors.
+  bajada: Upload the list of library resources as Excel (.xlsx, .xls), OpenDocument (.ods) or CSV. Before saving you will see what will be created, what will be updated and which rows have errors.
   archivo: File
   archivo_ayuda: Up to 10 MB and 5,000 rows. The first row with recognised headers is used as the header.
   revisar: Review file
@@ -241,18 +255,28 @@ importacion:
   campo: Column
   detalle: Content
   columna:
-    titulo: Title (or Name, Database)
+    titulo: Title (or Name, Resource, Database)
     url: URL (or Link)
     requiere_proxy: Requires proxy (or Proxy, AccesUM)
     descripcion: Description
     descripcion_en: Description in English
-    proveedor: Provider (or Publisher, Platform)
+    proveedor: Provider (or Platform)
     tipo: Type (or Format)
     acceso: Access
     materias: Subjects (or Areas, Disciplines)
     nombres_alternativos: Alternative names (or Alias, Acronyms)
     visible: Visible (or Active)
     prueba_hasta: Trial until
+    autores: Authors (or Author)
+    editorial: Publisher (or Editor)
+    anio: Year of publication (or Year)
+    isbn: ISBN
+    eisbn: e-ISBN (or Electronic ISBN)
+    issn: ISSN
+    eissn: e-ISSN (or Electronic ISSN)
+    disponible_desde: Available from
+    codigo_norma: Standard code
+    organismo: Issuing body
   columna_ayuda:
     titulo: Required.
     url: Required. If it includes the proxy prefix, the original URL is stored and "requires proxy" is ticked.
@@ -266,6 +290,16 @@ importacion:
     nombres_alternativos: Separated by semicolons.
     visible: Yes or No. If missing, Yes.
     prueba_hasta: Date (dd-mm-yyyy).
+    autores: Books and multimedia. Several separated by semicolons.
+    editorial: Books and journals. For other types, used as the provider if that is missing.
+    anio: Books, standards and multimedia. 4-digit year.
+    isbn: Books. An invalid ISBN is left empty with a warning.
+    eisbn: Books. An invalid ISBN is left empty with a warning.
+    issn: Journals. Format 1234-5678.
+    eissn: Journals. Format 1234-5678.
+    disponible_desde: Journals and databases. Date (dd-mm-yyyy) from which content is accessible.
+    codigo_norma: Standards, e.g. NCh 433 or ISO 9001:2015.
+    organismo: Standards, e.g. INN, ISO or IEEE.
   vista_previa: Import preview
   archivo_revisado: "File: %nombre%"
   se_crearan: new resources
@@ -296,3 +330,6 @@ importacion:
   aviso_tipo: "Type \"%valor%\" not recognised; Database will be used."
   aviso_proxy_quitado: The proxy prefix was removed from the URL.
   aviso_fecha: "Date \"%valor%\" not recognised; left empty."
+  aviso_isbn: "ISBN \"%valor%\" not valid; left empty."
+  aviso_issn: "ISSN \"%valor%\" not valid; left empty."
+  aviso_anio: "Year \"%valor%\" not recognised; left empty."
