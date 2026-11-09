@@ -1,0 +1,57 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'importacion.vista_previa'|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ 'importacion.vista_previa'|trans }}</h1>
+    <p>{{ 'importacion.archivo_revisado'|trans({'%nombre%': nombre_original}) }}</p>
+
+    <ul class="resumen-importacion">
+        <li><strong>{{ cuentas.crear ?? 0 }}</strong> {{ 'importacion.se_crearan'|trans }}</li>
+        <li><strong>{{ cuentas.actualizar ?? 0 }}</strong> {{ 'importacion.se_actualizaran'|trans }}</li>
+        <li><strong>{{ cuentas.error ?? 0 }}</strong> {{ 'importacion.con_errores'|trans }}</li>
+    </ul>
+
+    {% if (cuentas.crear ?? 0) + (cuentas.actualizar ?? 0) > 0 %}
+        <form method="post" action="{{ path('panel_recursos_importar_confirmar') }}" class="formulario__acciones">
+            <input type="hidden" name="archivo" value="{{ archivo }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('confirmar-importacion') }}">
+            <button type="submit" class="boton">{{ 'importacion.confirmar'|trans({'%count%': (cuentas.crear ?? 0) + (cuentas.actualizar ?? 0)}) }}</button>
+            <a href="{{ path('panel_recursos_importar') }}">{{ 'formulario.cancelar'|trans }}</a>
+        </form>
+    {% else %}
+        <p class="aviso aviso--error">{{ 'importacion.nada_que_importar'|trans }}</p>
+    {% endif %}
+
+    <div class="tabla-desplazable">
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'importacion.fila'|trans }}</th>
+                    <th scope="col">{{ 'importacion.accion'|trans }}</th>
+                    <th scope="col">{{ 'recurso.titulo'|trans }}</th>
+                    <th scope="col">{{ 'recurso.url'|trans }}</th>
+                    <th scope="col">{{ 'recurso.proxy_corto'|trans }}</th>
+                    <th scope="col">{{ 'recurso.materias'|trans }}</th>
+                    <th scope="col">{{ 'importacion.observaciones'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fila in filas %}
+                    <tr class="fila-importacion fila-importacion--{{ fila.accion }}">
+                        <td>{{ fila.numero }}</td>
+                        <td><span class="etiqueta">{{ ('importacion.accion_' ~ fila.accion)|trans }}</span></td>
+                        <td>{{ fila.datos.titulo }}</td>
+                        <td class="tabla__url">{{ fila.datos.url ?? '—' }}</td>
+                        <td>{{ fila.datos.requiere_proxy is defined ? ((fila.datos.requiere_proxy ? 'formulario.si' : 'formulario.no')|trans) : '—' }}</td>
+                        <td>{{ fila.materias|join(', ') ?: '—' }}</td>
+                        <td>
+                            {% for e in fila.errores %}<span class="texto-error">{{ e|mensaje }}</span><br>{% endfor %}
+                            {% for a in fila.avisos %}<small>{{ a|mensaje }}</small><br>{% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -6,9 +6,12 @@ namespace App\DataFixtures;
 
 use App\Entity\Departamento;
 use App\Entity\Materia;
+use App\Entity\Recurso;
 use App\Entity\Usuario;
 use App\Enum\Rol;
 use App\Enum\Sede;
+use App\Enum\TipoAcceso;
+use App\Enum\TipoRecurso;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -72,6 +75,28 @@ final class AppFixtures extends Fixture
                 $usuario->addMateria($materias[$i]);
             }
             $manager->persist($usuario);
+        }
+
+        foreach ([
+            ['Scopus', 'https://www.scopus.com', TipoRecurso::BaseDatos, TipoAcceso::Suscripcion, 'Elsevier', [0, 1, 4], 'Base de datos de resúmenes y citas de literatura científica revisada por pares.'],
+            ['Web of Science', 'https://www.webofscience.com', TipoRecurso::BaseDatos, TipoAcceso::Suscripcion, 'Clarivate', [0, 1, 3], 'Índice de citas multidisciplinario.'],
+            ['PubMed', 'https://pubmed.ncbi.nlm.nih.gov', TipoRecurso::BaseDatos, TipoAcceso::Abierto, 'NLM', [1], 'Literatura biomédica de la Biblioteca Nacional de Medicina de EE. UU.'],
+            ['SciELO Chile', 'https://www.scielo.cl', TipoRecurso::Revistas, TipoAcceso::Abierto, 'SciELO', [1, 2, 3], 'Revistas científicas chilenas de acceso abierto.'],
+            ['vLex', 'https://vlex.cl', TipoRecurso::BaseDatos, TipoAcceso::Suscripcion, 'vLex', [2], 'Legislación, jurisprudencia y doctrina.'],
+            ['Springer eBooks', 'https://link.springer.com', TipoRecurso::Libros, TipoAcceso::Suscripcion, 'Springer Nature', [0, 3, 4], 'Libros electrónicos de ciencia y tecnología.'],
+            ['ASTM Compass', 'https://compass.astm.org', TipoRecurso::Normas, TipoAcceso::Prueba, 'ASTM', [0], 'Normas técnicas ASTM.'],
+            ['GeoRef', 'https://www.americangeosciences.org/georef', TipoRecurso::BaseDatos, TipoAcceso::Suscripcion, 'AGI', [4], 'Bibliografía de geociencias.'],
+            ['Zotero', 'https://www.zotero.org', TipoRecurso::Herramienta, TipoAcceso::Abierto, null, [], 'Gestor de referencias bibliográficas gratuito.'],
+        ] as [$titulo, $url, $tipo, $acceso, $proveedor, $indices, $descripcion]) {
+            $recurso = (new Recurso())->setTitulo($titulo)->setUrl($url)->setTipo($tipo)->setAcceso($acceso)
+                ->setProveedor($proveedor)->setDescripcion($descripcion)->setRequiereProxy(TipoAcceso::Abierto !== $acceso);
+            if (TipoAcceso::Prueba === $acceso) {
+                $recurso->setPruebaHasta(new \DateTimeImmutable('+30 days'));
+            }
+            foreach ($indices as $i) {
+                $recurso->addMateria($materias[$i]);
+            }
+            $manager->persist($recurso);
         }
 
         $manager->flush();

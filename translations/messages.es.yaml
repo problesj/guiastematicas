@@ -43,6 +43,9 @@ sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
 panel:
+  contenido: Contenido
+  recursos: Bases de datos
+  recursos_texto: Lista A-Z, importación desde Excel y proxy AccesUM.
   menu: Menú del panel
   inicio: Inicio
   perfil: Mi perfil
@@ -140,6 +143,8 @@ materia:
   inactiva: Inactiva
   especialistas: Especialistas
 formulario:
+  si: Sí
+  no: "No"
   guardar: Guardar
   cancelar: Cancelar
   editar: Editar
@@ -161,3 +166,132 @@ personal:
   materias: Materias
   acerca: Presentación
   foto_de: Foto de %nombre%
+tipo_recurso:
+  base_datos: Base de datos
+  revistas: Revistas electrónicas
+  libros: Libros electrónicos
+  repositorio: Repositorio
+  normas: Normas y patentes
+  multimedia: Multimedia
+  herramienta: Herramienta
+  sitio_web: Sitio web
+tipo_acceso:
+  suscripcion: Suscripción UCN
+  abierto: Acceso abierto
+  prueba: En prueba
+bases:
+  titulo: Bases de datos A-Z
+  bajada: Bases de datos, revistas y libros electrónicos suscritos por Bibliotecas UCN y recursos de acceso abierto.
+  indice: Índice alfabético
+  todas: Todas
+  buscar: Buscar
+  buscar_placeholder: Nombre, proveedor o tema
+  materia: Materia
+  todas_materias: Todas las materias
+  tipo: Tipo
+  todos_tipos: Todos los tipos
+  acceso: Acceso
+  todos_accesos: Todos
+  filtrar: Aplicar
+  limpiar: Quitar filtros
+  resultados: "{0}Ningún recurso|{1}1 recurso|]1,Inf[%count% recursos"
+  nuevo: Nuevo
+  hasta: hasta
+  proxy: Acceso remoto con AccesUM
+  proxy_ayuda: Fuera del campus te pedirá iniciar sesión con tu cuenta UCN.
+  sin_resultados: No hay recursos que coincidan con la búsqueda.
+  vacio: Aún no hay recursos publicados.
+recurso:
+  nuevo: Nuevo recurso
+  editar: Editar recurso
+  guardado: El recurso quedó guardado.
+  eliminado: El recurso fue eliminado.
+  vacio: No hay recursos.
+  grupo_datos: Datos del recurso
+  titulo: Título
+  alternativos: Nombres alternativos
+  alternativos_ayuda: Siglas u otros nombres para la búsqueda, separados por punto y coma.
+  url: URL original
+  url_ayuda: La dirección del recurso sin el prefijo del proxy.
+  requiere_proxy: Requiere proxy AccesUM
+  requiere_proxy_ayuda: Marca si el acceso fuera del campus debe pasar por AccesUM.
+  proxy_corto: Proxy
+  tipo: Tipo
+  acceso: Acceso
+  prueba_hasta: En prueba hasta
+  prueba_hasta_ayuda: Solo para recursos en prueba. Después de esta fecha deja de mostrarse.
+  proveedor: Proveedor
+  descripcion: Descripción
+  descripcion_en: Descripción en inglés
+  materias: Materias
+  visible: Mostrar en la lista pública
+  oculto: Oculto
+  prueba_vencida: Prueba vencida
+  clics: Clics
+importacion:
+  titulo: Importar desde Excel
+  bajada: Sube la lista de bases de datos en Excel (.xlsx, .xls), OpenDocument (.ods) o CSV. Antes de guardar verás qué se creará, qué se actualizará y qué filas tienen errores.
+  archivo: Archivo
+  archivo_ayuda: Hasta 10 MB y 5.000 filas. La primera fila con encabezados reconocidos se usa como encabezado.
+  revisar: Revisar archivo
+  plantilla: Descargar plantilla de ejemplo
+  columnas: Columnas reconocidas
+  columnas_ayuda: Los encabezados pueden estar en español o inglés, con o sin tildes. Solo título y URL son obligatorias; si la URL no tiene columna propia, se usa el hipervínculo del título.
+  campo: Columna
+  detalle: Contenido
+  columna:
+    titulo: Título (o Nombre, Base de datos)
+    url: URL (o Enlace, Link)
+    requiere_proxy: Requiere proxy (o Proxy, AccesUM)
+    descripcion: Descripción
+    descripcion_en: Descripción en inglés
+    proveedor: Proveedor (o Editorial, Plataforma)
+    tipo: Tipo (o Formato)
+    acceso: Acceso
+    materias: Materias (o Áreas, Disciplinas, Carreras)
+    nombres_alternativos: Nombres alternativos (o Alias, Siglas)
+    visible: Visible (o Activo)
+    prueba_hasta: Prueba hasta
+  columna_ayuda:
+    titulo: Obligatoria.
+    url: Obligatoria. Si viene con el prefijo del proxy, se guarda la URL original y se marca "requiere proxy".
+    requiere_proxy: Sí o No. Si falta, se marca Sí salvo en recursos de acceso abierto.
+    descripcion: Texto libre.
+    descripcion_en: Texto libre.
+    proveedor: Texto libre.
+    tipo: Base de datos, Revistas, Libros, Repositorio, Normas, Multimedia, Herramienta o Sitio web.
+    acceso: Suscripción, Abierto o Prueba.
+    materias: Varias separadas por punto y coma. Las que no existen se crean.
+    nombres_alternativos: Separados por punto y coma.
+    visible: Sí o No. Si falta, Sí.
+    prueba_hasta: Fecha (dd-mm-aaaa).
+  vista_previa: Vista previa de la importación
+  archivo_revisado: "Archivo: %nombre%"
+  se_crearan: recursos nuevos
+  se_actualizaran: recursos existentes se actualizarán
+  con_errores: filas con errores se omitirán
+  confirmar: "{1}Importar 1 recurso|]1,Inf[Importar %count% recursos"
+  nada_que_importar: No hay filas válidas para importar. Revisa los errores y vuelve a subir el archivo.
+  fila: Fila
+  accion: Acción
+  accion_crear: Crear
+  accion_actualizar: Actualizar
+  accion_error: Error
+  observaciones: Observaciones
+  resultado: "Importación terminada: %creados% creados, %actualizados% actualizados, %omitidos% filas omitidas y %materias% materias nuevas."
+  expirada: La vista previa expiró. Sube el archivo otra vez.
+  sin_archivo: Selecciona un archivo.
+  extension: El archivo debe ser .xlsx, .xls, .ods o .csv.
+  muy_grande: El archivo supera los 10 MB.
+  archivo_ilegible: No se pudo leer el archivo. Revisa que sea una planilla válida.
+  sin_columnas: No se encontraron las columnas de título y URL en las primeras filas.
+  demasiadas_filas: El archivo tiene más de 5.000 filas. Divídelo en partes.
+  error_sin_titulo: Falta el título.
+  error_titulo_largo: El título supera los 200 caracteres.
+  error_sin_url: Falta la URL.
+  error_url: "URL no válida: %valor%"
+  error_url_larga: La URL supera los 1.000 caracteres.
+  error_repetido: "La misma URL ya está en la fila %valor%."
+  aviso_tipo: "Tipo \"%valor%\" no reconocido; se usará Base de datos."
+  aviso_proxy_quitado: Se quitó el prefijo del proxy de la URL.
+  aviso_fecha: "Fecha \"%valor%\" no reconocida; se deja vacía."

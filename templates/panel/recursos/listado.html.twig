@@ -1,0 +1,58 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.recursos'|trans }}{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado-accion">
+        <h1>{{ 'panel.recursos'|trans }}</h1>
+        <div class="encabezado-accion__botones">
+            <a class="boton boton--secundario" href="{{ path('panel_recursos_importar') }}">{{ 'importacion.titulo'|trans }}</a>
+            <a class="boton" href="{{ path('panel_recurso_nuevo') }}">{{ 'recurso.nuevo'|trans }}</a>
+        </div>
+    </div>
+
+    <form method="get" class="filtro" role="search">
+        <label for="q" class="solo-lectores">{{ 'bases.buscar'|trans }}</label>
+        <input type="search" id="q" name="q" value="{{ q }}" placeholder="{{ 'bases.buscar_placeholder'|trans }}" class="filtro__texto">
+        <button type="submit" class="boton boton--secundario">{{ 'bases.buscar'|trans }}</button>
+    </form>
+
+    {% if recursos is empty %}
+        <p>{{ 'recurso.vacio'|trans }}</p>
+    {% else %}
+        <p>{{ 'bases.resultados'|trans({'%count%': recursos|length}) }}</p>
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'recurso.titulo'|trans }}</th>
+                        <th scope="col">{{ 'recurso.tipo'|trans }}</th>
+                        <th scope="col">{{ 'recurso.acceso'|trans }}</th>
+                        <th scope="col">{{ 'recurso.proxy_corto'|trans }}</th>
+                        <th scope="col">{{ 'recurso.clics'|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recurso in recursos %}
+                        <tr{% if not recurso.estaDisponible %} class="tabla__inactivo"{% endif %}>
+                            <td>
+                                {{ recurso.titulo }}
+                                {% if not recurso.visible %}<span class="etiqueta">{{ 'recurso.oculto'|trans }}</span>{% elseif not recurso.estaDisponible %}<span class="etiqueta">{{ 'recurso.prueba_vencida'|trans }}</span>{% endif %}
+                                <br><small class="tabla__url">{{ recurso.url }}</small>
+                            </td>
+                            <td>{{ recurso.tipo.etiqueta|trans }}</td>
+                            <td>{{ recurso.acceso.etiqueta|trans }}</td>
+                            <td>{{ (recurso.requiereProxy ? 'formulario.si' : 'formulario.no')|trans }}</td>
+                            <td>{{ recurso.clics }}</td>
+                            <td class="tabla__acciones">
+                                <a href="{{ path('panel_recurso_editar', {id: recurso.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ recurso.titulo }}</span></a>
+                                {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_recurso_eliminar', id: recurso.id, token: 'eliminar-recurso-' ~ recurso.id, nombre: recurso.titulo} %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

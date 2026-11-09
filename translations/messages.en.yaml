@@ -43,6 +43,9 @@ sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
 panel:
+  contenido: Content
+  recursos: Databases
+  recursos_texto: A-Z list, Excel import and AccesUM proxy.
   menu: Dashboard menu
   inicio: Home
   perfil: My profile
@@ -140,6 +143,8 @@ materia:
   inactiva: Inactive
   especialistas: Specialists
 formulario:
+  si: "Yes"
+  no: "No"
   guardar: Save
   cancelar: Cancel
   editar: Edit
@@ -161,3 +166,132 @@ personal:
   materias: Subjects
   acerca: About
   foto_de: Photo of %nombre%
+tipo_recurso:
+  base_datos: Database
+  revistas: E-journals
+  libros: E-books
+  repositorio: Repository
+  normas: Standards and patents
+  multimedia: Multimedia
+  herramienta: Tool
+  sitio_web: Website
+tipo_acceso:
+  suscripcion: UCN subscription
+  abierto: Open access
+  prueba: On trial
+bases:
+  titulo: A-Z databases
+  bajada: Databases, e-journals and e-books subscribed by UCN Libraries, plus open access resources.
+  indice: Alphabetical index
+  todas: All
+  buscar: Search
+  buscar_placeholder: Name, provider or topic
+  materia: Subject
+  todas_materias: All subjects
+  tipo: Type
+  todos_tipos: All types
+  acceso: Access
+  todos_accesos: All
+  filtrar: Apply
+  limpiar: Clear filters
+  resultados: "{0}No resources|{1}1 resource|]1,Inf[%count% resources"
+  nuevo: New
+  hasta: until
+  proxy: Remote access via AccesUM
+  proxy_ayuda: Off campus you will be asked to sign in with your UCN account.
+  sin_resultados: No resources match your search.
+  vacio: There are no published resources yet.
+recurso:
+  nuevo: New resource
+  editar: Edit resource
+  guardado: The resource was saved.
+  eliminado: The resource was deleted.
+  vacio: There are no resources.
+  grupo_datos: Resource details
+  titulo: Title
+  alternativos: Alternative names
+  alternativos_ayuda: Acronyms or other names for searching, separated by semicolons.
+  url: Original URL
+  url_ayuda: The resource address without the proxy prefix.
+  requiere_proxy: Requires AccesUM proxy
+  requiere_proxy_ayuda: Tick if off-campus access must go through AccesUM.
+  proxy_corto: Proxy
+  tipo: Type
+  acceso: Access
+  prueba_hasta: On trial until
+  prueba_hasta_ayuda: Trial resources only. After this date it is hidden.
+  proveedor: Provider
+  descripcion: Description
+  descripcion_en: Description in English
+  materias: Subjects
+  visible: Show in the public list
+  oculto: Hidden
+  prueba_vencida: Trial ended
+  clics: Clicks
+importacion:
+  titulo: Import from Excel
+  bajada: Upload the database list as Excel (.xlsx, .xls), OpenDocument (.ods) or CSV. Before saving you will see what will be created, what will be updated and which rows have errors.
+  archivo: File
+  archivo_ayuda: Up to 10 MB and 5,000 rows. The first row with recognised headers is used as the header.
+  revisar: Review file
+  plantilla: Download sample template
+  columnas: Recognised columns
+  columnas_ayuda: Headers can be in Spanish or English, with or without accents. Only title and URL are required; if there is no URL column, the title's hyperlink is used.
+  campo: Column
+  detalle: Content
+  columna:
+    titulo: Title (or Name, Database)
+    url: URL (or Link)
+    requiere_proxy: Requires proxy (or Proxy, AccesUM)
+    descripcion: Description
+    descripcion_en: Description in English
+    proveedor: Provider (or Publisher, Platform)
+    tipo: Type (or Format)
+    acceso: Access
+    materias: Subjects (or Areas, Disciplines)
+    nombres_alternativos: Alternative names (or Alias, Acronyms)
+    visible: Visible (or Active)
+    prueba_hasta: Trial until
+  columna_ayuda:
+    titulo: Required.
+    url: Required. If it includes the proxy prefix, the original URL is stored and "requires proxy" is ticked.
+    requiere_proxy: Yes or No. If missing, Yes except for open access resources.
+    descripcion: Free text.
+    descripcion_en: Free text.
+    proveedor: Free text.
+    tipo: Database, Journals, Books, Repository, Standards, Multimedia, Tool or Website.
+    acceso: Subscription, Open or Trial.
+    materias: Several separated by semicolons. Missing ones are created.
+    nombres_alternativos: Separated by semicolons.
+    visible: Yes or No. If missing, Yes.
+    prueba_hasta: Date (dd-mm-yyyy).
+  vista_previa: Import preview
+  archivo_revisado: "File: %nombre%"
+  se_crearan: new resources
+  se_actualizaran: existing resources will be updated
+  con_errores: rows with errors will be skipped
+  confirmar: "{1}Import 1 resource|]1,Inf[Import %count% resources"
+  nada_que_importar: There are no valid rows to import. Check the errors and upload the file again.
+  fila: Row
+  accion: Action
+  accion_crear: Create
+  accion_actualizar: Update
+  accion_error: Error
+  observaciones: Notes
+  resultado: "Import finished: %creados% created, %actualizados% updated, %omitidos% rows skipped and %materias% new subjects."
+  expirada: The preview expired. Upload the file again.
+  sin_archivo: Choose a file.
+  extension: The file must be .xlsx, .xls, .ods or .csv.
+  muy_grande: The file is larger than 10 MB.
+  archivo_ilegible: The file could not be read. Check that it is a valid spreadsheet.
+  sin_columnas: The title and URL columns were not found in the first rows.
+  demasiadas_filas: The file has more than 5,000 rows. Split it into parts.
+  error_sin_titulo: Title is missing.
+  error_titulo_largo: The title is longer than 200 characters.
+  error_sin_url: URL is missing.
+  error_url: "Invalid URL: %valor%"
+  error_url_larga: The URL is longer than 1,000 characters.
+  error_repetido: "The same URL is already in row %valor%."
+  aviso_tipo: "Type \"%valor%\" not recognised; Database will be used."
+  aviso_proxy_quitado: The proxy prefix was removed from the URL.
+  aviso_fecha: "Date \"%valor%\" not recognised; left empty."
