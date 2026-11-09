@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Recurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
+use App\Paginacion\Pagina;
 use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
 use App\Servicio\ProxyAccesum;
@@ -32,17 +33,18 @@ final class RecursosController extends AbstractController
         $tipo = TipoRecurso::tryFrom($consulta->getString('tipo'));
         $acceso = TipoAcceso::tryFrom($consulta->getString('acceso'));
 
-        $resultados = $recursos->buscarPublicos($letra, $texto, $materia, $tipo, $acceso);
+        [$numero, $porPagina] = Pagina::leerParametros($request);
+        $pagina = $recursos->buscarPublicos($numero, $porPagina, $letra, $texto, $materia, $tipo, $acceso);
 
         // Agrupados por letra para la vista sin filtro de letra.
         $grupos = [];
-        foreach ($resultados as $recurso) {
+        foreach ($pagina->elementos as $recurso) {
             $grupos[$recurso->getLetra()][] = $recurso;
         }
 
         return $this->render('recursos/listado.html.twig', [
             'grupos' => $grupos,
-            'total' => \count($resultados),
+            'pagina' => $pagina,
             'letras' => $recursos->letrasConRecursos(),
             'materias' => $materias->activas(),
             'tipos' => TipoRecurso::cases(),

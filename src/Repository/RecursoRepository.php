@@ -8,6 +8,7 @@ use App\Entity\Materia;
 use App\Entity\Recurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
+use App\Paginacion\Pagina;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,17 +24,19 @@ class RecursoRepository extends ServiceEntityRepository
     }
 
     /**
-     * Recursos de la lista pública A-Z.
+     * Recursos de la lista pública A-Z, por páginas.
      *
-     * @return list<Recurso>
+     * @return Pagina<Recurso>
      */
     public function buscarPublicos(
+        int $pagina,
+        int $porPagina,
         ?string $letra = null,
         ?string $texto = null,
         ?Materia $materia = null,
         ?TipoRecurso $tipo = null,
         ?TipoAcceso $acceso = null,
-    ): array {
+    ): Pagina {
         $consulta = $this->disponibles();
 
         if (null !== $letra) {
@@ -52,13 +55,15 @@ class RecursoRepository extends ServiceEntityRepository
             $consulta->andWhere('r.acceso = :acceso')->setParameter('acceso', $acceso);
         }
 
-        return $consulta->leftJoin('r.materias', 'm')->addSelect('m')
+        $consulta->leftJoin('r.materias', 'm')->addSelect('m')
             ->leftJoin('r.autorias', 'ra')->addSelect('ra')
             ->leftJoin('ra.autor', 'au')->addSelect('au')
             ->leftJoin('r.editorial', 'ed')->addSelect('ed')
             ->orderBy('r.letra', 'ASC')
             ->addOrderBy('r.titulo', 'ASC')
-            ->getQuery()->getResult();
+            ->addOrderBy('r.id', 'ASC');
+
+        return Pagina::desdeConsulta($consulta, $pagina, $porPagina, true);
     }
 
     /**
@@ -74,15 +79,15 @@ class RecursoRepository extends ServiceEntityRepository
         );
     }
 
-    /** @return list<Recurso> */
-    public function listadoAdministracion(?string $texto = null): array
+    /** @return Pagina<Recurso> */
+    public function listadoAdministracion(int $pagina, int $porPagina, ?string $texto = null): Pagina
     {
-        $consulta = $this->createQueryBuilder('r')->orderBy('r.titulo', 'ASC');
+        $consulta = $this->createQueryBuilder('r')->orderBy('r.titulo', 'ASC')->addOrderBy('r.id', 'ASC');
         if (null !== $texto && '' !== trim($texto)) {
             self::filtrarTexto($consulta, $texto);
         }
 
-        return $consulta->getQuery()->getResult();
+        return Pagina::desdeConsulta($consulta, $pagina, $porPagina);
     }
 
     /** Busca un recurso existente para la importación: primero por URL, luego por título. */

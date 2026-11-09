@@ -427,3 +427,11 @@ pais:
   completados: "{0}La lista ya estaba completa.|{1}Se agregó 1 país.|]1,Inf[Se agregaron %count% países."
   ayuda: Lista de países y territorios ISO 3166-1 que se usa en autores y editoriales.
   vacio: No hay países. Usa «Completar lista ISO» para cargarlos.
+paginacion:
+  etiqueta: Páginas de resultados
+  mostrando: Mostrando %desde%–%hasta% de %total%
+  por_pagina: Por página
+  aplicar: Aplicar
+  anterior: « Anterior
+  siguiente: Siguiente »
+  pagina: Página

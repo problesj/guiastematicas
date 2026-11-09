@@ -1,0 +1,15 @@
+{# Resumen "Mostrando 1-25 de 120" y selector de cantidad por página. Parámetros: pagina (App\Paginacion\Pagina). #}
+{% set consulta = app.request.query.all|filter((v, k) => k not in ['pagina', 'por_pagina'] and v is not iterable) %}
+<form method="get" class="paginacion-cantidad" data-controller="envio-automatico">
+    {% for clave, valor in consulta %}<input type="hidden" name="{{ clave }}" value="{{ valor }}">{% endfor %}
+    <p class="paginacion-cantidad__resumen">
+        {% if pagina.total > 0 %}{{ 'paginacion.mostrando'|trans({'%desde%': pagina.desde, '%hasta%': pagina.hasta, '%total%': pagina.total}) }}{% endif %}
+    </p>
+    <label for="por-pagina">{{ 'paginacion.por_pagina'|trans }}</label>
+    <select id="por-pagina" name="por_pagina" data-action="envio-automatico#enviar">
+        {% for opcion in constant('App\\Paginacion\\Pagina::OPCIONES') %}
+            <option value="{{ opcion }}" {% if opcion == pagina.porPagina %}selected{% endif %}>{{ opcion }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="boton boton--secundario" data-envio-automatico-target="boton">{{ 'paginacion.aplicar'|trans }}</button>
+</form>

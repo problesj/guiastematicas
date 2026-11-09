@@ -17,10 +17,11 @@
         <button type="submit" class="boton boton--secundario">{{ 'bases.buscar'|trans }}</button>
     </form>
 
-    {% if recursos is empty %}
+    {% if pagina.total == 0 %}
         <p>{{ 'recurso.vacio'|trans }}</p>
     {% else %}
-        <p>{{ 'bases.resultados'|trans({'%count%': recursos|length}) }}</p>
+        <p>{{ 'bases.resultados'|trans({'%count%': pagina.total}) }}</p>
+        {% include 'paginacion/_cantidad.html.twig' %}
         <div class="tabla-desplazable">
             <table class="tabla">
                 <thead>
@@ -34,7 +35,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for recurso in recursos %}
+                    {% for recurso in pagina.elementos %}
                         <tr{% if not recurso.estaDisponible %} class="tabla__inactivo"{% endif %}>
                             <td>
                                 {{ recurso.titulo }}
@@ -54,5 +55,6 @@
                 </tbody>
             </table>
         </div>
+        {% include 'paginacion/_enlaces.html.twig' with {ruta: 'panel_recursos'} %}
     {% endif %}
 {% endblock %}

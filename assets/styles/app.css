@@ -274,3 +274,15 @@ a:hover { color: var(--color-principal-oscuro); }
 .selector-autores__opcion small { color: var(--color-texto-secundario); }
 .selector-autores__opcion[aria-selected="true"], .selector-autores__opcion:hover { background: var(--color-fondo-suave); }
 .selector-autores__opcion--nueva { font-style: italic; border-top: 1px solid var(--color-gris); }
+
+/* Paginación */
+.paginacion-cantidad { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin: 1rem 0; }
+.paginacion-cantidad__resumen { flex: 1; margin: 0; color: var(--color-texto-secundario); }
+.paginacion-cantidad select { padding: 0.35rem 0.5rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); background: #fff; }
+.paginacion { margin: 1.5rem 0; }
+.paginacion ul { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.paginacion a, .paginacion span { display: inline-block; min-width: 2.5rem; padding: 0.4rem 0.7rem; text-align: center; border: 1px solid var(--color-gris); border-radius: var(--radio); text-decoration: none; }
+.paginacion a:hover { background: var(--color-fondo-suave); }
+.paginacion a[aria-current="page"] { color: #fff; background: var(--color-principal); border-color: var(--color-principal); font-weight: 600; }
+.paginacion span[aria-hidden="true"] { border-color: transparent; }
+.paginacion span[aria-disabled="true"] { color: var(--color-texto-secundario); opacity: 0.6; }

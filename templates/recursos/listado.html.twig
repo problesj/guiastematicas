@@ -58,7 +58,8 @@
             </div>
         </form>
 
-        <p class="resultados" role="status">{{ 'bases.resultados'|trans({'%count%': total}) }}</p>
+        <p class="resultados" role="status">{{ 'bases.resultados'|trans({'%count%': pagina.total}) }}</p>
+        {% if pagina.total > 0 %}{% include 'paginacion/_cantidad.html.twig' %}{% endif %}
         <p id="aviso-ventana-nueva" class="solo-lectores">{{ 'bases.ventana_nueva'|trans }}</p>
 
         {% for letra, recursos in grupos %}
@@ -107,5 +108,6 @@
         {% else %}
             <p>{{ (hay_filtros ? 'bases.sin_resultados' : 'bases.vacio')|trans }}</p>
         {% endfor %}
+        {% include 'paginacion/_enlaces.html.twig' with {ruta: 'recursos'} %}
     </section>
 {% endblock %}
