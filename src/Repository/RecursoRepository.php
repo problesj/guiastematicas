@@ -111,7 +111,8 @@ class RecursoRepository extends ServiceEntityRepository
 
     private static function filtrarTexto(QueryBuilder $consulta, string $texto): void
     {
-        $consulta->andWhere('r.titulo LIKE :texto OR r.nombresAlternativos LIKE :texto OR r.descripcion LIKE :texto OR r.proveedor LIKE :texto')
+        $consulta->andWhere('r.titulo LIKE :texto OR r.nombresAlternativos LIKE :texto OR r.descripcion LIKE :texto OR r.proveedor LIKE :texto'
+            .' OR r.autores LIKE :texto OR r.editorial LIKE :texto OR r.isbn LIKE :texto OR r.eisbn LIKE :texto OR r.issn LIKE :texto OR r.eissn LIKE :texto OR r.codigoNorma LIKE :texto')
             ->setParameter('texto', '%'.addcslashes(trim($texto), '%_\\').'%');
     }
 }

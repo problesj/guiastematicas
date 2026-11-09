@@ -38,6 +38,7 @@ a:hover { color: var(--color-principal-oscuro); }
 
 .saltar { position: absolute; left: -999px; }
 .saltar:focus { left: 1rem; top: 1rem; background: #fff; padding: 0.5rem 1rem; z-index: 10; }
+[hidden] { display: none !important; }
 .solo-lectores { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
 /* Barra superior con enlaces institucionales */
@@ -197,6 +198,11 @@ a:hover { color: var(--color-principal-oscuro); }
 .recursos { margin: 0; padding: 0; list-style: none; }
 .recurso { padding: 1rem 0; border-bottom: 1px solid #ece5da; }
 .recurso__titulo { margin: 0; font-size: 1.1875rem; }
+.recurso__datos { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; margin: 0.375rem 0 0; font-size: 0.9375rem; }
+.recurso__datos div { display: flex; gap: 0.375rem; }
+.recurso__datos dt { color: var(--color-texto-secundario); }
+.recurso__datos dt::after { content: ":"; }
+.recurso__datos dd { margin: 0; }
 .recurso__titulo a[target="_blank"]::after { content: "\2197"; content: "\2197" / ""; margin-left: 0.25em; font-size: 0.8em; }
 .recurso__meta { margin: 0.15rem 0 0; font-size: 0.9375rem; color: var(--color-texto-secundario); }
 .recurso__descripcion { margin: 0.4rem 0 0; }

@@ -53,6 +53,42 @@ final class PanelRecursosTest extends WebTestCase
         self::assertTrue($jstor->isRequiereProxy());
     }
 
+    public function testLosDatosBibliograficosSeValidanYDependenDelTipo(): void
+    {
+        $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));
+        $crawler = $this->cliente->request('GET', '/es/panel/recursos/nuevo');
+        // Cada dato indica para qué tipos se muestra.
+        self::assertSame('libros', $crawler->filter('#recurso_isbn')->ancestors()->filter('[data-campos-tipo-target="campo"]')->attr('data-tipos'));
+
+        $datos = [
+            'recurso[titulo]' => 'Introducción a la programación',
+            'recurso[url]' => 'https://ebooks.org/1',
+            'recurso[tipo]' => 'libros',
+            'recurso[acceso]' => 'suscripcion',
+            'recurso[isbn]' => '978-956-11-2345-0',
+            'recurso[anio]' => '2021',
+        ];
+        $this->cliente->submitForm('Guardar', $datos);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.campo__errores li', 'El ISBN no es válido');
+
+        $this->cliente->submitForm('Guardar', ['recurso[isbn]' => '978-956-11-2345-8'] + $datos);
+        self::assertResponseRedirects('/es/panel/recursos');
+        $libro = self::em()->getRepository(Recurso::class)->findOneBy(['titulo' => 'Introducción a la programación']);
+        self::assertSame('978-956-11-2345-8', $libro->getIsbn());
+        self::assertSame(2021, $libro->getAnio());
+
+        // Al cambiarlo a Revistas, los datos de libro se vacían.
+        $this->cliente->request('GET', '/es/panel/recursos/'.$libro->getId().'/editar');
+        $this->cliente->submitForm('Guardar', ['recurso[tipo]' => 'revistas', 'recurso[issn]' => '0034-9887']);
+        self::assertResponseRedirects('/es/panel/recursos');
+        self::em()->clear();
+        $revista = self::em()->find(Recurso::class, $libro->getId());
+        self::assertNull($revista->getIsbn());
+        self::assertNull($revista->getAnio());
+        self::assertSame('0034-9887', $revista->getIssn());
+    }
+
     public function testImportacionConVistaPreviaYConfirmacion(): void
     {
         $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));

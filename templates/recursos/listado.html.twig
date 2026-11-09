@@ -9,17 +9,17 @@
         <p class="pagina__bajada">{{ 'bases.bajada'|trans }}</p>
 
         <nav class="indice-az" aria-label="{{ 'bases.indice'|trans }}">
-            <a href="{{ path('bases_datos') }}" {% if filtro.letra is null %}aria-current="page"{% endif %}>{{ 'bases.todas'|trans }}</a>
+            <a href="{{ path('recursos') }}" {% if filtro.letra is null %}aria-current="page"{% endif %}>{{ 'bases.todas'|trans }}</a>
             {% for letra in ['#']|merge(range('A', 'Z')) %}
                 {% if letra in letras %}
-                    <a href="{{ path('bases_datos', {letra: letra}) }}" {% if filtro.letra == letra %}aria-current="page"{% endif %}>{{ letra }}</a>
+                    <a href="{{ path('recursos', {letra: letra}) }}" {% if filtro.letra == letra %}aria-current="page"{% endif %}>{{ letra }}</a>
                 {% else %}
                     <span aria-hidden="true">{{ letra }}</span>
                 {% endif %}
             {% endfor %}
         </nav>
 
-        <form method="get" action="{{ path('bases_datos') }}" class="filtros" role="search">
+        <form method="get" action="{{ path('recursos') }}" class="filtros" role="search">
             <div class="campo filtros__texto">
                 <label for="q">{{ 'bases.buscar'|trans }}</label>
                 <input type="search" id="q" name="q" value="{{ filtro.q }}" placeholder="{{ 'bases.buscar_placeholder'|trans }}">
@@ -54,7 +54,7 @@
             {% if filtro.letra %}<input type="hidden" name="letra" value="{{ filtro.letra }}">{% endif %}
             <div class="filtros__acciones">
                 <button type="submit" class="boton">{{ 'bases.filtrar'|trans }}</button>
-                {% if hay_filtros %}<a href="{{ path('bases_datos') }}">{{ 'bases.limpiar'|trans }}</a>{% endif %}
+                {% if hay_filtros %}<a href="{{ path('recursos') }}">{{ 'bases.limpiar'|trans }}</a>{% endif %}
             </div>
         </form>
 
@@ -68,7 +68,7 @@
                     {% for recurso in recursos %}
                         <li class="recurso">
                             <h3 class="recurso__titulo">
-                                <a href="{{ path('bases_datos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener" aria-describedby="aviso-ventana-nueva">{{ recurso.titulo }}</a>
+                                <a href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener" aria-describedby="aviso-ventana-nueva">{{ recurso.titulo }}</a>
                                 {% if recurso.esNuevo %}<span class="insignia insignia--nuevo">{{ 'bases.nuevo'|trans }}</span>{% endif %}
                                 {% if recurso.acceso.value == 'prueba' %}<span class="insignia insignia--prueba">{{ 'tipo_acceso.prueba'|trans }}{% if recurso.pruebaHasta %} · {{ 'bases.hasta'|trans }} {{ recurso.pruebaHasta|date('d-m-Y') }}{% endif %}</span>{% endif %}
                                 {% if recurso.acceso.value == 'abierto' %}<span class="insignia insignia--abierto">{{ 'tipo_acceso.abierto'|trans }}</span>{% endif %}
@@ -77,10 +77,18 @@
                                 {{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}
                                 {% if recurso.requiereProxy %} · <span title="{{ 'bases.proxy_ayuda'|trans }}">{{ 'bases.proxy'|trans }}</span>{% endif %}
                             </p>
+                            {% set datos = recurso.datosBibliograficos %}
+                            {% if datos is not empty %}
+                                <dl class="recurso__datos">
+                                    {% for campo, valor in datos %}
+                                        <div><dt>{{ ('recurso.' ~ campo)|trans }}</dt><dd>{{ valor }}</dd></div>
+                                    {% endfor %}
+                                </dl>
+                            {% endif %}
                             {% if recurso.descripcionTraducida(idioma) %}<p class="recurso__descripcion">{{ recurso.descripcionTraducida(idioma) }}</p>{% endif %}
                             {% if recurso.materias is not empty %}
                                 <p class="recurso__materias">
-                                    {% for m in recurso.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('bases_datos', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
+                                    {% for m in recurso.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('recursos', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
                                 </p>
                             {% endif %}
                         </li>

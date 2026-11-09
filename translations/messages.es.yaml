@@ -7,7 +7,7 @@ sitio:
 menu:
   principal: Menú principal
   guias: Guías por materia
-  bases_datos: Bases de datos A-Z
+  bases_datos: Recursos bibliográficos
   personal: Bibliotecarios
   acceso: Acceso personal
   panel: Mi panel
@@ -16,11 +16,11 @@ inicio:
   titulo: Guías temáticas
   bajada: Recursos seleccionados por bibliotecarios para cada área de estudio.
   buscar_etiqueta: Buscar guías y recursos
-  buscar_placeholder: Busca una materia, una base de datos o un tema
+  buscar_placeholder: Busca una materia, un recurso o un tema
   buscar: Buscar
   secciones: Secciones principales
-  guias_texto: Guías con bases de datos, libros y consejos de búsqueda para cada carrera y asignatura.
-  bases_texto: Lista completa de bases de datos suscritas, con filtros por materia y formato.
+  guias_texto: Guías con bases de datos, revistas, libros y consejos de búsqueda para cada carrera y asignatura.
+  bases_texto: Bases de datos, revistas, libros electrónicos y normas, con filtros por materia y tipo.
   personal_texto: Bibliotecarios especialistas por materia y cómo contactarlos.
 pie:
   sedes: Antofagasta y Coquimbo
@@ -44,7 +44,7 @@ sede:
   coquimbo: Coquimbo
 panel:
   contenido: Contenido
-  recursos: Bases de datos
+  recursos: Recursos bibliográficos
   recursos_texto: Lista A-Z, importación desde Excel y proxy AccesUM.
   menu: Menú del panel
   inicio: Inicio
@@ -180,12 +180,12 @@ tipo_acceso:
   abierto: Acceso abierto
   prueba: En prueba
 bases:
-  titulo: Bases de datos A-Z
-  bajada: Bases de datos, revistas y libros electrónicos suscritos por Bibliotecas UCN y recursos de acceso abierto.
+  titulo: Recursos bibliográficos A-Z
+  bajada: Bases de datos, revistas, libros electrónicos, normas y otros recursos suscritos por Bibliotecas UCN o de acceso abierto.
   indice: Índice alfabético
   todas: Todas
   buscar: Buscar
-  buscar_placeholder: Nombre, proveedor o tema
+  buscar_placeholder: Título, autor, ISBN, ISSN o tema
   materia: Materia
   todas_materias: Todas las materias
   tipo: Tipo
@@ -229,9 +229,23 @@ recurso:
   oculto: Oculto
   prueba_vencida: Prueba vencida
   clics: Clics
+  grupo_bibliograficos: Datos bibliográficos
+  sin_bibliograficos: Este tipo de recurso no tiene datos bibliográficos adicionales.
+  autores: Autores
+  autores_ayuda: Separados por punto y coma.
+  editorial: Editorial
+  anio: Año de edición
+  isbn: ISBN
+  eisbn: e-ISBN
+  issn: ISSN
+  eissn: e-ISSN
+  disponible_desde: Disponible desde
+  disponible_desde_ayuda: Fecha desde la cual hay acceso al contenido.
+  codigo_norma: Código de la norma
+  organismo: Organismo emisor
 importacion:
   titulo: Importar desde Excel
-  bajada: Sube la lista de bases de datos en Excel (.xlsx, .xls), OpenDocument (.ods) o CSV. Antes de guardar verás qué se creará, qué se actualizará y qué filas tienen errores.
+  bajada: Sube la lista de recursos bibliográficos en Excel (.xlsx, .xls), OpenDocument (.ods) o CSV. Antes de guardar verás qué se creará, qué se actualizará y qué filas tienen errores.
   archivo: Archivo
   archivo_ayuda: Hasta 10 MB y 5.000 filas. La primera fila con encabezados reconocidos se usa como encabezado.
   revisar: Revisar archivo
@@ -241,18 +255,28 @@ importacion:
   campo: Columna
   detalle: Contenido
   columna:
-    titulo: Título (o Nombre, Base de datos)
+    titulo: Título (o Nombre, Recurso, Base de datos)
     url: URL (o Enlace, Link)
     requiere_proxy: Requiere proxy (o Proxy, AccesUM)
     descripcion: Descripción
     descripcion_en: Descripción en inglés
-    proveedor: Proveedor (o Editorial, Plataforma)
+    proveedor: Proveedor (o Plataforma)
     tipo: Tipo (o Formato)
     acceso: Acceso
     materias: Materias (o Áreas, Disciplinas, Carreras)
     nombres_alternativos: Nombres alternativos (o Alias, Siglas)
     visible: Visible (o Activo)
     prueba_hasta: Prueba hasta
+    autores: Autores (o Autor)
+    editorial: Editorial (o Editor, Publisher)
+    anio: Año de edición (o Año)
+    isbn: ISBN
+    eisbn: e-ISBN (o ISBN electrónico)
+    issn: ISSN
+    eissn: e-ISSN (o ISSN electrónico)
+    disponible_desde: Disponible desde (o Fecha de disponibilidad)
+    codigo_norma: Código de la norma
+    organismo: Organismo emisor
   columna_ayuda:
     titulo: Obligatoria.
     url: Obligatoria. Si viene con el prefijo del proxy, se guarda la URL original y se marca "requiere proxy".
@@ -266,6 +290,16 @@ importacion:
     nombres_alternativos: Separados por punto y coma.
     visible: Sí o No. Si falta, Sí.
     prueba_hasta: Fecha (dd-mm-aaaa).
+    autores: Libros y multimedia. Varios separados por punto y coma.
+    editorial: Libros y revistas. En otros tipos, si falta el proveedor, se usa como proveedor.
+    anio: Libros, normas y multimedia. Año de 4 dígitos.
+    isbn: Libros. Un ISBN no válido se deja vacío con aviso.
+    eisbn: Libros. Un ISBN no válido se deja vacío con aviso.
+    issn: Revistas. Formato 1234-5678.
+    eissn: Revistas. Formato 1234-5678.
+    disponible_desde: Revistas y bases de datos. Fecha (dd-mm-aaaa) desde la cual hay acceso.
+    codigo_norma: Normas, p. ej. NCh 433 o ISO 9001:2015.
+    organismo: Normas, p. ej. INN, ISO o IEEE.
   vista_previa: Vista previa de la importación
   archivo_revisado: "Archivo: %nombre%"
   se_crearan: recursos nuevos
@@ -296,3 +330,6 @@ importacion:
   aviso_tipo: "Tipo \"%valor%\" no reconocido; se usará Base de datos."
   aviso_proxy_quitado: Se quitó el prefijo del proxy de la URL.
   aviso_fecha: "Fecha \"%valor%\" no reconocida; se deja vacía."
+  aviso_isbn: "ISBN \"%valor%\" no válido; se deja vacío."
+  aviso_issn: "ISSN \"%valor%\" no válido; se deja vacío."
+  aviso_anio: "Año \"%valor%\" no reconocido; se deja vacío."

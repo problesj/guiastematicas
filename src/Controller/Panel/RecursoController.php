@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Panel;
 
 use App\Entity\Recurso;
+use App\Enum\TipoRecurso;
 use App\Form\RecursoType;
 use App\Repository\RecursoRepository;
 use App\Servicio\Importacion\ArchivoNoValidoException;
@@ -145,7 +146,7 @@ final class RecursoController extends AbstractController
     {
         return new StreamedResponse(fn () => $plantilla->escribir('php://output'), 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="plantilla-bases-de-datos.xlsx"',
+            'Content-Disposition' => 'attachment; filename="plantilla-recursos.xlsx"',
         ]);
     }
 
@@ -190,6 +191,8 @@ final class RecursoController extends AbstractController
         return $this->render('panel/recursos/formulario.html.twig', [
             'formulario' => $formulario,
             'titulo' => $titulo,
+            'campos_bibliograficos' => TipoRecurso::CAMPOS_BIBLIOGRAFICOS,
+            'tipos_por_campo' => array_combine(TipoRecurso::CAMPOS_BIBLIOGRAFICOS, array_map(TipoRecurso::tiposConCampo(...), TipoRecurso::CAMPOS_BIBLIOGRAFICOS)),
         ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
     }
 }

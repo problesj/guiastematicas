@@ -16,10 +16,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/** Lista pública A-Z de bases de datos y recursos electrónicos. */
-final class BasesDatosController extends AbstractController
+/** Lista pública A-Z de recursos bibliográficos electrónicos (bases de datos, revistas, libros, normas, etc.). */
+final class RecursosController extends AbstractController
 {
-    #[Route('/{_locale}/bases-de-datos', name: 'bases_datos', requirements: ['_locale' => 'es|en'], methods: ['GET'])]
+    #[Route('/{_locale}/recursos-bibliograficos', name: 'recursos', requirements: ['_locale' => 'es|en'], methods: ['GET'])]
     public function listado(Request $request, RecursoRepository $recursos, MateriaRepository $materias): Response
     {
         $consulta = $request->query;
@@ -40,7 +40,7 @@ final class BasesDatosController extends AbstractController
             $grupos[$recurso->getLetra()][] = $recurso;
         }
 
-        return $this->render('bases_datos/listado.html.twig', [
+        return $this->render('recursos/listado.html.twig', [
             'grupos' => $grupos,
             'total' => \count($resultados),
             'letras' => $recursos->letrasConRecursos(),
@@ -59,7 +59,8 @@ final class BasesDatosController extends AbstractController
     }
 
     /** Enlace de salida: suma el clic y redirige a la URL del recurso, por el proxy si corresponde. */
-    #[Route('/bases-de-datos/{id<\d+>}/ir', name: 'bases_datos_ir', methods: ['GET'])]
+    #[Route('/recursos/{id<\d+>}/ir', name: 'recursos_ir', methods: ['GET'])]
+    #[Route('/bases-de-datos/{id<\d+>}/ir', name: 'bases_datos_ir', methods: ['GET'])] // enlaces antiguos
     public function ir(Recurso $recurso, RecursoRepository $recursos, ProxyAccesum $proxy): RedirectResponse
     {
         if (!$recurso->estaDisponible()) {
@@ -69,5 +70,12 @@ final class BasesDatosController extends AbstractController
         $recursos->registrarClic($recurso);
 
         return new RedirectResponse($proxy->enlace($recurso));
+    }
+
+    /** Dirección anterior de la lista ("Bases de datos A-Z"); se conserva para marcadores y enlaces ya publicados. */
+    #[Route('/{_locale}/bases-de-datos', name: 'bases_datos', requirements: ['_locale' => 'es|en'], methods: ['GET'])]
+    public function direccionAntigua(Request $request): RedirectResponse
+    {
+        return $this->redirectToRoute('recursos', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
     }
 }
