@@ -59,6 +59,7 @@
         </form>
 
         <p class="resultados" role="status">{{ 'bases.resultados'|trans({'%count%': total}) }}</p>
+        <p id="aviso-ventana-nueva" class="solo-lectores">{{ 'bases.ventana_nueva'|trans }}</p>
 
         {% for letra, recursos in grupos %}
             <section class="grupo-az" aria-labelledby="letra-{{ loop.index }}">
@@ -67,7 +68,7 @@
                     {% for recurso in recursos %}
                         <li class="recurso">
                             <h3 class="recurso__titulo">
-                                <a href="{{ path('bases_datos_ir', {id: recurso.id}) }}" rel="noopener">{{ recurso.titulo }}</a>
+                                <a href="{{ path('bases_datos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener" aria-describedby="aviso-ventana-nueva">{{ recurso.titulo }}</a>
                                 {% if recurso.esNuevo %}<span class="insignia insignia--nuevo">{{ 'bases.nuevo'|trans }}</span>{% endif %}
                                 {% if recurso.acceso.value == 'prueba' %}<span class="insignia insignia--prueba">{{ 'tipo_acceso.prueba'|trans }}{% if recurso.pruebaHasta %} · {{ 'bases.hasta'|trans }} {{ recurso.pruebaHasta|date('d-m-Y') }}{% endif %}</span>{% endif %}
                                 {% if recurso.acceso.value == 'abierto' %}<span class="insignia insignia--abierto">{{ 'tipo_acceso.abierto'|trans }}</span>{% endif %}

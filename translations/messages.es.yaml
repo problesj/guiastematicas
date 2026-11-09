@@ -199,6 +199,7 @@ bases:
   hasta: hasta
   proxy: Acceso remoto con AccesUM
   proxy_ayuda: Fuera del campus te pedirá iniciar sesión con tu cuenta UCN.
+  ventana_nueva: Se abre en una ventana nueva.
   sin_resultados: No hay recursos que coincidan con la búsqueda.
   vacio: Aún no hay recursos publicados.
 recurso:
