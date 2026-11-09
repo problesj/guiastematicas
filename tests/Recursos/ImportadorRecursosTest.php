@@ -62,10 +62,17 @@ final class ImportadorRecursosTest extends KernelTestCase
             ['Sin enlace', '', '', '', '', ''],
             ['Scopus repetido', 'https://www.scopus.com', '', '', '', ''],
             ['Raro', 'https://raro.org', '', 'Cosa extraña', '', ''],
+            ['JSTOR', 'https://itmsp.museknowledge.com/UCN?url=https://www.jstor.org', '', '', '', ''],
+            ['Wiley', 'https://itmsp.museknowledge.com/UCN?qurl=https%3A%2F%2Fonlinelibrary.wiley.com', 'Acceso abierto', '', '', ''],
         ]));
 
-        self::assertCount(5, $filas);
-        [$scopus, $scielo, $sinEnlace, $repetido, $raro] = $filas;
+        self::assertCount(7, $filas);
+        [$scopus, $scielo, $sinEnlace, $repetido, $raro, $jstor, $wiley] = $filas;
+        self::assertSame('https://www.jstor.org', $jstor->datos['url']);
+        self::assertTrue($jstor->datos['requiere_proxy']);
+        self::assertSame('https://onlinelibrary.wiley.com', $wiley->datos['url']);
+        // Venía con proxy: se mantiene "requiere proxy" aunque diga acceso abierto.
+        self::assertTrue($wiley->datos['requiere_proxy']);
 
         self::assertSame('crear', $scopus->accion());
         self::assertSame('https://www.scopus.com', $scopus->datos['url']);
