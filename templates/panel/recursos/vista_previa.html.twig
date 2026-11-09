@@ -2,6 +2,9 @@
 
 {% block title %}{{ 'importacion.vista_previa'|trans }}{% endblock %}
 
+{# Toda la pantalla para la tabla: sin menú lateral ni ancho máximo. #}
+{% block clase_panel %}panel--ancho{% endblock %}
+
 {% block contenido %}
     <h1>{{ 'importacion.vista_previa'|trans }}</h1>
     <p>{{ 'importacion.archivo_revisado'|trans({'%nombre%': nombre_original}) }}</p>
@@ -12,48 +15,103 @@
         <li><strong>{{ cuentas.error ?? 0 }}</strong> {{ 'importacion.con_errores'|trans }}</li>
     </ul>
 
-    {% if (cuentas.crear ?? 0) + (cuentas.actualizar ?? 0) > 0 %}
-        <form method="post" action="{{ path('panel_recursos_importar_confirmar') }}" class="formulario__acciones">
-            <input type="hidden" name="archivo" value="{{ archivo }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('confirmar-importacion') }}">
-            <button type="submit" class="boton">{{ 'importacion.confirmar'|trans({'%count%': (cuentas.crear ?? 0) + (cuentas.actualizar ?? 0)}) }}</button>
-            <a href="{{ path('panel_recursos_importar') }}">{{ 'formulario.cancelar'|trans }}</a>
-        </form>
+    {% set importables = (cuentas.crear ?? 0) + (cuentas.actualizar ?? 0) %}
+    {% if importables > 0 %}
+        <p>{{ 'importacion.ajustar_ayuda'|trans }}</p>
     {% else %}
         <p class="aviso aviso--error">{{ 'importacion.nada_que_importar'|trans }}</p>
     {% endif %}
 
-    <div class="tabla-desplazable">
-        <table class="tabla">
-            <thead>
-                <tr>
-                    <th scope="col">{{ 'importacion.fila'|trans }}</th>
-                    <th scope="col">{{ 'importacion.accion'|trans }}</th>
-                    <th scope="col">{{ 'recurso.titulo'|trans }}</th>
-                    <th scope="col">{{ 'recurso.tipo'|trans }}</th>
-                    <th scope="col">{{ 'recurso.url'|trans }}</th>
-                    <th scope="col">{{ 'recurso.proxy_corto'|trans }}</th>
-                    <th scope="col">{{ 'recurso.materias'|trans }}</th>
-                    <th scope="col">{{ 'importacion.observaciones'|trans }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for fila in filas %}
-                    <tr class="fila-importacion fila-importacion--{{ fila.accion }}">
-                        <td>{{ fila.numero }}</td>
-                        <td><span class="etiqueta">{{ ('importacion.accion_' ~ fila.accion)|trans }}</span></td>
-                        <td>{{ fila.datos.titulo }}</td>
-                        <td>{{ fila.datos.tipo is defined ? fila.datos.tipo.etiqueta|trans : (fila.existente ? fila.existente.tipo.etiqueta|trans : 'tipo_recurso.base_datos'|trans) }}</td>
-                        <td class="tabla__url">{{ fila.datos.url ?? '—' }}</td>
-                        <td>{{ fila.datos.requiere_proxy is defined ? ((fila.datos.requiere_proxy ? 'formulario.si' : 'formulario.no')|trans) : '—' }}</td>
-                        <td>{{ fila.materias|join(', ') ?: '—' }}</td>
-                        <td>
-                            {% for e in fila.errores %}<span class="texto-error">{{ e|mensaje }}</span><br>{% endfor %}
-                            {% for a in fila.avisos %}<small>{{ a|mensaje }}</small><br>{% endfor %}
-                        </td>
+    <form method="post" action="{{ path('panel_recursos_importar_confirmar') }}" data-turbo="false"
+          data-controller="vista-previa"
+          data-action="submit->vista-previa#enviar change->vista-previa#contar"
+          data-vista-previa-uno-value="{{ 'importacion.confirmar_uno'|trans }}"
+          data-vista-previa-varios-value="{{ 'importacion.confirmar_varios'|trans }}"
+          data-vista-previa-ninguno-value="{{ 'importacion.confirmar_ninguno'|trans }}">
+        <input type="hidden" name="archivo" value="{{ archivo }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('confirmar-importacion') }}">
+        <input type="hidden" name="seleccion" data-vista-previa-target="seleccion">
+        {% if importables > 0 %}
+            <div class="formulario__acciones">
+                <button type="submit" class="boton" data-vista-previa-target="boton">{{ 'importacion.confirmar'|trans({'%count%': importables}) }}</button>
+                <a href="{{ path('panel_recursos_importar') }}">{{ 'formulario.cancelar'|trans }}</a>
+            </div>
+        {% endif %}
+
+        <p class="campo__ayuda">{{ 'importacion.columnas_ajustables'|trans }}</p>
+        <div class="tabla-desplazable">
+            <table class="tabla tabla--vista-previa" data-controller="columnas-ajustables">
+                <thead>
+                    <tr>
+                        <th scope="col" class="columna--angosta">
+                            <label class="casilla-tabla"><input type="checkbox" data-action="vista-previa#marcarTodas" data-vista-previa-target="todas" checked aria-label="{{ 'importacion.marcar_todas'|trans }}"> {{ 'importacion.importar'|trans }}</label>
+                        </th>
+                        <th scope="col" class="columna--angosta">{{ 'importacion.fila'|trans }}</th>
+                        <th scope="col">{{ 'importacion.accion'|trans }}</th>
+                        <th scope="col" class="columna--titulo">{{ 'recurso.titulo'|trans }}</th>
+                        <th scope="col">{{ 'recurso.tipo'|trans }}</th>
+                        <th scope="col" class="columna--url">{{ 'recurso.url'|trans }}</th>
+                        <th scope="col">{{ 'recurso.proxy_corto'|trans }}</th>
+                        <th scope="col" class="columna--materias">{{ 'recurso.materias'|trans }}</th>
+                        <th scope="col" class="columna--observaciones">{{ 'importacion.observaciones'|trans }}</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    {% for fila in filas %}
+                        {% set valida = fila.accion != 'error' %}
+                        <tr class="fila-importacion fila-importacion--{{ fila.accion }}" {% if valida %}data-vista-previa-target="fila" data-numero="{{ fila.numero }}"{% endif %}>
+                            <td>
+                                {% if valida %}
+                                    <input type="checkbox" data-campo="importar" checked aria-label="{{ 'importacion.importar_fila'|trans({'%fila%': fila.numero}) }}">
+                                {% endif %}
+                            </td>
+                            <td>{{ fila.numero }}</td>
+                            <td><span class="etiqueta">{{ ('importacion.accion_' ~ fila.accion)|trans }}</span></td>
+                            <td>{{ fila.datos.titulo }}</td>
+                            <td>{{ fila.datos.tipo is defined ? fila.datos.tipo.etiqueta|trans : (fila.existente ? fila.existente.tipo.etiqueta|trans : 'tipo_recurso.base_datos'|trans) }}</td>
+                            <td class="tabla__url">
+                                {% if valida and fila.urls|length > 1 %}
+                                    <fieldset class="opciones-url">
+                                        <legend class="solo-lectores">{{ 'importacion.elegir_url'|trans }}</legend>
+                                        {% for url in fila.urls %}
+                                            <label><input type="radio" name="url-{{ fila.numero }}" value="{{ url }}" data-campo="url" {% if url == fila.datos.url %}checked{% endif %}> {{ url }}</label>
+                                        {% endfor %}
+                                    </fieldset>
+                                {% else %}
+                                    {{ fila.datos.url ?? '—' }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if valida %}
+                                    <input type="checkbox" data-campo="proxy" {% if fila.datos.requiere_proxy %}checked{% endif %} aria-label="{{ 'importacion.proxy_fila'|trans({'%fila%': fila.numero}) }}">
+                                {% else %}—{% endif %}
+                            </td>
+                            <td>
+                                {% if valida %}
+                                    {% set propuestas = materias_por_fila[fila.numero] ?? {ids: [], nuevas: []} %}
+                                    <details class="selector-materias">
+                                        <summary data-vista-previa-target="resumen">{{ 'importacion.materias_elegidas'|trans({'%count%': propuestas.ids|length + propuestas.nuevas|length}) }}</summary>
+                                        <div class="selector-materias__lista">
+                                            {% for nueva in propuestas.nuevas %}
+                                                <label><input type="checkbox" data-campo="materia" data-nueva value="{{ nueva }}" checked> {{ nueva }} <small>({{ 'importacion.materia_nueva'|trans }})</small></label>
+                                            {% endfor %}
+                                            {% for materia in materias %}
+                                                <label><input type="checkbox" data-campo="materia" value="{{ materia.id }}" {% if materia.id in propuestas.ids %}checked{% endif %}> {{ materia.nombre }}</label>
+                                            {% endfor %}
+                                        </div>
+                                    </details>
+                                {% else %}
+                                    {{ fila.materias|join(', ') ?: '—' }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% for e in fila.errores %}<span class="texto-error">{{ e|mensaje }}</span><br>{% endfor %}
+                                {% for a in fila.avisos %}<small>{{ a|mensaje }}</small><br>{% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
 {% endblock %}

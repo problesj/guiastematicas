@@ -211,6 +211,80 @@ final class ImportadorRecursos
     }
 
     /**
+     * Para la vista previa: las materias del archivo que ya existen (por id) y las que se crearían (por nombre).
+     *
+     * @param list<FilaImportacion> $filas
+     *
+     * @return array<int, array{ids: list<int>, nuevas: list<string>}> por número de fila
+     */
+    public function clasificarMaterias(array $filas): array
+    {
+        $indice = $this->indiceMaterias();
+        $resultado = [];
+        foreach ($filas as $fila) {
+            $ids = [];
+            $nuevas = [];
+            foreach ($fila->materias as $nombre) {
+                $materia = $indice[self::normalizar($nombre)] ?? null;
+                if (null !== $materia) {
+                    $ids[] = (int) $materia->getId();
+                } else {
+                    $nuevas[] = $nombre;
+                }
+            }
+            $resultado[$fila->numero] = ['ids' => array_values(array_unique($ids)), 'nuevas' => $nuevas];
+        }
+
+        return $resultado;
+    }
+
+    /**
+     * Aplica lo elegido en la vista previa: qué filas importar, cuál de sus URL usar, si requieren proxy y sus materias.
+     *
+     * @param list<FilaImportacion>                                                              $filas
+     * @param array<int|string, array{importar?: bool, url?: string, proxy?: bool, materias?: list<int|string>}> $seleccion por número de fila
+     *
+     * Las materias se indican por id (existentes) o por nombre (solo las nuevas que venían en el archivo).
+     */
+    public function aplicarSeleccion(array $filas, array $seleccion): void
+    {
+        $materias = [];
+        foreach ($this->materiasRepo->findAll() as $materia) {
+            $materias[$materia->getId()] = $materia->getNombre();
+        }
+
+        foreach ($filas as $fila) {
+            $eleccion = $seleccion[$fila->numero] ?? null;
+            if (!\is_array($eleccion) || !$fila->esValida()) {
+                continue;
+            }
+            if (false === ($eleccion['importar'] ?? true)) {
+                $fila->descartada = true;
+                continue;
+            }
+            $url = $eleccion['url'] ?? null;
+            if (\is_string($url) && $url !== $fila->datos['url'] && \in_array($url, $fila->urls, true)) {
+                $fila->datos['url'] = $url;
+                $fila->existente = $this->recursos->buscarParaImportar($url, $fila->datos['titulo']);
+            }
+            if (\is_bool($eleccion['proxy'] ?? null)) {
+                $fila->datos['requiere_proxy'] = $eleccion['proxy'];
+            }
+            if (\is_array($eleccion['materias'] ?? null)) {
+                $nombres = [];
+                foreach ($eleccion['materias'] as $materia) {
+                    if (\is_int($materia) && isset($materias[$materia])) {
+                        $nombres[] = $materias[$materia];
+                    } elseif (\is_string($materia) && \in_array($materia, $fila->materias, true)) {
+                        $nombres[] = $materia;
+                    }
+                }
+                $fila->materias = array_values(array_unique($nombres));
+            }
+        }
+    }
+
+    /**
      * Crea o actualiza los recursos de las filas válidas.
      *
      * @param list<FilaImportacion> $filas
@@ -223,7 +297,7 @@ final class ImportadorRecursos
         $materias = $this->indiceMaterias();
 
         foreach ($filas as $fila) {
-            if (!$fila->esValida()) {
+            if (!$fila->esValida() || $fila->descartada) {
                 ++$resultado['omitidos'];
                 continue;
             }
@@ -340,10 +414,11 @@ final class ImportadorRecursos
         $hay = fn (string $campo): bool => \in_array($campo, $presentes, true);
         $titulo = $valor('titulo');
         $doi = null !== $valor('doi') ? (new Recurso())->setDoi($valor('doi'))->getDoi() : null;
-        // Sin URL: el hipervínculo del título (Excel) o el enlace del DOI (artículos).
-        $url = $valor('url') ?? $hipervinculo ?? (null !== $doi ? 'https://doi.org/'.$doi : null);
+        // Sin URL: el hipervínculo del título (Excel). El enlace del DOI siempre queda como opción.
+        $url = $valor('url') ?? $hipervinculo;
+        $enlaceDoi = null !== $doi && 1 === preg_match('~^10\.\d{4,9}/\S+$~', $doi) ? 'https://doi.org/'.$doi : null;
 
-        if (null === $titulo && null === $url) {
+        if (null === $titulo && null === $url && null === $enlaceDoi) {
             return null; // fila vacía
         }
 
@@ -354,7 +429,7 @@ final class ImportadorRecursos
             $fila->errores[] = 'importacion.error_titulo_largo';
         }
 
-        $traiaProxy = $this->interpretarUrl($fila, $url);
+        $traiaProxy = $this->interpretarUrl($fila, $url, $enlaceDoi);
 
         foreach (self::CAMPOS_TEXTO as $campo => [, $largo]) {
             if ($hay($campo)) {
@@ -409,33 +484,51 @@ final class ImportadorRecursos
         return $fila;
     }
 
-    /** Valida y guarda la URL original. Devuelve true si venía con el prefijo del proxy. */
-    private function interpretarUrl(FilaImportacion $fila, ?string $url): bool
+    /**
+     * Valida y guarda la URL original. Una celda o campo puede traer varias URL (separadas por espacios, saltos de línea
+     * o punto y coma): todas las válidas quedan en $fila->urls para elegir en la vista previa, y se propone la primera.
+     * $adicional (el enlace del DOI) se agrega como otra opción. Devuelve true si alguna venía con el prefijo del proxy.
+     */
+    private function interpretarUrl(FilaImportacion $fila, ?string $texto, ?string $adicional = null): bool
     {
-        if (null === $url) {
-            $fila->errores[] = 'importacion.error_sin_url';
-
-            return false;
+        $partes = null === $texto ? [] : (preg_split('/[\s;|]+/', trim($texto), -1, \PREG_SPLIT_NO_EMPTY) ?: []);
+        if (null !== $adicional) {
+            $partes[] = $adicional;
         }
 
-        // Si la URL viene con el prefijo del proxy, se guarda la original y se marca "requiere proxy".
-        $original = $this->proxy->quitar($url);
-        if (null === $original && 1 === preg_match(self::PATRON_PROXY, $url, $coincidencia)) {
-            $original = rawurldecode($coincidencia[1]);
+        $traiaProxy = false;
+        $validas = [];
+        $invalidas = [];
+        foreach ($partes as $url) {
+            // Si la URL viene con el prefijo del proxy, se guarda la original y se marca "requiere proxy".
+            $original = $this->proxy->quitar($url);
+            if (null === $original && 1 === preg_match(self::PATRON_PROXY, $url, $coincidencia)) {
+                $original = rawurldecode($coincidencia[1]);
+            }
+            $traiaProxy = $traiaProxy || null !== $original;
+            $url = (string) preg_replace('~^https?://(?:dx\.)?doi\.org/~i', 'https://doi.org/', $original ?? $url);
+            if (!preg_match('~^[a-z][a-z0-9+.-]*://~i', $url)) {
+                $url = 'https://'.$url;
+            }
+            if (false === filter_var($url, \FILTER_VALIDATE_URL) || !preg_match('~^https?://~i', $url) || mb_strlen($url) > 1000) {
+                $invalidas[] = $url;
+            } elseif (!\in_array($url, $validas, true)) {
+                $validas[] = $url;
+            }
         }
-        $traiaProxy = null !== $original;
-        $url = $original ?? $url;
 
-        if (!preg_match('~^[a-z][a-z0-9+.-]*://~i', $url)) {
-            $url = 'https://'.$url;
-        }
-        if (false === filter_var($url, \FILTER_VALIDATE_URL) || !preg_match('~^https?://~i', $url)) {
-            $fila->errores[] = 'importacion.error_url|'.$url;
-        } elseif (mb_strlen($url) > 1000) {
-            $fila->errores[] = 'importacion.error_url_larga';
+        if ([] === $validas) {
+            $fila->errores[] = [] === $invalidas ? 'importacion.error_sin_url' : 'importacion.error_url|'.$invalidas[0];
+            $fila->datos['url'] = $invalidas[0] ?? null;
+
+            return $traiaProxy;
         }
 
-        $fila->datos['url'] = $url;
+        foreach ($invalidas as $invalida) {
+            $fila->avisos[] = 'importacion.aviso_url_descartada|'.$invalida;
+        }
+        $fila->urls = $validas;
+        $fila->datos['url'] = $validas[0];
         if ($traiaProxy) {
             $fila->avisos[] = 'importacion.aviso_proxy_quitado';
         }

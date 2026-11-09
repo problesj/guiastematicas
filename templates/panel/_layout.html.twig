@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="contenedor panel">
+    <div class="contenedor panel {% block clase_panel %}{% endblock %}">
         <nav class="panel__menu" aria-label="{{ 'panel.menu'|trans }}">
             {% set ruta = app.request.attributes.get('_route') %}
             <p class="panel__usuario">

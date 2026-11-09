@@ -356,3 +356,16 @@ importacion:
   bibliografia_texto: También puedes subir un archivo .bib (BibTeX) o .ris (RIS), como los que exportan Zotero, Mendeley, EndNote, Google Académico, Scopus o Web of Science. El tipo se toma del registro (artículo, libro, tesis, norma, video...), y si un artículo no trae URL se usa el enlace de su DOI.
   bibliografia_vacia: No se encontraron registros BibTeX ni RIS en el archivo.
   aviso_doi: "DOI \"%valor%\" no válido; se deja vacío."
+  ajustar_ayuda: "Revisa cada fila antes de importar: desmarca las que no quieras, elige la URL cuando el registro trae más de una, e indica si usa proxy y a qué materias se vincula."
+  confirmar_uno: Importar 1 recurso
+  confirmar_varios: Importar %count% recursos
+  confirmar_ninguno: No hay filas seleccionadas
+  columnas_ajustables: Puedes cambiar el ancho de las columnas arrastrando el borde derecho de cada encabezado.
+  marcar_todas: Marcar o desmarcar todas las filas
+  importar: Importar
+  importar_fila: "Importar la fila %fila%"
+  elegir_url: URL que se usará
+  proxy_fila: "Usar proxy en la fila %fila%"
+  materias_elegidas: "{0}Sin materias|{1}1 materia|]1,Inf[%count% materias"
+  materia_nueva: nueva
+  aviso_url_descartada: "URL \"%valor%\" no válida; se descartó."

@@ -144,6 +144,43 @@ final class PanelRecursosTest extends WebTestCase
         @unlink($ruta);
     }
 
+    public function testLaVistaPreviaPermiteElegirQueImportar(): void
+    {
+        $medicina = self::crearMateria('Medicina', 'medicina');
+        $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));
+        $ruta = sys_get_temp_dir().'/lista-'.bin2hex(random_bytes(4)).'.xlsx';
+        $libro = new Spreadsheet();
+        $libro->getActiveSheet()->fromArray([
+            ['Título', 'URL', 'Materias'],
+            ['Scopus', 'https://www.scopus.com https://www.scopus.com/sources', 'Medicina; Biología marina'],
+            ['PubMed', 'https://pubmed.ncbi.nlm.nih.gov', ''],
+        ]);
+        (new Xlsx($libro))->save($ruta);
+
+        $crawler = $this->cliente->request('GET', '/es/panel/recursos/importar');
+        $formulario = $crawler->selectButton('Revisar archivo')->form();
+        $formulario['archivo']->upload($ruta);
+        $crawler = $this->cliente->submit($formulario);
+
+        self::assertCount(2, $crawler->filter('input[data-campo="url"]'));
+        self::assertSame('Biología marina', $crawler->filter('input[data-campo="materia"][data-nueva]')->attr('value'));
+        self::assertNotNull($crawler->filter('input[data-campo="materia"][value="'.$medicina->getId().'"]')->first()->attr('checked'));
+
+        $confirmar = $crawler->selectButton('Importar 2 recursos')->form();
+        $confirmar['seleccion'] = json_encode([
+            2 => ['importar' => true, 'url' => 'https://www.scopus.com/sources', 'proxy' => true, 'materias' => ['Biología marina']],
+            3 => ['importar' => false],
+        ]);
+        $this->cliente->submit($confirmar);
+
+        self::assertResponseRedirects('/es/panel/recursos');
+        $recursos = self::em()->getRepository(Recurso::class)->findAll();
+        self::assertCount(1, $recursos);
+        self::assertSame('https://www.scopus.com/sources', $recursos[0]->getUrl());
+        self::assertSame(['Biología marina'], $recursos[0]->getMaterias()->map(fn ($m) => $m->getNombre())->getValues());
+        @unlink($ruta);
+    }
+
     public function testRechazaExtensionesNoPermitidas(): void
     {
         $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));

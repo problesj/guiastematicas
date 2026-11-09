@@ -7,6 +7,7 @@ namespace App\Controller\Panel;
 use App\Entity\Recurso;
 use App\Enum\TipoRecurso;
 use App\Form\RecursoType;
+use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
 use App\Servicio\Importacion\ArchivoNoValidoException;
 use App\Servicio\Importacion\ImportadorRecursos;
@@ -74,7 +75,7 @@ final class RecursoController extends AbstractController
 
     /** Paso 1: subir el archivo y ver qué se va a crear, actualizar u omitir. */
     #[Route('/importar', name: 'panel_recursos_importar', methods: ['GET', 'POST'])]
-    public function importar(Request $request, ImportadorRecursos $importador): Response
+    public function importar(Request $request, ImportadorRecursos $importador, MateriaRepository $materias): Response
     {
         if (!$request->isMethod('POST')) {
             return $this->render('panel/recursos/importar.html.twig', ['columnas' => ImportadorRecursos::COLUMNAS]);
@@ -95,6 +96,8 @@ final class RecursoController extends AbstractController
 
                 return $this->render('panel/recursos/vista_previa.html.twig', [
                     'filas' => $filas,
+                    'materias' => $materias->activas(),
+                    'materias_por_fila' => $importador->clasificarMaterias($filas),
                     'archivo' => $nombre,
                     'nombre_original' => $archivo->getClientOriginalName(),
                     'cuentas' => array_count_values(array_map(fn ($f) => $f->accion(), $filas)),
@@ -126,7 +129,13 @@ final class RecursoController extends AbstractController
         }
 
         try {
-            $resultado = $importador->aplicar($importador->leer($ruta));
+            $filas = $importador->leer($ruta);
+            // Lo elegido fila a fila en la vista previa (JSON armado en el navegador); sin él se importan las filas válidas tal cual.
+            $seleccion = json_decode($request->getPayload()->getString('seleccion'), true);
+            if (\is_array($seleccion)) {
+                $importador->aplicarSeleccion($filas, $seleccion);
+            }
+            $resultado = $importador->aplicar($filas);
         } finally {
             (new Filesystem())->remove($ruta);
         }
