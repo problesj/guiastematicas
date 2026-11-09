@@ -1,0 +1,7 @@
+{# Botón de eliminar con confirmación. Parámetros: ruta, id, token, nombre. #}
+<form method="post" action="{{ path(ruta, {id: id}) }}" class="en-linea"
+      data-controller="confirmar" data-action="submit->confirmar#preguntar"
+      data-confirmar-mensaje-value="{{ 'formulario.confirmar_eliminar'|trans({'%nombre%': nombre}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token(token) }}">
+    <button type="submit" class="boton-texto boton-texto--peligro">{{ 'formulario.eliminar'|trans }}<span class="solo-lectores"> {{ nombre }}</span></button>
+</form>

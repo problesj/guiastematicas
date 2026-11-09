@@ -9,6 +9,9 @@ menu:
   guias: Guías por materia
   bases_datos: Bases de datos A-Z
   personal: Bibliotecarios
+  acceso: Acceso personal
+  panel: Mi panel
+  salir: Cerrar sesión
 inicio:
   titulo: Guías temáticas
   bajada: Recursos seleccionados por bibliotecarios para cada área de estudio.
@@ -21,3 +24,140 @@ inicio:
   personal_texto: Bibliotecarios especialistas por materia y cómo contactarlos.
 pie:
   sedes: Antofagasta y Coquimbo
+acceso:
+  titulo: Acceso para el personal
+  bajada: Espacio para bibliotecarios y editores de guías.
+  identificador: Correo electrónico
+  identificador_ldap: Usuario UCN o correo electrónico
+  contrasena: Contraseña
+  ayuda_ldap: Puedes usar la misma contraseña de tu cuenta institucional UCN.
+  entrar: Entrar
+  o: o
+  google: Entrar con Google
+  nota: Si necesitas una cuenta, pídela al administrador de Guías temáticas.
+rol:
+  administrador: Administrador
+  editor: Editor
+  colaborador: Colaborador
+sede:
+  antofagasta: Antofagasta
+  coquimbo: Coquimbo
+panel:
+  menu: Menú del panel
+  inicio: Inicio
+  perfil: Mi perfil
+  contrasena: Cambiar contraseña
+  administracion: Administración
+  usuarios: Usuarios
+  departamentos: Departamentos
+  materias: Materias
+  bienvenida: Hola, %nombre%
+  bienvenida_texto: Desde aquí administras tu perfil y, según tu rol, las cuentas y los datos del sitio.
+  perfil_texto: Tu cargo, foto, contacto y materias en las que eres especialista.
+  ver_perfil_publico: Ver mi perfil público
+  ver_perfil_publico_texto: Así te ven los estudiantes en el directorio de bibliotecarios.
+  usuarios_texto: Crear cuentas, asignar roles y métodos de acceso.
+  proximamente: La creación y edición de guías llegará en la fase 4.
+perfil:
+  bajada: Estos datos se muestran en el directorio público de bibliotecarios si marcas "Mostrar en el directorio".
+  guardado: Tu perfil quedó guardado.
+contrasena:
+  actual: Contraseña actual
+  actual_incorrecta: La contraseña actual no es correcta.
+  nueva: Nueva contraseña
+  nueva_ayuda: Al menos 12 caracteres. Una frase de varias palabras es una buena opción.
+  repetir: Repite la nueva contraseña
+  no_coinciden: Las contraseñas no coinciden.
+  debil: La contraseña es demasiado fácil de adivinar.
+  cambiar: Cambiar contraseña
+  cambiada: Tu contraseña fue cambiada.
+  sin_contrasena: Tu cuenta entra con LDAP UCN o con Google, así que no tiene contraseña propia. Si necesitas una, pídela al administrador.
+usuario:
+  nuevo: Nueva persona
+  editar: Editar
+  guardado: Los datos quedaron guardados.
+  grupo_cuenta: Cuenta
+  grupo_acceso: Métodos de acceso
+  grupo_acceso_ayuda: Completa al menos uno. Con Google basta con que el correo de la cuenta coincida con el de arriba.
+  grupo_perfil: Perfil público
+  email: Correo electrónico
+  rol: Rol
+  rol_ayuda: "Administrador: todo el sitio. Editor: crea y publica sus guías. Colaborador: edita las guías que le compartan."
+  nombre: Nombre
+  apellidos: Apellidos
+  cargo: Cargo
+  cargo_en: Cargo en inglés
+  departamento: Departamento
+  sede: Sede
+  ubicacion: Ubicación
+  ubicacion_ayuda: Por ejemplo, oficina o piso de la biblioteca.
+  telefono: Teléfono
+  materias: Materias de especialidad
+  materias_ayuda: Aparecerás como contacto en las guías de estas materias.
+  biografia: Presentación
+  biografia_en: Presentación en inglés
+  foto: Foto
+  foto_ayuda: JPG, PNG o WebP de hasta 2 MB. Mejor si es cuadrada.
+  eliminar_foto: Quitar la foto actual
+  visible: Mostrar en el directorio de bibliotecarios
+  ldap: Usuario LDAP UCN
+  ldap_ayuda: El nombre de usuario institucional (sin @ucn.cl). Vacío si no entra con LDAP.
+  contrasena: Contraseña propia
+  contrasena_ayuda: Al menos 12 caracteres. Déjala vacía para no cambiarla.
+  google_vinculado: Cuenta de Google vinculada.
+  activo: Cuenta activa
+  inactivo: Inactiva
+  metodos: Acceso
+  metodo_contrasena: Contraseña
+  ultimo_acceso: Último acceso
+  ultimo_administrador: Debe quedar al menos un administrador activo.
+departamento:
+  nuevo: Nuevo departamento
+  editar: Editar departamento
+  guardado: El departamento quedó guardado.
+  eliminado: El departamento fue eliminado.
+  vacio: Aún no hay departamentos.
+  nombre: Nombre
+  nombre_en: Nombre en inglés
+  sede: Sede
+  email: Correo de contacto
+  telefono: Teléfono
+  orden: Orden
+  orden_ayuda: Los departamentos se muestran de menor a mayor.
+  integrantes: Personas
+materia:
+  nuevo: Nueva materia
+  editar: Editar materia
+  guardado: La materia quedó guardada.
+  eliminado: La materia fue eliminada.
+  vacio: Aún no hay materias.
+  nombre: Nombre
+  nombre_en: Nombre en inglés
+  slug: Identificador en la URL
+  slug_ayuda: Solo minúsculas, números y guiones. Si lo dejas vacío se genera desde el nombre.
+  codigo: Código UCN
+  activa: Activa
+  inactiva: Inactiva
+  especialistas: Especialistas
+formulario:
+  guardar: Guardar
+  cancelar: Cancelar
+  editar: Editar
+  eliminar: Eliminar
+  acciones: Acciones
+  confirmar_eliminar: ¿Eliminar "%nombre%"? Esta acción no se puede deshacer.
+  ninguno: (ninguno)
+  ninguna: (ninguna)
+  ambas_sedes: Ambas sedes
+personal:
+  titulo: Bibliotecarios
+  bajada: Conoce al equipo de Bibliotecas UCN y encuentra al especialista de tu área.
+  filtrar: Filtrar por materia
+  todas: Todas las materias
+  aplicar: Filtrar
+  especialistas_en: Especialistas en %materia%
+  otros: Otros integrantes
+  vacio: No hay bibliotecarios para mostrar.
+  materias: Materias
+  acerca: Presentación
+  foto_de: Foto de %nombre%

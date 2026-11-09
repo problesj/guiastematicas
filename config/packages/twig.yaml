@@ -1,5 +1,8 @@
 twig:
     file_name_pattern: '*.twig'
+    form_themes: ['formularios/tema.html.twig']
+    globals:
+        metodos_acceso: '@App\Servicio\MetodosAcceso'
 
 when@test:
     twig:

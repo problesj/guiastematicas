@@ -1,0 +1,28 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.inicio'|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ 'panel.bienvenida'|trans({'%nombre%': app.user.nombre}) }}</h1>
+    <p>{{ 'panel.bienvenida_texto'|trans }}</p>
+
+    <div class="tarjetas tarjetas--panel">
+        <a class="tarjeta tarjeta--enlace" href="{{ path('panel_perfil') }}">
+            <h2>{{ 'panel.perfil'|trans }}</h2>
+            <p>{{ 'panel.perfil_texto'|trans }}</p>
+        </a>
+        {% if app.user.visibleEnDirectorio %}
+            <a class="tarjeta tarjeta--enlace" href="{{ path('personal_perfil', {slug: app.user.slug}) }}">
+                <h2>{{ 'panel.ver_perfil_publico'|trans }}</h2>
+                <p>{{ 'panel.ver_perfil_publico_texto'|trans }}</p>
+            </a>
+        {% endif %}
+        {% if is_granted('ROLE_ADMINISTRADOR') %}
+            <a class="tarjeta tarjeta--enlace" href="{{ path('admin_usuarios') }}">
+                <h2>{{ 'panel.usuarios'|trans }}</h2>
+                <p>{{ 'panel.usuarios_texto'|trans }}</p>
+            </a>
+        {% endif %}
+    </div>
+    <p class="pagina__nota">{{ 'panel.proximamente'|trans }}</p>
+{% endblock %}

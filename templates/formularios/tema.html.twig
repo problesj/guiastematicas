@@ -1,0 +1,44 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{# Cada campo en un bloque .campo, con la ayuda y los errores asociados para lectores de pantalla. #}
+{%- block form_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~ '_help'}} -%}
+    {%- endif -%}
+    <div class="campo{% if not valid %} campo--error{% endif %}{% if 'checkbox' in block_prefixes %} campo--casilla{% endif %}">
+        {%- if 'checkbox' in block_prefixes -%}
+            {{- form_widget(form, widget_attr) -}}
+            {{- form_label(form) -}}
+        {%- else -%}
+            {{- form_label(form) -}}
+            {{- form_widget(form, widget_attr) -}}
+        {%- endif -%}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="campo__errores" role="alert">
+            {%- for error in errors -%}
+                <li>{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{%- block form_help -%}
+    {%- if help is not empty -%}
+        <p id="{{ id }}_help" class="campo__ayuda">{{ help|trans(help_translation_parameters, translation_domain) }}</p>
+    {%- endif -%}
+{%- endblock form_help -%}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }} class="casillas">
+        {%- for child in form %}
+            <label class="casillas__opcion">{{- form_widget(child) -}} {{ choice_translation_domain is same as(false) ? child.vars.label : child.vars.label|trans({}, choice_translation_domain) }}</label>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}

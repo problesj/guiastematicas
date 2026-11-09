@@ -1,0 +1,48 @@
+{# Formulario de UsuarioType, compartido por "Mi perfil" y la administración de usuarios. #}
+{{ form_start(formulario, {attr: {class: 'formulario', novalidate: 'novalidate'}}) }}
+    {{ form_errors(formulario) }}
+
+    {% if formulario.email is defined %}
+        <fieldset>
+            <legend>{{ 'usuario.grupo_cuenta'|trans }}</legend>
+            {{ form_row(formulario.email) }}
+            {{ form_row(formulario.rol) }}
+            {{ form_row(formulario.activo) }}
+        </fieldset>
+        <fieldset>
+            <legend>{{ 'usuario.grupo_acceso'|trans }}</legend>
+            <p class="campo__ayuda">{{ 'usuario.grupo_acceso_ayuda'|trans }}</p>
+            {{ form_row(formulario.nuevaContrasena) }}
+            {{ form_row(formulario.ldapUsuario) }}
+            {% if usuario.googleId %}<p>{{ 'usuario.google_vinculado'|trans }}</p>{% endif %}
+        </fieldset>
+    {% endif %}
+
+    <fieldset>
+        <legend>{{ 'usuario.grupo_perfil'|trans }}</legend>
+        <div class="formulario__columnas">
+            {{ form_row(formulario.nombre) }}
+            {{ form_row(formulario.apellidos) }}
+            {{ form_row(formulario.cargo) }}
+            {{ form_row(formulario.cargoEn) }}
+            {{ form_row(formulario.departamento) }}
+            {{ form_row(formulario.sede) }}
+            {{ form_row(formulario.ubicacion) }}
+            {{ form_row(formulario.telefono) }}
+        </div>
+        {% if usuario.foto %}
+            <img class="foto foto--pequena" src="{{ asset('uploads/personal/' ~ usuario.foto) }}" alt="">
+        {% endif %}
+        {{ form_row(formulario.archivoFoto) }}
+        {% if formulario.eliminarFoto is defined %}{{ form_row(formulario.eliminarFoto) }}{% endif %}
+        {{ form_row(formulario.biografia) }}
+        {{ form_row(formulario.biografiaEn) }}
+        {{ form_row(formulario.materias) }}
+        {{ form_row(formulario.visibleEnDirectorio) }}
+    </fieldset>
+
+    <div class="formulario__acciones">
+        <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
+        {% if volver is defined %}<a href="{{ path(volver) }}">{{ 'formulario.cancelar'|trans }}</a>{% endif %}
+    </div>
+{{ form_end(formulario) }}

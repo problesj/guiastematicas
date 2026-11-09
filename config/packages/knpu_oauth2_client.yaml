@@ -1,0 +1,11 @@
+# Inicio de sesión con Google. Crear un "ID de cliente OAuth" (aplicación web) en Google Cloud Console con
+# URI de redirección https://<dominio>/conectar/google/verificar y completar GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET
+# en .env.local. Mientras GOOGLE_CLIENT_ID esté vacío, el botón de Google no se muestra.
+knpu_oauth2_client:
+    clients:
+        google:
+            type: google
+            client_id: '%env(GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+            redirect_route: google_verificar
+            redirect_params: {}

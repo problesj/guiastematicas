@@ -9,6 +9,9 @@ menu:
   guias: Guides by subject
   bases_datos: A-Z databases
   personal: Librarians
+  acceso: Staff login
+  panel: My dashboard
+  salir: Log out
 inicio:
   titulo: Research guides
   bajada: Resources selected by librarians for each field of study.
@@ -21,3 +24,140 @@ inicio:
   personal_texto: Subject specialist librarians and how to contact them.
 pie:
   sedes: Antofagasta and Coquimbo
+acceso:
+  titulo: Staff login
+  bajada: For librarians and guide editors.
+  identificador: Email address
+  identificador_ldap: UCN username or email address
+  contrasena: Password
+  ayuda_ldap: You can use the password of your UCN institutional account.
+  entrar: Log in
+  o: or
+  google: Sign in with Google
+  nota: If you need an account, ask the Research guides administrator.
+rol:
+  administrador: Administrator
+  editor: Editor
+  colaborador: Collaborator
+sede:
+  antofagasta: Antofagasta
+  coquimbo: Coquimbo
+panel:
+  menu: Dashboard menu
+  inicio: Home
+  perfil: My profile
+  contrasena: Change password
+  administracion: Administration
+  usuarios: Users
+  departamentos: Departments
+  materias: Subjects
+  bienvenida: Hello, %nombre%
+  bienvenida_texto: Manage your profile here and, depending on your role, the site's accounts and data.
+  perfil_texto: Your position, photo, contact details and subjects of expertise.
+  ver_perfil_publico: View my public profile
+  ver_perfil_publico_texto: How students see you in the librarian directory.
+  usuarios_texto: Create accounts and assign roles and login methods.
+  proximamente: Creating and editing guides arrives in phase 4.
+perfil:
+  bajada: These details appear in the public librarian directory if you tick "Show in the directory".
+  guardado: Your profile was saved.
+contrasena:
+  actual: Current password
+  actual_incorrecta: The current password is not correct.
+  nueva: New password
+  nueva_ayuda: At least 12 characters. A phrase of several words is a good choice.
+  repetir: Repeat the new password
+  no_coinciden: The passwords do not match.
+  debil: The password is too easy to guess.
+  cambiar: Change password
+  cambiada: Your password was changed.
+  sin_contrasena: Your account logs in with UCN LDAP or Google, so it has no password of its own. Ask the administrator if you need one.
+usuario:
+  nuevo: New person
+  editar: Edit
+  guardado: The details were saved.
+  grupo_cuenta: Account
+  grupo_acceso: Login methods
+  grupo_acceso_ayuda: Fill in at least one. For Google, the account email only needs to match the one above.
+  grupo_perfil: Public profile
+  email: Email address
+  rol: Role
+  rol_ayuda: "Administrator: the whole site. Editor: creates and publishes their guides. Collaborator: edits guides shared with them."
+  nombre: First name
+  apellidos: Last name
+  cargo: Position
+  cargo_en: Position in English
+  departamento: Department
+  sede: Campus
+  ubicacion: Location
+  ubicacion_ayuda: For example, office or library floor.
+  telefono: Phone
+  materias: Subjects of expertise
+  materias_ayuda: You will appear as the contact in guides for these subjects.
+  biografia: About
+  biografia_en: About, in English
+  foto: Photo
+  foto_ayuda: JPG, PNG or WebP up to 2 MB. Square works best.
+  eliminar_foto: Remove the current photo
+  visible: Show in the librarian directory
+  ldap: UCN LDAP username
+  ldap_ayuda: The institutional username (without @ucn.cl). Leave empty if they do not use LDAP.
+  contrasena: Own password
+  contrasena_ayuda: At least 12 characters. Leave empty to keep it unchanged.
+  google_vinculado: Google account linked.
+  activo: Active account
+  inactivo: Inactive
+  metodos: Login
+  metodo_contrasena: Password
+  ultimo_acceso: Last login
+  ultimo_administrador: There must be at least one active administrator.
+departamento:
+  nuevo: New department
+  editar: Edit department
+  guardado: The department was saved.
+  eliminado: The department was deleted.
+  vacio: There are no departments yet.
+  nombre: Name
+  nombre_en: Name in English
+  sede: Campus
+  email: Contact email
+  telefono: Phone
+  orden: Order
+  orden_ayuda: Departments are listed from lowest to highest.
+  integrantes: People
+materia:
+  nuevo: New subject
+  editar: Edit subject
+  guardado: The subject was saved.
+  eliminado: The subject was deleted.
+  vacio: There are no subjects yet.
+  nombre: Name
+  nombre_en: Name in English
+  slug: URL identifier
+  slug_ayuda: Lowercase letters, numbers and hyphens only. Leave empty to build it from the name.
+  codigo: UCN code
+  activa: Active
+  inactiva: Inactive
+  especialistas: Specialists
+formulario:
+  guardar: Save
+  cancelar: Cancel
+  editar: Edit
+  eliminar: Delete
+  acciones: Actions
+  confirmar_eliminar: Delete "%nombre%"? This cannot be undone.
+  ninguno: (none)
+  ninguna: (none)
+  ambas_sedes: Both campuses
+personal:
+  titulo: Librarians
+  bajada: Meet the UCN Libraries team and find the specialist for your field.
+  filtrar: Filter by subject
+  todas: All subjects
+  aplicar: Filter
+  especialistas_en: Specialists in %materia%
+  otros: Other team members
+  vacio: There are no librarians to show.
+  materias: Subjects
+  acerca: About
+  foto_de: Photo of %nombre%

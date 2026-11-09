@@ -1,0 +1,45 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.usuarios'|trans }}{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado-accion">
+        <h1>{{ 'panel.usuarios'|trans }}</h1>
+        <a class="boton" href="{{ path('admin_usuario_nuevo') }}">{{ 'usuario.nuevo'|trans }}</a>
+    </div>
+
+    <div class="tabla-desplazable">
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'usuario.nombre'|trans }}</th>
+                    <th scope="col">{{ 'usuario.email'|trans }}</th>
+                    <th scope="col">{{ 'usuario.rol'|trans }}</th>
+                    <th scope="col">{{ 'usuario.metodos'|trans }}</th>
+                    <th scope="col">{{ 'usuario.ultimo_acceso'|trans }}</th>
+                    <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                    <tr{% if not usuario.activo %} class="tabla__inactivo"{% endif %}>
+                        <td>
+                            {{ usuario.apellidos }}, {{ usuario.nombre }}
+                            {% if not usuario.activo %}<span class="etiqueta">{{ 'usuario.inactivo'|trans }}</span>{% endif %}
+                            {% if usuario.departamento %}<br><small>{{ usuario.departamento.nombre }}</small>{% endif %}
+                        </td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.rol.etiqueta|trans }}</td>
+                        <td>
+                            {% if usuario.tieneContrasenaPropia %}<span class="etiqueta">{{ 'usuario.metodo_contrasena'|trans }}</span>{% endif %}
+                            {% if usuario.ldapUsuario %}<span class="etiqueta">LDAP</span>{% endif %}
+                            {% if usuario.googleId %}<span class="etiqueta">Google</span>{% endif %}
+                        </td>
+                        <td>{{ usuario.ultimoAcceso ? usuario.ultimoAcceso|date('d-m-Y H:i') : '—' }}</td>
+                        <td><a href="{{ path('admin_usuario_editar', {id: usuario.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ usuario.nombreCompleto }}</span></a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

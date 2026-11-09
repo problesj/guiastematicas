@@ -1,0 +1,22 @@
+{% set idioma = app.request.locale %}
+<article class="persona">
+    {% if persona.foto %}
+        <img class="foto" src="{{ asset('uploads/personal/' ~ persona.foto) }}" alt="" width="96" height="96" loading="lazy">
+    {% else %}
+        <span class="foto foto--iniciales" aria-hidden="true">{{ persona.iniciales }}</span>
+    {% endif %}
+    <div>
+        <h3 class="persona__nombre"><a href="{{ path('personal_perfil', {slug: persona.slug}) }}">{{ persona.nombreCompleto }}</a></h3>
+        {% if persona.cargoTraducido(idioma) %}<p class="persona__cargo">{{ persona.cargoTraducido(idioma) }}</p>{% endif %}
+        <p class="persona__contacto">
+            <a href="mailto:{{ persona.email }}">{{ persona.email }}</a>
+            {% if persona.telefono %}<br><a href="tel:{{ persona.telefono|replace({' ': ''}) }}">{{ persona.telefono }}</a>{% endif %}
+        </p>
+        {% if persona.materias is not empty %}
+            <p class="persona__materias">
+                <span class="solo-lectores">{{ 'personal.materias'|trans }}:</span>
+                {% for materia in persona.materias|filter(m => m.activa) %}<span class="etiqueta">{{ materia.nombreTraducido(idioma) }}</span> {% endfor %}
+            </p>
+        {% endif %}
+    </div>
+</article>

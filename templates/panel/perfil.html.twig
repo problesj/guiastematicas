@@ -1,0 +1,9 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.perfil'|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ 'panel.perfil'|trans }}</h1>
+    <p>{{ 'perfil.bajada'|trans }}</p>
+    {% include 'panel/_formulario_usuario.html.twig' with {usuario: app.user} %}
+{% endblock %}
