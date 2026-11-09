@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="contenedor panel">
+        <nav class="panel__menu" aria-label="{{ 'panel.menu'|trans }}">
+            {% set ruta = app.request.attributes.get('_route') %}
+            <p class="panel__usuario">
+                <strong>{{ app.user.nombreCompleto }}</strong>
+                <span>{{ app.user.rol.etiqueta|trans }}</span>
+            </p>
+            <ul>
+                <li><a href="{{ path('panel') }}" {% if ruta == 'panel' %}aria-current="page"{% endif %}>{{ 'panel.inicio'|trans }}</a></li>
+                <li><a href="{{ path('panel_perfil') }}" {% if ruta == 'panel_perfil' %}aria-current="page"{% endif %}>{{ 'panel.perfil'|trans }}</a></li>
+                {% if app.user.tieneContrasenaPropia %}
+                    <li><a href="{{ path('panel_contrasena') }}" {% if ruta == 'panel_contrasena' %}aria-current="page"{% endif %}>{{ 'panel.contrasena'|trans }}</a></li>
+                {% endif %}
+            </ul>
+            {% if is_granted('ROLE_ADMINISTRADOR') %}
+                <p class="panel__grupo">{{ 'panel.administracion'|trans }}</p>
+                <ul>
+                    <li><a href="{{ path('admin_usuarios') }}" {% if ruta starts with 'admin_usuario' %}aria-current="page"{% endif %}>{{ 'panel.usuarios'|trans }}</a></li>
+                    <li><a href="{{ path('admin_departamentos') }}" {% if ruta starts with 'admin_departamento' %}aria-current="page"{% endif %}>{{ 'panel.departamentos'|trans }}</a></li>
+                    <li><a href="{{ path('admin_materias') }}" {% if ruta starts with 'admin_materia' %}aria-current="page"{% endif %}>{{ 'panel.materias'|trans }}</a></li>
+                </ul>
+            {% endif %}
+        </nav>
+        <div class="panel__contenido">
+            {% block contenido %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

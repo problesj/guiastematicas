@@ -1,0 +1,6 @@
+acceso.cuenta_inactiva: Your account is disabled. Please contact the administrator.
+acceso.google_sin_cuenta: There is no account registered for %email%. Ask the administrator for access.
+acceso.google_dominio: Only Google accounts from %dominio% are accepted.
+acceso.google_correo_no_verificado: Google did not confirm your email address.
+"Invalid credentials.": Incorrect username or password.
+"Invalid CSRF token.": The form session expired. Please try again.

@@ -1,0 +1,17 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.contrasena'|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ 'panel.contrasena'|trans }}</h1>
+    {% if formulario %}
+        {{ form_start(formulario, {attr: {class: 'formulario formulario--angosto'}}) }}
+            {{ form_rest(formulario) }}
+            <div class="formulario__acciones">
+                <button type="submit" class="boton">{{ 'contrasena.cambiar'|trans }}</button>
+            </div>
+        {{ form_end(formulario) }}
+    {% else %}
+        <p>{{ 'contrasena.sin_contrasena'|trans }}</p>
+    {% endif %}
+{% endblock %}

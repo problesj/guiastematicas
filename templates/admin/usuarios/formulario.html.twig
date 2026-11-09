@@ -1,0 +1,8 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ titulo|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ titulo|trans }}{% if usuario.id %}: {{ usuario.nombreCompleto }}{% endif %}</h1>
+    {% include 'panel/_formulario_usuario.html.twig' with {usuario: usuario, volver: 'admin_usuarios'} %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.departamentos'|trans }}{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado-accion">
+        <h1>{{ 'panel.departamentos'|trans }}</h1>
+        <a class="boton" href="{{ path('admin_departamento_nuevo') }}">{{ 'departamento.nuevo'|trans }}</a>
+    </div>
+
+    {% if departamentos is empty %}
+        <p>{{ 'departamento.vacio'|trans }}</p>
+    {% else %}
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'departamento.orden'|trans }}</th>
+                        <th scope="col">{{ 'departamento.nombre'|trans }}</th>
+                        <th scope="col">{{ 'departamento.sede'|trans }}</th>
+                        <th scope="col">{{ 'departamento.integrantes'|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for departamento in departamentos %}
+                        <tr>
+                            <td>{{ departamento.orden }}</td>
+                            <td>{{ departamento.nombre }}{% if departamento.nombreEn %}<br><small lang="en">{{ departamento.nombreEn }}</small>{% endif %}</td>
+                            <td>{{ departamento.sede ? departamento.sede.etiqueta|trans : 'formulario.ambas_sedes'|trans }}</td>
+                            <td>{{ departamento.integrantes|length }}</td>
+                            <td class="tabla__acciones">
+                                <a href="{{ path('admin_departamento_editar', {id: departamento.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ departamento.nombre }}</span></a>
+                                {% include 'admin/_eliminar.html.twig' with {ruta: 'admin_departamento_eliminar', id: departamento.id, token: 'eliminar-departamento-' ~ departamento.id, nombre: departamento.nombre} %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

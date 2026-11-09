@@ -1,0 +1,8 @@
+usuario.email_repetido: Someone with this email already exists.
+usuario.ldap_repetido: This LDAP username is already assigned to someone else.
+usuario.ldap_formato: Use only letters, numbers, dots, hyphens and underscores.
+materia.slug_repetido: A subject with this identifier already exists.
+materia.slug_formato: Use only lowercase letters, numbers and hyphens.
+contrasena.actual_incorrecta: The current password is not correct.
+contrasena.no_coinciden: The passwords do not match.
+contrasena.debil: The password is too easy to guess.

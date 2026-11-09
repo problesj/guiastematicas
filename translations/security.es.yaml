@@ -1,0 +1,6 @@
+acceso.cuenta_inactiva: Tu cuenta está desactivada. Contacta al administrador.
+acceso.google_sin_cuenta: No hay una cuenta registrada para %email%. Pide al administrador que te dé acceso.
+acceso.google_dominio: Solo se aceptan cuentas de Google de %dominio%.
+acceso.google_correo_no_verificado: Google no confirmó tu correo electrónico.
+"Invalid credentials.": Usuario o contraseña incorrectos.
+"Invalid CSRF token.": La sesión del formulario expiró. Vuelve a intentarlo.

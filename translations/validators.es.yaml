@@ -1,0 +1,8 @@
+usuario.email_repetido: Ya existe una persona con este correo.
+usuario.ldap_repetido: Este usuario LDAP ya está asignado a otra persona.
+usuario.ldap_formato: Usa solo letras, números, puntos, guiones y guiones bajos.
+materia.slug_repetido: Ya existe una materia con este identificador.
+materia.slug_formato: Usa solo minúsculas, números y guiones.
+contrasena.actual_incorrecta: La contraseña actual no es correcta.
+contrasena.no_coinciden: Las contraseñas no coinciden.
+contrasena.debil: La contraseña es demasiado fácil de adivinar.

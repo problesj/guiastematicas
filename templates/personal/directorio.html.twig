@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'personal.titulo'|trans }}{% endblock %}
+
+{% block body %}
+    {% set idioma = app.request.locale %}
+    <section class="contenedor pagina">
+        <h1>{{ 'personal.titulo'|trans }}</h1>
+        <p class="pagina__bajada">{{ 'personal.bajada'|trans }}</p>
+
+        {% if materias is not empty %}
+            <form method="get" action="{{ path('personal') }}" class="filtro">
+                <label for="materia">{{ 'personal.filtrar'|trans }}</label>
+                <select id="materia" name="materia">
+                    <option value="">{{ 'personal.todas'|trans }}</option>
+                    {% for m in materias %}
+                        <option value="{{ m.slug }}" {% if materia and materia.id == m.id %}selected{% endif %}>{{ m.nombreTraducido(idioma) }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="boton boton--secundario">{{ 'personal.aplicar'|trans }}</button>
+            </form>
+        {% endif %}
+
+        {% if materia %}
+            <p role="status">{{ 'personal.especialistas_en'|trans({'%materia%': materia.nombreTraducido(idioma)}) }}</p>
+        {% endif %}
+
+        {% for grupo in grupos %}
+            <section class="grupo-personal">
+                <h2>{{ grupo.departamento ? grupo.departamento.nombreTraducido(idioma) : 'personal.otros'|trans }}</h2>
+                {% if grupo.departamento and (grupo.departamento.email or grupo.departamento.telefono) %}
+                    <p class="grupo-personal__contacto">
+                        {% if grupo.departamento.email %}<a href="mailto:{{ grupo.departamento.email }}">{{ grupo.departamento.email }}</a>{% endif %}
+                        {% if grupo.departamento.telefono %} · {{ grupo.departamento.telefono }}{% endif %}
+                    </p>
+                {% endif %}
+                <div class="personas">
+                    {% for persona in grupo.personas %}
+                        {% include 'personal/_tarjeta.html.twig' %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <p>{{ 'personal.vacio'|trans }}</p>
+        {% endfor %}
+    </section>
+{% endblock %}

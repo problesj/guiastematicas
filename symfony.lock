@@ -1,4 +1,7 @@
 {
+    "dama/doctrine-test-bundle": {
+        "version": "v8.7.0"
+    },
     "doctrine/deprecations": {
         "version": "1.1",
         "recipe": {
@@ -46,6 +49,9 @@
             "config/packages/doctrine_migrations.yaml",
             "migrations/.gitignore"
         ]
+    },
+    "knpuniversity/oauth2-client-bundle": {
+        "version": "v2.20.2"
     },
     "phpunit/phpunit": {
         "version": "12.5",

@@ -21,6 +21,13 @@
                     <a href="https://www.ucn.cl/">UCN.cl</a>
                     <a href="https://bibliotecas.ucn.cl/">{{ 'sitio.institucion'|trans }}</a>
                 </nav>
+                <div class="barra-superior__derecha">
+                {% if app.user %}
+                    <a href="{{ path('panel') }}">{{ 'menu.panel'|trans }}</a>
+                    <a href="{{ logout_path('main') }}">{{ 'menu.salir'|trans }}</a>
+                {% else %}
+                    <a href="{{ path('acceso') }}">{{ 'menu.acceso'|trans }}</a>
+                {% endif %}
                 <nav class="idiomas" aria-label="{{ 'sitio.idioma'|trans }}">
                     {% set ruta = app.request.attributes.get('_route') ?? 'inicio' %}
                     {% set parametros = app.request.attributes.get('_route_params') ?? {} %}
@@ -30,6 +37,7 @@
                            {% if app.request.locale == idioma %}aria-current="true"{% endif %}>{{ idioma|upper }}</a>
                     {% endfor %}
                 </nav>
+                </div>
             </div>
         </div>
 
@@ -43,12 +51,17 @@
                 <nav class="menu" aria-label="{{ 'menu.principal'|trans }}">
                     <a href="{{ path('inicio') }}">{{ 'menu.guias'|trans }}</a>
                     <a href="{{ path('inicio') }}">{{ 'menu.bases_datos'|trans }}</a>
-                    <a href="{{ path('inicio') }}">{{ 'menu.personal'|trans }}</a>
+                    <a href="{{ path('personal') }}">{{ 'menu.personal'|trans }}</a>
                 </nav>
             </div>
         </header>
 
         <main id="contenido">
+            {% for tipo, mensajes in app.flashes %}
+                {% for mensaje in mensajes %}
+                    <div class="contenedor"><p class="aviso aviso--{{ tipo }}" role="status">{{ mensaje|trans }}</p></div>
+                {% endfor %}
+            {% endfor %}
             {% block body %}{% endblock %}
         </main>
 

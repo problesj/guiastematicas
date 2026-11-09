@@ -1,0 +1,46 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.materias'|trans }}{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado-accion">
+        <h1>{{ 'panel.materias'|trans }}</h1>
+        <a class="boton" href="{{ path('admin_materia_nuevo') }}">{{ 'materia.nuevo'|trans }}</a>
+    </div>
+
+    {% if materias is empty %}
+        <p>{{ 'materia.vacio'|trans }}</p>
+    {% else %}
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'materia.nombre'|trans }}</th>
+                        <th scope="col">{{ 'materia.slug'|trans }}</th>
+                        <th scope="col">{{ 'materia.codigo'|trans }}</th>
+                        <th scope="col">{{ 'materia.especialistas'|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for materia in materias %}
+                        <tr{% if not materia.activa %} class="tabla__inactivo"{% endif %}>
+                            <td>
+                                {{ materia.nombre }}
+                                {% if not materia.activa %}<span class="etiqueta">{{ 'materia.inactiva'|trans }}</span>{% endif %}
+                                {% if materia.nombreEn %}<br><small lang="en">{{ materia.nombreEn }}</small>{% endif %}
+                            </td>
+                            <td><code>{{ materia.slug }}</code></td>
+                            <td>{{ materia.codigo ?? '—' }}</td>
+                            <td>{{ materia.especialistas|map(e => e.nombreCompleto)|join(', ') ?: '—' }}</td>
+                            <td class="tabla__acciones">
+                                <a href="{{ path('admin_materia_editar', {id: materia.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ materia.nombre }}</span></a>
+                                {% include 'admin/_eliminar.html.twig' with {ruta: 'admin_materia_eliminar', id: materia.id, token: 'eliminar-materia-' ~ materia.id, nombre: materia.nombre} %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

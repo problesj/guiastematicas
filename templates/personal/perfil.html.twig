@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ persona.nombreCompleto }}{% endblock %}
+
+{% block body %}
+    {% set idioma = app.request.locale %}
+    <section class="contenedor pagina perfil">
+        <p class="miga"><a href="{{ path('personal') }}">{{ 'personal.titulo'|trans }}</a></p>
+        <div class="perfil__cabecera">
+            {% if persona.foto %}
+                <img class="foto foto--grande" src="{{ asset('uploads/personal/' ~ persona.foto) }}" alt="{{ 'personal.foto_de'|trans({'%nombre%': persona.nombreCompleto}) }}" width="160" height="160">
+            {% else %}
+                <span class="foto foto--grande foto--iniciales" aria-hidden="true">{{ persona.iniciales }}</span>
+            {% endif %}
+            <div>
+                <h1>{{ persona.nombreCompleto }}</h1>
+                {% if persona.cargoTraducido(idioma) %}<p class="perfil__cargo">{{ persona.cargoTraducido(idioma) }}</p>{% endif %}
+                {% if persona.departamento %}<p>{{ persona.departamento.nombreTraducido(idioma) }}</p>{% endif %}
+            </div>
+        </div>
+
+        <dl class="datos">
+            <dt>{{ 'usuario.email'|trans }}</dt>
+            <dd><a href="mailto:{{ persona.email }}">{{ persona.email }}</a></dd>
+            {% if persona.telefono %}
+                <dt>{{ 'usuario.telefono'|trans }}</dt>
+                <dd><a href="tel:{{ persona.telefono|replace({' ': ''}) }}">{{ persona.telefono }}</a></dd>
+            {% endif %}
+            {% if persona.sede %}
+                <dt>{{ 'usuario.sede'|trans }}</dt>
+                <dd>{{ persona.sede.etiqueta|trans }}</dd>
+            {% endif %}
+            {% if persona.ubicacion %}
+                <dt>{{ 'usuario.ubicacion'|trans }}</dt>
+                <dd>{{ persona.ubicacion }}</dd>
+            {% endif %}
+        </dl>
+
+        {% if persona.biografiaTraducida(idioma) %}
+            <h2>{{ 'personal.acerca'|trans }}</h2>
+            <div class="perfil__biografia">{{ persona.biografiaTraducida(idioma)|nl2br }}</div>
+        {% endif %}
+
+        {% set materias = persona.materias|filter(m => m.activa) %}
+        {% if materias is not empty %}
+            <h2>{{ 'personal.materias'|trans }}</h2>
+            <ul class="lista-etiquetas">
+                {% for materia in materias %}
+                    <li><a class="etiqueta" href="{{ path('personal', {materia: materia.slug}) }}">{{ materia.nombreTraducido(idioma) }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+{% endblock %}
