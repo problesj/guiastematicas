@@ -34,7 +34,8 @@ ufw allow OpenSSH
 ufw allow 'Apache Full'
 ufw --force enable
 
-install -d -o www-data -g www-data "$APP_DIR"
+# El código pertenece a root; desplegar.sh da a www-data solo var/ y public/assets.
+install -d "$APP_DIR"
 systemctl reload apache2
 
 echo "Servidor listo. Siguiente paso: clonar el repositorio en $APP_DIR, crear .env.local y ejecutar scripts/desplegar.sh"

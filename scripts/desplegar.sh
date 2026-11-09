@@ -8,6 +8,10 @@ RAMA="${1:-main}"
 APP_DIR="${APP_DIR:-/var/www/guias}"
 cd "$APP_DIR"
 
+# Si el directorio pertenece a otro usuario (p. ej. www-data), git rechaza operar sin esta excepción.
+# Se pasa por entorno para no depender de HOME ni modificar la configuración global.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$APP_DIR"
+
 if [[ ! -f .env.local ]]; then
     echo "Falta $APP_DIR/.env.local" >&2
     exit 1
