@@ -20,7 +20,7 @@
     {{ form_start(formulario, {attr: {class: 'formulario', novalidate: 'novalidate'}}) }}
         {{ form_row(formulario.titulo) }}
         {% if bloque.tipo.value == 'recursos' %}
-            <div class="campo selector-autores" data-controller="selector-lista"
+            <div class="campo selector-autores" data-controller="selector-lista" data-action="catalogo-recursos:agregar->selector-lista#agregarVarios"
                  data-selector-lista-url-value="{{ path('panel_guias_buscar_recursos') }}"
                  data-selector-lista-nuevos-value="false"
                  data-selector-lista-agregar-value=""
@@ -29,17 +29,47 @@
                  data-selector-lista-subir-value="{{ 'autor.subir'|trans }}"
                  data-selector-lista-bajar-value="{{ 'autor.bajar'|trans }}"
                  data-selector-lista-vacio-value="{{ 'bloque.sin_recursos'|trans }}">
-                <label for="buscar-recurso">{{ 'bloque.recursos'|trans }}</label>
+                <p class="campo__etiqueta" id="titulo-recursos-bloque">{{ 'bloque.recursos_elegidos'|trans }}</p>
                 {{ form_widget(formulario.recursos, {attr: {'data-selector-lista-target': 'campo'}}) }}
-                <ol class="selector-autores__lista" data-selector-lista-target="lista" aria-label="{{ 'bloque.recursos_elegidos'|trans }}"></ol>
-                <div class="selector-autores__busqueda">
-                    <input type="text" id="buscar-recurso" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugerencias-recursos"
-                           placeholder="{{ 'bloque.buscar_recurso'|trans }}"
-                           data-selector-lista-target="busqueda"
-                           data-action="input->selector-lista#buscar keydown->selector-lista#tecla">
-                    <ul id="sugerencias-recursos" class="selector-autores__sugerencias" role="listbox" data-selector-lista-target="sugerencias" hidden></ul>
-                </div>
+                <ol class="selector-autores__lista" data-selector-lista-target="lista" aria-labelledby="titulo-recursos-bloque"></ol>
                 <p class="campo__ayuda">{{ 'bloque.recursos_ayuda'|trans }}</p>
+                <section class="catalogo-recursos" data-controller="catalogo-recursos"
+                         data-catalogo-recursos-url-value="{{ path('panel_guias_buscar_recursos') }}"
+                         data-catalogo-recursos-resumen-value="{{ 'bloque.catalogo_resumen'|trans }}"
+                         data-catalogo-recursos-vacio-value="{{ 'bloque.catalogo_vacio'|trans }}"
+                         data-catalogo-recursos-ya-value="{{ 'bloque.catalogo_ya_agregado'|trans }}"
+                         data-catalogo-recursos-error-value="{{ 'bloque.catalogo_error'|trans }}"
+                         aria-labelledby="titulo-catalogo">
+                    <h2 id="titulo-catalogo" class="catalogo-recursos__titulo">{{ 'bloque.catalogo_titulo'|trans }}</h2>
+                    <div class="catalogo-recursos__filtros">
+                        <div class="campo">
+                            <label for="catalogo-texto">{{ 'bloque.catalogo_texto'|trans }}</label>
+                            <input type="search" id="catalogo-texto" autocomplete="off" placeholder="{{ 'bloque.buscar_recurso'|trans }}"
+                                   data-catalogo-recursos-target="texto" data-action="input->catalogo-recursos#filtrarConEspera keydown.enter->catalogo-recursos#filtrarYa:prevent">
+                        </div>
+                        <div class="campo">
+                            <label for="catalogo-tipo">{{ 'bloque.catalogo_tipo'|trans }}</label>
+                            <select id="catalogo-tipo" data-catalogo-recursos-target="tipo" data-action="catalogo-recursos#filtrarYa">
+                                <option value="">{{ 'bloque.catalogo_todos_tipos'|trans }}</option>
+                                {% for t in tipos_recurso %}<option value="{{ t.value }}">{{ t.etiqueta|trans }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label for="catalogo-materia">{{ 'bloque.catalogo_materia'|trans }}</label>
+                            <select id="catalogo-materia" data-catalogo-recursos-target="materia" data-action="catalogo-recursos#filtrarYa">
+                                <option value="">{{ 'bloque.catalogo_todas_materias'|trans }}</option>
+                                {% for m in materias %}<option value="{{ m.id }}">{{ m.nombreTraducido(app.request.locale) }}</option>{% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <p class="catalogo-recursos__estado" role="status" data-catalogo-recursos-target="estado"></p>
+                    <div class="catalogo-recursos__acciones">
+                        <label class="casillas__opcion"><input type="checkbox" data-catalogo-recursos-target="todos" data-action="catalogo-recursos#marcarTodos"> {{ 'bloque.catalogo_marcar_todos'|trans }}</label>
+                        <button type="button" class="boton" data-catalogo-recursos-target="agregar" data-action="catalogo-recursos#agregar" disabled>{{ 'bloque.catalogo_agregar'|trans }}</button>
+                    </div>
+                    <ul class="catalogo-recursos__lista" data-catalogo-recursos-target="lista" aria-label="{{ 'bloque.catalogo_resultados'|trans }}"></ul>
+                    <button type="button" class="boton boton--secundario" data-catalogo-recursos-target="mas" data-action="catalogo-recursos#verMas" hidden>{{ 'bloque.catalogo_ver_mas'|trans }}</button>
+                </section>
             </div>
         {% endif %}
         {{ form_rest(formulario) }}

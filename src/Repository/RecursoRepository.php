@@ -80,11 +80,17 @@ class RecursoRepository extends ServiceEntityRepository
     }
 
     /** @return Pagina<Recurso> */
-    public function listadoAdministracion(int $pagina, int $porPagina, ?string $texto = null): Pagina
+    public function listadoAdministracion(int $pagina, int $porPagina, ?string $texto = null, ?TipoRecurso $tipo = null, ?Materia $materia = null): Pagina
     {
         $consulta = $this->createQueryBuilder('r')->orderBy('r.titulo', 'ASC')->addOrderBy('r.id', 'ASC');
         if (null !== $texto && '' !== trim($texto)) {
             self::filtrarTexto($consulta, $texto);
+        }
+        if (null !== $tipo) {
+            $consulta->andWhere('r.tipo = :tipo')->setParameter('tipo', $tipo);
+        }
+        if (null !== $materia) {
+            $consulta->andWhere(':materia MEMBER OF r.materias')->setParameter('materia', $materia);
         }
 
         return Pagina::desdeConsulta($consulta, $pagina, $porPagina);

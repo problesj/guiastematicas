@@ -372,4 +372,48 @@ final class EditorGuiasTest extends WebTestCase
         static::getContainer()->get(AlmacenImagenesGuia::class)->eliminarDe($guia);
         self::assertFileDoesNotExist($directorio.'/'.$icono);
     }
+
+    public function testElCatalogoDelBloqueFiltraRecursosPorTextoTipoYMateria(): void
+    {
+        $quimica = self::crearMateria('Química', 'quimica');
+        $fisica = self::crearMateria('Física', 'fisica');
+        $crear = function (string $titulo, TipoRecurso $tipo, array $materias) {
+            $recurso = (new Recurso())->setTitulo($titulo)->setUrl('https://ejemplo.org/'.md5($titulo))->setTipo($tipo)->setAcceso(TipoAcceso::Abierto)->setProveedor('Proveedor X');
+            foreach ($materias as $materia) {
+                $recurso->addMateria($materia);
+            }
+            self::em()->persist($recurso);
+        };
+        $crear('Reaxys', TipoRecurso::BaseDatos, [$quimica]);
+        $crear('SciFinder', TipoRecurso::BaseDatos, [$quimica, $fisica]);
+        $crear('Journal of Chemistry', TipoRecurso::Revistas, [$quimica]);
+        $crear('Physics Today', TipoRecurso::Revistas, [$fisica]);
+        self::em()->flush();
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $this->cliente->loginUser($ana);
+
+        $buscar = function (array $filtros): array {
+            $this->cliente->request('GET', '/es/panel/guias/buscar-recursos?'.http_build_query($filtros));
+            self::assertResponseIsSuccessful();
+
+            return json_decode($this->cliente->getResponse()->getContent(), true);
+        };
+        $titulos = fn (array $r) => array_column($r['elementos'], 'nombre');
+
+        self::assertSame(4, $buscar([])['total']);
+        self::assertSame(4, $buscar(['q' => '', 'tipo' => '', 'materia' => '', 'pagina' => '1'])['total']);
+        self::assertSame(['Reaxys', 'SciFinder'], $titulos($buscar(['tipo' => 'base_datos'])));
+        self::assertSame(['Physics Today', 'SciFinder'], $titulos($buscar(['materia' => $fisica->getId()])));
+        self::assertSame(['Journal of Chemistry'], $titulos($buscar(['materia' => $quimica->getId(), 'tipo' => 'revistas'])));
+        self::assertSame(['SciFinder'], $titulos($buscar(['q' => 'scif', 'materia' => $quimica->getId()])));
+        self::assertSame(4, $buscar(['tipo' => 'no-existe'])['total']);
+        self::assertSame('Base de datos · Proveedor X', $buscar(['q' => 'Reaxys'])['elementos'][0]['detalle']);
+
+        $guia = self::crearGuia(self::em()->find(Usuario::class, $ana->getId()));
+        $seccion = $guia->getPestana()->getSecciones()->first();
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/recursos');
+        self::assertResponseIsSuccessful();
+        self::assertCount(\count(TipoRecurso::cases()) + 1, $crawler->filter('#catalogo-tipo option'));
+        self::assertSame(['Todas las materias', 'Física', 'Química'], $crawler->filter('#catalogo-materia option')->each(fn ($o) => $o->text()));
+    }
 }

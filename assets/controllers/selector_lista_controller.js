@@ -7,6 +7,7 @@ import { Controller } from '@hotwired/stimulus';
  */
 export default class extends Controller {
     static targets = ['campo', 'lista', 'busqueda', 'sugerencias'];
+    // La búsqueda con sugerencias es opcional (el bloque de recursos usa el catálogo con filtros).
     static values = { url: String, agregar: String, nuevo: String, quitar: String, subir: String, bajar: String, vacio: String, nuevos: { type: Boolean, default: true } };
 
     connect() {
@@ -139,7 +140,17 @@ export default class extends Controller {
         this.busquedaTarget.focus();
     }
 
+    /** Agrega varios elementos ya existentes ({id, nombre}) al final, sin repetir. Lo usa el catálogo de recursos. */
+    agregarVarios({ detail }) {
+        const ya = new Set(this.elegidos.filter((e) => e.id).map((e) => e.id));
+        (detail?.elementos || []).filter((e) => e.id && !ya.has(e.id)).forEach((e) => this.elegidos.push({ id: e.id, nombre: e.nombre }));
+        this.dibujar();
+    }
+
     cerrar() {
+        if (!this.hasSugerenciasTarget || !this.hasBusquedaTarget) {
+            return;
+        }
         this.sugerenciasTarget.hidden = true;
         this.busquedaTarget.setAttribute('aria-expanded', 'false');
         this.busquedaTarget.removeAttribute('aria-activedescendant');
@@ -163,6 +174,7 @@ export default class extends Controller {
 
     dibujar() {
         this.campoTarget.value = JSON.stringify(this.elegidos);
+        this.campoTarget.dispatchEvent(new Event('change', { bubbles: true }));
         const lista = this.listaTarget;
         lista.replaceChildren();
         if (this.elegidos.length === 0) {
