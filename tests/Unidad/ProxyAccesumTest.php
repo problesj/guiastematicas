@@ -30,6 +30,16 @@ final class ProxyAccesumTest extends TestCase
         self::assertSame('https://x.org/buscar?q=a&b=1', $proxy->quitar($enlace));
     }
 
+    public function testMuseKnowledgeDeBibliotecasUcn(): void
+    {
+        $proxy = new ProxyAccesum('https://itmsp.museknowledge.com/UCN?qurl={url}');
+
+        self::assertSame(
+            'https://itmsp.museknowledge.com/UCN?qurl=https%3A%2F%2Fwww.scopus.com%2Fsearch%3Fq%3D1',
+            $proxy->aplicar('https://www.scopus.com/search?q=1'),
+        );
+    }
+
     public function testSinProxyConfiguradoUsaLaUrlOriginal(): void
     {
         $proxy = new ProxyAccesum('');

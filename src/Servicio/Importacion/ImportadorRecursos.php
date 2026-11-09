@@ -45,8 +45,11 @@ final class ImportadorRecursos
 
     public const int MAXIMO_FILAS = 5000;
 
-    /** Prefijos de proxy habituales (EZproxy y similares) que se reconocen aunque PROXY_URL no esté configurado. */
-    private const string PATRON_PROXY = '~^https?://[^/\s]+/login\?q?url=(.+)$~i';
+    /**
+     * Prefijos de proxy habituales que se reconocen aunque no coincidan con PROXY_URL:
+     * EZproxy (https://host/login?url=...) y MuseKnowledge (https://host/APP?url=... o ?qurl=... codificada).
+     */
+    private const string PATRON_PROXY = '~^https?://[^/\s]+(?:/[^?\s]*)?\?q?url=(.+)$~i';
 
     public function __construct(
         private readonly RecursoRepository $recursos,
