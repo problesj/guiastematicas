@@ -196,6 +196,51 @@ final class ImportadorRecursosTest extends KernelTestCase
         self::assertSame(TipoRecurso::Multimedia, $video->getTipo());
     }
 
+    public function testVariasUrlYSeleccionDeLaVistaPrevia(): void
+    {
+        $medicina = self::crearMateria('Medicina', 'medicina');
+        $ruta = sys_get_temp_dir().'/referencias-'.bin2hex(random_bytes(4)).'.bib';
+        file_put_contents($ruta, <<<'BIB'
+            @article{a1, title={Marketing digital}, journal={Texto Livre}, doi={10.35699/1983-3652.2021.26251},
+              url={http://dx.doi.org/10.35699/1983-3652.2021.26251 https://periodicos.ufmg.br/index.php/textolivre/article/view/26251}}
+            @article{a2, title={Otro artículo}, url={https://revista.cl/2 nota-sin-url}, keywords={x}}
+            @article{a3, title={Descartado}, url={https://revista.cl/3}}
+            BIB);
+
+        try {
+            $importador = $this->importador();
+            $filas = $importador->leer($ruta);
+            [$marketing, $otro] = $filas;
+            // El enlace http://dx.doi.org del campo url y el del DOI son el mismo: queda una sola opción.
+            self::assertSame(['https://doi.org/10.35699/1983-3652.2021.26251', 'https://periodicos.ufmg.br/index.php/textolivre/article/view/26251'], $marketing->urls);
+            self::assertTrue($marketing->esValida());
+            self::assertSame(['https://revista.cl/2', 'https://nota-sin-url'], $otro->urls);
+
+            $importador->aplicarSeleccion($filas, [
+                1 => ['importar' => true, 'url' => 'https://periodicos.ufmg.br/index.php/textolivre/article/view/26251', 'proxy' => false, 'materias' => [$medicina->getId()]],
+                2 => ['importar' => true, 'url' => 'https://no-estaba-en-el-archivo.org', 'materias' => ['Inventada']],
+                3 => ['importar' => false],
+            ]);
+            $resultado = $importador->aplicar($filas);
+        } finally {
+            @unlink($ruta);
+        }
+
+        self::assertSame(2, $resultado['creados']);
+        self::assertSame(1, $resultado['omitidos']);
+        self::em()->clear();
+        $repo = self::em()->getRepository(Recurso::class);
+        $marketing = $repo->findOneBy(['titulo' => 'Marketing digital']);
+        self::assertSame('https://periodicos.ufmg.br/index.php/textolivre/article/view/26251', $marketing->getUrl());
+        self::assertFalse($marketing->isRequiereProxy());
+        self::assertSame(['Medicina'], $marketing->getMaterias()->map(fn ($m) => $m->getNombre())->getValues());
+        // Una URL o materia que no venía en el archivo se ignora.
+        $otro = $repo->findOneBy(['titulo' => 'Otro artículo']);
+        self::assertSame('https://revista.cl/2', $otro->getUrl());
+        self::assertCount(0, $otro->getMaterias());
+        self::assertNull($repo->findOneBy(['titulo' => 'Descartado']));
+    }
+
     public function testUsaElHipervinculoDelTituloSiNoHayColumnaUrl(): void
     {
         $libro = new Spreadsheet();

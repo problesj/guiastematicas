@@ -356,3 +356,16 @@ importacion:
   bibliografia_texto: You can also upload a .bib (BibTeX) or .ris (RIS) file, such as those exported by Zotero, Mendeley, EndNote, Google Scholar, Scopus or Web of Science. The type comes from each record (article, book, thesis, standard, video...), and an article without a URL uses its DOI link.
   bibliografia_vacia: No BibTeX or RIS records were found in the file.
   aviso_doi: "DOI \"%valor%\" not valid; left empty."
+  ajustar_ayuda: "Review each row before importing: untick the ones you do not want, choose the URL when a record has more than one, and set whether it uses the proxy and which subjects it is linked to."
+  confirmar_uno: Import 1 resource
+  confirmar_varios: Import %count% resources
+  confirmar_ninguno: No rows selected
+  columnas_ajustables: You can change column widths by dragging the right edge of each header.
+  marcar_todas: Tick or untick all rows
+  importar: Import
+  importar_fila: "Import row %fila%"
+  elegir_url: URL to use
+  proxy_fila: "Use proxy for row %fila%"
+  materias_elegidas: "{0}No subjects|{1}1 subject|]1,Inf[%count% subjects"
+  materia_nueva: new
+  aviso_url_descartada: "URL \"%valor%\" not valid; discarded."

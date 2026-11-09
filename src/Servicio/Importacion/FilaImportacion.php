@@ -18,6 +18,12 @@ final class FilaImportacion
     /** @var list<string> nombres de materias tal como vienen en el archivo */
     public array $materias = [];
 
+    /** @var list<string> URL válidas encontradas en la fila; datos['url'] es la elegida */
+    public array $urls = [];
+
+    /** La persona la desmarcó en la vista previa. */
+    public bool $descartada = false;
+
     public ?Recurso $existente = null;
 
     /**
