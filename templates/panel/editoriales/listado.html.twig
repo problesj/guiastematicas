@@ -1,0 +1,47 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.editoriales'|trans }}{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado-accion">
+        <h1>{{ 'panel.editoriales'|trans }}</h1>
+        <a class="boton" href="{{ path('panel_editorial_nueva') }}">{{ 'editorial.nueva'|trans }}</a>
+    </div>
+
+    <form method="get" class="filtro" role="search">
+        <label for="q" class="solo-lectores">{{ 'editorial.buscar'|trans }}</label>
+        <input type="search" id="q" name="q" value="{{ q }}" placeholder="{{ 'editorial.buscar_placeholder'|trans }}" class="filtro__texto">
+        <button type="submit" class="boton boton--secundario">{{ 'editorial.buscar'|trans }}</button>
+    </form>
+
+    {% if editoriales is empty %}
+        <p>{{ 'editorial.vacio'|trans }}</p>
+    {% else %}
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'editorial.nombre'|trans }}</th>
+                        <th scope="col">{{ 'editorial.pais'|trans }}</th>
+                        <th scope="col">{{ 'editorial.recursos'|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fila in editoriales %}
+                        {% set editorial = fila.editorial %}
+                        <tr>
+                            <td>{{ editorial.nombre }}</td>
+                            <td>{{ editorial.pais ? editorial.pais.nombreTraducido(app.request.locale) : '—' }}</td>
+                            <td>{{ fila.recursos }}</td>
+                            <td class="tabla__acciones">
+                                <a href="{{ path('panel_editorial_editar', {id: editorial.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ editorial.nombre }}</span></a>
+                                {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_editorial_eliminar', id: editorial.id, token: 'eliminar-editorial-' ~ editorial.id, nombre: editorial.nombre} %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

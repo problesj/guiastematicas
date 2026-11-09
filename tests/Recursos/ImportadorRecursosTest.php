@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Recursos;
 
+use App\Entity\Autor;
+use App\Entity\Editorial;
 use App\Entity\Materia;
 use App\Entity\Recurso;
 use App\Enum\TipoAcceso;
@@ -144,8 +146,8 @@ final class ImportadorRecursosTest extends KernelTestCase
         $repo = self::em()->getRepository(Recurso::class);
 
         $libro = $repo->findOneBy(['titulo' => 'Introducción a la programación']);
-        self::assertSame('Pérez, Ana; Soto, Luis', $libro->getAutores());
-        self::assertSame('Editorial Universitaria', $libro->getEditorial());
+        self::assertSame('Pérez, Ana; Soto, Luis', $libro->getAutoresTexto());
+        self::assertSame('Editorial Universitaria', $libro->getEditorial()?->getNombre());
         self::assertSame(2021, $libro->getAnio());
 
         $revista = $repo->findOneBy(['titulo' => 'Revista Médica de Chile']);
@@ -163,6 +165,29 @@ final class ImportadorRecursosTest extends KernelTestCase
         self::assertSame('Elsevier', $base->getProveedor());
         self::assertNull($base->getEditorial());
         self::assertSame('1996-01-01', $base->getDisponibleDesde()?->format('Y-m-d'));
+    }
+
+    public function testLaImportacionReutilizaAutoresYEditoriales(): void
+    {
+        $existente = (new Autor())->setApellidos('Soto')->setNombres('Luis');
+        self::em()->persist($existente);
+        self::em()->flush();
+
+        $importador = $this->importador();
+        $filas = $importador->leer($this->excel([
+            ['Título', 'URL', 'Tipo', 'Autores', 'Editorial'],
+            ['Libro uno', 'https://ebooks.org/1', 'Libro', 'Pérez, Ana; SOTO, Luis', 'Editorial Universitaria'],
+            ['Libro dos', 'https://ebooks.org/2', 'Libro', 'pérez, ana; Organización Mundial de la Salud', 'Editorial Universitaria'],
+        ]));
+        $importador->aplicar($filas);
+        self::em()->clear();
+
+        $repo = self::em()->getRepository(Recurso::class);
+        self::assertSame('Pérez, Ana; Soto, Luis', $repo->findOneBy(['titulo' => 'Libro uno'])->getAutoresTexto());
+        self::assertSame('Pérez, Ana; Organización Mundial de la Salud', $repo->findOneBy(['titulo' => 'Libro dos'])->getAutoresTexto());
+        self::assertSame($existente->getId(), $repo->findOneBy(['titulo' => 'Libro uno'])->getAutores()[1]->getId());
+        self::assertCount(3, self::em()->getRepository(Autor::class)->findAll());
+        self::assertCount(1, self::em()->getRepository(Editorial::class)->findAll());
     }
 
     public function testImportaBibtexConDoiComoEnlace(): void

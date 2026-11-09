@@ -54,6 +54,9 @@ panel:
   usuarios: Usuarios
   departamentos: Departamentos
   materias: Materias
+  paises: Países
+  autores: Autores
+  editoriales: Editoriales
   bienvenida: Hola, %nombre%
   bienvenida_texto: Desde aquí administras tu perfil y, según tu rol, las cuentas y los datos del sitio.
   perfil_texto: Tu cargo, foto, contacto y materias en las que eres especialista.
@@ -154,6 +157,7 @@ formulario:
   ninguno: (ninguno)
   ninguna: (ninguna)
   ambas_sedes: Ambas sedes
+  sin_pais: (sin país)
 personal:
   titulo: Bibliotecarios
   bajada: Conoce al equipo de Bibliotecas UCN y encuentra al especialista de tu área.
@@ -234,8 +238,9 @@ recurso:
   grupo_bibliograficos: Datos bibliográficos
   sin_bibliograficos: Este tipo de recurso no tiene datos bibliográficos adicionales.
   autores: Autores
-  autores_ayuda: Separados por punto y coma.
+  autores_ayuda: "Busca por nombre o apellido y elige de la lista. Si no existe, escríbelo como «Apellidos, Nombres» y elige «Agregar». Usa las flechas para ordenarlos como en la cita."
   editorial: Editorial
+  editorial_ayuda: Elige una de la lista o escribe una nueva; las nuevas se agregan a Editoriales al guardar.
   anio: Año de edición
   isbn: ISBN
   eisbn: e-ISBN
@@ -304,8 +309,8 @@ importacion:
     nombres_alternativos: Separados por punto y coma.
     visible: Sí o No. Si falta, Sí.
     prueba_hasta: Fecha (dd-mm-aaaa).
-    autores: Libros y multimedia. Varios separados por punto y coma.
-    editorial: Libros y revistas. En otros tipos, si falta el proveedor, se usa como proveedor.
+    autores: "Libros, artículos y multimedia. Varios separados por punto y coma, cada uno como «Apellidos, Nombres». Los que no existen se agregan a Autores."
+    editorial: Libros y revistas (las nuevas se agregan a Editoriales). En otros tipos, si falta el proveedor, se usa como proveedor.
     anio: Libros, normas y multimedia. Año de 4 dígitos.
     isbn: Libros. Un ISBN no válido se deja vacío con aviso.
     eisbn: Libros. Un ISBN no válido se deja vacío con aviso.
@@ -369,3 +374,56 @@ importacion:
   materias_elegidas: "{0}Sin materias|{1}1 materia|]1,Inf[%count% materias"
   materia_nueva: nueva
   aviso_url_descartada: "URL \"%valor%\" no válida; se descartó."
+sexo:
+  femenino: Femenino
+  masculino: Masculino
+  otro: Otro
+  no_informado: No informado
+autor:
+  nuevo: Nuevo autor
+  editar: Editar autor
+  guardado: Autor guardado.
+  eliminado: Autor eliminado. Se quitó de los recursos donde aparecía.
+  nombres: Nombres
+  apellidos: Apellidos
+  apellidos_ayuda: Para un autor institucional (p. ej. Organización Mundial de la Salud) escribe el nombre completo aquí y deja vacíos los nombres.
+  orcid: ORCID iD
+  orcid_ayuda: 16 dígitos, p. ej. 0000-0002-1825-0097. También se acepta la dirección https://orcid.org/...
+  sexo: Sexo
+  pais: País
+  recursos: Recursos
+  buscar: Buscar
+  buscar_placeholder: Nombre, apellido u ORCID
+  vacio: No hay autores. Se agregan desde aquí, desde el formulario de un recurso o al importar.
+  limite: Se muestran los primeros %count%. Usa la búsqueda para encontrar otros.
+  agregar_nuevo: Agregar «%nombre%» como autor nuevo
+  nuevo_etiqueta: nuevo
+  quitar: Quitar
+  subir: Subir
+  bajar: Bajar
+  ninguno: Sin autores.
+  elegidos: Autores elegidos
+editorial:
+  nueva: Nueva editorial
+  editar: Editar editorial
+  guardada: Editorial guardada.
+  eliminada: Editorial eliminada. Sus recursos quedaron sin editorial.
+  nombre: Nombre
+  pais: País
+  recursos: Recursos
+  buscar: Buscar
+  buscar_placeholder: Nombre de la editorial
+  vacio: No hay editoriales. Se agregan desde aquí, desde el formulario de un recurso o al importar.
+pais:
+  nuevo: Nuevo país
+  editar: Editar país
+  guardado: País guardado.
+  eliminado: País eliminado. Sus autores y editoriales quedaron sin país.
+  codigo: Código
+  codigo_ayuda: Código ISO 3166-1 de 2 letras, p. ej. CL.
+  nombre: Nombre
+  nombre_en: Nombre en inglés
+  completar: Completar lista ISO
+  completados: "{0}La lista ya estaba completa.|{1}Se agregó 1 país.|]1,Inf[Se agregaron %count% países."
+  ayuda: Lista de países y territorios ISO 3166-1 que se usa en autores y editoriales.
+  vacio: No hay países. Usa «Completar lista ISO» para cargarlos.

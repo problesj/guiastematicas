@@ -100,5 +100,18 @@ El formulario muestra solo los del tipo elegido, valida ISBN, ISSN y DOI, y al g
 Un artículo sin URL usa el enlace de su DOI (`https://doi.org/...`). Un recurso multimedia con enlace de YouTube o Vimeo
 muestra el reproductor en la lista pública (YouTube en modo de privacidad mejorada).
 
+Autores y editoriales tienen tablas propias, administradas en **Panel → Autores** y **Panel → Editoriales**:
+
+- **Autor**: nombres, apellidos, ORCID iD (se valida el dígito verificador), sexo y país. Un autor institucional
+  (p. ej. "Organización Mundial de la Salud") lleva el nombre completo en apellidos.
+- **Editorial**: nombre (único) y país.
+- **País**: tabla ISO 3166-1 con nombre en español e inglés, precargada por la migración y editable en
+  **Administración → Países** (el botón *Completar lista ISO* repone los que falten).
+
+En el formulario de un recurso, el selector de autores busca entre los existentes o agrega uno nuevo escrito como
+"Apellidos, Nombres", y permite ordenarlos como en la cita (`recurso_autor.posicion`). La editorial se elige de la lista
+o se escribe una nueva. Al importar, cada autor ("Apellidos, Nombres", separados por punto y coma) y cada editorial se
+buscan sin distinguir mayúsculas ni tildes y se crean solo si no existen (`App\Servicio\RegistroBibliografico`).
+
 Además de Excel, la importación acepta archivos **BibTeX (.bib)** y **RIS (.ris)** exportados desde Zotero, Mendeley,
 EndNote, Google Académico, Scopus o Web of Science (`App\Servicio\Importacion\LectorBibliografia`).

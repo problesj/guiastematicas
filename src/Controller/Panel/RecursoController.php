@@ -7,6 +7,7 @@ namespace App\Controller\Panel;
 use App\Entity\Recurso;
 use App\Enum\TipoRecurso;
 use App\Form\RecursoType;
+use App\Repository\EditorialRepository;
 use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
 use App\Servicio\Importacion\ArchivoNoValidoException;
@@ -35,6 +36,7 @@ final class RecursoController extends AbstractController
         private readonly EntityManagerInterface $em,
         #[Autowire('%kernel.project_dir%/var/importaciones')]
         private readonly string $directorioImportaciones,
+        private readonly EditorialRepository $editoriales,
     ) {
     }
 
@@ -201,6 +203,7 @@ final class RecursoController extends AbstractController
             'formulario' => $formulario,
             'titulo' => $titulo,
             'campos_bibliograficos' => TipoRecurso::CAMPOS_BIBLIOGRAFICOS,
+            'editoriales' => $this->editoriales->nombres(),
             'tipos_por_campo' => array_combine(TipoRecurso::CAMPOS_BIBLIOGRAFICOS, array_map(TipoRecurso::tiposConCampo(...), TipoRecurso::CAMPOS_BIBLIOGRAFICOS)),
         ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
     }

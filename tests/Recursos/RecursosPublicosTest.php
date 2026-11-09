@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Recursos;
 
+use App\Entity\Autor;
 use App\Entity\Recurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
@@ -96,7 +97,7 @@ final class RecursosPublicosTest extends WebTestCase
     public function testMuestraYBuscaLosDatosBibliograficos(): void
     {
         self::recurso('Introducción a la programación', 'https://ebooks.org/1', [
-            'setTipo' => TipoRecurso::Libros, 'setAutores' => 'Pérez, Ana', 'setIsbn' => '978-956-11-2345-8', 'setAnio' => 2021,
+            'setTipo' => TipoRecurso::Libros, 'setAutores' => [Autor::desdeTexto('Pérez, Ana')], 'setIsbn' => '978-956-11-2345-8', 'setAnio' => 2021,
         ]);
         self::recurso('Revista Médica de Chile', 'https://revista.cl', ['setTipo' => TipoRecurso::Revistas, 'setIssn' => '00349887']);
 

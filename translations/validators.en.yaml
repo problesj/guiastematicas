@@ -9,3 +9,8 @@ contrasena.debil: The password is too easy to guess.
 recurso.isbn_no_valido: The ISBN is not valid. Check the digits (10 or 13, with or without hyphens).
 recurso.issn_no_valido: The ISSN is not valid. Use the format 1234-5678 (the last one may be X).
 recurso.doi_no_valido: The DOI is not valid. It must start with 10. (for example 10.1016/j.cell.2020.01.001).
+autor.orcid_no_valido: The ORCID is not valid. Check the 16 digits (the last one may be X).
+autor.orcid_repetido: Another author already has this ORCID.
+editorial.nombre_repetido: A publisher with this name already exists.
+pais.codigo_repetido: A country with this code already exists.
+pais.codigo_no_valido: Use the two-letter ISO code, e.g. CL.
