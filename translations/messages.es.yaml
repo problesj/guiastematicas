@@ -537,6 +537,20 @@ guia:
   migas: Ruta de navegación
   sin_contenido: Esta guía todavía no tiene contenido.
 bloque:
+  catalogo_titulo: Buscar y agregar recursos
+  catalogo_texto: Texto
+  catalogo_tipo: Tipo de recurso
+  catalogo_todos_tipos: Todos los tipos
+  catalogo_materia: Materia
+  catalogo_todas_materias: Todas las materias
+  catalogo_resultados: Resultados de la búsqueda
+  catalogo_resumen: Mostrando %mostrados% de %total% recursos.
+  catalogo_vacio: No hay recursos con estos filtros.
+  catalogo_error: No se pudo cargar el listado. Intenta de nuevo.
+  catalogo_marcar_todos: Marcar todos los mostrados
+  catalogo_agregar: Agregar los marcados al bloque
+  catalogo_ver_mas: Ver más resultados
+  catalogo_ya_agregado: Ya está en el bloque
   nuevo: "Nuevo bloque: %tipo%"
   editar: "Editar bloque: %tipo%"
   titulo: Título del bloque
@@ -544,7 +558,7 @@ bloque:
   texto: Texto
   recursos: Recursos
   recursos_elegidos: Recursos elegidos
-  recursos_ayuda: Busca por título y elige de la lista. Usa las flechas para ordenarlos.
+  recursos_ayuda: Usa las flechas para ordenar los recursos del bloque y × para quitarlos. Abajo puedes filtrar la lista A-Z y agregar varios a la vez.
   buscar_recurso: Buscar recurso por título
   sin_recursos: Sin recursos.
   recursos_vacio: Este bloque no tiene recursos disponibles.

@@ -537,6 +537,20 @@ guia:
   migas: Breadcrumb
   sin_contenido: This guide has no content yet.
 bloque:
+  catalogo_titulo: Find and add resources
+  catalogo_texto: Text
+  catalogo_tipo: Resource type
+  catalogo_todos_tipos: All types
+  catalogo_materia: Subject
+  catalogo_todas_materias: All subjects
+  catalogo_resultados: Search results
+  catalogo_resumen: Showing %mostrados% of %total% resources.
+  catalogo_vacio: No resources match these filters.
+  catalogo_error: The list could not be loaded. Please try again.
+  catalogo_marcar_todos: Select all shown
+  catalogo_agregar: Add selected to the block
+  catalogo_ver_mas: Show more results
+  catalogo_ya_agregado: Already in the block
   nuevo: "New block: %tipo%"
   editar: "Edit block: %tipo%"
   titulo: Block title
@@ -544,7 +558,7 @@ bloque:
   texto: Text
   recursos: Resources
   recursos_elegidos: Selected resources
-  recursos_ayuda: Search by title and pick from the list. Use the arrows to order them.
+  recursos_ayuda: Use the arrows to order the block resources and × to remove them. Below you can filter the A-Z list and add several at once.
   buscar_recurso: Search resource by title
   sin_recursos: No resources.
   recursos_vacio: This block has no available resources.

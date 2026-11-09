@@ -6,14 +6,17 @@ namespace App\Controller\Panel;
 
 use App\Entity\Bloque;
 use App\Entity\Guia;
+use App\Entity\Materia;
 use App\Entity\Pestana;
 use App\Entity\Recurso;
 use App\Entity\Seccion;
 use App\Entity\Usuario;
 use App\Enum\TipoBloque;
+use App\Enum\TipoRecurso;
 use App\Form\BloqueType;
 use App\Form\GuiaType;
 use App\Repository\GuiaRepository;
+use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
 use App\Security\GuiaVoter;
 use App\Servicio\AlmacenImagenesGuia;
@@ -340,20 +343,38 @@ final class GuiaController extends AbstractController
         return new Response(null, 204);
     }
 
-    /** Sugerencias para el selector de recursos de un bloque. */
+    /**
+     * Listado filtrado (texto, tipo y materia) para elegir los recursos de un bloque.
+     * Responde {total, pagina, paginas, elementos: [{id, nombre, detalle}]}; sin filtros lista todos.
+     */
     #[Route('/buscar-recursos', name: 'panel_guias_buscar_recursos', methods: ['GET'])]
-    public function buscarRecursos(Request $request, RecursoRepository $recursos): JsonResponse
+    public function buscarRecursos(Request $request, RecursoRepository $recursos, MateriaRepository $materias): JsonResponse
     {
-        $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
-        if (mb_strlen($texto) < 2) {
-            return $this->json([]);
-        }
+        $consulta = $request->query;
+        $texto = mb_substr(trim($consulta->getString('q')), 0, 100);
+        $tipo = TipoRecurso::tryFrom($consulta->getString('tipo'));
+        // Los filtros vacíos llegan como "" (getInt los rechazaría con 400).
+        $materiaId = $consulta->getString('materia');
+        $materia = ctype_digit($materiaId) ? $materias->find((int) $materiaId) : null;
+        $numero = $consulta->getString('pagina');
+        $pagina = $recursos->listadoAdministracion(ctype_digit($numero) ? max(1, (int) $numero) : 1, 50, $texto, $tipo, $materia);
+        $idioma = $request->getLocale();
 
-        return $this->json(array_map(fn (Recurso $r) => [
-            'id' => $r->getId(),
-            'nombre' => $r->getTitulo(),
-            'detalle' => $this->traductor->trans($r->getTipo()->etiqueta()).($r->isVisible() ? '' : ' · '.$this->traductor->trans('recurso.oculto')),
-        ], $recursos->listadoAdministracion(1, 15, $texto)->elementos));
+        return $this->json([
+            'total' => $pagina->total,
+            'pagina' => $pagina->numero,
+            'paginas' => $pagina->getPaginas(),
+            'elementos' => array_map(fn (Recurso $r) => [
+                'id' => $r->getId(),
+                'nombre' => $r->getTitulo(),
+                'detalle' => implode(' · ', array_filter([
+                    $this->traductor->trans($r->getTipo()->etiqueta(), [], null, $idioma),
+                    $r->getProveedor() ?? $r->getEditorial()?->getNombre(),
+                    $r->getAnio(),
+                    $r->isVisible() ? null : $this->traductor->trans('recurso.oculto', [], null, $idioma),
+                ])),
+            ], $pagina->elementos),
+        ]);
     }
 
     private function formularioBloque(Request $request, Guia $guia, Bloque $bloque, Seccion $seccion): Response
@@ -379,6 +400,8 @@ final class GuiaController extends AbstractController
             'guia' => $guia,
             'bloque' => $bloque,
             'seccion' => $seccion,
+            'tipos_recurso' => TipoRecurso::cases(),
+            'materias' => TipoBloque::Recursos === $tipo ? $this->em->getRepository(Materia::class)->findBy(['activa' => true], ['nombre' => 'ASC']) : [],
         ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
     }
 

@@ -391,3 +391,25 @@ a:hover { color: var(--color-principal-oscuro); }
 @media (max-width: 40rem) {
     .guia__icono { width: 48px; height: 48px; }
 }
+
+/* Catálogo de recursos del bloque de guía */
+.campo__etiqueta { margin: 0 0 0.25rem; font-weight: 600; }
+.catalogo-recursos { margin-top: 1.25rem; padding: 1rem 1.25rem; background: var(--color-fondo-suave); border-radius: var(--radio); }
+.catalogo-recursos__titulo { margin: 0 0 0.75rem; font-size: 1.125rem; }
+.catalogo-recursos__filtros { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0 1rem; }
+.catalogo-recursos__filtros input, .catalogo-recursos__filtros select { width: 100%; padding: 0.5rem 0.6rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); background: #fff; }
+.catalogo-recursos__estado { margin: 0 0 0.5rem; color: var(--color-texto-secundario); }
+.catalogo-recursos__acciones { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-bottom: 0.5rem; }
+.catalogo-recursos__lista { max-height: 26rem; overflow-y: auto; margin: 0 0 0.75rem; padding: 0; list-style: none; background: #fff; border: 1px solid #e4dccf; border-radius: var(--radio); }
+.catalogo-recursos__lista li + li { border-top: 1px solid #ece5da; }
+.catalogo-recursos__lista label { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.5rem 0.75rem; cursor: pointer; }
+.catalogo-recursos__lista label:hover { background: var(--color-fondo-suave); }
+.catalogo-recursos__lista input { margin-top: 0.3rem; flex: none; }
+.catalogo-recursos__lista span { display: flex; flex-direction: column; min-width: 0; }
+.catalogo-recursos__lista small { color: var(--color-texto-secundario); }
+.catalogo-recursos__fila--ya label { cursor: default; opacity: 0.7; }
+.catalogo-recursos__ya { font-style: italic; }
+@media (max-width: 48rem) {
+    .catalogo-recursos__filtros { grid-template-columns: 1fr; }
+}
+.boton:disabled { opacity: 0.5; cursor: not-allowed; }
