@@ -30,6 +30,7 @@
                     <th scope="col">{{ 'importacion.fila'|trans }}</th>
                     <th scope="col">{{ 'importacion.accion'|trans }}</th>
                     <th scope="col">{{ 'recurso.titulo'|trans }}</th>
+                    <th scope="col">{{ 'recurso.tipo'|trans }}</th>
                     <th scope="col">{{ 'recurso.url'|trans }}</th>
                     <th scope="col">{{ 'recurso.proxy_corto'|trans }}</th>
                     <th scope="col">{{ 'recurso.materias'|trans }}</th>
@@ -42,6 +43,7 @@
                         <td>{{ fila.numero }}</td>
                         <td><span class="etiqueta">{{ ('importacion.accion_' ~ fila.accion)|trans }}</span></td>
                         <td>{{ fila.datos.titulo }}</td>
+                        <td>{{ fila.datos.tipo is defined ? fila.datos.tipo.etiqueta|trans : (fila.existente ? fila.existente.tipo.etiqueta|trans : 'tipo_recurso.base_datos'|trans) }}</td>
                         <td class="tabla__url">{{ fila.datos.url ?? '—' }}</td>
                         <td>{{ fila.datos.requiere_proxy is defined ? ((fila.datos.requiere_proxy ? 'formulario.si' : 'formulario.no')|trans) : '—' }}</td>
                         <td>{{ fila.materias|join(', ') ?: '—' }}</td>

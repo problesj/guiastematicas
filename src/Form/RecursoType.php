@@ -64,8 +64,13 @@ final class RecursoType extends AbstractType
             ->add('visible', CheckboxType::class, ['label' => 'recurso.visible', 'required' => false])
             // Datos bibliográficos: el formulario muestra solo los del tipo elegido (ver TipoRecurso::campos()).
             ->add('autores', TextType::class, ['label' => 'recurso.autores', 'required' => false, 'help' => 'recurso.autores_ayuda'])
+            ->add('fuente', TextType::class, ['label' => 'recurso.fuente', 'required' => false, 'help' => 'recurso.fuente_ayuda'])
             ->add('editorial', TextType::class, ['label' => 'recurso.editorial', 'required' => false])
             ->add('anio', IntegerType::class, ['label' => 'recurso.anio', 'required' => false, 'attr' => ['min' => 1450, 'max' => 2100]])
+            ->add('volumen', TextType::class, ['label' => 'recurso.volumen', 'required' => false])
+            ->add('fasciculo', TextType::class, ['label' => 'recurso.fasciculo', 'required' => false])
+            ->add('paginas', TextType::class, ['label' => 'recurso.paginas', 'required' => false, 'attr' => ['placeholder' => '15-32']])
+            ->add('doi', TextType::class, ['label' => 'recurso.doi', 'required' => false, 'help' => 'recurso.doi_ayuda', 'attr' => ['placeholder' => '10.1016/j.cell.2020.01.001']])
             ->add('isbn', TextType::class, ['label' => 'recurso.isbn', 'required' => false])
             ->add('eisbn', TextType::class, ['label' => 'recurso.eisbn', 'required' => false])
             ->add('issn', TextType::class, ['label' => 'recurso.issn', 'required' => false, 'attr' => ['placeholder' => '1234-5678']])
@@ -80,7 +85,7 @@ final class RecursoType extends AbstractType
             ->add('codigoNorma', TextType::class, ['label' => 'recurso.codigo_norma', 'required' => false, 'attr' => ['placeholder' => 'NCh 433']])
             ->add('organismo', TextType::class, ['label' => 'recurso.organismo', 'required' => false, 'attr' => ['placeholder' => 'INN, ISO, IEEE']])
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $evento): void {
-                $evento->getData()?->limpiarCamposNoAplicables();
+                $evento->getData()?->limpiarCamposNoAplicables()->completarUrlDesdeDoi();
             });
     }
 

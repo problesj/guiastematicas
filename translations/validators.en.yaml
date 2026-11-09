@@ -8,3 +8,4 @@ contrasena.no_coinciden: The passwords do not match.
 contrasena.debil: The password is too easy to guess.
 recurso.isbn_no_valido: The ISBN is not valid. Check the digits (10 or 13, with or without hyphens).
 recurso.issn_no_valido: The ISSN is not valid. Use the format 1234-5678 (the last one may be X).
+recurso.doi_no_valido: The DOI is not valid. It must start with 10. (for example 10.1016/j.cell.2020.01.001).

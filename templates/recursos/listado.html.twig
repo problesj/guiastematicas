@@ -81,9 +81,18 @@
                             {% if datos is not empty %}
                                 <dl class="recurso__datos">
                                     {% for campo, valor in datos %}
-                                        <div><dt>{{ ('recurso.' ~ campo)|trans }}</dt><dd>{{ valor }}</dd></div>
+                                        <div><dt>{{ ('recurso.' ~ campo)|trans }}</dt><dd>{% if campo == 'doi' %}<a href="{{ recurso.enlaceDoi }}" target="_blank" rel="noopener" aria-describedby="aviso-ventana-nueva">{{ valor }}</a>{% else %}{{ valor }}{% endif %}</dd></div>
                                     {% endfor %}
                                 </dl>
+                            {% endif %}
+                            {% set video = recurso.tipo.value == 'multimedia' ? video_incrustado(recurso.url) : null %}
+                            {% if video %}
+                                <details class="recurso__video">
+                                    <summary>{{ 'bases.ver_video'|trans }}</summary>
+                                    <div class="recurso__reproductor">
+                                        <iframe src="{{ video }}" title="{{ recurso.titulo }}" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </details>
                             {% endif %}
                             {% if recurso.descripcionTraducida(idioma) %}<p class="recurso__descripcion">{{ recurso.descripcionTraducida(idioma) }}</p>{% endif %}
                             {% if recurso.materias is not empty %}

@@ -47,6 +47,11 @@ final class ImportadorRecursos
         // Datos bibliográficos: se guardan solo si corresponden al tipo (ver TipoRecurso::campos()).
         'autores' => ['autores', 'autor', 'autoria', 'responsables', 'authors', 'author'],
         'editorial' => ['editorial', 'editor', 'casaeditora', 'publisher'],
+        'fuente' => ['fuente', 'revista', 'publicadoen', 'nombredelarevista', 'source', 'journal', 'sourcetitle'],
+        'volumen' => ['volumen', 'vol', 'volume'],
+        'fasciculo' => ['fasciculo', 'numero', 'num', 'issue', 'number'],
+        'paginas' => ['paginas', 'pagina', 'pags', 'pp', 'pages'],
+        'doi' => ['doi'],
         'anio' => ['ano', 'anio', 'anodeedicion', 'anoedicion', 'anodepublicacion', 'year', 'publicationyear'],
         'isbn' => ['isbn', 'isbnimpreso', 'printisbn'],
         'eisbn' => ['eisbn', 'isbne', 'isbnelectronico', 'onlineisbn', 'electronicisbn'],
@@ -65,6 +70,10 @@ final class ImportadorRecursos
         'nombres_alternativos' => ['setNombresAlternativos', 255],
         'autores' => ['setAutores', 500],
         'editorial' => ['setEditorial', 150],
+        'fuente' => ['setFuente', 255],
+        'volumen' => ['setVolumen', 20],
+        'fasciculo' => ['setFasciculo', 20],
+        'paginas' => ['setPaginas', 30],
         'codigo_norma' => ['setCodigoNorma', 60],
         'organismo' => ['setOrganismo', 120],
     ];
@@ -92,6 +101,7 @@ final class ImportadorRecursos
         private readonly ProxyAccesum $proxy,
         private readonly GeneradorSlug $slugs,
         private readonly ValidatorInterface $validador,
+        private readonly LectorBibliografia $lectorBibliografia,
     ) {
     }
 
@@ -102,6 +112,10 @@ final class ImportadorRecursos
      */
     public function leer(string $ruta): array
     {
+        if (\in_array(strtolower(pathinfo($ruta, \PATHINFO_EXTENSION)), LectorBibliografia::EXTENSIONES, true)) {
+            return $this->leerBibliografia($ruta);
+        }
+
         try {
             // Sin READ_DATA_ONLY para conservar los hipervínculos de las celdas.
             $hoja = IOFactory::load($ruta, 0, ['Xlsx', 'Xls', 'Ods', 'Csv'])->getActiveSheet();
@@ -114,32 +128,86 @@ final class ImportadorRecursos
             throw new ArchivoNoValidoException('importacion.sin_columnas');
         }
 
-        $filas = [];
-        $vistas = [];
         $ultimaFila = $hoja->getHighestDataRow();
         if ($ultimaFila - $filaEncabezado > self::MAXIMO_FILAS) {
             throw new ArchivoNoValidoException('importacion.demasiadas_filas');
         }
+
+        $filas = [];
         for ($n = $filaEncabezado + 1; $n <= $ultimaFila; ++$n) {
-            $fila = $this->interpretarFila($hoja, $n, $columnas);
-            if (null === $fila) {
-                continue;
+            $crudo = function (string $campo) use ($hoja, $columnas, $n): mixed {
+                return isset($columnas[$campo]) && $hoja->cellExists($columnas[$campo].$n) ? $hoja->getCell($columnas[$campo].$n)->getValue() : null;
+            };
+            $valor = function (string $campo) use ($hoja, $columnas, $n): ?string {
+                if (!isset($columnas[$campo]) || !$hoja->cellExists($columnas[$campo].$n)) {
+                    return null;
+                }
+                $texto = trim((string) $hoja->getCell($columnas[$campo].$n)->getFormattedValue());
+
+                return '' === $texto ? null : $texto;
+            };
+            // Si no hay columna URL, o viene vacía, se usa el hipervínculo del título (común en listas en Excel).
+            $hipervinculo = null;
+            if ($hoja->cellExists($columnas['titulo'].$n) && $hoja->getCell($columnas['titulo'].$n)->hasHyperlink()) {
+                $hipervinculo = trim($hoja->getCell($columnas['titulo'].$n)->getHyperlink()->getUrl());
             }
 
+            $filas[] = $this->interpretarFila($n, array_keys($columnas), $valor, $crudo, $hipervinculo);
+        }
+
+        return $this->revisarFilas($filas);
+    }
+
+    /**
+     * Lee un archivo BibTeX (.bib) o RIS (.ris), exportado por ejemplo desde Zotero, Mendeley, EndNote o una base de datos.
+     *
+     * @return list<FilaImportacion>
+     */
+    private function leerBibliografia(string $ruta): array
+    {
+        $registros = $this->lectorBibliografia->leer($ruta);
+        if ([] === $registros) {
+            throw new ArchivoNoValidoException('importacion.bibliografia_vacia');
+        }
+        if (\count($registros) > self::MAXIMO_FILAS) {
+            throw new ArchivoNoValidoException('importacion.demasiadas_filas');
+        }
+
+        $filas = [];
+        foreach ($registros as $i => $registro) {
+            $valor = fn (string $campo): ?string => $registro[$campo] ?? null;
+            $filas[] = $this->interpretarFila($i + 1, array_keys($registro), $valor, $valor, null);
+        }
+
+        return $this->revisarFilas($filas);
+    }
+
+    /**
+     * Quita filas vacías, marca URL repetidas dentro del archivo y busca los recursos que ya existen.
+     *
+     * @param list<FilaImportacion|null> $filas
+     *
+     * @return list<FilaImportacion>
+     */
+    private function revisarFilas(array $filas): array
+    {
+        $revisadas = [];
+        $vistas = [];
+        foreach (array_filter($filas) as $fila) {
             $clave = mb_strtolower((string) ($fila->datos['url'] ?? ''));
             if ('' !== $clave && isset($vistas[$clave])) {
                 $fila->errores[] = 'importacion.error_repetido|'.$vistas[$clave];
             } elseif ('' !== $clave) {
-                $vistas[$clave] = $n;
+                $vistas[$clave] = $fila->numero;
             }
 
             if ($fila->esValida()) {
                 $fila->existente = $this->recursos->buscarParaImportar($fila->datos['url'], $fila->datos['titulo']);
             }
-            $filas[] = $fila;
+            $revisadas[] = $fila;
         }
 
-        return $filas;
+        return $revisadas;
     }
 
     /**
@@ -170,6 +238,9 @@ final class ImportadorRecursos
             }
             if (\array_key_exists('anio', $d)) {
                 $recurso->setAnio($d['anio']);
+            }
+            if (\array_key_exists('doi', $d)) {
+                $recurso->setDoi($d['doi']);
             }
             if (\array_key_exists('disponible_desde', $d)) {
                 $recurso->setDisponibleDesde($d['disponible_desde']);
@@ -257,25 +328,20 @@ final class ImportadorRecursos
         return $hoja->cellExists($columna.$siguiente) && $hoja->getCell($columna.$siguiente)->hasHyperlink();
     }
 
-    /** @param array<string, string> $columnas */
-    private function interpretarFila(Worksheet $hoja, int $n, array $columnas): ?FilaImportacion
+    /**
+     * Interpreta un registro, venga de una planilla o de un archivo bibliográfico.
+     *
+     * @param list<string>                  $presentes campos que trae el archivo (un campo presente y vacío borra el valor al actualizar)
+     * @param \Closure(string): ?string     $valor     texto del campo, o null si está vacío
+     * @param \Closure(string): mixed       $crudo     valor sin formato (para fechas de Excel)
+     */
+    private function interpretarFila(int $n, array $presentes, \Closure $valor, \Closure $crudo, ?string $hipervinculo): ?FilaImportacion
     {
-        $valor = function (string $campo) use ($hoja, $columnas, $n): ?string {
-            if (!isset($columnas[$campo]) || !$hoja->cellExists($columnas[$campo].$n)) {
-                return null;
-            }
-            $texto = trim((string) $hoja->getCell($columnas[$campo].$n)->getFormattedValue());
-
-            return '' === $texto ? null : $texto;
-        };
-
+        $hay = fn (string $campo): bool => \in_array($campo, $presentes, true);
         $titulo = $valor('titulo');
-        $url = $valor('url');
-        // Si no hay columna URL, o viene vacía, se usa el hipervínculo del título (común en listas en Excel).
-        if (null === $url && isset($columnas['titulo']) && $hoja->cellExists($columnas['titulo'].$n)) {
-            $celda = $hoja->getCell($columnas['titulo'].$n);
-            $url = $celda->hasHyperlink() ? trim($celda->getHyperlink()->getUrl()) : null;
-        }
+        $doi = null !== $valor('doi') ? (new Recurso())->setDoi($valor('doi'))->getDoi() : null;
+        // Sin URL: el hipervínculo del título (Excel) o el enlace del DOI (artículos).
+        $url = $valor('url') ?? $hipervinculo ?? (null !== $doi ? 'https://doi.org/'.$doi : null);
 
         if (null === $titulo && null === $url) {
             return null; // fila vacía
@@ -291,21 +357,28 @@ final class ImportadorRecursos
         $traiaProxy = $this->interpretarUrl($fila, $url);
 
         foreach (self::CAMPOS_TEXTO as $campo => [, $largo]) {
-            if (isset($columnas[$campo])) {
+            if ($hay($campo)) {
                 $texto = $valor($campo);
                 $fila->datos[$campo] = null === $texto ? null : mb_substr($texto, 0, $largo);
             }
         }
         foreach (self::IDENTIFICADORES as $campo => [, $tipoIdentificador]) {
-            if (isset($columnas[$campo])) {
+            if ($hay($campo)) {
                 $fila->datos[$campo] = $this->interpretarIdentificador($valor($campo), $tipoIdentificador, $fila);
             }
         }
-        if (isset($columnas['anio'])) {
+        if ($hay('doi')) {
+            $fila->datos['doi'] = $doi;
+            if (null !== $doi && 1 !== preg_match('~^10\.\d{4,9}/\S+$~', $doi)) {
+                $fila->avisos[] = 'importacion.aviso_doi|'.$doi;
+                $fila->datos['doi'] = null;
+            }
+        }
+        if ($hay('anio')) {
             $fila->datos['anio'] = self::interpretarAnio($valor('anio'), $fila);
         }
-        if (isset($columnas['disponible_desde'])) {
-            $fila->datos['disponible_desde'] = $this->interpretarFecha($hoja, $columnas['disponible_desde'].$n, $fila);
+        if ($hay('disponible_desde')) {
+            $fila->datos['disponible_desde'] = $this->interpretarFecha($crudo('disponible_desde'), $fila);
         }
 
         if (null !== $tipo = $valor('tipo')) {
@@ -317,11 +390,11 @@ final class ImportadorRecursos
         if (null !== $acceso = $valor('acceso')) {
             $fila->datos['acceso'] = self::interpretarAcceso($acceso);
         }
-        if (isset($columnas['visible'])) {
+        if ($hay('visible')) {
             $fila->datos['visible'] = self::interpretarBooleano($valor('visible')) ?? true;
         }
-        if (isset($columnas['prueba_hasta'])) {
-            $fila->datos['prueba_hasta'] = $this->interpretarFecha($hoja, $columnas['prueba_hasta'].$n, $fila);
+        if ($hay('prueba_hasta')) {
+            $fila->datos['prueba_hasta'] = $this->interpretarFecha($crudo('prueba_hasta'), $fila);
         }
 
         // Requiere proxy: lo que diga la columna; si no hay, sí cuando la URL traía el proxy o el recurso no es de acceso abierto.
@@ -401,16 +474,13 @@ final class ImportadorRecursos
         return null;
     }
 
-    private function interpretarFecha(Worksheet $hoja, string $coordenada, FilaImportacion $fila): ?\DateTimeImmutable
+    /** Fecha desde Excel (número de serie) o texto dd-mm-aaaa, dd/mm/aaaa o aaaa-mm-dd. */
+    private function interpretarFecha(mixed $valor, FilaImportacion $fila): ?\DateTimeImmutable
     {
-        if (!$hoja->cellExists($coordenada)) {
-            return null;
-        }
-        $valor = $hoja->getCell($coordenada)->getValue();
         if (null === $valor || '' === $valor) {
             return null;
         }
-        if (is_numeric($valor)) {
+        if (\is_int($valor) || \is_float($valor)) {
             return \DateTimeImmutable::createFromMutable(FechaExcel::excelToDateTimeObject((float) $valor))->setTime(0, 0);
         }
         foreach (['d-m-Y', 'd/m/Y', 'Y-m-d'] as $formato) {
@@ -442,6 +512,7 @@ final class ImportadorRecursos
         $v = self::normalizar($valor);
 
         return match (true) {
+            str_contains($v, 'articul') || str_contains($v, 'article') || str_contains($v, 'paper') => TipoRecurso::Articulo,
             str_contains($v, 'revist') || str_contains($v, 'journal') => TipoRecurso::Revistas,
             str_contains($v, 'libro') || str_contains($v, 'book') => TipoRecurso::Libros,
             str_contains($v, 'repositori') => TipoRecurso::Repositorio,

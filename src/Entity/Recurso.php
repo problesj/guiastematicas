@@ -83,6 +83,31 @@ class Recurso
     #[Assert\Length(max: 500)]
     private ?string $autores = null;
 
+    /** Revista o publicación donde aparece un artículo. */
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $fuente = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Length(max: 20)]
+    private ?string $volumen = null;
+
+    /** Número o fascículo de la revista. */
+    #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Length(max: 20)]
+    private ?string $fasciculo = null;
+
+    /** Páginas, p. ej. "15-32" o "e1234". */
+    #[ORM\Column(length: 30, nullable: true)]
+    #[Assert\Length(max: 30)]
+    private ?string $paginas = null;
+
+    /** DOI sin el prefijo https://doi.org/, p. ej. "10.1016/j.cell.2020.01.001". */
+    #[ORM\Column(length: 200, nullable: true)]
+    #[Assert\Regex(pattern: '~^10\.\d{4,9}/\S+$~', message: 'recurso.doi_no_valido')]
+    #[Assert\Length(max: 200)]
+    private ?string $doi = null;
+
     /** Editorial o editor (libros, revistas). Distinto del proveedor o plataforma de acceso. */
     #[ORM\Column(length: 150, nullable: true)]
     #[Assert\Length(max: 150)]
@@ -305,6 +330,85 @@ class Recurso
     public function setAutores(?string $autores): static
     {
         $this->autores = self::textoONulo($autores);
+
+        return $this;
+    }
+
+    public function getFuente(): ?string
+    {
+        return $this->fuente;
+    }
+
+    public function setFuente(?string $fuente): static
+    {
+        $this->fuente = self::textoONulo($fuente);
+
+        return $this;
+    }
+
+    public function getVolumen(): ?string
+    {
+        return $this->volumen;
+    }
+
+    public function setVolumen(?string $volumen): static
+    {
+        $this->volumen = self::textoONulo($volumen);
+
+        return $this;
+    }
+
+    public function getFasciculo(): ?string
+    {
+        return $this->fasciculo;
+    }
+
+    public function setFasciculo(?string $fasciculo): static
+    {
+        $this->fasciculo = self::textoONulo($fasciculo);
+
+        return $this;
+    }
+
+    public function getPaginas(): ?string
+    {
+        return $this->paginas;
+    }
+
+    public function setPaginas(?string $paginas): static
+    {
+        $paginas = self::textoONulo($paginas);
+        // BibTeX usa "--" entre páginas.
+        $this->paginas = null === $paginas ? null : (string) preg_replace('/\s*-{1,2}\s*|\s*–\s*/u', '-', $paginas);
+
+        return $this;
+    }
+
+    public function getDoi(): ?string
+    {
+        return $this->doi;
+    }
+
+    /** Acepta el DOI solo o como enlace (https://doi.org/..., doi:...) y guarda solo el identificador. */
+    public function setDoi(?string $doi): static
+    {
+        $doi = self::textoONulo($doi);
+        $this->doi = null === $doi ? null : (string) preg_replace('~^(?:https?://(?:dx\.)?doi\.org/|doi:\s*)~i', '', $doi);
+
+        return $this;
+    }
+
+    public function getEnlaceDoi(): ?string
+    {
+        return null === $this->doi ? null : 'https://doi.org/'.$this->doi;
+    }
+
+    /** Si falta la URL y hay DOI, usa el enlace del DOI (habitual en artículos). */
+    public function completarUrlDesdeDoi(): static
+    {
+        if ('' === $this->url && null !== $this->doi) {
+            $this->url = (string) $this->getEnlaceDoi();
+        }
 
         return $this;
     }

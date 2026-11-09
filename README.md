@@ -91,8 +91,14 @@ Cada tipo de recurso tiene sus propios datos bibliográficos (definidos en `Tipo
 | --- | --- |
 | Libros | Autores, editorial, año de edición, ISBN, e-ISBN |
 | Revistas | Editorial, ISSN, e-ISSN, disponible desde |
+| Artículo científico | Autores, fuente (revista), año, volumen, fascículo, páginas, DOI |
 | Base de datos | Disponible desde |
 | Normas | Código de la norma, organismo emisor, año |
 | Multimedia | Autores, año |
 
-El formulario muestra solo los del tipo elegido, valida ISBN e ISSN, y al guardar vacía los que no corresponden.
+El formulario muestra solo los del tipo elegido, valida ISBN, ISSN y DOI, y al guardar vacía los que no corresponden.
+Un artículo sin URL usa el enlace de su DOI (`https://doi.org/...`). Un recurso multimedia con enlace de YouTube o Vimeo
+muestra el reproductor en la lista pública (YouTube en modo de privacidad mejorada).
+
+Además de Excel, la importación acepta archivos **BibTeX (.bib)** y **RIS (.ris)** exportados desde Zotero, Mendeley,
+EndNote, Google Académico, Scopus o Web of Science (`App\Servicio\Importacion\LectorBibliografia`).

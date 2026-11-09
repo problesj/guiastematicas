@@ -175,6 +175,7 @@ tipo_recurso:
   multimedia: Multimedia
   herramienta: Tool
   sitio_web: Website
+  articulo: Scholarly article
 tipo_acceso:
   suscripcion: UCN subscription
   abierto: Open access
@@ -202,6 +203,7 @@ bases:
   ventana_nueva: Opens in a new window.
   sin_resultados: No resources match your search.
   vacio: There are no published resources yet.
+  ver_video: Watch video
 recurso:
   nuevo: New resource
   editar: Edit resource
@@ -213,7 +215,7 @@ recurso:
   alternativos: Alternative names
   alternativos_ayuda: Acronyms or other names for searching, separated by semicolons.
   url: Original URL
-  url_ayuda: The resource address without the proxy prefix.
+  url_ayuda: The resource address without the proxy prefix. For articles you may leave it empty if you enter the DOI. For multimedia, a YouTube or Vimeo link shows the player in the list.
   requiere_proxy: Requires AccesUM proxy
   requiere_proxy_ayuda: Tick if off-campus access must go through AccesUM.
   proxy_corto: Proxy
@@ -243,11 +245,18 @@ recurso:
   disponible_desde_ayuda: Date from which the content is accessible.
   codigo_norma: Standard code
   organismo: Issuing body
+  fuente: Source (journal)
+  fuente_ayuda: Journal or publication where the article appears.
+  volumen: Volume
+  fasciculo: Issue
+  paginas: Pages
+  doi: DOI
+  doi_ayuda: "For example 10.1016/j.cell.2020.01.001. You can also paste the https://doi.org/... link."
 importacion:
-  titulo: Import from Excel
+  titulo: Import resources
   bajada: Upload the list of library resources as Excel (.xlsx, .xls), OpenDocument (.ods) or CSV. Before saving you will see what will be created, what will be updated and which rows have errors.
   archivo: File
-  archivo_ayuda: Up to 10 MB and 5,000 rows. The first row with recognised headers is used as the header.
+  archivo_ayuda: Up to 10 MB and 5,000 records. In spreadsheets, the first row with recognised headers is used as the header.
   revisar: Review file
   plantilla: Download sample template
   columnas: Recognised columns
@@ -277,6 +286,11 @@ importacion:
     disponible_desde: Available from
     codigo_norma: Standard code
     organismo: Issuing body
+    fuente: Source (or Journal)
+    volumen: Volume
+    fasciculo: Issue (or Number)
+    paginas: Pages
+    doi: DOI
   columna_ayuda:
     titulo: Required.
     url: Required. If it includes the proxy prefix, the original URL is stored and "requires proxy" is ticked.
@@ -300,6 +314,11 @@ importacion:
     disponible_desde: Journals and databases. Date (dd-mm-yyyy) from which content is accessible.
     codigo_norma: Standards, e.g. NCh 433 or ISO 9001:2015.
     organismo: Standards, e.g. INN, ISO or IEEE.
+    fuente: Articles. Journal where it was published.
+    volumen: Articles.
+    fasciculo: Articles.
+    paginas: Articles, e.g. 15-32.
+    doi: "Articles. If the URL is missing, https://doi.org/ plus the DOI is used."
   vista_previa: Import preview
   archivo_revisado: "File: %nombre%"
   se_crearan: new resources
@@ -316,7 +335,7 @@ importacion:
   resultado: "Import finished: %creados% created, %actualizados% updated, %omitidos% rows skipped and %materias% new subjects."
   expirada: The preview expired. Upload the file again.
   sin_archivo: Choose a file.
-  extension: The file must be .xlsx, .xls, .ods or .csv.
+  extension: The file must be .xlsx, .xls, .ods, .csv, .bib or .ris.
   muy_grande: The file is larger than 10 MB.
   archivo_ilegible: The file could not be read. Check that it is a valid spreadsheet.
   sin_columnas: The title and URL columns were not found in the first rows.
@@ -333,3 +352,7 @@ importacion:
   aviso_isbn: "ISBN \"%valor%\" not valid; left empty."
   aviso_issn: "ISSN \"%valor%\" not valid; left empty."
   aviso_anio: "Year \"%valor%\" not recognised; left empty."
+  bibliografia_titulo: From BibTeX or RIS
+  bibliografia_texto: You can also upload a .bib (BibTeX) or .ris (RIS) file, such as those exported by Zotero, Mendeley, EndNote, Google Scholar, Scopus or Web of Science. The type comes from each record (article, book, thesis, standard, video...), and an article without a URL uses its DOI link.
+  bibliografia_vacia: No BibTeX or RIS records were found in the file.
+  aviso_doi: "DOI \"%valor%\" not valid; left empty."
