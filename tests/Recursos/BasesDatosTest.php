@@ -49,6 +49,9 @@ final class BasesDatosTest extends WebTestCase
         $crawler = $this->cliente->request('GET', '/es/bases-de-datos');
         self::assertResponseIsSuccessful();
         self::assertSame(['PubMed', 'Scopus', 'Springer eBooks'], $crawler->filter('.recurso__titulo a')->each(fn ($n) => $n->text()));
+        // Los enlaces a las bases se abren en una ventana nueva, con aviso para lectores de pantalla.
+        self::assertSame(['_blank'], array_unique($crawler->filter('.recurso__titulo a')->each(fn ($n) => $n->attr('target'))));
+        self::assertCount(1, $crawler->filter('#aviso-ventana-nueva'));
         // Solo las letras con recursos son enlaces.
         self::assertSame(['Todas', 'P', 'S'], $crawler->filter('.indice-az a')->each(fn ($n) => $n->text()));
 

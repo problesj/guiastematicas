@@ -199,6 +199,7 @@ bases:
   hasta: until
   proxy: Remote access via AccesUM
   proxy_ayuda: Off campus you will be asked to sign in with your UCN account.
+  ventana_nueva: Opens in a new window.
   sin_resultados: No resources match your search.
   vacio: There are no published resources yet.
 recurso:

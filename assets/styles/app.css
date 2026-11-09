@@ -197,6 +197,7 @@ a:hover { color: var(--color-principal-oscuro); }
 .recursos { margin: 0; padding: 0; list-style: none; }
 .recurso { padding: 1rem 0; border-bottom: 1px solid #ece5da; }
 .recurso__titulo { margin: 0; font-size: 1.1875rem; }
+.recurso__titulo a[target="_blank"]::after { content: "\2197"; content: "\2197" / ""; margin-left: 0.25em; font-size: 0.8em; }
 .recurso__meta { margin: 0.15rem 0 0; font-size: 0.9375rem; color: var(--color-texto-secundario); }
 .recurso__descripcion { margin: 0.4rem 0 0; }
 .recurso__materias { margin: 0.4rem 0 0; }
