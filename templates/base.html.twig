@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{{ 'sitio.titulo'|trans }}{% endblock %} · {{ 'sitio.institucion'|trans }}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap">
+        {% block stylesheets %}{% endblock %}
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        <a class="saltar" href="#contenido">{{ 'sitio.saltar_contenido'|trans }}</a>
+
+        <div class="barra-superior">
+            <div class="contenedor barra-superior__interior">
+                <nav aria-label="{{ 'sitio.enlaces_ucn'|trans }}">
+                    <a href="https://www.ucn.cl/">UCN.cl</a>
+                    <a href="https://bibliotecas.ucn.cl/">{{ 'sitio.institucion'|trans }}</a>
+                </nav>
+                <nav class="idiomas" aria-label="{{ 'sitio.idioma'|trans }}">
+                    {% set ruta = app.request.attributes.get('_route') ?? 'inicio' %}
+                    {% set parametros = app.request.attributes.get('_route_params') ?? {} %}
+                    {% for idioma in ['es', 'en'] %}
+                        <a href="{{ path(ruta, parametros|merge({_locale: idioma})) }}"
+                           lang="{{ idioma }}" hreflang="{{ idioma }}"
+                           {% if app.request.locale == idioma %}aria-current="true"{% endif %}>{{ idioma|upper }}</a>
+                    {% endfor %}
+                </nav>
+            </div>
+        </div>
+
+        <header class="cabecera">
+            <div class="contenedor cabecera__interior">
+                <a class="marca" href="{{ path('inicio') }}">
+                    {# Reemplazar por el logo oficial de Bibliotecas UCN cuando se reciban los archivos originales. #}
+                    <span class="marca__institucion">{{ 'sitio.institucion'|trans }}</span>
+                    <span class="marca__titulo">{{ 'sitio.titulo'|trans }}</span>
+                </a>
+                <nav class="menu" aria-label="{{ 'menu.principal'|trans }}">
+                    <a href="{{ path('inicio') }}">{{ 'menu.guias'|trans }}</a>
+                    <a href="{{ path('inicio') }}">{{ 'menu.bases_datos'|trans }}</a>
+                    <a href="{{ path('inicio') }}">{{ 'menu.personal'|trans }}</a>
+                </nav>
+            </div>
+        </header>
+
+        <main id="contenido">
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="pie">
+            <div class="contenedor pie__interior">
+                <p><strong>{{ 'sitio.institucion'|trans }}</strong> · Universidad Católica del Norte</p>
+                <p>{{ 'pie.sedes'|trans }}</p>
+                <p><a href="https://bibliotecas.ucn.cl/">bibliotecas.ucn.cl</a></p>
+            </div>
+        </footer>
+    </body>
+</html>
