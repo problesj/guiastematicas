@@ -12,8 +12,12 @@
             </p>
         {% endif %}
         <nav class="migas" aria-label="{{ 'guia.migas'|trans }}"><a href="{{ path('guias') }}">{{ 'guias.titulo'|trans }}</a> › <span aria-current="page">{{ guia.titulo }}</span></nav>
-        <header class="guia__cabecera">
-            <h1>{{ guia.titulo }}</h1>
+        <header class="guia__cabecera{% if guia.banner %} guia__cabecera--banner{% endif %}">
+            {% if guia.banner %}<img class="guia__banner" src="{{ asset('uploads/guias/' ~ guia.banner) }}" alt="" width="1200" height="300">{% endif %}
+            <div class="guia__titular">
+                {% if guia.icono %}<img class="guia__icono" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="64" height="64">{% endif %}
+                <h1>{{ guia.titulo }}</h1>
+            </div>
             {% if guia.descripcion %}<p class="pagina__bajada">{{ guia.descripcion }}</p>{% endif %}
             <p class="guia__meta">
                 {% for m in guia.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}

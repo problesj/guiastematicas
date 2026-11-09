@@ -466,6 +466,15 @@ guias:
   vacio: No guides have been published yet.
   sin_resultados: No published guides match those filters.
 guia:
+  grupo_imagenes: Images
+  banner: Header image (banner)
+  banner_ayuda: JPG, PNG or WebP up to 4 MB. Shown at the top of the guide, cropped to 4:1 (1600 × 400 px recommended).
+  banner_actual: Current banner
+  eliminar_banner: Remove the banner
+  icono: Guide icon
+  icono_ayuda: JPG, PNG or WebP up to 1 MB, square (256 × 256 px recommended). Shown in the guide list and next to the title.
+  icono_actual: Current icon
+  eliminar_icono: Remove the icon
   nueva: New guide
   crear: Create guide
   creada: Guide created. Add tabs, sections and blocks.

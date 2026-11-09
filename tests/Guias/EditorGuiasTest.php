@@ -16,6 +16,7 @@ use App\Enum\Rol;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoBloque;
 use App\Enum\TipoRecurso;
+use App\Servicio\AlmacenImagenesGuia;
 use App\Tests\CreaDatosTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -320,5 +321,55 @@ final class EditorGuiasTest extends WebTestCase
         self::em()->clear();
         self::assertNull(self::em()->find(Guia::class, $id));
         self::assertSame(0, self::em()->getRepository(Bloque::class)->count([]));
+    }
+
+    public function testLaGuiaLlevaBannerEIconoQueSeMuestranYSePuedenQuitar(): void
+    {
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $guia = self::crearGuia($ana, publicada: true);
+        $this->cliente->loginUser($ana);
+        $png = sys_get_temp_dir().'/guia-prueba.png';
+        file_put_contents($png, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='));
+        $texto = sys_get_temp_dir().'/no-es-imagen.png';
+        file_put_contents($texto, 'hola');
+
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/datos');
+        $formulario = $crawler->selectButton('Guardar')->form();
+        $formulario['guia[archivoBanner]']->upload($texto);
+        $this->cliente->submit($formulario);
+        self::assertResponseStatusCodeSame(422);
+
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/datos');
+        $formulario = $crawler->selectButton('Guardar')->form();
+        $formulario['guia[archivoBanner]']->upload($png);
+        $formulario['guia[archivoIcono]']->upload($png);
+        $this->cliente->submit($formulario);
+        self::assertResponseRedirects();
+        $guia = self::recargar($guia);
+        self::assertMatchesRegularExpression('/^[0-9a-f]{24}\.png$/', (string) $guia->getBanner());
+        self::assertNotNull($guia->getIcono());
+        $directorio = static::getContainer()->getParameter('kernel.project_dir').'/public/'.AlmacenImagenesGuia::RUTA_PUBLICA;
+        self::assertFileExists($directorio.'/'.$guia->getBanner());
+
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertSame('/uploads/guias/'.$guia->getBanner(), $crawler->filter('img.guia__banner')->attr('src'));
+        self::assertCount(1, $crawler->filter('img.guia__icono'));
+        $crawler = $this->cliente->request('GET', '/es/guias');
+        self::assertSame('/uploads/guias/'.$guia->getIcono(), $crawler->filter('img.lista-guias__icono')->attr('src'));
+
+        $banner = $guia->getBanner();
+        $icono = $guia->getIcono();
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/datos');
+        $formulario = $crawler->selectButton('Guardar')->form();
+        $formulario['guia[eliminarBanner]']->tick();
+        $this->cliente->submit($formulario);
+        self::assertResponseRedirects();
+        $guia = self::recargar($guia);
+        self::assertNull($guia->getBanner());
+        self::assertSame($icono, $guia->getIcono());
+        self::assertFileDoesNotExist($directorio.'/'.$banner);
+
+        static::getContainer()->get(AlmacenImagenesGuia::class)->eliminarDe($guia);
+        self::assertFileDoesNotExist($directorio.'/'.$icono);
     }
 }

@@ -19,6 +19,21 @@
             {% if formulario.responsable is defined %}{{ form_row(formulario.responsable) }}{% endif %}
         </fieldset>
         <fieldset>
+            <legend>{{ 'guia.grupo_imagenes'|trans }}</legend>
+            <div class="formulario__columnas">
+                <div>
+                    {% if guia and guia.banner %}<img class="vista-imagen vista-imagen--banner" src="{{ asset('uploads/guias/' ~ guia.banner) }}" alt="{{ 'guia.banner_actual'|trans }}">{% endif %}
+                    {{ form_row(formulario.archivoBanner) }}
+                    {% if formulario.eliminarBanner is defined %}{{ form_row(formulario.eliminarBanner) }}{% endif %}
+                </div>
+                <div>
+                    {% if guia and guia.icono %}<img class="vista-imagen vista-imagen--icono" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="{{ 'guia.icono_actual'|trans }}">{% endif %}
+                    {{ form_row(formulario.archivoIcono) }}
+                    {% if formulario.eliminarIcono is defined %}{{ form_row(formulario.eliminarIcono) }}{% endif %}
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
             <legend>{{ 'guia.materias'|trans }}</legend>
             {{ form_row(formulario.materias, {label: false}) }}
         </fieldset>
