@@ -63,9 +63,10 @@ class Materia
         return $this->nombre;
     }
 
-    public function setNombre(string $nombre): static
+    /** Acepta null (campo vacío en un formulario); la validación NotBlank informa el error. */
+    public function setNombre(?string $nombre): static
     {
-        $this->nombre = trim($nombre);
+        $this->nombre = trim((string) $nombre);
 
         return $this;
     }

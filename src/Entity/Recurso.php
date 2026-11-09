@@ -114,9 +114,10 @@ class Recurso
         return $this->titulo;
     }
 
-    public function setTitulo(string $titulo): static
+    /** Acepta null (campo vacío en un formulario); la validación NotBlank informa el error. */
+    public function setTitulo(?string $titulo): static
     {
-        $this->titulo = trim($titulo);
+        $this->titulo = trim((string) $titulo);
         $this->letra = self::calcularLetra($this->titulo);
 
         return $this;
@@ -151,9 +152,10 @@ class Recurso
         return $this->url;
     }
 
-    public function setUrl(string $url): static
+    /** Acepta null (campo vacío en un formulario); la validación NotBlank informa el error. */
+    public function setUrl(?string $url): static
     {
-        $this->url = trim($url);
+        $this->url = trim((string) $url);
 
         return $this;
     }
