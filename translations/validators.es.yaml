@@ -9,3 +9,8 @@ contrasena.debil: La contraseña es demasiado fácil de adivinar.
 recurso.isbn_no_valido: El ISBN no es válido. Revisa los dígitos (10 o 13, con o sin guiones).
 recurso.issn_no_valido: El ISSN no es válido. Usa el formato 1234-5678 (el último puede ser X).
 recurso.doi_no_valido: El DOI no es válido. Debe empezar con 10. (por ejemplo 10.1016/j.cell.2020.01.001).
+autor.orcid_no_valido: El ORCID no es válido. Revisa los 16 dígitos (el último puede ser X).
+autor.orcid_repetido: Ya hay otro autor con este ORCID.
+editorial.nombre_repetido: Ya existe una editorial con este nombre.
+pais.codigo_repetido: Ya existe un país con este código.
+pais.codigo_no_valido: Usa el código ISO de 2 letras, p. ej. CL.

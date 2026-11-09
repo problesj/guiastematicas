@@ -53,6 +53,9 @@ class RecursoRepository extends ServiceEntityRepository
         }
 
         return $consulta->leftJoin('r.materias', 'm')->addSelect('m')
+            ->leftJoin('r.autorias', 'ra')->addSelect('ra')
+            ->leftJoin('ra.autor', 'au')->addSelect('au')
+            ->leftJoin('r.editorial', 'ed')->addSelect('ed')
             ->orderBy('r.letra', 'ASC')
             ->addOrderBy('r.titulo', 'ASC')
             ->getQuery()->getResult();
@@ -112,7 +115,9 @@ class RecursoRepository extends ServiceEntityRepository
     private static function filtrarTexto(QueryBuilder $consulta, string $texto): void
     {
         $consulta->andWhere('r.titulo LIKE :texto OR r.nombresAlternativos LIKE :texto OR r.descripcion LIKE :texto OR r.proveedor LIKE :texto'
-            .' OR r.autores LIKE :texto OR r.editorial LIKE :texto OR r.isbn LIKE :texto OR r.eisbn LIKE :texto OR r.issn LIKE :texto OR r.eissn LIKE :texto OR r.codigoNorma LIKE :texto')
+            .' OR EXISTS (SELECT sra.id FROM App\\Entity\\RecursoAutor sra JOIN sra.autor sau WHERE sra.recurso = r AND (sau.apellidos LIKE :texto OR sau.nombres LIKE :texto OR sau.orcid LIKE :texto))'
+            .' OR EXISTS (SELECT sed.id FROM App\\Entity\\Editorial sed WHERE sed = r.editorial AND sed.nombre LIKE :texto)'
+            .' OR r.isbn LIKE :texto OR r.eisbn LIKE :texto OR r.issn LIKE :texto OR r.eissn LIKE :texto OR r.codigoNorma LIKE :texto')
             ->setParameter('texto', '%'.addcslashes(trim($texto), '%_\\').'%');
     }
 }

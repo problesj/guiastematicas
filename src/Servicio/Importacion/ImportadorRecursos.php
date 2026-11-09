@@ -12,6 +12,7 @@ use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
 use App\Servicio\GeneradorSlug;
 use App\Servicio\ProxyAccesum;
+use App\Servicio\RegistroBibliografico;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date as FechaExcel;
@@ -62,14 +63,17 @@ final class ImportadorRecursos
         'organismo' => ['organismo', 'organismoemisor', 'entidademisora', 'issuingbody'],
     ];
 
-    /** Columna del archivo => setter de Recurso, para los campos de texto libre. */
+    /**
+     * Columna del archivo => setter de Recurso, para los campos de texto libre. Autores y editorial no tienen setter
+     * de texto: se buscan o crean en sus tablas al aplicar (ver RegistroBibliografico).
+     */
     private const array CAMPOS_TEXTO = [
         'descripcion' => ['setDescripcion', 3000],
         'descripcion_en' => ['setDescripcionEn', 3000],
         'proveedor' => ['setProveedor', 120],
         'nombres_alternativos' => ['setNombresAlternativos', 255],
-        'autores' => ['setAutores', 500],
-        'editorial' => ['setEditorial', 150],
+        'autores' => [null, 2000],
+        'editorial' => [null, 150],
         'fuente' => ['setFuente', 255],
         'volumen' => ['setVolumen', 20],
         'fasciculo' => ['setFasciculo', 20],
@@ -102,6 +106,7 @@ final class ImportadorRecursos
         private readonly GeneradorSlug $slugs,
         private readonly ValidatorInterface $validador,
         private readonly LectorBibliografia $lectorBibliografia,
+        private readonly RegistroBibliografico $registro,
     ) {
     }
 
@@ -306,7 +311,7 @@ final class ImportadorRecursos
             $d = $fila->datos;
             $recurso->setTitulo($d['titulo'])->setUrl($d['url'])->setRequiereProxy($d['requiere_proxy']);
             foreach (self::CAMPOS_TEXTO + self::IDENTIFICADORES as $campo => [$metodo]) {
-                if (\array_key_exists($campo, $d)) {
+                if (null !== $metodo && \array_key_exists($campo, $d)) {
                     $recurso->{$metodo}($d[$campo]);
                 }
             }
@@ -331,9 +336,17 @@ final class ImportadorRecursos
             if (\array_key_exists('prueba_hasta', $d)) {
                 $recurso->setPruebaHasta($d['prueba_hasta']);
             }
-            // En listas de bases de datos la columna "Editorial" suele ser el proveedor.
-            if (null !== $recurso->getEditorial() && !$recurso->getTipo()->usaCampo('editorial') && null === $recurso->getProveedor()) {
-                $recurso->setProveedor(mb_substr($recurso->getEditorial(), 0, 120));
+            $tipo = $recurso->getTipo();
+            if (\array_key_exists('autores', $d) && $tipo->usaCampo('autores')) {
+                $recurso->setAutores($this->registro->autoresDesdeTexto($d['autores']));
+            }
+            if (\array_key_exists('editorial', $d)) {
+                if ($tipo->usaCampo('editorial')) {
+                    $recurso->setEditorial($this->registro->editorial($d['editorial']));
+                } elseif (null !== $d['editorial'] && null === $recurso->getProveedor()) {
+                    // En listas de bases de datos la columna "Editorial" suele ser el proveedor.
+                    $recurso->setProveedor(mb_substr($d['editorial'], 0, 120));
+                }
             }
             $recurso->limpiarCamposNoAplicables();
 

@@ -1,0 +1,47 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.paises'|trans }}{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado-accion">
+        <h1>{{ 'panel.paises'|trans }}</h1>
+        <div class="encabezado-accion__botones">
+            <form method="post" action="{{ path('admin_paises_completar') }}" class="en-linea">
+                <input type="hidden" name="_token" value="{{ csrf_token('completar-paises') }}">
+                <button type="submit" class="boton boton--secundario">{{ 'pais.completar'|trans }}</button>
+            </form>
+            <a class="boton" href="{{ path('admin_pais_nuevo') }}">{{ 'pais.nuevo'|trans }}</a>
+        </div>
+    </div>
+    <p class="campo__ayuda">{{ 'pais.ayuda'|trans }}</p>
+
+    {% if paises is empty %}
+        <p>{{ 'pais.vacio'|trans }}</p>
+    {% else %}
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'pais.codigo'|trans }}</th>
+                        <th scope="col">{{ 'pais.nombre'|trans }}</th>
+                        <th scope="col">{{ 'pais.nombre_en'|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pais in paises %}
+                        <tr>
+                            <td>{{ pais.codigo }}</td>
+                            <td>{{ pais.nombre }}</td>
+                            <td lang="en">{{ pais.nombreEn }}</td>
+                            <td class="tabla__acciones">
+                                <a href="{{ path('admin_pais_editar', {id: pais.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ pais.nombre }}</span></a>
+                                {% include 'admin/_eliminar.html.twig' with {ruta: 'admin_pais_eliminar', id: pais.id, token: 'eliminar-pais-' ~ pais.id, nombre: pais.nombre} %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

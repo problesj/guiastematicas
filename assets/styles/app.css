@@ -258,3 +258,19 @@ a:hover { color: var(--color-principal-oscuro); }
     .portada h1 { font-size: 1.75rem; }
     .buscador { flex-direction: column; }
 }
+
+/* Selector de autores del formulario de recursos */
+.campo--completo { grid-column: 1 / -1; }
+.selector-autores__lista { margin: 0 0 0.5rem; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.25rem; }
+.selector-autores__autor { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; background: var(--color-fondo-suave); border: 1px solid var(--color-gris); border-radius: 4px; }
+.selector-autores__autor > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.selector-autores__vacio { color: var(--color-texto-secundario); font-style: italic; }
+.selector-autores__boton { min-width: 2rem; padding: 0.1rem 0.4rem; font: inherit; line-height: 1.4; color: var(--color-texto); background: #fff; border: 1px solid var(--color-gris); border-radius: 4px; cursor: pointer; }
+.selector-autores__boton:disabled { opacity: 0.4; cursor: default; }
+.selector-autores__busqueda { position: relative; }
+.selector-autores__busqueda input { width: 100%; }
+.selector-autores__sugerencias { position: absolute; z-index: 10; left: 0; right: 0; max-height: 16rem; overflow-y: auto; margin: 0.125rem 0 0; padding: 0; list-style: none; background: #fff; border: 1px solid var(--color-gris); border-radius: 4px; box-shadow: 0 4px 12px rgb(0 0 0 / 0.12); }
+.selector-autores__opcion { padding: 0.4rem 0.6rem; cursor: pointer; }
+.selector-autores__opcion small { color: var(--color-texto-secundario); }
+.selector-autores__opcion[aria-selected="true"], .selector-autores__opcion:hover { background: var(--color-fondo-suave); }
+.selector-autores__opcion--nueva { font-style: italic; border-top: 1px solid var(--color-gris); }

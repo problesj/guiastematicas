@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\Autor;
 use App\Entity\Departamento;
+use App\Entity\Editorial;
 use App\Entity\Materia;
+use App\Entity\Pais;
 use App\Entity\Recurso;
 use App\Entity\Usuario;
 use App\Enum\Rol;
 use App\Enum\Sede;
+use App\Enum\Sexo;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
+use App\Servicio\CatalogoPaises;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -98,6 +103,22 @@ final class AppFixtures extends Fixture
             }
             $manager->persist($recurso);
         }
+
+        $paises = [];
+        foreach (CatalogoPaises::PAISES as $codigo => [$nombre, $nombreEn]) {
+            $paises[$codigo] = (new Pais())->setCodigo($codigo)->setNombre($nombre)->setNombreEn($nombreEn);
+            $manager->persist($paises[$codigo]);
+        }
+
+        $autores = [
+            (new Autor())->setApellidos('Pérez Rojas')->setNombres('Ana María')->setSexo(Sexo::Femenino)->setPais($paises['CL'])->setOrcid('0000-0002-1825-0097'),
+            (new Autor())->setApellidos('Soto')->setNombres('Luis')->setSexo(Sexo::Masculino)->setPais($paises['CL']),
+        ];
+        $editorial = (new Editorial())->setNombre('Ediciones Universidad Católica del Norte')->setPais($paises['CL']);
+        $libro = (new Recurso())->setTitulo('Introducción a la geología del norte de Chile')->setUrl('https://ebooks.ucn.cl/geologia')
+            ->setTipo(TipoRecurso::Libros)->setAcceso(TipoAcceso::Suscripcion)->setAnio(2021)->setIsbn('978-956-11-2345-8')
+            ->setEditorial($editorial)->setAutores($autores)->addMateria($materias[4]);
+        $manager->persist($libro);
 
         $manager->flush();
     }

@@ -19,6 +19,8 @@
                 <p class="panel__grupo">{{ 'panel.contenido'|trans }}</p>
                 <ul>
                     <li><a href="{{ path('panel_recursos') }}" {% if ruta starts with 'panel_recurso' %}aria-current="page"{% endif %}>{{ 'panel.recursos'|trans }}</a></li>
+                    <li><a href="{{ path('panel_autores') }}" {% if ruta starts with 'panel_autor' %}aria-current="page"{% endif %}>{{ 'panel.autores'|trans }}</a></li>
+                    <li><a href="{{ path('panel_editoriales') }}" {% if ruta starts with 'panel_editorial' %}aria-current="page"{% endif %}>{{ 'panel.editoriales'|trans }}</a></li>
                 </ul>
             {% endif %}
             {% if is_granted('ROLE_ADMINISTRADOR') %}
@@ -27,6 +29,7 @@
                     <li><a href="{{ path('admin_usuarios') }}" {% if ruta starts with 'admin_usuario' %}aria-current="page"{% endif %}>{{ 'panel.usuarios'|trans }}</a></li>
                     <li><a href="{{ path('admin_departamentos') }}" {% if ruta starts with 'admin_departamento' %}aria-current="page"{% endif %}>{{ 'panel.departamentos'|trans }}</a></li>
                     <li><a href="{{ path('admin_materias') }}" {% if ruta starts with 'admin_materia' %}aria-current="page"{% endif %}>{{ 'panel.materias'|trans }}</a></li>
+                    <li><a href="{{ path('admin_paises') }}" {% if ruta starts with 'admin_pais' %}aria-current="page"{% endif %}>{{ 'panel.paises'|trans }}</a></li>
                 </ul>
             {% endif %}
         </nav>

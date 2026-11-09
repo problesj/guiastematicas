@@ -54,6 +54,9 @@ panel:
   usuarios: Users
   departamentos: Departments
   materias: Subjects
+  paises: Countries
+  autores: Authors
+  editoriales: Publishers
   bienvenida: Hello, %nombre%
   bienvenida_texto: Manage your profile here and, depending on your role, the site's accounts and data.
   perfil_texto: Your position, photo, contact details and subjects of expertise.
@@ -154,6 +157,7 @@ formulario:
   ninguno: (none)
   ninguna: (none)
   ambas_sedes: Both campuses
+  sin_pais: (no country)
 personal:
   titulo: Librarians
   bajada: Meet the UCN Libraries team and find the specialist for your field.
@@ -234,8 +238,9 @@ recurso:
   grupo_bibliograficos: Bibliographic details
   sin_bibliograficos: This resource type has no additional bibliographic details.
   autores: Authors
-  autores_ayuda: Separated by semicolons.
+  autores_ayuda: "Search by first or last name and pick from the list. If the author is new, type «Last name, First names» and choose «Add». Use the arrows to order them as in the citation."
   editorial: Publisher
+  editorial_ayuda: Pick one from the list or type a new one; new publishers are added to Publishers on save.
   anio: Year of publication
   isbn: ISBN
   eisbn: e-ISBN
@@ -304,8 +309,8 @@ importacion:
     nombres_alternativos: Separated by semicolons.
     visible: Yes or No. If missing, Yes.
     prueba_hasta: Date (dd-mm-yyyy).
-    autores: Books and multimedia. Several separated by semicolons.
-    editorial: Books and journals. For other types, used as the provider if that is missing.
+    autores: "Books, articles and multimedia. Several separated by semicolons, each as «Last name, First names». New ones are added to Authors."
+    editorial: Books and journals (new ones are added to Publishers). For other types, used as the provider if that is missing.
     anio: Books, standards and multimedia. 4-digit year.
     isbn: Books. An invalid ISBN is left empty with a warning.
     eisbn: Books. An invalid ISBN is left empty with a warning.
@@ -369,3 +374,56 @@ importacion:
   materias_elegidas: "{0}No subjects|{1}1 subject|]1,Inf[%count% subjects"
   materia_nueva: new
   aviso_url_descartada: "URL \"%valor%\" not valid; discarded."
+sexo:
+  femenino: Female
+  masculino: Male
+  otro: Other
+  no_informado: Not stated
+autor:
+  nuevo: New author
+  editar: Edit author
+  guardado: Author saved.
+  eliminado: Author deleted. It was removed from the resources where it appeared.
+  nombres: First names
+  apellidos: Last names
+  apellidos_ayuda: For a corporate author (e.g. World Health Organization) type the full name here and leave first names empty.
+  orcid: ORCID iD
+  orcid_ayuda: 16 digits, e.g. 0000-0002-1825-0097. The https://orcid.org/... address is also accepted.
+  sexo: Sex
+  pais: Country
+  recursos: Resources
+  buscar: Search
+  buscar_placeholder: Name, last name or ORCID
+  vacio: No authors yet. Add them here, from a resource form or by importing.
+  limite: Showing the first %count%. Use search to find others.
+  agregar_nuevo: Add «%nombre%» as a new author
+  nuevo_etiqueta: new
+  quitar: Remove
+  subir: Move up
+  bajar: Move down
+  ninguno: No authors.
+  elegidos: Selected authors
+editorial:
+  nueva: New publisher
+  editar: Edit publisher
+  guardada: Publisher saved.
+  eliminada: Publisher deleted. Its resources no longer have a publisher.
+  nombre: Name
+  pais: Country
+  recursos: Resources
+  buscar: Search
+  buscar_placeholder: Publisher name
+  vacio: No publishers yet. Add them here, from a resource form or by importing.
+pais:
+  nuevo: New country
+  editar: Edit country
+  guardado: Country saved.
+  eliminado: Country deleted. Its authors and publishers no longer have a country.
+  codigo: Code
+  codigo_ayuda: Two-letter ISO 3166-1 code, e.g. CL.
+  nombre: Name (Spanish)
+  nombre_en: Name in English
+  completar: Complete ISO list
+  completados: "{0}The list was already complete.|{1}1 country added.|]1,Inf[%count% countries added."
+  ayuda: List of ISO 3166-1 countries and territories used for authors and publishers.
+  vacio: No countries. Use «Complete ISO list» to load them.

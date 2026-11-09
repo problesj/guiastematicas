@@ -1,0 +1,53 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.autores'|trans }}{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado-accion">
+        <h1>{{ 'panel.autores'|trans }}</h1>
+        <a class="boton" href="{{ path('panel_autor_nuevo') }}">{{ 'autor.nuevo'|trans }}</a>
+    </div>
+
+    <form method="get" class="filtro" role="search">
+        <label for="q" class="solo-lectores">{{ 'autor.buscar'|trans }}</label>
+        <input type="search" id="q" name="q" value="{{ q }}" placeholder="{{ 'autor.buscar_placeholder'|trans }}" class="filtro__texto">
+        <button type="submit" class="boton boton--secundario">{{ 'autor.buscar'|trans }}</button>
+    </form>
+
+    {% if autores is empty %}
+        <p>{{ 'autor.vacio'|trans }}</p>
+    {% else %}
+        {% if autores|length >= limite %}<p class="campo__ayuda">{{ 'autor.limite'|trans({'%count%': limite}) }}</p>{% endif %}
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'autor.apellidos'|trans }}</th>
+                        <th scope="col">{{ 'autor.nombres'|trans }}</th>
+                        <th scope="col">{{ 'autor.orcid'|trans }}</th>
+                        <th scope="col">{{ 'autor.sexo'|trans }}</th>
+                        <th scope="col">{{ 'autor.pais'|trans }}</th>
+                        <th scope="col">{{ 'autor.recursos'|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for autor in autores %}
+                        <tr>
+                            <td>{{ autor.apellidos }}</td>
+                            <td>{{ autor.nombres }}</td>
+                            <td>{% if autor.orcid %}<a href="{{ autor.enlaceOrcid }}" target="_blank" rel="noopener">{{ autor.orcid }}</a>{% else %}—{% endif %}</td>
+                            <td>{{ autor.sexo.etiqueta|trans }}</td>
+                            <td>{{ autor.pais ? autor.pais.nombreTraducido(app.request.locale) : '—' }}</td>
+                            <td>{{ autor.cantidadRecursos }}</td>
+                            <td class="tabla__acciones">
+                                <a href="{{ path('panel_autor_editar', {id: autor.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ autor.nombreCompleto }}</span></a>
+                                {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_autor_eliminar', id: autor.id, token: 'eliminar-autor-' ~ autor.id, nombre: autor.nombreCompleto} %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

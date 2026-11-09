@@ -78,10 +78,14 @@ class Recurso
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $pruebaHasta = null;
 
-    /** Autores o responsables, separados por punto y coma (libros, multimedia). */
-    #[ORM\Column(length: 500, nullable: true)]
-    #[Assert\Length(max: 500)]
-    private ?string $autores = null;
+    /**
+     * Autores en orden (libros, artículos, multimedia).
+     *
+     * @var Collection<int, RecursoAutor>
+     */
+    #[ORM\OneToMany(targetEntity: RecursoAutor::class, mappedBy: 'recurso', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['posicion' => 'ASC'])]
+    private Collection $autorias;
 
     /** Revista o publicación donde aparece un artículo. */
     #[ORM\Column(length: 255, nullable: true)]
@@ -109,9 +113,9 @@ class Recurso
     private ?string $doi = null;
 
     /** Editorial o editor (libros, revistas). Distinto del proveedor o plataforma de acceso. */
-    #[ORM\Column(length: 150, nullable: true)]
-    #[Assert\Length(max: 150)]
-    private ?string $editorial = null;
+    #[ORM\ManyToOne(cascade: ['persist'])]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Editorial $editorial = null;
 
     #[ORM\Column(length: 20, nullable: true)]
     #[Assert\Isbn(message: 'recurso.isbn_no_valido')]
@@ -167,6 +171,7 @@ class Recurso
     public function __construct()
     {
         $this->materias = new ArrayCollection();
+        $this->autorias = new ArrayCollection();
         $this->creadoEn = new \DateTimeImmutable();
         $this->actualizadoEn = $this->creadoEn;
     }
@@ -322,16 +327,56 @@ class Recurso
         return $this;
     }
 
-    public function getAutores(): ?string
+    /** @return list<Autor> en el orden de la cita */
+    public function getAutores(): array
     {
-        return $this->autores;
+        // Se ordena aquí porque OrderBy solo se aplica al cargar desde la base, no tras setAutores().
+        $autorias = $this->autorias->toArray();
+        usort($autorias, fn (RecursoAutor $a, RecursoAutor $b) => $a->getPosicion() <=> $b->getPosicion());
+
+        return array_map(fn (RecursoAutor $a) => $a->getAutor(), $autorias);
     }
 
-    public function setAutores(?string $autores): static
+    /**
+     * Reemplaza la lista de autores conservando el orden dado. Reutiliza los vínculos que ya existían para no
+     * borrar y volver a crear la misma fila (choca con la restricción única recurso + autor).
+     *
+     * @param iterable<Autor> $autores
+     */
+    public function setAutores(iterable $autores): static
     {
-        $this->autores = self::textoONulo($autores);
-
+        $actuales = [];
+        foreach ($this->autorias as $autoria) {
+            $actuales[spl_object_id($autoria->getAutor())] = $autoria;
+        }
+        $posicion = 0;
+        $vistos = [];
+        foreach ($autores as $autor) {
+            $clave = spl_object_id($autor);
+            if (isset($vistos[$clave])) {
+                continue;
+            }
+            $vistos[$clave] = true;
+            if (isset($actuales[$clave])) {
+                $actuales[$clave]->setPosicion($posicion);
+                unset($actuales[$clave]);
+            } else {
+                $this->autorias->add(new RecursoAutor($this, $autor, $posicion));
+            }
+            ++$posicion;
+        }
+        foreach ($actuales as $sobrante) {
+            $this->autorias->removeElement($sobrante);
+        }
         return $this;
+    }
+
+    /** Autores en forma bibliográfica: "Pérez, Ana; Soto, Luis". */
+    public function getAutoresTexto(): ?string
+    {
+        $nombres = array_map(fn (Autor $a) => $a->getNombreCompleto(), $this->getAutores());
+
+        return [] === $nombres ? null : implode('; ', $nombres);
     }
 
     public function getFuente(): ?string
@@ -413,14 +458,14 @@ class Recurso
         return $this;
     }
 
-    public function getEditorial(): ?string
+    public function getEditorial(): ?Editorial
     {
         return $this->editorial;
     }
 
-    public function setEditorial(?string $editorial): static
+    public function setEditorial(?Editorial $editorial): static
     {
-        $this->editorial = self::textoONulo($editorial);
+        $this->editorial = $editorial;
 
         return $this;
     }
@@ -530,7 +575,11 @@ class Recurso
     {
         $datos = [];
         foreach ($this->tipo->campos() as $campo) {
-            $valor = $this->{$campo};
+            $valor = match ($campo) {
+                'autores' => $this->getAutoresTexto(),
+                'editorial' => $this->editorial?->getNombre(),
+                default => $this->{$campo},
+            };
             if (null === $valor) {
                 continue;
             }
@@ -545,7 +594,12 @@ class Recurso
     public function limpiarCamposNoAplicables(): static
     {
         foreach (TipoRecurso::CAMPOS_BIBLIOGRAFICOS as $campo) {
-            if (!$this->tipo->usaCampo($campo)) {
+            if ($this->tipo->usaCampo($campo)) {
+                continue;
+            }
+            if ('autores' === $campo) {
+                $this->autorias->clear();
+            } else {
                 $this->{$campo} = null;
             }
         }

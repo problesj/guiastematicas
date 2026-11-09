@@ -25,9 +25,16 @@
             <p class="campo__ayuda" data-campos-tipo-target="vacio" hidden>{{ 'recurso.sin_bibliograficos'|trans }}</p>
             <div class="formulario__columnas">
                 {% for campo in campos_bibliograficos %}
-                    <div data-campos-tipo-target="campo" data-tipos="{{ tipos_por_campo[campo]|join(' ') }}">{{ form_row(formulario[campo]) }}</div>
+                    {% if campo == 'autores' %}
+                        <div class="campo--completo" data-campos-tipo-target="campo" data-tipos="{{ tipos_por_campo[campo]|join(' ') }}">{% include 'panel/recursos/_selector_autores.html.twig' %}</div>
+                    {% else %}
+                        <div data-campos-tipo-target="campo" data-tipos="{{ tipos_por_campo[campo]|join(' ') }}">{{ form_row(formulario[campo]) }}</div>
+                    {% endif %}
                 {% endfor %}
             </div>
+            <datalist id="editoriales-existentes">
+                {% for nombre in editoriales %}<option value="{{ nombre }}"></option>{% endfor %}
+            </datalist>
         </fieldset>
         <fieldset>
             <legend>{{ 'recurso.materias'|trans }}</legend>
