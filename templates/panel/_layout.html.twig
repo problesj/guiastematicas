@@ -15,6 +15,12 @@
                     <li><a href="{{ path('panel_contrasena') }}" {% if ruta == 'panel_contrasena' %}aria-current="page"{% endif %}>{{ 'panel.contrasena'|trans }}</a></li>
                 {% endif %}
             </ul>
+            {% if is_granted('ROLE_EDITOR') %}
+                <p class="panel__grupo">{{ 'panel.contenido'|trans }}</p>
+                <ul>
+                    <li><a href="{{ path('panel_recursos') }}" {% if ruta starts with 'panel_recurso' %}aria-current="page"{% endif %}>{{ 'panel.recursos'|trans }}</a></li>
+                </ul>
+            {% endif %}
             {% if is_granted('ROLE_ADMINISTRADOR') %}
                 <p class="panel__grupo">{{ 'panel.administracion'|trans }}</p>
                 <ul>

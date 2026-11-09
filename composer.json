@@ -12,6 +12,7 @@
         "doctrine/orm": "^3.7",
         "knpuniversity/oauth2-client-bundle": "^2.20",
         "league/oauth2-google": "^5.0",
+        "phpoffice/phpspreadsheet": "^5.11",
         "symfony/apache-pack": "*",
         "symfony/asset": "7.4.*",
         "symfony/asset-mapper": "7.4.*",

@@ -68,3 +68,18 @@ Para Google, crear un "ID de cliente OAuth" de tipo aplicación web en Google Cl
 
 Roles: **Administrador** (usuarios, departamentos, materias y todo el sitio), **Editor** (crea y publica sus guías)
 y **Colaborador** (edita las guías que le compartan). Las guías llegan en la fase 4.
+
+## Bases de datos A-Z y proxy AccesUM
+
+La lista pública está en `/es/bases-de-datos`. Editores y administradores la gestionan en **Panel → Bases de datos**,
+uno a uno o importando el Excel (**Importar desde Excel**). La importación muestra una vista previa antes de guardar,
+reconoce los encabezados en español o inglés y ofrece una plantilla descargable. Un recurso que ya existe (misma URL o
+mismo título) se actualiza en vez de duplicarse.
+
+Cada recurso guarda su URL original y la marca "requiere proxy". El enlace público se arma con `PROXY_URL` (en `.env.local`):
+
+- prefijo: `PROXY_URL=https://accesum.ucn.cl/login?url=` (se agrega la URL original), o
+- plantilla: `PROXY_URL=https://proxy.ucn.cl/login?qurl={url}` (se reemplaza `{url}` por la URL codificada).
+
+Si el Excel trae las URL con el prefijo del proxy, la importación lo quita y marca "requiere proxy".
+Los clics de salida (`/bases-de-datos/{id}/ir`) se cuentan por recurso.

@@ -1,0 +1,409 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Servicio\Importacion;
+
+use App\Entity\Materia;
+use App\Entity\Recurso;
+use App\Enum\TipoAcceso;
+use App\Enum\TipoRecurso;
+use App\Repository\MateriaRepository;
+use App\Repository\RecursoRepository;
+use App\Servicio\GeneradorSlug;
+use App\Servicio\ProxyAccesum;
+use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date as FechaExcel;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Symfony\Component\String\Slugger\AsciiSlugger;
+
+/**
+ * Importa la lista A-Z desde Excel (.xlsx, .xls, .ods) o CSV.
+ *
+ * Las columnas se reconocen por su encabezado, en español o inglés y sin importar tildes ni mayúsculas
+ * (ver COLUMNAS). Solo "titulo" y "url" son obligatorias. Un recurso existente (misma URL o mismo título)
+ * se actualiza; las materias que no existen se crean.
+ */
+final class ImportadorRecursos
+{
+    /** Campo => encabezados aceptados, ya normalizados (minúsculas, sin tildes ni signos). */
+    public const array COLUMNAS = [
+        'titulo' => ['titulo', 'nombre', 'basededatos', 'basesdedatos', 'recurso', 'title', 'name', 'database', 'nombredelrecurso'],
+        'url' => ['url', 'enlace', 'link', 'direccion', 'urlacceso', 'urloriginal', 'sitio'],
+        'requiere_proxy' => ['proxy', 'requiereproxy', 'accesum', 'viaproxy', 'usaproxy', 'accesoremoto'],
+        'descripcion' => ['descripcion', 'description', 'resumen', 'contenido', 'descripcionespanol'],
+        'descripcion_en' => ['descripcionen', 'descripcioningles', 'descriptionen', 'englishdescription'],
+        'proveedor' => ['proveedor', 'editor', 'editorial', 'plataforma', 'vendor', 'publisher'],
+        'tipo' => ['tipo', 'formato', 'type', 'tipoderecurso'],
+        'acceso' => ['acceso', 'tipodeacceso', 'access', 'licencia'],
+        'materias' => ['materias', 'materia', 'areas', 'area', 'disciplinas', 'disciplina', 'subjects', 'carreras', 'carrera'],
+        'nombres_alternativos' => ['nombresalternativos', 'alias', 'siglas', 'otrosnombres'],
+        'visible' => ['visible', 'activo', 'activa', 'mostrar', 'publicado'],
+        'prueba_hasta' => ['pruebahasta', 'finprueba', 'finperiododeprueba', 'trialuntil'],
+    ];
+
+    public const int MAXIMO_FILAS = 5000;
+
+    /** Prefijos de proxy habituales (EZproxy y similares) que se reconocen aunque PROXY_URL no esté configurado. */
+    private const string PATRON_PROXY = '~^https?://[^/\s]+/login\?q?url=(.+)$~i';
+
+    public function __construct(
+        private readonly RecursoRepository $recursos,
+        private readonly MateriaRepository $materiasRepo,
+        private readonly EntityManagerInterface $em,
+        private readonly ProxyAccesum $proxy,
+        private readonly GeneradorSlug $slugs,
+    ) {
+    }
+
+    /**
+     * @return list<FilaImportacion>
+     *
+     * @throws ArchivoNoValidoException si el archivo no se puede leer o no tiene las columnas mínimas
+     */
+    public function leer(string $ruta): array
+    {
+        try {
+            // Sin READ_DATA_ONLY para conservar los hipervínculos de las celdas.
+            $hoja = IOFactory::load($ruta, 0, ['Xlsx', 'Xls', 'Ods', 'Csv'])->getActiveSheet();
+        } catch (\Throwable) {
+            throw new ArchivoNoValidoException('importacion.archivo_ilegible');
+        }
+
+        [$filaEncabezado, $columnas] = $this->detectarEncabezados($hoja);
+        if (!isset($columnas['titulo']) || (!isset($columnas['url']) && !$this->tituloTieneHipervinculos($hoja, $columnas['titulo'], $filaEncabezado))) {
+            throw new ArchivoNoValidoException('importacion.sin_columnas');
+        }
+
+        $filas = [];
+        $vistas = [];
+        $ultimaFila = $hoja->getHighestDataRow();
+        if ($ultimaFila - $filaEncabezado > self::MAXIMO_FILAS) {
+            throw new ArchivoNoValidoException('importacion.demasiadas_filas');
+        }
+        for ($n = $filaEncabezado + 1; $n <= $ultimaFila; ++$n) {
+            $fila = $this->interpretarFila($hoja, $n, $columnas);
+            if (null === $fila) {
+                continue;
+            }
+
+            $clave = mb_strtolower((string) ($fila->datos['url'] ?? ''));
+            if ('' !== $clave && isset($vistas[$clave])) {
+                $fila->errores[] = 'importacion.error_repetido|'.$vistas[$clave];
+            } elseif ('' !== $clave) {
+                $vistas[$clave] = $n;
+            }
+
+            if ($fila->esValida()) {
+                $fila->existente = $this->recursos->buscarParaImportar($fila->datos['url'], $fila->datos['titulo']);
+            }
+            $filas[] = $fila;
+        }
+
+        return $filas;
+    }
+
+    /**
+     * Crea o actualiza los recursos de las filas válidas.
+     *
+     * @param list<FilaImportacion> $filas
+     *
+     * @return array{creados: int, actualizados: int, omitidos: int, materias_nuevas: int}
+     */
+    public function aplicar(array $filas): array
+    {
+        $resultado = ['creados' => 0, 'actualizados' => 0, 'omitidos' => 0, 'materias_nuevas' => 0];
+        $materias = $this->indiceMaterias();
+
+        foreach ($filas as $fila) {
+            if (!$fila->esValida()) {
+                ++$resultado['omitidos'];
+                continue;
+            }
+
+            $recurso = $fila->existente ?? new Recurso();
+            $d = $fila->datos;
+            $recurso->setTitulo($d['titulo'])->setUrl($d['url'])->setRequiereProxy($d['requiere_proxy']);
+            foreach (['descripcion' => 'setDescripcion', 'descripcion_en' => 'setDescripcionEn', 'proveedor' => 'setProveedor', 'nombres_alternativos' => 'setNombresAlternativos'] as $campo => $metodo) {
+                if (\array_key_exists($campo, $d)) {
+                    $recurso->{$metodo}($d[$campo]);
+                }
+            }
+            if (isset($d['tipo'])) {
+                $recurso->setTipo($d['tipo']);
+            }
+            if (isset($d['acceso'])) {
+                $recurso->setAcceso($d['acceso']);
+            }
+            if (\array_key_exists('visible', $d)) {
+                $recurso->setVisible($d['visible']);
+            }
+            if (\array_key_exists('prueba_hasta', $d)) {
+                $recurso->setPruebaHasta($d['prueba_hasta']);
+            }
+
+            foreach ($fila->materias as $nombre) {
+                $clave = self::normalizar($nombre);
+                if (!isset($materias[$clave])) {
+                    $materia = (new Materia())->setNombre($nombre);
+                    $materia->setSlug($this->slugUnico($nombre, $materias));
+                    $this->em->persist($materia);
+                    $materias[$clave] = $materia;
+                    ++$resultado['materias_nuevas'];
+                }
+                $recurso->addMateria($materias[$clave]);
+            }
+
+            if (null === $fila->existente) {
+                $this->em->persist($recurso);
+                ++$resultado['creados'];
+            } else {
+                ++$resultado['actualizados'];
+            }
+        }
+
+        $this->em->flush();
+
+        return $resultado;
+    }
+
+    /** Quita tildes, mayúsculas y todo lo que no sea letra o número: "Base de Datos" → "basededatos". */
+    public static function normalizar(string $texto): string
+    {
+        return preg_replace('/[^a-z0-9]/', '', (new AsciiSlugger())->slug($texto)->lower()->toString()) ?? '';
+    }
+
+    /**
+     * Busca la fila de encabezados entre las 10 primeras: la primera que tenga al menos dos columnas conocidas.
+     *
+     * @return array{0: int, 1: array<string, string>} número de fila y campo => letra de columna
+     */
+    private function detectarEncabezados(Worksheet $hoja): array
+    {
+        $ultimaColumna = $hoja->getHighestDataColumn();
+        for ($n = 1; $n <= min(10, $hoja->getHighestDataRow()); ++$n) {
+            $columnas = [];
+            foreach ($hoja->getRowIterator($n, $n)->current()->getCellIterator('A', $ultimaColumna) as $celda) {
+                $encabezado = self::normalizar((string) $celda->getValue());
+                foreach (self::COLUMNAS as $campo => $aceptados) {
+                    if ('' !== $encabezado && !isset($columnas[$campo]) && \in_array($encabezado, $aceptados, true)) {
+                        $columnas[$campo] = $celda->getColumn();
+                        break;
+                    }
+                }
+            }
+            if (\count($columnas) >= 2 || isset($columnas['titulo'])) {
+                return [$n, $columnas];
+            }
+        }
+
+        return [1, []];
+    }
+
+    private function tituloTieneHipervinculos(Worksheet $hoja, string $columna, int $filaEncabezado): bool
+    {
+        $siguiente = $filaEncabezado + 1;
+
+        return $hoja->cellExists($columna.$siguiente) && $hoja->getCell($columna.$siguiente)->hasHyperlink();
+    }
+
+    /** @param array<string, string> $columnas */
+    private function interpretarFila(Worksheet $hoja, int $n, array $columnas): ?FilaImportacion
+    {
+        $valor = function (string $campo) use ($hoja, $columnas, $n): ?string {
+            if (!isset($columnas[$campo]) || !$hoja->cellExists($columnas[$campo].$n)) {
+                return null;
+            }
+            $texto = trim((string) $hoja->getCell($columnas[$campo].$n)->getFormattedValue());
+
+            return '' === $texto ? null : $texto;
+        };
+
+        $titulo = $valor('titulo');
+        $url = $valor('url');
+        // Si no hay columna URL, o viene vacía, se usa el hipervínculo del título (común en listas en Excel).
+        if (null === $url && isset($columnas['titulo']) && $hoja->cellExists($columnas['titulo'].$n)) {
+            $celda = $hoja->getCell($columnas['titulo'].$n);
+            $url = $celda->hasHyperlink() ? trim($celda->getHyperlink()->getUrl()) : null;
+        }
+
+        if (null === $titulo && null === $url) {
+            return null; // fila vacía
+        }
+
+        $fila = new FilaImportacion($n, ['titulo' => (string) $titulo]);
+        if (null === $titulo) {
+            $fila->errores[] = 'importacion.error_sin_titulo';
+        } elseif (mb_strlen($titulo) > 200) {
+            $fila->errores[] = 'importacion.error_titulo_largo';
+        }
+
+        $traiaProxy = $this->interpretarUrl($fila, $url);
+
+        foreach (['descripcion', 'descripcion_en', 'proveedor', 'nombres_alternativos'] as $campo) {
+            if (isset($columnas[$campo])) {
+                $fila->datos[$campo] = $valor($campo);
+            }
+        }
+        if (isset($fila->datos['proveedor']) && mb_strlen($fila->datos['proveedor']) > 120) {
+            $fila->datos['proveedor'] = mb_substr($fila->datos['proveedor'], 0, 120);
+        }
+        if (isset($fila->datos['nombres_alternativos']) && mb_strlen($fila->datos['nombres_alternativos']) > 255) {
+            $fila->datos['nombres_alternativos'] = mb_substr($fila->datos['nombres_alternativos'], 0, 255);
+        }
+
+        if (null !== $tipo = $valor('tipo')) {
+            $fila->datos['tipo'] = self::interpretarTipo($tipo) ?? TipoRecurso::BaseDatos;
+            if (null === self::interpretarTipo($tipo)) {
+                $fila->avisos[] = 'importacion.aviso_tipo|'.$tipo;
+            }
+        }
+        if (null !== $acceso = $valor('acceso')) {
+            $fila->datos['acceso'] = self::interpretarAcceso($acceso);
+        }
+        if (isset($columnas['visible'])) {
+            $fila->datos['visible'] = self::interpretarBooleano($valor('visible')) ?? true;
+        }
+        if (isset($columnas['prueba_hasta'])) {
+            $fila->datos['prueba_hasta'] = $this->interpretarFecha($hoja, $columnas['prueba_hasta'].$n, $fila);
+        }
+
+        // Requiere proxy: lo que diga la columna; si no hay, sí cuando la URL traía el proxy o el recurso no es de acceso abierto.
+        $fila->datos['requiere_proxy'] = self::interpretarBooleano($valor('requiere_proxy'))
+            ?? ($traiaProxy || TipoAcceso::Abierto !== ($fila->datos['acceso'] ?? TipoAcceso::Suscripcion));
+
+        if (null !== $materias = $valor('materias')) {
+            $nombres = array_map('trim', preg_split('/[;,|\/\n]+/', $materias) ?: []);
+            $fila->materias = array_values(array_unique(array_filter($nombres, fn (string $m) => '' !== $m && mb_strlen($m) <= 150)));
+        }
+
+        return $fila;
+    }
+
+    /** Valida y guarda la URL original. Devuelve true si venía con el prefijo del proxy. */
+    private function interpretarUrl(FilaImportacion $fila, ?string $url): bool
+    {
+        if (null === $url) {
+            $fila->errores[] = 'importacion.error_sin_url';
+
+            return false;
+        }
+
+        // Si la URL viene con el prefijo del proxy, se guarda la original y se marca "requiere proxy".
+        $original = $this->proxy->quitar($url);
+        if (null === $original && 1 === preg_match(self::PATRON_PROXY, $url, $coincidencia)) {
+            $original = rawurldecode($coincidencia[1]);
+        }
+        $traiaProxy = null !== $original;
+        $url = $original ?? $url;
+
+        if (!preg_match('~^[a-z][a-z0-9+.-]*://~i', $url)) {
+            $url = 'https://'.$url;
+        }
+        if (false === filter_var($url, \FILTER_VALIDATE_URL) || !preg_match('~^https?://~i', $url)) {
+            $fila->errores[] = 'importacion.error_url|'.$url;
+        } elseif (mb_strlen($url) > 1000) {
+            $fila->errores[] = 'importacion.error_url_larga';
+        }
+
+        $fila->datos['url'] = $url;
+        if ($traiaProxy) {
+            $fila->avisos[] = 'importacion.aviso_proxy_quitado';
+        }
+
+        return $traiaProxy;
+    }
+
+    private function interpretarFecha(Worksheet $hoja, string $coordenada, FilaImportacion $fila): ?\DateTimeImmutable
+    {
+        if (!$hoja->cellExists($coordenada)) {
+            return null;
+        }
+        $valor = $hoja->getCell($coordenada)->getValue();
+        if (null === $valor || '' === $valor) {
+            return null;
+        }
+        if (is_numeric($valor)) {
+            return \DateTimeImmutable::createFromMutable(FechaExcel::excelToDateTimeObject((float) $valor))->setTime(0, 0);
+        }
+        foreach (['d-m-Y', 'd/m/Y', 'Y-m-d'] as $formato) {
+            $fecha = \DateTimeImmutable::createFromFormat('!'.$formato, trim((string) $valor));
+            if (false !== $fecha) {
+                return $fecha;
+            }
+        }
+        $fila->avisos[] = 'importacion.aviso_fecha|'.$valor;
+
+        return null;
+    }
+
+    public static function interpretarBooleano(?string $valor): ?bool
+    {
+        if (null === $valor) {
+            return null;
+        }
+
+        return match (self::normalizar($valor)) {
+            'si', 's', 'yes', 'y', 'x', '1', 'true', 'verdadero', 'v' => true,
+            'no', 'n', '0', 'false', 'falso', 'f' => false,
+            default => null,
+        };
+    }
+
+    public static function interpretarTipo(string $valor): ?TipoRecurso
+    {
+        $v = self::normalizar($valor);
+
+        return match (true) {
+            str_contains($v, 'revist') || str_contains($v, 'journal') => TipoRecurso::Revistas,
+            str_contains($v, 'libro') || str_contains($v, 'book') => TipoRecurso::Libros,
+            str_contains($v, 'repositori') => TipoRecurso::Repositorio,
+            str_contains($v, 'norma') || str_contains($v, 'standard') => TipoRecurso::Normas,
+            str_contains($v, 'video') || str_contains($v, 'multimedia') || str_contains($v, 'audio') || str_contains($v, 'imagen') => TipoRecurso::Multimedia,
+            str_contains($v, 'herramienta') || str_contains($v, 'gestor') || str_contains($v, 'tool') || str_contains($v, 'software') => TipoRecurso::Herramienta,
+            str_contains($v, 'sitio') || str_contains($v, 'web') || str_contains($v, 'portal') => TipoRecurso::SitioWeb,
+            str_contains($v, 'base') || str_contains($v, 'database') || str_contains($v, 'bd') => TipoRecurso::BaseDatos,
+            default => null,
+        };
+    }
+
+    public static function interpretarAcceso(string $valor): TipoAcceso
+    {
+        $v = self::normalizar($valor);
+
+        return match (true) {
+            str_contains($v, 'abiert') || str_contains($v, 'open') || str_contains($v, 'libre') || str_contains($v, 'gratuit') || str_contains($v, 'free') => TipoAcceso::Abierto,
+            str_contains($v, 'prueba') || str_contains($v, 'trial') => TipoAcceso::Prueba,
+            default => TipoAcceso::Suscripcion,
+        };
+    }
+
+    /** @return array<string, Materia> nombre o slug normalizado => materia */
+    private function indiceMaterias(): array
+    {
+        $indice = [];
+        foreach ($this->materiasRepo->findAll() as $materia) {
+            $indice[self::normalizar($materia->getNombre())] = $materia;
+            $indice[self::normalizar($materia->getSlug())] ??= $materia;
+            if (null !== $materia->getNombreEn()) {
+                $indice[self::normalizar($materia->getNombreEn())] ??= $materia;
+            }
+        }
+
+        return $indice;
+    }
+
+    /** @param array<string, Materia> $materias */
+    private function slugUnico(string $nombre, array $materias): string
+    {
+        $usados = array_map(fn (Materia $m) => $m->getSlug(), $materias);
+        $base = $this->slugs->generar(Materia::class, $nombre);
+        $slug = $base;
+        for ($n = 2; \in_array($slug, $usados, true); ++$n) {
+            $slug = $base.'-'.$n;
+        }
+
+        return $slug;
+    }
+}

@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'bases.titulo'|trans }}{% endblock %}
+
+{% block body %}
+    {% set idioma = app.request.locale %}
+    <section class="contenedor pagina">
+        <h1>{{ 'bases.titulo'|trans }}</h1>
+        <p class="pagina__bajada">{{ 'bases.bajada'|trans }}</p>
+
+        <nav class="indice-az" aria-label="{{ 'bases.indice'|trans }}">
+            <a href="{{ path('bases_datos') }}" {% if filtro.letra is null %}aria-current="page"{% endif %}>{{ 'bases.todas'|trans }}</a>
+            {% for letra in ['#']|merge(range('A', 'Z')) %}
+                {% if letra in letras %}
+                    <a href="{{ path('bases_datos', {letra: letra}) }}" {% if filtro.letra == letra %}aria-current="page"{% endif %}>{{ letra }}</a>
+                {% else %}
+                    <span aria-hidden="true">{{ letra }}</span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+
+        <form method="get" action="{{ path('bases_datos') }}" class="filtros" role="search">
+            <div class="campo filtros__texto">
+                <label for="q">{{ 'bases.buscar'|trans }}</label>
+                <input type="search" id="q" name="q" value="{{ filtro.q }}" placeholder="{{ 'bases.buscar_placeholder'|trans }}">
+            </div>
+            <div class="campo">
+                <label for="materia">{{ 'bases.materia'|trans }}</label>
+                <select id="materia" name="materia">
+                    <option value="">{{ 'bases.todas_materias'|trans }}</option>
+                    {% for m in materias %}
+                        <option value="{{ m.slug }}" {% if filtro.materia and filtro.materia.id == m.id %}selected{% endif %}>{{ m.nombreTraducido(idioma) }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="campo">
+                <label for="tipo">{{ 'bases.tipo'|trans }}</label>
+                <select id="tipo" name="tipo">
+                    <option value="">{{ 'bases.todos_tipos'|trans }}</option>
+                    {% for t in tipos %}
+                        <option value="{{ t.value }}" {% if filtro.tipo == t %}selected{% endif %}>{{ t.etiqueta|trans }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="campo">
+                <label for="acceso">{{ 'bases.acceso'|trans }}</label>
+                <select id="acceso" name="acceso">
+                    <option value="">{{ 'bases.todos_accesos'|trans }}</option>
+                    {% for a in accesos %}
+                        <option value="{{ a.value }}" {% if filtro.acceso == a %}selected{% endif %}>{{ a.etiqueta|trans }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% if filtro.letra %}<input type="hidden" name="letra" value="{{ filtro.letra }}">{% endif %}
+            <div class="filtros__acciones">
+                <button type="submit" class="boton">{{ 'bases.filtrar'|trans }}</button>
+                {% if hay_filtros %}<a href="{{ path('bases_datos') }}">{{ 'bases.limpiar'|trans }}</a>{% endif %}
+            </div>
+        </form>
+
+        <p class="resultados" role="status">{{ 'bases.resultados'|trans({'%count%': total}) }}</p>
+
+        {% for letra, recursos in grupos %}
+            <section class="grupo-az" aria-labelledby="letra-{{ loop.index }}">
+                <h2 id="letra-{{ loop.index }}" class="grupo-az__letra">{{ letra }}</h2>
+                <ul class="recursos">
+                    {% for recurso in recursos %}
+                        <li class="recurso">
+                            <h3 class="recurso__titulo">
+                                <a href="{{ path('bases_datos_ir', {id: recurso.id}) }}" rel="noopener">{{ recurso.titulo }}</a>
+                                {% if recurso.esNuevo %}<span class="insignia insignia--nuevo">{{ 'bases.nuevo'|trans }}</span>{% endif %}
+                                {% if recurso.acceso.value == 'prueba' %}<span class="insignia insignia--prueba">{{ 'tipo_acceso.prueba'|trans }}{% if recurso.pruebaHasta %} · {{ 'bases.hasta'|trans }} {{ recurso.pruebaHasta|date('d-m-Y') }}{% endif %}</span>{% endif %}
+                                {% if recurso.acceso.value == 'abierto' %}<span class="insignia insignia--abierto">{{ 'tipo_acceso.abierto'|trans }}</span>{% endif %}
+                            </h3>
+                            <p class="recurso__meta">
+                                {{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}
+                                {% if recurso.requiereProxy %} · <span title="{{ 'bases.proxy_ayuda'|trans }}">{{ 'bases.proxy'|trans }}</span>{% endif %}
+                            </p>
+                            {% if recurso.descripcionTraducida(idioma) %}<p class="recurso__descripcion">{{ recurso.descripcionTraducida(idioma) }}</p>{% endif %}
+                            {% if recurso.materias is not empty %}
+                                <p class="recurso__materias">
+                                    {% for m in recurso.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('bases_datos', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
+                                </p>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% else %}
+            <p>{{ (hay_filtros ? 'bases.sin_resultados' : 'bases.vacio')|trans }}</p>
+        {% endfor %}
+    </section>
+{% endblock %}

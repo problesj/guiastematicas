@@ -1,0 +1,33 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ titulo|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ titulo|trans }}</h1>
+    {{ form_start(formulario, {attr: {class: 'formulario', novalidate: 'novalidate'}}) }}
+        <fieldset>
+            <legend>{{ 'recurso.grupo_datos'|trans }}</legend>
+            {{ form_row(formulario.titulo) }}
+            {{ form_row(formulario.nombresAlternativos) }}
+            {{ form_row(formulario.url) }}
+            {{ form_row(formulario.requiereProxy) }}
+            <div class="formulario__columnas">
+                {{ form_row(formulario.tipo) }}
+                {{ form_row(formulario.acceso) }}
+                {{ form_row(formulario.pruebaHasta) }}
+                {{ form_row(formulario.proveedor) }}
+            </div>
+            {{ form_row(formulario.descripcion) }}
+            {{ form_row(formulario.descripcionEn) }}
+        </fieldset>
+        <fieldset>
+            <legend>{{ 'recurso.materias'|trans }}</legend>
+            {{ form_row(formulario.materias, {label: false}) }}
+        </fieldset>
+        {{ form_row(formulario.visible) }}
+        <div class="formulario__acciones">
+            <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
+            <a href="{{ path('panel_recursos') }}">{{ 'formulario.cancelar'|trans }}</a>
+        </div>
+    {{ form_end(formulario) }}
+{% endblock %}
