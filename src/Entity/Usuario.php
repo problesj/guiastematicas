@@ -139,9 +139,10 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    /** Acepta null (campo vacío en un formulario); la validación NotBlank informa el error. */
+    public function setEmail(?string $email): static
     {
-        $this->email = mb_strtolower(trim($email));
+        $this->email = mb_strtolower(trim((string) $email));
 
         return $this;
     }
@@ -156,9 +157,10 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->nombre;
     }
 
-    public function setNombre(string $nombre): static
+    /** Acepta null (campo vacío en un formulario); la validación NotBlank informa el error. */
+    public function setNombre(?string $nombre): static
     {
-        $this->nombre = trim($nombre);
+        $this->nombre = trim((string) $nombre);
 
         return $this;
     }
@@ -168,9 +170,10 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->apellidos;
     }
 
-    public function setApellidos(string $apellidos): static
+    /** Acepta null (campo vacío en un formulario); la validación NotBlank informa el error. */
+    public function setApellidos(?string $apellidos): static
     {
-        $this->apellidos = trim($apellidos);
+        $this->apellidos = trim((string) $apellidos);
 
         return $this;
     }
@@ -185,9 +188,10 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->slug;
     }
 
-    public function setSlug(string $slug): static
+    /** Acepta null (campo vacío en un formulario); la validación NotBlank informa el error. */
+    public function setSlug(?string $slug): static
     {
-        $this->slug = $slug;
+        $this->slug = (string) $slug;
 
         return $this;
     }
