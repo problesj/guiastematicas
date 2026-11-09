@@ -165,6 +165,37 @@ final class ImportadorRecursosTest extends KernelTestCase
         self::assertSame('1996-01-01', $base->getDisponibleDesde()?->format('Y-m-d'));
     }
 
+    public function testImportaBibtexConDoiComoEnlace(): void
+    {
+        $ruta = sys_get_temp_dir().'/referencias-'.bin2hex(random_bytes(4)).'.bib';
+        file_put_contents($ruta, <<<'BIB'
+            @article{a1, title={Resistencia antimicrobiana}, author={P{\'e}rez, Ana}, journal={Revista M{\'e}dica de Chile},
+              year={2021}, volume={149}, number={3}, pages={315--322}, doi={10.4067/S0034-98872021000300315}}
+            @article{a2, title={Sin enlace}, author={Soto, Luis}, journal={Otra}, year={2020}}
+            @misc{v1, title={Cómo buscar en Scopus}, url={https://youtu.be/dQw4w9WgXcQ}}
+            BIB);
+
+        try {
+            $importador = $this->importador();
+            $filas = $importador->leer($ruta);
+            self::assertSame(['crear', 'error', 'crear'], array_map(fn ($f) => $f->accion(), $filas));
+            self::assertContains('importacion.error_sin_url', $filas[1]->errores);
+
+            $importador->aplicar($filas);
+        } finally {
+            @unlink($ruta);
+        }
+
+        self::em()->clear();
+        $articulo = self::em()->getRepository(Recurso::class)->findOneBy(['titulo' => 'Resistencia antimicrobiana']);
+        self::assertSame(TipoRecurso::Articulo, $articulo->getTipo());
+        self::assertSame('https://doi.org/10.4067/S0034-98872021000300315', $articulo->getUrl());
+        self::assertSame('Revista Médica de Chile', $articulo->getFuente());
+        self::assertSame(['autores' => 'Pérez, Ana', 'fuente' => 'Revista Médica de Chile', 'anio' => '2021', 'volumen' => '149', 'fasciculo' => '3', 'paginas' => '315-322', 'doi' => '10.4067/S0034-98872021000300315'], $articulo->getDatosBibliograficos());
+        $video = self::em()->getRepository(Recurso::class)->findOneBy(['titulo' => 'Cómo buscar en Scopus']);
+        self::assertSame(TipoRecurso::Multimedia, $video->getTipo());
+    }
+
     public function testUsaElHipervinculoDelTituloSiNoHayColumnaUrl(): void
     {
         $libro = new Spreadsheet();

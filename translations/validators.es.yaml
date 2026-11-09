@@ -8,3 +8,4 @@ contrasena.no_coinciden: Las contraseñas no coinciden.
 contrasena.debil: La contraseña es demasiado fácil de adivinar.
 recurso.isbn_no_valido: El ISBN no es válido. Revisa los dígitos (10 o 13, con o sin guiones).
 recurso.issn_no_valido: El ISSN no es válido. Usa el formato 1234-5678 (el último puede ser X).
+recurso.doi_no_valido: El DOI no es válido. Debe empezar con 10. (por ejemplo 10.1016/j.cell.2020.01.001).

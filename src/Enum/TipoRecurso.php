@@ -8,6 +8,7 @@ enum TipoRecurso: string
 {
     case BaseDatos = 'base_datos';
     case Revistas = 'revistas';
+    case Articulo = 'articulo';
     case Libros = 'libros';
     case Repositorio = 'repositorio';
     case Normas = 'normas';
@@ -16,7 +17,7 @@ enum TipoRecurso: string
     case SitioWeb = 'sitio_web';
 
     /** Campos bibliográficos propios de cada tipo (nombres de propiedades de Recurso). */
-    public const array CAMPOS_BIBLIOGRAFICOS = ['autores', 'editorial', 'isbn', 'eisbn', 'anio', 'issn', 'eissn', 'disponibleDesde', 'codigoNorma', 'organismo'];
+    public const array CAMPOS_BIBLIOGRAFICOS = ['autores', 'fuente', 'editorial', 'anio', 'volumen', 'fasciculo', 'paginas', 'doi', 'isbn', 'eisbn', 'issn', 'eissn', 'disponibleDesde', 'codigoNorma', 'organismo'];
 
     public function etiqueta(): string
     {
@@ -33,6 +34,7 @@ enum TipoRecurso: string
         return match ($this) {
             self::Libros => ['autores', 'editorial', 'anio', 'isbn', 'eisbn'],
             self::Revistas => ['editorial', 'issn', 'eissn', 'disponibleDesde'],
+            self::Articulo => ['autores', 'fuente', 'anio', 'volumen', 'fasciculo', 'paginas', 'doi'],
             self::BaseDatos => ['disponibleDesde'],
             self::Normas => ['codigoNorma', 'organismo', 'anio'],
             self::Multimedia => ['autores', 'anio'],

@@ -89,6 +89,30 @@ final class PanelRecursosTest extends WebTestCase
         self::assertSame('0034-9887', $revista->getIssn());
     }
 
+    public function testUnArticuloSinUrlUsaElEnlaceDelDoi(): void
+    {
+        $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));
+        $this->cliente->request('GET', '/es/panel/recursos/nuevo');
+        $datos = [
+            'recurso[titulo]' => 'Resistencia antimicrobiana',
+            'recurso[url]' => '',
+            'recurso[tipo]' => 'articulo',
+            'recurso[acceso]' => 'abierto',
+            'recurso[fuente]' => 'Revista Médica de Chile',
+            'recurso[paginas]' => '315--322',
+        ];
+        $this->cliente->submitForm('Guardar', ['recurso[doi]' => 'doi.org/10.4067'] + $datos);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.campo__errores li', 'El DOI no es válido');
+
+        $this->cliente->submitForm('Guardar', ['recurso[doi]' => 'https://doi.org/10.4067/S0034-98872021000300315'] + $datos);
+        self::assertResponseRedirects('/es/panel/recursos');
+        $articulo = self::em()->getRepository(Recurso::class)->findOneBy(['titulo' => 'Resistencia antimicrobiana']);
+        self::assertSame('10.4067/S0034-98872021000300315', $articulo->getDoi());
+        self::assertSame('https://doi.org/10.4067/S0034-98872021000300315', $articulo->getUrl());
+        self::assertSame('315-322', $articulo->getPaginas());
+    }
+
     public function testImportacionConVistaPreviaYConfirmacion(): void
     {
         $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));

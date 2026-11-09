@@ -28,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted('ROLE_EDITOR')]
 final class RecursoController extends AbstractController
 {
-    private const array EXTENSIONES = ['xlsx', 'xls', 'ods', 'csv'];
+    private const array EXTENSIONES = ['xlsx', 'xls', 'ods', 'csv', 'bib', 'bibtex', 'ris'];
 
     public function __construct(
         private readonly EntityManagerInterface $em,
@@ -118,7 +118,7 @@ final class RecursoController extends AbstractController
         $nombre = $request->getPayload()->getString('archivo');
         $ruta = $this->directorioImportaciones.'/'.$nombre;
         if (!$this->isCsrfTokenValid('confirmar-importacion', $request->getPayload()->getString('_token'))
-            || 1 !== preg_match('/^[a-f0-9]{32}\.(xlsx|xls|ods|csv)$/', $nombre)
+            || 1 !== preg_match('/^[a-f0-9]{32}\.(xlsx|xls|ods|csv|bib|bibtex|ris)$/', $nombre)
             || !is_file($ruta)) {
             $this->addFlash('error', 'importacion.expirada');
 

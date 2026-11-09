@@ -13,7 +13,7 @@
     <form method="post" enctype="multipart/form-data" class="formulario formulario--angosto" data-turbo="false">
         <div class="campo">
             <label for="archivo">{{ 'importacion.archivo'|trans }}</label>
-            <input type="file" id="archivo" name="archivo" accept=".xlsx,.xls,.ods,.csv" required aria-describedby="archivo_ayuda">
+            <input type="file" id="archivo" name="archivo" accept=".xlsx,.xls,.ods,.csv,.bib,.bibtex,.ris" required aria-describedby="archivo_ayuda">
             <p id="archivo_ayuda" class="campo__ayuda">{{ 'importacion.archivo_ayuda'|trans }}</p>
         </div>
         <input type="hidden" name="_token" value="{{ csrf_token('importar-recursos') }}">
@@ -22,6 +22,9 @@
             <a href="{{ path('panel_recursos_plantilla') }}" data-turbo="false">{{ 'importacion.plantilla'|trans }}</a>
         </div>
     </form>
+
+    <h2>{{ 'importacion.bibliografia_titulo'|trans }}</h2>
+    <p>{{ 'importacion.bibliografia_texto'|trans }}</p>
 
     <h2>{{ 'importacion.columnas'|trans }}</h2>
     <p>{{ 'importacion.columnas_ayuda'|trans }}</p>

@@ -125,4 +125,20 @@ final class RecursosPublicosTest extends WebTestCase
         $this->cliente->request('GET', '/bases-de-datos/'.$scopus->getId().'/ir');
         self::assertResponseRedirects('https://accesum.ucn.cl/login?url=https://www.scopus.com');
     }
+
+    public function testArticuloConDoiYVideoIncrustado(): void
+    {
+        self::recurso('Resistencia antimicrobiana', 'https://doi.org/10.4067/S0034-98872021000300315', [
+            'setTipo' => TipoRecurso::Articulo, 'setFuente' => 'Revista Médica de Chile', 'setDoi' => '10.4067/S0034-98872021000300315',
+        ]);
+        self::recurso('Cómo buscar en Scopus', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', ['setTipo' => TipoRecurso::Multimedia]);
+        self::recurso('Scopus', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'); // no es multimedia: sin reproductor
+
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos');
+
+        self::assertSame('https://doi.org/10.4067/S0034-98872021000300315', $crawler->filter('.recurso__datos a')->attr('href'));
+        self::assertStringContainsString('Fuente (revista)Revista Médica de Chile', $crawler->filter('.recurso__datos')->text());
+        self::assertCount(1, $crawler->filter('.recurso__video iframe'));
+        self::assertSame('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ', $crawler->filter('.recurso__video iframe')->attr('src'));
+    }
 }

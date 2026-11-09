@@ -175,6 +175,7 @@ tipo_recurso:
   multimedia: Multimedia
   herramienta: Herramienta
   sitio_web: Sitio web
+  articulo: Artículo científico
 tipo_acceso:
   suscripcion: Suscripción UCN
   abierto: Acceso abierto
@@ -202,6 +203,7 @@ bases:
   ventana_nueva: Se abre en una ventana nueva.
   sin_resultados: No hay recursos que coincidan con la búsqueda.
   vacio: Aún no hay recursos publicados.
+  ver_video: Ver video
 recurso:
   nuevo: Nuevo recurso
   editar: Editar recurso
@@ -213,7 +215,7 @@ recurso:
   alternativos: Nombres alternativos
   alternativos_ayuda: Siglas u otros nombres para la búsqueda, separados por punto y coma.
   url: URL original
-  url_ayuda: La dirección del recurso sin el prefijo del proxy.
+  url_ayuda: La dirección del recurso sin el prefijo del proxy. En artículos puedes dejarla vacía si indicas el DOI. En multimedia, un enlace de YouTube o Vimeo muestra el reproductor en la lista.
   requiere_proxy: Requiere proxy AccesUM
   requiere_proxy_ayuda: Marca si el acceso fuera del campus debe pasar por AccesUM.
   proxy_corto: Proxy
@@ -243,11 +245,18 @@ recurso:
   disponible_desde_ayuda: Fecha desde la cual hay acceso al contenido.
   codigo_norma: Código de la norma
   organismo: Organismo emisor
+  fuente: Fuente (revista)
+  fuente_ayuda: Revista o publicación donde aparece el artículo.
+  volumen: Volumen
+  fasciculo: Fascículo
+  paginas: Páginas
+  doi: DOI
+  doi_ayuda: "Por ejemplo 10.1016/j.cell.2020.01.001. También puedes pegar el enlace https://doi.org/..."
 importacion:
-  titulo: Importar desde Excel
+  titulo: Importar recursos
   bajada: Sube la lista de recursos bibliográficos en Excel (.xlsx, .xls), OpenDocument (.ods) o CSV. Antes de guardar verás qué se creará, qué se actualizará y qué filas tienen errores.
   archivo: Archivo
-  archivo_ayuda: Hasta 10 MB y 5.000 filas. La primera fila con encabezados reconocidos se usa como encabezado.
+  archivo_ayuda: Hasta 10 MB y 5.000 registros. En planillas, la primera fila con encabezados reconocidos se usa como encabezado.
   revisar: Revisar archivo
   plantilla: Descargar plantilla de ejemplo
   columnas: Columnas reconocidas
@@ -277,6 +286,11 @@ importacion:
     disponible_desde: Disponible desde (o Fecha de disponibilidad)
     codigo_norma: Código de la norma
     organismo: Organismo emisor
+    fuente: Fuente (o Revista, Journal)
+    volumen: Volumen
+    fasciculo: Fascículo (o Número, Issue)
+    paginas: Páginas (o Pages)
+    doi: DOI
   columna_ayuda:
     titulo: Obligatoria.
     url: Obligatoria. Si viene con el prefijo del proxy, se guarda la URL original y se marca "requiere proxy".
@@ -300,6 +314,11 @@ importacion:
     disponible_desde: Revistas y bases de datos. Fecha (dd-mm-aaaa) desde la cual hay acceso.
     codigo_norma: Normas, p. ej. NCh 433 o ISO 9001:2015.
     organismo: Normas, p. ej. INN, ISO o IEEE.
+    fuente: Artículos. Revista donde se publicó.
+    volumen: Artículos.
+    fasciculo: Artículos.
+    paginas: Artículos, p. ej. 15-32.
+    doi: "Artículos. Si falta la URL, se usa https://doi.org/ con el DOI."
   vista_previa: Vista previa de la importación
   archivo_revisado: "Archivo: %nombre%"
   se_crearan: recursos nuevos
@@ -316,7 +335,7 @@ importacion:
   resultado: "Importación terminada: %creados% creados, %actualizados% actualizados, %omitidos% filas omitidas y %materias% materias nuevas."
   expirada: La vista previa expiró. Sube el archivo otra vez.
   sin_archivo: Selecciona un archivo.
-  extension: El archivo debe ser .xlsx, .xls, .ods o .csv.
+  extension: El archivo debe ser .xlsx, .xls, .ods, .csv, .bib o .ris.
   muy_grande: El archivo supera los 10 MB.
   archivo_ilegible: No se pudo leer el archivo. Revisa que sea una planilla válida.
   sin_columnas: No se encontraron las columnas de título y URL en las primeras filas.
@@ -333,3 +352,7 @@ importacion:
   aviso_isbn: "ISBN \"%valor%\" no válido; se deja vacío."
   aviso_issn: "ISSN \"%valor%\" no válido; se deja vacío."
   aviso_anio: "Año \"%valor%\" no reconocido; se deja vacío."
+  bibliografia_titulo: Desde BibTeX o RIS
+  bibliografia_texto: También puedes subir un archivo .bib (BibTeX) o .ris (RIS), como los que exportan Zotero, Mendeley, EndNote, Google Académico, Scopus o Web of Science. El tipo se toma del registro (artículo, libro, tesis, norma, video...), y si un artículo no trae URL se usa el enlace de su DOI.
+  bibliografia_vacia: No se encontraron registros BibTeX ni RIS en el archivo.
+  aviso_doi: "DOI \"%valor%\" no válido; se deja vacío."
