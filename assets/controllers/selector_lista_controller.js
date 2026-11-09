@@ -1,12 +1,13 @@
 import { Controller } from '@hotwired/stimulus';
 
 /*
- * Selector de autores de un recurso: busca entre los autores guardados o agrega uno nuevo ("Apellidos, Nombres").
- * La lista elegida, en orden, se guarda como JSON en un campo oculto: [{id, nombre}] o [{apellidos, nombres}].
+ * Lista ordenada elegida con búsqueda (autores de un recurso, recursos de un bloque de guía).
+ * Busca en url?q=... (JSON [{id, nombre, detalle}]) y, si "nuevos" está activo, permite agregar uno nuevo escrito como
+ * "Apellidos, Nombres". La lista, en orden, se guarda como JSON en un campo oculto: [{id, nombre}] o [{apellidos, nombres}].
  */
 export default class extends Controller {
     static targets = ['campo', 'lista', 'busqueda', 'sugerencias'];
-    static values = { url: String, agregar: String, nuevo: String, quitar: String, subir: String, bajar: String, vacio: String };
+    static values = { url: String, agregar: String, nuevo: String, quitar: String, subir: String, bajar: String, vacio: String, nuevos: { type: Boolean, default: true } };
 
     connect() {
         try {
@@ -62,11 +63,11 @@ export default class extends Controller {
             }
         }
         const ya = new Set(this.elegidos.filter((a) => a.id).map((a) => a.id));
-        this.opciones = encontrados.filter((a) => !ya.has(a.id)).map((a) => ({ id: a.id, nombre: a.nombre, detalle: a.orcid || '' }));
+        this.opciones = encontrados.filter((a) => !ya.has(a.id)).map((a) => ({ id: a.id, nombre: a.nombre, detalle: a.detalle || a.orcid || '' }));
         const [apellidos, ...resto] = texto.split(',');
         const nuevo = { apellidos: apellidos.trim(), nombres: resto.join(',').trim() };
         const repetido = encontrados.some((a) => a.nombre.toLowerCase() === this.nombre(nuevo).toLowerCase());
-        if (nuevo.apellidos && !repetido) {
+        if (this.nuevosValue && nuevo.apellidos && !repetido) {
             this.opciones.push({ ...nuevo, nombre: this.agregarValue.replace('%nombre%', this.nombre(nuevo)), nuevo: true });
         }
         this.mostrarOpciones();
@@ -77,7 +78,7 @@ export default class extends Controller {
         lista.replaceChildren();
         this.opciones.forEach((opcion, i) => {
             const item = document.createElement('li');
-            item.id = `sugerencia-autor-${i}`;
+            item.id = `${this.busquedaTarget.id}-opcion-${i}`;
             item.setAttribute('role', 'option');
             item.className = 'selector-autores__opcion' + (opcion.nuevo ? ' selector-autores__opcion--nueva' : '');
             item.textContent = opcion.nombre;
@@ -120,7 +121,7 @@ export default class extends Controller {
     marcarActiva() {
         [...this.sugerenciasTarget.children].forEach((item, i) => item.setAttribute('aria-selected', String(i === this.activa)));
         if (this.activa >= 0) {
-            this.busquedaTarget.setAttribute('aria-activedescendant', `sugerencia-autor-${this.activa}`);
+            this.busquedaTarget.setAttribute('aria-activedescendant', `${this.busquedaTarget.id}-opcion-${this.activa}`);
         } else {
             this.busquedaTarget.removeAttribute('aria-activedescendant');
         }

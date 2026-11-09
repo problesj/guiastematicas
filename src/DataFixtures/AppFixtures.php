@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Autor;
+use App\Entity\Bloque;
 use App\Entity\Departamento;
 use App\Entity\Editorial;
+use App\Entity\Guia;
 use App\Entity\Materia;
 use App\Entity\Pais;
+use App\Entity\Pestana;
 use App\Entity\Recurso;
+use App\Entity\Seccion;
 use App\Entity\Usuario;
+use App\Enum\DisposicionGuia;
 use App\Enum\Rol;
 use App\Enum\Sede;
 use App\Enum\Sexo;
 use App\Enum\TipoAcceso;
+use App\Enum\TipoBloque;
 use App\Enum\TipoRecurso;
 use App\Servicio\CatalogoPaises;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -50,6 +56,8 @@ final class AppFixtures extends Fixture
         }
 
         $materias = [];
+        $usuarios = [];
+        $recursos = [];
         foreach ([
             ['Ingeniería Civil', 'Civil Engineering'],
             ['Medicina', 'Medicine'],
@@ -80,6 +88,7 @@ final class AppFixtures extends Fixture
                 $usuario->addMateria($materias[$i]);
             }
             $manager->persist($usuario);
+            $usuarios[$email] = $usuario;
         }
 
         foreach ([
@@ -102,6 +111,7 @@ final class AppFixtures extends Fixture
                 $recurso->addMateria($materias[$i]);
             }
             $manager->persist($recurso);
+            $recursos[$titulo] = $recurso;
         }
 
         $paises = [];
@@ -121,5 +131,65 @@ final class AppFixtures extends Fixture
         $manager->persist($libro);
 
         $manager->flush();
+
+        $this->guiasDeEjemplo($manager, $usuarios, $recursos, $materias);
+        $manager->flush();
+    }
+
+    /**
+     * Una guía publicada en pestañas (con traducción al inglés en borrador) y una en borrador con menú lateral.
+     *
+     * @param array<string, Usuario> $usuarios
+     * @param array<string, Recurso> $recursos
+     * @param list<Materia>          $materias
+     */
+    private function guiasDeEjemplo(ObjectManager $manager, array $usuarios, array $recursos, array $materias): void
+    {
+        $bloque = static fn (TipoBloque $tipo, ?string $titulo, array $contenido) => (new Bloque($tipo))->setTitulo($titulo)->setContenido($contenido);
+        $ids = static fn (string ...$titulos) => array_map(fn (string $t) => $recursos[$t]->getId(), $titulos);
+
+        $ingenieria = (new Guia())->setTitulo('Ingeniería: cómo buscar información')->setSlug('ingenieria')
+            ->setDescripcion('Bases de datos, normas técnicas y libros electrónicos para estudiantes de ingeniería.')
+            ->setDisposicion(DisposicionGuia::Pestanas)->setResponsable($usuarios['editora1@ucn.cl'])
+            ->addCoeditor($usuarios['editora3@ucn.cl'])->addMateria($materias[0]);
+
+        $inicio = new Pestana('Inicio');
+        $inicio->agregarSeccion((new Seccion('Bienvenida'))
+            ->agregarBloque($bloque(TipoBloque::Texto, null, ['html' => '<p>Esta guía reúne los recursos de información más útiles para <strong>Ingeniería</strong>. Si necesitas ayuda, escríbenos o agenda una capacitación.</p>']))
+            ->agregarBloque($bloque(TipoBloque::Perfil, 'Tu bibliotecaria', ['usuario' => $usuarios['editora1@ucn.cl']->getId()])));
+        $inicio->agregarSeccion((new Seccion('Busca en el catálogo'))
+            ->agregarBloque($bloque(TipoBloque::Busqueda, null, ['texto' => 'Busca libros, artículos y tesis en el catálogo de Bibliotecas UCN.'])));
+        $ingenieria->agregarPestana($inicio);
+
+        $bases = new Pestana('Bases de datos');
+        $bases->agregarSeccion((new Seccion('Multidisciplinarias'))
+            ->agregarBloque($bloque(TipoBloque::Recursos, null, ['ids' => $ids('Scopus', 'Web of Science'), 'descripcion' => true])));
+        $bases->agregarSeccion((new Seccion('Normas y libros'))
+            ->agregarBloque($bloque(TipoBloque::Recursos, null, ['ids' => $ids('ASTM Compass', 'Springer eBooks'), 'descripcion' => false])));
+        $ingenieria->agregarPestana($bases);
+
+        $citar = new Pestana('Cómo citar');
+        $citar->agregarSeccion((new Seccion())
+            ->agregarBloque($bloque(TipoBloque::Texto, 'Normas de citación', ['html' => '<p>Las normas más usadas en ingeniería son <strong>IEEE</strong> y <strong>APA</strong>.</p><ul><li>IEEE: referencias numeradas.</li><li>APA: autor y año.</li></ul>']))
+            ->agregarBloque($bloque(TipoBloque::Recursos, 'Gestor de referencias', ['ids' => $ids('Zotero'), 'descripcion' => true])));
+        $ingenieria->agregarPestana($citar);
+        $ingenieria->publicar();
+        $manager->persist($ingenieria);
+
+        $engineering = (new Guia())->setTitulo('Engineering: finding information')->setSlug('engineering')->setIdioma('en')
+            ->setDisposicion(DisposicionGuia::Pestanas)->setResponsable($usuarios['editora1@ucn.cl'])->addMateria($materias[0])
+            ->agregarPestana((new Pestana('Home'))->agregarSeccion((new Seccion())
+                ->agregarBloque($bloque(TipoBloque::Texto, null, ['html' => '<p>Key information resources for Engineering.</p>']))));
+        $engineering->setTraduccion($ingenieria);
+        $manager->persist($engineering);
+
+        $geologia = (new Guia())->setTitulo('Geología')->setSlug('geologia')
+            ->setDescripcion('Recursos de geociencias y minería.')
+            ->setDisposicion(DisposicionGuia::MenuLateral)->setResponsable($usuarios['editora1@ucn.cl'])->addMateria($materias[4])
+            ->agregarPestana((new Pestana('Inicio'))->agregarSeccion((new Seccion('Bases de datos'))
+                ->agregarBloque($bloque(TipoBloque::Recursos, null, ['ids' => $ids('GeoRef', 'Scopus'), 'descripcion' => true]))))
+            ->agregarPestana((new Pestana('Videos'))->agregarSeccion((new Seccion())
+                ->agregarBloque($bloque(TipoBloque::Video, 'Cómo buscar en GeoRef', ['url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'descripcion' => 'Tutorial de búsqueda básica.']))));
+        $manager->persist($geologia);
     }
 }

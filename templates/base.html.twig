@@ -31,8 +31,9 @@
                 <nav class="idiomas" aria-label="{{ 'sitio.idioma'|trans }}">
                     {% set ruta = app.request.attributes.get('_route') ?? 'inicio' %}
                     {% set parametros = app.request.attributes.get('_route_params') ?? {} %}
+                    {% set enlaces_idioma = enlaces_idioma ?? {} %}
                     {% for idioma in ['es', 'en'] %}
-                        <a href="{{ path(ruta, parametros|merge({_locale: idioma})) }}"
+                        <a href="{{ enlaces_idioma[idioma] ?? path(ruta, parametros|merge({_locale: idioma})) }}"
                            lang="{{ idioma }}" hreflang="{{ idioma }}"
                            {% if app.request.locale == idioma %}aria-current="true"{% endif %}>{{ idioma|upper }}</a>
                     {% endfor %}
@@ -49,7 +50,7 @@
                     <span class="marca__titulo">{{ 'sitio.titulo'|trans }}</span>
                 </a>
                 <nav class="menu" aria-label="{{ 'menu.principal'|trans }}">
-                    <a href="{{ path('inicio') }}">{{ 'menu.guias'|trans }}</a>
+                    <a href="{{ path('guias') }}">{{ 'menu.guias'|trans }}</a>
                     <a href="{{ path('recursos') }}">{{ 'menu.bases_datos'|trans }}</a>
                     <a href="{{ path('personal') }}">{{ 'menu.personal'|trans }}</a>
                 </nav>

@@ -1,0 +1,51 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% set titulo = bloque.id ? 'bloque.editar' : 'bloque.nuevo' %}
+{% block title %}{{ titulo|trans({'%tipo%': bloque.tipo.etiqueta|trans}) }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% if bloque.tipo.value == 'texto' %}<link rel="stylesheet" href="{{ asset('lib/ckeditor5/ckeditor5.css') }}">{% endif %}
+{% endblock %}
+
+{% block contenido %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}">
+        <a href="{{ path('panel_guias') }}">{{ 'panel.guias'|trans }}</a> ›
+        <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: seccion.pestana.id}) }}">{{ guia.titulo }}</a> ›
+        <span>{{ seccion.pestana.titulo }}{% if seccion.titulo %} › {{ seccion.titulo }}{% endif %}</span>
+    </nav>
+    <h1>{{ titulo|trans({'%tipo%': bloque.tipo.etiqueta|trans}) }}</h1>
+    <p class="campo__ayuda">{{ bloque.tipo.ayuda|trans }}</p>
+
+    {{ form_start(formulario, {attr: {class: 'formulario', novalidate: 'novalidate'}}) }}
+        {{ form_row(formulario.titulo) }}
+        {% if bloque.tipo.value == 'recursos' %}
+            <div class="campo selector-autores" data-controller="selector-lista"
+                 data-selector-lista-url-value="{{ path('panel_guias_buscar_recursos') }}"
+                 data-selector-lista-nuevos-value="false"
+                 data-selector-lista-agregar-value=""
+                 data-selector-lista-nuevo-value=""
+                 data-selector-lista-quitar-value="{{ 'autor.quitar'|trans }}"
+                 data-selector-lista-subir-value="{{ 'autor.subir'|trans }}"
+                 data-selector-lista-bajar-value="{{ 'autor.bajar'|trans }}"
+                 data-selector-lista-vacio-value="{{ 'bloque.sin_recursos'|trans }}">
+                <label for="buscar-recurso">{{ 'bloque.recursos'|trans }}</label>
+                {{ form_widget(formulario.recursos, {attr: {'data-selector-lista-target': 'campo'}}) }}
+                <ol class="selector-autores__lista" data-selector-lista-target="lista" aria-label="{{ 'bloque.recursos_elegidos'|trans }}"></ol>
+                <div class="selector-autores__busqueda">
+                    <input type="text" id="buscar-recurso" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugerencias-recursos"
+                           placeholder="{{ 'bloque.buscar_recurso'|trans }}"
+                           data-selector-lista-target="busqueda"
+                           data-action="input->selector-lista#buscar keydown->selector-lista#tecla">
+                    <ul id="sugerencias-recursos" class="selector-autores__sugerencias" role="listbox" data-selector-lista-target="sugerencias" hidden></ul>
+                </div>
+                <p class="campo__ayuda">{{ 'bloque.recursos_ayuda'|trans }}</p>
+            </div>
+        {% endif %}
+        {{ form_rest(formulario) }}
+        <div class="formulario__acciones">
+            <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
+            <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: seccion.pestana.id}) }}">{{ 'formulario.cancelar'|trans }}</a>
+        </div>
+    {{ form_end(formulario) }}
+{% endblock %}

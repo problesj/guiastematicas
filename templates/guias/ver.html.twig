@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ pestana and guia.pestanas|length > 1 ? pestana.titulo ~ ' · ' : '' }}{{ guia.titulo }}{% endblock %}
+
+{% block body %}
+    {% set idioma = app.request.locale %}
+    <article class="contenedor pagina guia guia--{{ guia.disposicion.value }}" lang="{{ guia.idioma }}">
+        {% if vista_previa %}
+            <p class="aviso">
+                {{ 'guia.aviso_vista_previa'|trans({'%estado%': guia.estado.etiqueta|trans}) }}
+                <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: pestana ? pestana.id : null}) }}">{{ 'guia.volver_editor'|trans }}</a>
+            </p>
+        {% endif %}
+        <nav class="migas" aria-label="{{ 'guia.migas'|trans }}"><a href="{{ path('guias') }}">{{ 'guias.titulo'|trans }}</a> › <span aria-current="page">{{ guia.titulo }}</span></nav>
+        <header class="guia__cabecera">
+            <h1>{{ guia.titulo }}</h1>
+            {% if guia.descripcion %}<p class="pagina__bajada">{{ guia.descripcion }}</p>{% endif %}
+            <p class="guia__meta">
+                {% for m in guia.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
+                {% if guia.responsable %}<span>{{ 'guia.responsable'|trans }}: <a href="{{ path('personal_perfil', {slug: guia.responsable.slug}) }}">{{ guia.responsable.nombreCompleto }}</a></span>{% endif %}
+                <span>{{ 'guia.actualizada'|trans }}: {{ guia.actualizadaEn|date('d-m-Y') }}</span>
+            </p>
+        </header>
+
+        <div class="guia__cuerpo">
+            {% if guia.pestanas|length > 1 %}
+                <nav class="guia__pestanas" aria-label="{{ 'guia.pestanas'|trans }}">
+                    <ul>
+                        {% for p in guia.pestanas %}
+                            {% set enlace = vista_previa ? path('panel_guia_vista_previa', {id: guia.id, pestana: p.id}) : path('guia', {slug: guia.slug, pestana: loop.first ? null : p.slug}) %}
+                            <li><a href="{{ enlace }}" {% if pestana and p.id == pestana.id %}aria-current="page"{% endif %}>{{ p.titulo }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            {% endif %}
+
+            <div class="guia__contenido">
+                {% if pestana %}
+                    <h2 class="guia__titulo-pestana solo-lectores">{{ pestana.titulo }}</h2>
+                    {% for seccion in pestana.secciones %}
+                        <section class="guia__seccion" id="seccion-{{ seccion.id }}" {% if seccion.titulo %}aria-labelledby="titulo-seccion-{{ seccion.id }}"{% endif %}>
+                            {% if seccion.titulo %}<h3 id="titulo-seccion-{{ seccion.id }}">{{ seccion.titulo }}</h3>{% endif %}
+                            {% for bloque in seccion.bloques %}
+                                <div class="bloque bloque--{{ bloque.tipo.value }}" id="bloque-{{ bloque.id }}">
+                                    {% if bloque.titulo %}<h4 class="bloque__titulo">{{ bloque.titulo }}</h4>{% endif %}
+                                    {% include 'guias/bloques/_' ~ bloque.tipo.value ~ '.html.twig' %}
+                                </div>
+                            {% endfor %}
+                        </section>
+                    {% endfor %}
+                {% else %}
+                    <p>{{ 'guia.sin_contenido'|trans }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </article>
+{% endblock %}

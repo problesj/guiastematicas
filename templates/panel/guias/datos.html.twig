@@ -1,0 +1,42 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% set titulo = guia ? 'guia.datos' : 'guia.nueva' %}
+{% block title %}{{ titulo|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ titulo|trans }}{% if guia %}: {{ guia.titulo }}{% endif %}</h1>
+    {{ form_start(formulario, {attr: {class: 'formulario', novalidate: 'novalidate'}}) }}
+        <fieldset>
+            <legend>{{ 'guia.grupo_datos'|trans }}</legend>
+            {{ form_row(formulario.titulo) }}
+            {{ form_row(formulario.slug) }}
+            {{ form_row(formulario.descripcion) }}
+            <div class="formulario__columnas">
+                {{ form_row(formulario.idioma) }}
+                {{ form_row(formulario.traduccion) }}
+            </div>
+            {{ form_row(formulario.disposicion) }}
+            {% if formulario.responsable is defined %}{{ form_row(formulario.responsable) }}{% endif %}
+        </fieldset>
+        <fieldset>
+            <legend>{{ 'guia.materias'|trans }}</legend>
+            {{ form_row(formulario.materias, {label: false}) }}
+        </fieldset>
+        <fieldset>
+            <legend>{{ 'guia.coeditores'|trans }}</legend>
+            {{ form_row(formulario.coeditores, {label: false}) }}
+        </fieldset>
+        <div class="formulario__acciones">
+            <button type="submit" class="boton">{{ (guia ? 'formulario.guardar' : 'guia.crear')|trans }}</button>
+            <a href="{{ guia ? path('panel_guia_editar', {id: guia.id}) : path('panel_guias') }}">{{ 'formulario.cancelar'|trans }}</a>
+        </div>
+    {{ form_end(formulario) }}
+
+    {% if guia and is_granted('GUIA_GESTIONAR', guia) %}
+        <section class="zona-peligro">
+            <h2>{{ 'guia.eliminar_titulo'|trans }}</h2>
+            <p>{{ 'guia.eliminar_ayuda'|trans }}</p>
+            {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_eliminar', id: guia.id, token: 'eliminar-guia-' ~ guia.id, nombre: guia.titulo} %}
+        </section>
+    {% endif %}
+{% endblock %}

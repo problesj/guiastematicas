@@ -17,6 +17,10 @@
                 <p>{{ 'panel.ver_perfil_publico_texto'|trans }}</p>
             </a>
         {% endif %}
+        <a class="tarjeta tarjeta--enlace" href="{{ path('panel_guias') }}">
+            <h2>{{ 'panel.guias'|trans }}</h2>
+            <p>{{ 'panel.guias_texto'|trans }}</p>
+        </a>
         {% if is_granted('ROLE_EDITOR') %}
             <a class="tarjeta tarjeta--enlace" href="{{ path('panel_recursos') }}">
                 <h2>{{ 'panel.recursos'|trans }}</h2>
@@ -30,5 +34,4 @@
             </a>
         {% endif %}
     </div>
-    <p class="pagina__nota">{{ 'panel.proximamente'|trans }}</p>
 {% endblock %}

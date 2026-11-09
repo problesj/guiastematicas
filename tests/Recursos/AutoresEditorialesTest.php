@@ -56,7 +56,7 @@ final class AutoresEditorialesTest extends WebTestCase
         $soto = self::autor('Soto', 'Luis');
         $this->cliente->loginUser(self::crearUsuario('editor@ucn.cl', Rol::Editor));
         $crawler = $this->cliente->request('GET', '/es/panel/recursos/nuevo');
-        self::assertCount(1, $crawler->filter('[data-controller="selector-autores"]'));
+        self::assertCount(1, $crawler->filter('[data-controller="selector-lista"]'));
 
         $formulario = $crawler->selectButton('Guardar')->form();
         $formulario['recurso[autores]']->setValue(json_encode([

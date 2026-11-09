@@ -1,0 +1,121 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ guia.titulo }}{% endblock %}
+{% block clase_panel %}panel--ancho{% endblock %}
+
+{% block contenido %}
+    {% set token = csrf_token('editar-guia-' ~ guia.id) %}
+    {% set gestiona = is_granted('GUIA_GESTIONAR', guia) %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}"><a href="{{ path('panel_guias') }}">{{ 'panel.guias'|trans }}</a> › <span aria-current="page">{{ guia.titulo }}</span></nav>
+    <div class="encabezado-accion">
+        <div>
+            <h1>{{ guia.titulo }}</h1>
+            <p class="editor-guia__estado">
+                <span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span>
+                {{ guia.idioma|upper }} · {{ 'guia.actualizada'|trans }} {{ guia.actualizadaEn|date('d-m-Y H:i') }}
+                {% if guia.publicada %} · <a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}" target="_blank" rel="noopener">{{ 'guia.ver_publicada'|trans }}</a>{% endif %}
+            </p>
+        </div>
+        <div class="encabezado-accion__botones">
+            <a class="boton boton--secundario" href="{{ path('panel_guia_vista_previa', {id: guia.id, pestana: pestana ? pestana.id : null}) }}" target="_blank" rel="noopener">{{ 'guia.vista_previa'|trans }}</a>
+            {% if gestiona %}
+                <a class="boton boton--secundario" href="{{ path('panel_guia_datos', {id: guia.id}) }}">{{ 'guia.datos'|trans }}</a>
+                <form method="post" action="{{ path('panel_guia_publicar', {id: guia.id}) }}" class="en-linea">
+                    <input type="hidden" name="_token" value="{{ csrf_token('publicar-guia-' ~ guia.id) }}">
+                    <button type="submit" class="boton">{{ (guia.publicada ? 'guia.despublicar' : 'guia.publicar')|trans }}</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="editor-guia" data-controller="ordenar" data-ordenar-url-value="{{ path('panel_guia_ordenar', {id: guia.id}) }}" data-ordenar-token-value="{{ token }}" data-ordenar-error-value="{{ 'guia.error_orden'|trans }}">
+        <p class="campo__ayuda">{{ 'guia.ayuda_arrastrar'|trans }}</p>
+
+        {# Pestañas #}
+        <div class="editor-guia__pestanas">
+            <ul class="editor-guia__lista-pestanas" data-ordenar-target="lista" data-tipo="pestanas" aria-label="{{ 'guia.pestanas'|trans }}">
+                {% for p in guia.pestanas %}
+                    <li data-id="{{ p.id }}">
+                        <span class="asa" aria-hidden="true" title="{{ 'guia.arrastrar'|trans }}">⠿</span>
+                        <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: p.id}) }}" {% if pestana and p.id == pestana.id %}aria-current="page"{% endif %}>{{ p.titulo }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <form method="post" action="{{ path('panel_guia_pestana_nueva', {id: guia.id}) }}" class="editor-guia__nueva-pestana">
+                <input type="hidden" name="_token" value="{{ token }}">
+                <label for="nueva-pestana" class="solo-lectores">{{ 'guia.nueva_pestana'|trans }}</label>
+                <input type="text" id="nueva-pestana" name="titulo" maxlength="100" required placeholder="{{ 'guia.nueva_pestana'|trans }}">
+                <button type="submit" class="boton boton--secundario">{{ 'guia.agregar'|trans }}</button>
+            </form>
+        </div>
+
+        {% if pestana %}
+            <section class="editor-guia__pestana" aria-labelledby="titulo-pestana">
+                <div class="editor-guia__barra">
+                    <h2 id="titulo-pestana">{{ pestana.titulo }}</h2>
+                    <details class="editor-guia__opciones">
+                        <summary>{{ 'guia.opciones_pestana'|trans }}</summary>
+                        <form method="post" action="{{ path('panel_guia_pestana_renombrar', {id: guia.id, pestana: pestana.id}) }}">
+                            <input type="hidden" name="_token" value="{{ token }}">
+                            <label for="renombrar-pestana">{{ 'guia.renombrar'|trans }}</label>
+                            <input type="text" id="renombrar-pestana" name="titulo" value="{{ pestana.titulo }}" maxlength="100" required>
+                            <button type="submit" class="boton boton--secundario">{{ 'formulario.guardar'|trans }}</button>
+                        </form>
+                        {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_pestana_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: pestana.titulo, extra_ruta: {pestana: pestana.id}} %}
+                    </details>
+                </div>
+
+                <div class="editor-guia__secciones" data-ordenar-target="lista" data-tipo="secciones" data-padre="{{ pestana.id }}">
+                    {% for seccion in pestana.secciones %}
+                        <section class="editor-seccion" id="seccion-{{ seccion.id }}" data-id="{{ seccion.id }}">
+                            <div class="editor-seccion__cabecera">
+                                <span class="asa" aria-hidden="true" title="{{ 'guia.arrastrar'|trans }}">⠿</span>
+                                <form method="post" action="{{ path('panel_guia_seccion_renombrar', {id: guia.id, seccion: seccion.id}) }}" class="editor-seccion__titulo">
+                                    <input type="hidden" name="_token" value="{{ token }}">
+                                    <label for="titulo-seccion-{{ seccion.id }}" class="solo-lectores">{{ 'guia.titulo_seccion'|trans }}</label>
+                                    <input type="text" id="titulo-seccion-{{ seccion.id }}" name="titulo" value="{{ seccion.titulo }}" maxlength="150" placeholder="{{ 'guia.seccion_sin_titulo'|trans }}">
+                                    <button type="submit" class="boton-texto">{{ 'formulario.guardar'|trans }}</button>
+                                </form>
+                                {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_seccion_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: seccion.titulo ?? 'guia.seccion_sin_titulo'|trans, extra_ruta: {seccion: seccion.id}} %}
+                            </div>
+
+                            <ul class="editor-seccion__bloques" data-ordenar-target="lista" data-tipo="bloques" data-padre="{{ seccion.id }}" data-grupo="bloques">
+                                {% for bloque in seccion.bloques %}
+                                    <li class="editor-bloque" id="bloque-{{ bloque.id }}" data-id="{{ bloque.id }}">
+                                        <span class="asa" aria-hidden="true" title="{{ 'guia.arrastrar'|trans }}">⠿</span>
+                                        <div class="editor-bloque__resumen">
+                                            <span class="etiqueta">{{ bloque.tipo.etiqueta|trans }}</span>
+                                            <strong>{{ bloque.titulo }}</strong>
+                                            <small>{{ include('panel/guias/_resumen_bloque.html.twig') }}</small>
+                                        </div>
+                                        <div class="tabla__acciones">
+                                            <a href="{{ path('panel_guia_bloque_editar', {id: guia.id, bloque: bloque.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></a>
+                                            {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_bloque_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: bloque.titulo ?? bloque.tipo.etiqueta|trans, extra_ruta: {bloque: bloque.id}} %}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <details class="editor-seccion__agregar">
+                                <summary class="boton boton--secundario">{{ 'guia.agregar_bloque'|trans }}</summary>
+                                <ul>
+                                    {% for tipo in tipos_bloque %}
+                                        <li><a href="{{ path('panel_guia_bloque_nuevo', {id: guia.id, seccion: seccion.id, tipo: tipo.value}) }}"><strong>{{ tipo.etiqueta|trans }}</strong> <small>{{ tipo.ayuda|trans }}</small></a></li>
+                                    {% endfor %}
+                                </ul>
+                            </details>
+                        </section>
+                    {% endfor %}
+                </div>
+
+                <form method="post" action="{{ path('panel_guia_seccion_nueva', {id: guia.id, pestana: pestana.id}) }}" class="editor-guia__nueva-seccion">
+                    <input type="hidden" name="_token" value="{{ token }}">
+                    <label for="nueva-seccion" class="solo-lectores">{{ 'guia.nueva_seccion'|trans }}</label>
+                    <input type="text" id="nueva-seccion" name="titulo" maxlength="150" placeholder="{{ 'guia.nueva_seccion_placeholder'|trans }}">
+                    <button type="submit" class="boton boton--secundario">{{ 'guia.agregar_seccion'|trans }}</button>
+                </form>
+            </section>
+        {% else %}
+            <p>{{ 'guia.sin_pestanas'|trans }}</p>
+        {% endif %}
+    </div>
+{% endblock %}

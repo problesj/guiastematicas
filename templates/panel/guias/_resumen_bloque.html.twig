@@ -1,0 +1,11 @@
+{%- if bloque.tipo.value == 'texto' -%}
+    {% set texto = bloque.dato('html', '')|striptags|trim %}{{ texto|length > 120 ? texto|slice(0, 120) ~ '…' : texto }}
+{%- elseif bloque.tipo.value == 'recursos' -%}
+    {{ 'bloque.resumen_recursos'|trans({'%count%': bloque.dato('ids', [])|length}) }}
+{%- elseif bloque.tipo.value == 'perfil' -%}
+    {% set persona = perfil_del_bloque(bloque) %}{{ persona ? persona.nombreCompleto : '—' }}
+{%- elseif bloque.tipo.value == 'video' -%}
+    {{ bloque.dato('url') }}
+{%- elseif bloque.tipo.value == 'busqueda' -%}
+    {{ bloque.dato('texto') ?? 'bloque.busqueda_etiqueta'|trans }}
+{%- endif -%}

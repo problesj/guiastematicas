@@ -1,0 +1,7 @@
+{% set video = video_incrustado(bloque.dato('url')) %}
+{% if video %}
+    <div class="recurso__reproductor">
+        <iframe src="{{ video }}" title="{{ bloque.titulo ?? 'bloque.video'|trans }}" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    {% if bloque.dato('descripcion') %}<p class="bloque__descripcion">{{ bloque.dato('descripcion') }}</p>{% endif %}
+{% endif %}

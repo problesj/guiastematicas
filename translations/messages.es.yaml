@@ -57,6 +57,8 @@ panel:
   paises: Países
   autores: Autores
   editoriales: Editoriales
+  guias: Guías temáticas
+  guias_texto: Crea y edita guías con pestañas, secciones y bloques.
   bienvenida: Hola, %nombre%
   bienvenida_texto: Desde aquí administras tu perfil y, según tu rol, las cuentas y los datos del sitio.
   perfil_texto: Tu cargo, foto, contacto y materias en las que eres especialista.
@@ -435,3 +437,121 @@ paginacion:
   anterior: « Anterior
   siguiente: Siguiente »
   pagina: Página
+idioma:
+  es: Español
+  en: Inglés
+estado_guia:
+  borrador: Borrador
+  publicada: Publicada
+disposicion_guia:
+  pestanas: Pestañas arriba del contenido
+  menu_lateral: Menú lateral
+tipo_bloque:
+  texto: Texto
+  texto_ayuda: Texto con formato, enlaces, listas y tablas.
+  recursos: Recursos bibliográficos
+  recursos_ayuda: Lista de bases de datos, revistas, libros u otros recursos de la lista A-Z.
+  perfil: Perfil del bibliotecario
+  perfil_ayuda: Tarjeta de contacto de una persona del directorio.
+  video: Video
+  video_ayuda: Video de YouTube o Vimeo incrustado.
+  busqueda: Búsqueda en el catálogo
+  busqueda_ayuda: Buscador que envía la consulta a Primo VE.
+guias:
+  titulo: Guías por materia
+  bajada: Guías temáticas preparadas por los bibliotecarios, con recursos, consejos de búsqueda y contacto para cada área.
+  buscar: Buscar guías
+  buscar_placeholder: Título o tema de la guía
+  resultados: "{0}No hay guías.|{1}1 guía|]1,Inf[%count% guías"
+  vacio: Todavía no hay guías publicadas.
+  sin_resultados: No hay guías publicadas con esos filtros.
+guia:
+  nueva: Nueva guía
+  crear: Crear guía
+  creada: Guía creada. Agrega pestañas, secciones y bloques.
+  guardada: Datos de la guía guardados.
+  datos: Datos de la guía
+  grupo_datos: Datos generales
+  titulo: Título
+  slug: Dirección
+  slug_ayuda: Parte final de la dirección pública (/guias/...). Si la dejas vacía, se arma con el título.
+  slug_repetido: Ya hay otra guía con esta dirección.
+  slug_no_valido: Usa solo minúsculas sin tildes, números y guiones.
+  descripcion: Descripción breve
+  descripcion_ayuda: Aparece en la lista de guías. Máximo 500 caracteres.
+  idioma: Idioma de la guía
+  traduccion: Versión en el otro idioma
+  traduccion_ayuda: Si la guía existe en el otro idioma, enlázala para que el botón ES/EN lleve de una a otra.
+  sin_traduccion: (ninguna)
+  disposicion: Presentación de las pestañas
+  materias: Materias
+  coeditores: Coeditores
+  coeditores_ayuda: Pueden editar el contenido, pero no publicar ni cambiar estos datos.
+  responsable: Responsable
+  sin_responsable: (sin responsable)
+  estado: Estado
+  actualizada: Actualizada
+  visitas: Visitas
+  ver_publicada: Ver publicada
+  vista_previa: Vista previa
+  publicar: Publicar
+  despublicar: Pasar a borrador
+  publicada: La guía está publicada.
+  despublicada: La guía volvió a borrador y ya no se ve en el sitio público.
+  eliminar_titulo: Eliminar la guía
+  eliminar_ayuda: Se borran sus pestañas, secciones y bloques. Los recursos y perfiles enlazados no se modifican.
+  eliminada: Guía eliminada.
+  vacio_editor: Aún no tienes guías. Crea la primera con «Nueva guía».
+  vacio_colaborador: Aún no te han agregado como coeditor de ninguna guía.
+  pestana_inicial: Inicio
+  pestanas: Pestañas de la guía
+  nueva_pestana: Nueva pestaña
+  agregar: Agregar
+  opciones_pestana: Opciones de la pestaña
+  renombrar: Cambiar nombre
+  pestana_eliminada: Pestaña eliminada.
+  sin_pestanas: Esta guía no tiene pestañas. Agrega una para empezar.
+  titulo_seccion: Título de la sección
+  seccion_sin_titulo: (sección sin título)
+  nueva_seccion: Nueva sección
+  nueva_seccion_placeholder: Título de la nueva sección (opcional)
+  agregar_seccion: Agregar sección
+  seccion_eliminada: Sección eliminada.
+  agregar_bloque: Agregar bloque
+  bloque_guardado: Bloque guardado.
+  bloque_eliminado: Bloque eliminado.
+  arrastrar: Arrastrar para ordenar
+  ayuda_arrastrar: Arrastra pestañas, secciones y bloques desde el ícono ⠿ para cambiar su orden. Los bloques también se pueden mover a otra sección.
+  error_orden: No se pudo guardar el nuevo orden. La página se recargará.
+  aviso_vista_previa: "Vista previa (%estado%): así se verá la guía publicada."
+  volver_editor: Volver al editor
+  migas: Ruta de navegación
+  sin_contenido: Esta guía todavía no tiene contenido.
+bloque:
+  nuevo: "Nuevo bloque: %tipo%"
+  editar: "Editar bloque: %tipo%"
+  titulo: Título del bloque
+  titulo_ayuda: Opcional.
+  texto: Texto
+  recursos: Recursos
+  recursos_elegidos: Recursos elegidos
+  recursos_ayuda: Busca por título y elige de la lista. Usa las flechas para ordenarlos.
+  buscar_recurso: Buscar recurso por título
+  sin_recursos: Sin recursos.
+  recursos_vacio: Este bloque no tiene recursos disponibles.
+  mostrar_descripcion: Mostrar la descripción de cada recurso
+  resumen_recursos: "{0}Sin recursos|{1}1 recurso|]1,Inf[%count% recursos"
+  perfil: Persona
+  elegir_persona: Elige una persona
+  perfil_obligatorio: Elige una persona.
+  perfil_no_disponible: La persona de este bloque ya no está activa.
+  video: Video
+  video_url: Enlace del video
+  video_url_ayuda: Dirección de YouTube o Vimeo, p. ej. https://www.youtube.com/watch?v=...
+  video_no_valido: El enlace debe ser de un video de YouTube o Vimeo.
+  video_descripcion: Descripción
+  busqueda_texto: Texto sobre el buscador
+  busqueda_texto_ayuda: Opcional, p. ej. «Busca libros y artículos en el catálogo de Bibliotecas UCN».
+  busqueda_etiqueta: Buscar en el catálogo de Bibliotecas UCN
+  busqueda_placeholder: Título, autor o tema
+  busqueda_sin_configurar: El buscador no se mostrará hasta configurar Primo VE (PRIMO_URL y PRIMO_VID).

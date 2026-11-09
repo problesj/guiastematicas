@@ -1,21 +1,21 @@
 {# Selector de autores: busca entre los existentes o agrega nuevos; el orden de la lista es el de la cita. #}
-<div class="campo selector-autores{% if not formulario.autores.vars.valid %} campo--error{% endif %}" data-controller="selector-autores"
-     data-selector-autores-url-value="{{ path('panel_autores_buscar') }}"
-     data-selector-autores-agregar-value="{{ 'autor.agregar_nuevo'|trans }}"
-     data-selector-autores-nuevo-value="{{ 'autor.nuevo_etiqueta'|trans }}"
-     data-selector-autores-quitar-value="{{ 'autor.quitar'|trans }}"
-     data-selector-autores-subir-value="{{ 'autor.subir'|trans }}"
-     data-selector-autores-bajar-value="{{ 'autor.bajar'|trans }}"
-     data-selector-autores-vacio-value="{{ 'autor.ninguno'|trans }}">
+<div class="campo selector-autores{% if not formulario.autores.vars.valid %} campo--error{% endif %}" data-controller="selector-lista"
+     data-selector-lista-url-value="{{ path('panel_autores_buscar') }}"
+     data-selector-lista-agregar-value="{{ 'autor.agregar_nuevo'|trans }}"
+     data-selector-lista-nuevo-value="{{ 'autor.nuevo_etiqueta'|trans }}"
+     data-selector-lista-quitar-value="{{ 'autor.quitar'|trans }}"
+     data-selector-lista-subir-value="{{ 'autor.subir'|trans }}"
+     data-selector-lista-bajar-value="{{ 'autor.bajar'|trans }}"
+     data-selector-lista-vacio-value="{{ 'autor.ninguno'|trans }}">
     <label for="buscar-autor">{{ 'recurso.autores'|trans }}</label>
-    {{ form_widget(formulario.autores, {attr: {'data-selector-autores-target': 'campo'}}) }}
-    <ol class="selector-autores__lista" data-selector-autores-target="lista" aria-label="{{ 'autor.elegidos'|trans }}"></ol>
+    {{ form_widget(formulario.autores, {attr: {'data-selector-lista-target': 'campo'}}) }}
+    <ol class="selector-autores__lista" data-selector-lista-target="lista" aria-label="{{ 'autor.elegidos'|trans }}"></ol>
     <div class="selector-autores__busqueda">
         <input type="text" id="buscar-autor" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugerencias-autores"
                placeholder="{{ 'autor.buscar_placeholder'|trans }}"
-               data-selector-autores-target="busqueda"
-               data-action="input->selector-autores#buscar keydown->selector-autores#tecla">
-        <ul id="sugerencias-autores" class="selector-autores__sugerencias" role="listbox" data-selector-autores-target="sugerencias" hidden></ul>
+               data-selector-lista-target="busqueda"
+               data-action="input->selector-lista#buscar keydown->selector-lista#tecla">
+        <ul id="sugerencias-autores" class="selector-autores__sugerencias" role="listbox" data-selector-lista-target="sugerencias" hidden></ul>
     </div>
     <p class="campo__ayuda">{{ 'recurso.autores_ayuda'|trans }}</p>
     {{ form_errors(formulario.autores) }}
