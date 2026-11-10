@@ -1,0 +1,8 @@
+{# Enlace a una pestaña de la guía (p); las externas se abren en otra ventana. Usa enlaces y pestana de ver.html.twig. #}
+<a href="{{ enlaces['p' ~ p.id] }}"
+    {%- if pestana and p.id == pestana.id %} aria-current="page"{% endif %}
+    {%- if p.enlaceExterno %} target="_blank" rel="noopener" class="guia__pestana-externa"{% endif %}>
+    {{- p.titulo -}}
+    {%- if p.enlaceExterno %}<span class="solo-lectores"> ({{ 'guia.abre_ventana'|trans }})</span>{% endif -%}
+    {%- if p.nueva %}<span class="insignia insignia--nuevo">{{ 'guia.nuevo'|trans }}</span>{% endif -%}
+</a>

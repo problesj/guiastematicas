@@ -35,7 +35,13 @@ final class GuiasController extends AbstractController
     public function ver(Request $request, string $slug, ?string $pestana, GuiaRepository $guias): Response
     {
         $guia = $guias->publicadaPorSlug($slug) ?? throw $this->createNotFoundException();
-        $elegida = $guia->getPestana($pestana) ?? throw $this->createNotFoundException();
+        $elegida = $guia->getPestana($pestana);
+        if (null === $elegida && null !== $pestana) {
+            throw $this->createNotFoundException();
+        }
+        if (null !== $elegida?->getEnlace()) { // pestaña que es solo un enlace externo
+            return $this->redirect($elegida->getEnlace());
+        }
         if (null === $pestana) {
             $guias->registrarVisita($guia);
         }

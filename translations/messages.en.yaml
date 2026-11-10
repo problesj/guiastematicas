@@ -536,6 +536,29 @@ guia:
   volver_editor: Back to the editor
   migas: Breadcrumb
   sin_contenido: This guide has no content yet.
+  titulo_pestana: Title
+  padre_pestana: Placement
+  pestana_principal: Main tab
+  subpestana_de: "Subtab of “%pestana%”"
+  tiene_subpestanas: This is a main tab because it has subtabs.
+  enlace_pestana: External link (optional)
+  enlace_pestana_ayuda: If set, the tab opens that address in a new window instead of showing content.
+  enlace_invalido: The link must be a full address starting with http:// or https://.
+  subpestana_con_hijas: A tab with subtabs cannot be a subtab of another one (only one level).
+  aviso_enlace: "This tab is an external link: in the published guide it leads to %enlace% and its content is not shown."
+  enlace_externo: External link
+  abre_ventana: opens in a new window
+  marcar_nueva: Show the “New” label
+  nuevo: New
+  columnas: Section columns
+  n_columnas: "1 column|%count% columns"
+  paginacion: Guide pages
+  anterior: Previous
+  siguiente: Next
+  ultima_actualizacion: Last updated
+  imprimir: Print page
+  reportar: Report a problem
+  reportar_asunto: "Problem in the guide “%guia%”"
 bloque:
   catalogo_titulo: Find and add resources
   catalogo_texto: Text
