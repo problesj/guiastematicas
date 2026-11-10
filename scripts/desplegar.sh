@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Despliega la versión actual de la rama indicada (por defecto main) en el servidor.
-# Uso: bash scripts/desplegar.sh [rama]
+# Despliega la versión actual de la rama o etiqueta indicada (por defecto main) en el servidor.
+# Uso: bash scripts/desplegar.sh [rama|etiqueta]
 # Requiere .env.local con APP_ENV=prod, APP_SECRET y DATABASE_URL (ver README).
 set -euo pipefail
 
@@ -17,9 +17,17 @@ if [[ ! -f .env.local ]]; then
     exit 1
 fi
 
-git fetch origin "$RAMA"
-git checkout "$RAMA"
-git reset --hard "origin/$RAMA"
+git fetch --tags --force origin
+git fetch origin "$RAMA" 2>/dev/null || true
+if git show-ref --verify --quiet "refs/remotes/origin/$RAMA"; then
+    git checkout -B "$RAMA" "origin/$RAMA"
+    git reset --hard "origin/$RAMA"
+elif git show-ref --verify --quiet "refs/tags/$RAMA"; then
+    git checkout --detach "refs/tags/$RAMA"
+else
+    echo "No existe la rama ni la etiqueta $RAMA en origin" >&2
+    exit 1
+fi
 
 export APP_ENV=prod
 composer install --no-dev --optimize-autoloader --no-interaction
