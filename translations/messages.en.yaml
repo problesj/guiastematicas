@@ -591,8 +591,16 @@ bloque:
   libro_titulo: Title
   libro_autor: Author (optional)
   libro_enlace: Link (optional)
-  libro_titulo_opcional: Title (optional if the book is in the catalogue)
-  libro_isbn_ayuda: With the ISBN, the title, author, publisher and year are filled in from the library catalogue, and the book links to its record.
+  libro_anio: Year
+  libro_editorial: Publisher (optional)
+  libro_enlace_ayuda: Only if the book should open another page; otherwise it links to its catalogue record or its DOI.
+  libro_buscar: Find details
+  libro_buscando: Searching…
+  libro_falta_identificador: Enter an ISBN or a DOI to search.
+  libro_sin_datos: No details were found for that ISBN or DOI. Check the digits or enter the details by hand.
+  libro_datos_catalogo: Details filled in from the library catalogue.
+  libro_datos_doi: Details filled in from doi.org.
+  libros_ayuda: Enter the ISBN or DOI of each book and press “Find details” to fill in the title, author, publisher and year (they are also filled in when you save). You can correct what is brought in.
   libros_isbns: Add several by ISBN
   libros_isbns_ayuda: Paste one or more ISBNs (one per line or separated by commas); when you save, they are added to the list with catalogue data.
   isbn_no_valido: The ISBN is not valid.

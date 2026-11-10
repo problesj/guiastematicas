@@ -15,9 +15,11 @@ editorial.nombre_repetido: Ya existe una editorial con este nombre.
 pais.codigo_repetido: Ya existe un país con este código.
 pais.codigo_no_valido: Usa el código ISO de 2 letras, p. ej. CL.
 bloque.lista_vacia: Agrega al menos un elemento.
-bloque.isbn_no_valido: El ISBN no es válido.
+bloque.isbn_no_valido: El ISBN no es válido; revisa los dígitos (el último es de control).
 bloque.diapositiva_sin_imagen: Sube una imagen para esta diapositiva.
 bloque.perfil_obligatorio: Elige una persona.
 bloque.video_no_valido: El enlace debe ser de un video de YouTube o Vimeo.
-bloque.libro_no_encontrado: "No encontramos el ISBN %isbn% en el catálogo: escribe el título."
-bloque.libro_sin_titulo: Escribe el título o un ISBN.
+bloque.libro_no_encontrado: "No encontramos datos para %isbn%: escribe el título."
+bloque.libro_sin_titulo: Escribe el título, un ISBN o un DOI.
+bloque.doi_no_valido: "El DOI no es válido. Debe empezar con 10. (por ejemplo 10.1007/978-3-030-12345-6)."
+bloque.anio_no_valido: Escribe el año con 4 dígitos.

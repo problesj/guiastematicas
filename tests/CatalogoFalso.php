@@ -9,11 +9,13 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 /**
  * Responde en las pruebas como lo harían las API de Primo VE y Alma (formato JSON de Ex Libris).
  *
- * Conoce un libro propio de la biblioteca (Cormen, con ejemplares) y uno solo del índice central (sin ejemplares).
+ * Conoce un libro propio de la biblioteca (Cormen, con ejemplares), uno solo del índice central (sin ejemplares) y un
+ * libro con DOI en doi.org.
  */
 final class CatalogoFalso
 {
     public const MMS_CORMEN = '991000000001234';
+    public const DOI_LIBRO = '10.1007/978-3-030-12345-1';
 
     /** @var list<string> direcciones consultadas */
     public array $consultas = [];
@@ -71,6 +73,22 @@ final class CatalogoFalso
             }
 
             return new MockResponse(json_encode(['bib' => $bibs, 'total_record_count' => \count($bibs)]));
+        }
+
+        // doi.org con Accept: application/vnd.citationstyles.csl+json
+        if (str_starts_with($url, 'https://doi.org/')) {
+            return match (rawurldecode(substr((string) parse_url($url, \PHP_URL_PATH), 1))) {
+                self::DOI_LIBRO => new MockResponse(json_encode([
+                    'type' => 'book',
+                    'title' => 'Machine Learning in Medicine',
+                    'subtitle' => ['A Practical Introduction'],
+                    'author' => [['family' => 'Pérez', 'given' => 'Ana'], ['family' => 'Soto', 'given' => 'Luis']],
+                    'publisher' => 'Springer International Publishing',
+                    'issued' => ['date-parts' => [[2020, 3, 1]]],
+                    'ISBN' => ['9783030123451', '9783030123468'],
+                ])),
+                default => new MockResponse('', ['http_code' => 404]),
+            };
         }
 
         return new MockResponse('', ['http_code' => 404]);

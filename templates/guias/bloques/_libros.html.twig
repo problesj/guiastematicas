@@ -8,6 +8,7 @@
         {% for libro in items %}
             {% set destino = libro.enlace ?? null %}
             {% if not destino and libro.registro is defined and libro.registro %}{% set destino = enlace_registro_catalogo(libro.registro, guia.idioma) %}{% endif %}
+            {% if not destino and libro.doi is defined and libro.doi %}{% set destino = 'https://doi.org/' ~ libro.doi %}{% endif %}
             {% if not destino and hay_buscador_primo() %}{% set destino = path('catalogo', {_locale: guia.idioma, q: libro.isbn ?? libro.titulo}) %}{% endif %}
             <li class="libro">
                 {% if destino %}<a class="libro__enlace" href="{{ destino }}" target="_blank" rel="noopener">{% else %}<span class="libro__enlace">{% endif %}

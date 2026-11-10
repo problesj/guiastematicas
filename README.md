@@ -159,7 +159,7 @@ problema (correo al responsable).
 | Video | YouTube o Vimeo |
 | Búsqueda en el catálogo | Caja de búsqueda que abre Primo VE (`PRIMO_URL` y `PRIMO_VID` en `.env.local`) |
 | Lista de enlaces | Sitios web externos con descripción opcional |
-| Libros | Lista por ISBN: título, autor, editorial y año se completan desde el catálogo (ver abajo); portada de Open Library y enlace al registro en Primo VE |
+| Libros | Lista por ISBN o DOI: el botón «Buscar datos» (y el guardado) completa título, autor, editorial y año desde el catálogo (ver abajo) o desde doi.org; portada de Open Library y enlace al registro en Primo VE o al DOI |
 | Diapositivas | Carrusel de imágenes subidas (`public/uploads/guias/d{id}-*`), cada una con texto y enlace opcionales; las que dejan de usarse se borran |
 
 Los recursos de acceso abierto llevan la marca «Recurso libre», y el perfil muestra la ubicación (oficina) y, si se
@@ -181,7 +181,7 @@ libro desde la API de búsqueda de Primo VE con solo el ISBN (también se pueden
 a su registro (`/discovery/fulldisplay`). Lo escrito a mano tiene prioridad. Con `ALMA_API_KEY`, la guía muestra si hay
 ejemplares disponibles y en qué biblioteca (API de Alma, `expand=p_avail`); se pide después de cargar la página, solo
 para los libros guardados en el bloque, y se guarda en caché 30 minutos (los datos por ISBN, una semana). Si el
-catálogo no responde, la guía se muestra igual. Las claves van solo en `.env.local` del servidor.
+catálogo no responde, la guía se muestra igual. Las claves van solo en `.env.local` del servidor. Los datos por DOI se piden a doi.org (formato CSL JSON, sin clave).
 
 ### API pública e incrustación
 

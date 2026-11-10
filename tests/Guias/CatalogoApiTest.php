@@ -67,7 +67,7 @@ final class CatalogoApiTest extends WebTestCase
         // Un ISBN que el catálogo no conoce necesita el título escrito a mano.
         $this->enviarLibros($url, [['isbn' => '978-1-234-56789-7']]);
         self::assertResponseStatusCodeSame(422);
-        self::assertSelectorTextContains('.coleccion__item', 'No encontramos el ISBN 978-1-234-56789-7');
+        self::assertSelectorTextContains('.coleccion__item', 'No encontramos datos para 9781234567897');
         $this->enviarLibros($url, [['isbn' => '', 'titulo' => '']], '9781234567897');
         self::assertResponseStatusCodeSame(422);
 
@@ -178,5 +178,41 @@ final class CatalogoApiTest extends WebTestCase
         self::assertSame(0, $comando->execute(['isbn' => '978-0-262-03384-8']));
         self::assertStringContainsString('Biblioteca Coquimbo', $comando->getDisplay());
         self::assertSame(1, $comando->execute(['isbn' => '9781234567897']));
+    }
+
+    public function testConElDoiSeTraenLosDatosDesdeDoiOrg(): void
+    {
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $guia = self::crearGuia($ana);
+        $seccion = $guia->getPestana()->getSecciones()->first();
+        $this->cliente->loginUser($ana);
+
+        // Botón «Buscar datos»: no guarda nada.
+        $this->cliente->request('GET', '/es/panel/guias/datos-libro?doi=https://doi.org/'.CatalogoFalso::DOI_LIBRO);
+        self::assertResponseIsSuccessful();
+        $datos = json_decode((string) $this->cliente->getResponse()->getContent(), true);
+        self::assertSame('Machine Learning in Medicine: A Practical Introduction', $datos['titulo']);
+        self::assertSame('Pérez, Ana; Soto, Luis', $datos['autor']);
+        self::assertSame(['2020', '9783030123451', ['doi']], [$datos['anio'], $datos['isbn'], $datos['origen']]);
+        $this->cliente->request('GET', '/es/panel/guias/datos-libro?isbn=9780262033848');
+        self::assertSame(['catalogo'], json_decode((string) $this->cliente->getResponse()->getContent(), true)['origen']);
+        $this->cliente->request('GET', '/es/panel/guias/datos-libro?doi=10.9999/no-existe');
+        self::assertResponseStatusCodeSame(404);
+
+        // Al guardar con solo el DOI se completa el libro; un DOI mal escrito no se acepta.
+        $url = '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/libros';
+        $this->enviarLibros($url, [['doi' => 'esto no es un doi', 'titulo' => 'X']]);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.coleccion__item', 'El DOI no es válido');
+        $this->enviarLibros($url, [['doi' => 'doi:'.CatalogoFalso::DOI_LIBRO]]);
+        self::assertResponseRedirects();
+        self::em()->clear();
+        $libro = self::em()->getRepository(Bloque::class)->findOneBy(['seccion' => $seccion->getId()])->dato('items')[0];
+        self::assertSame(CatalogoFalso::DOI_LIBRO, $libro['doi']);
+        self::assertSame('Springer International Publishing', $libro['editorial']);
+        self::assertSame('9783030123451', $libro['isbn']);
+
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertSame('https://doi.org/'.CatalogoFalso::DOI_LIBRO, $crawler->filter('.libro a')->attr('href'));
     }
 }
