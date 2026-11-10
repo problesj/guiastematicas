@@ -125,6 +125,7 @@
                                         </div>
                                         <div class="tabla__acciones">
                                             <a href="{{ path('panel_guia_bloque_editar', {id: guia.id, bloque: bloque.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></a>
+                                            <a href="{{ path('panel_guia_bloque_incrustar', {id: guia.id, bloque: bloque.id}) }}">{{ 'incrustar.enlace'|trans }}<span class="solo-lectores"> {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></a>
                                             {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_bloque_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: bloque.titulo ?? bloque.tipo.etiqueta|trans, extra_ruta: {bloque: bloque.id}} %}
                                         </div>
                                     </li>

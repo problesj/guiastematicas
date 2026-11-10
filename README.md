@@ -159,7 +159,7 @@ problema (correo al responsable).
 | Video | YouTube o Vimeo |
 | Búsqueda en el catálogo | Caja de búsqueda que abre Primo VE (`PRIMO_URL` y `PRIMO_VID` en `.env.local`) |
 | Lista de enlaces | Sitios web externos con descripción opcional |
-| Libros | Título, autor, ISBN y enlace; la portada se carga de Open Library por ISBN y, sin enlace, el libro se busca en Primo VE |
+| Libros | Lista por ISBN: título, autor, editorial y año se completan desde el catálogo (ver abajo); portada de Open Library y enlace al registro en Primo VE |
 | Diapositivas | Carrusel de imágenes subidas (`public/uploads/guias/d{id}-*`), cada una con texto y enlace opcionales; las que dejan de usarse se borran |
 
 Los recursos de acceso abierto llevan la marca «Recurso libre», y el perfil muestra la ubicación (oficina) y, si se
@@ -173,5 +173,35 @@ ve en la vista previa del panel hasta que se publica.
 
 Idiomas: cada guía está en un idioma (español o inglés). La versión en el otro idioma es otra guía enlazada en
 **Datos de la guía → Traducción**; el selector ES/EN del sitio lleva de una a otra.
+
+### Catálogo (Primo VE y Alma)
+
+Con `EXLIBRIS_API_URL`, `PRIMO_API_KEY`, `PRIMO_URL` y `PRIMO_VID` en `.env.local`, el bloque Libros completa cada
+libro desde la API de búsqueda de Primo VE con solo el ISBN (también se pueden pegar varios ISBN de una vez) y lo enlaza
+a su registro (`/discovery/fulldisplay`). Lo escrito a mano tiene prioridad. Con `ALMA_API_KEY`, la guía muestra si hay
+ejemplares disponibles y en qué biblioteca (API de Alma, `expand=p_avail`); se pide después de cargar la página, solo
+para los libros guardados en el bloque, y se guarda en caché 30 minutos (los datos por ISBN, una semana). Si el
+catálogo no responde, la guía se muestra igual. Las claves van solo en `.env.local` del servidor.
+
+### API pública e incrustación
+
+API de solo lectura en JSON, con CORS abierto y solo con contenido público (guías publicadas no restringidas):
+
+| Dirección | Contenido |
+| --- | --- |
+| `/api/v1/guias` | Guías; filtros `materia` (slug), `q` e `idioma` |
+| `/api/v1/guias/{slug}` | Una guía con pestañas, secciones y bloques |
+| `/api/v1/recursos` | Lista A-Z por páginas; filtros `q`, `letra`, `materia`, `tipo`, `acceso`, `idioma`, `pagina`, `por_pagina` |
+
+Cualquier bloque de una guía pública se puede mostrar en otra web (un curso de Moodle, el sitio de una carrera): en el
+editor, **Incrustar** entrega el código. Con `/incrustar.js` el iframe ajusta su alto solo:
+
+```html
+<div data-guias-bloque="12"></div>
+<script src="https://<servidor>/incrustar.js" async></script>
+```
+
+o un `<iframe src="https://<servidor>/es/incrustar/bloque/12">` para sitios que no aceptan scripts. Esas páginas se
+pueden enmarcar desde cualquier origen (`Content-Security-Policy: frame-ancestors *`).
 
 CKEditor 5 (licencia GPL 2+) y SortableJS (MIT) están copiados en `assets/lib/`, sin depender de un CDN.

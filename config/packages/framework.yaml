@@ -13,3 +13,6 @@ when@test:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+        # Las pruebas nunca llaman al catálogo real: responde App\Tests\CatalogoFalso.
+        http_client:
+            mock_response_factory: App\Tests\CatalogoFalso

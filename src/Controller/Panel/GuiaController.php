@@ -305,6 +305,16 @@ final class GuiaController extends AbstractController
         return $this->formularioBloque($request, $guia, $bloque, $bloque->getSeccion());
     }
 
+    /** Código para mostrar el bloque en otra web (iframe o /incrustar.js). */
+    #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/incrustar', name: 'panel_guia_bloque_incrustar', methods: ['GET'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function incrustarBloque(Guia $guia, #[MapEntity(id: 'bloque')] Bloque $bloque): Response
+    {
+        $this->comprobarPertenencia($guia, $bloque->getGuia());
+
+        return $this->render('panel/guias/incrustar.html.twig', ['guia' => $guia, 'bloque' => $bloque]);
+    }
+
     #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/eliminar', name: 'panel_guia_bloque_eliminar', methods: ['POST'])]
     #[IsGranted(GuiaVoter::EDITAR, 'guia')]
     public function eliminarBloque(Request $request, Guia $guia, #[MapEntity(id: 'bloque')] Bloque $bloque): Response
@@ -485,6 +495,11 @@ final class GuiaController extends AbstractController
                 'autor' => $texto($i['autor'] ?? null),
                 'isbn' => $texto(preg_replace('/[^0-9X]/', '', strtoupper((string) ($i['isbn'] ?? '')))),
                 'enlace' => $texto($i['enlace'] ?? null),
+                // Del catálogo (LibroBloqueType): editorial, año, registro en Primo VE y MMS id de Alma.
+                'editorial' => $texto($i['editorial'] ?? null),
+                'anio' => $texto($i['anio'] ?? null),
+                'registro' => $texto($i['registro'] ?? null),
+                'mms' => $texto($i['mms'] ?? null),
             ], $items)],
             TipoBloque::Diapositivas => ['items' => array_values(array_filter(array_map(function (array $i) use ($texto, $guia) {
                 $imagen = (string) ($i['imagen'] ?? '');

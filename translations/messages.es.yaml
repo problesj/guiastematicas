@@ -591,6 +591,10 @@ bloque:
   libro_titulo: Título
   libro_autor: Autor (opcional)
   libro_enlace: Enlace (opcional)
+  libro_titulo_opcional: Título (opcional si el libro está en el catálogo)
+  libro_isbn_ayuda: Con el ISBN se completan el título, el autor, la editorial y el año desde el catálogo de la biblioteca, y el libro enlaza a su registro.
+  libros_isbns: Agregar varios por ISBN
+  libros_isbns_ayuda: Pega uno o más ISBN (uno por línea o separados por comas); al guardar se suman a la lista con los datos del catálogo.
   isbn_no_valido: El ISBN no es válido.
   diapositiva_imagen: Imagen
   diapositiva_imagen_ayuda: JPG, PNG o WebP de hasta 4 MB, apaisada (recomendado 1200 × 675 px). Si ya tiene imagen, sube otra solo para reemplazarla.
@@ -647,3 +651,18 @@ bloque:
   busqueda_etiqueta: Buscar en el catálogo de Bibliotecas UCN
   busqueda_placeholder: Título, autor o tema
   busqueda_sin_configurar: El buscador no se mostrará hasta configurar Primo VE (PRIMO_URL y PRIMO_VID).
+libro:
+  disponible: Disponible en %biblioteca%
+  no_disponible: "Sin ejemplares disponibles ahora (%biblioteca%)"
+incrustar:
+  enlace: Incrustar
+  titulo: Incrustar en otra web
+  bajada: Copia uno de estos códigos en otra página (por ejemplo, un curso de Moodle o el sitio de una carrera) para mostrar este bloque allí. Los cambios que hagas en la guía se verán también allá.
+  codigo_script: Código recomendado
+  codigo_script_ayuda: Ajusta el alto automáticamente. Puedes poner varios bloques en la misma página con un solo script.
+  codigo_iframe: Código con iframe
+  codigo_iframe_ayuda: Para sitios que no permiten scripts (por ejemplo, algunos editores de Moodle). Ajusta el alto (height) a mano.
+  vista: Así se verá
+  volver: Volver al editor de la guía
+  no_publicada: Publica la guía para poder incrustar sus bloques.
+  no_restringida: Los bloques de una guía restringida no se pueden incrustar en otras webs.

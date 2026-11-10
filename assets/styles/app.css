@@ -491,6 +491,12 @@ a.libro__enlace:hover .libro__titulo { color: var(--color-principal-oscuro); tex
 .libro__sin-portada { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0.5rem; font-size: 0.8125rem; font-weight: 600; text-align: center; color: #fff; background: linear-gradient(160deg, var(--color-principal), var(--color-principal-oscuro)); overflow: hidden; }
 .libro__titulo { font-weight: 600; }
 .libro__autor { color: var(--color-texto-secundario); font-size: 0.875rem; }
+.libro__edicion { color: var(--color-texto-secundario); font-size: 0.8125rem; }
+.libro__disponibilidad:empty { display: none; }
+.libro__disponibilidad { font-size: 0.8125rem; font-weight: 600; }
+.libro__disponibilidad::before { content: ""; display: inline-block; width: 0.55em; height: 0.55em; margin-right: 0.35em; border-radius: 50%; background: currentColor; }
+.libro__disponibilidad--si { color: #2e7d32; }
+.libro__disponibilidad--no { color: var(--color-texto-secundario); }
 .diapositivas { position: relative; }
 .diapositivas__pista { display: flex; margin: 0; padding: 0; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; border-radius: var(--radio); }
 .diapositivas__pista::-webkit-scrollbar { display: none; }
@@ -523,3 +529,10 @@ a.libro__enlace:hover .libro__titulo { color: var(--color-principal-oscuro); tex
 /* Guías restringidas */
 .insignia--restringida { color: #fff; background: #4a4a48; text-transform: none; letter-spacing: 0; }
 h1 .insignia--restringida { font-size: 0.875rem; }
+
+/* Bloque incrustado en otra web (iframe) */
+.incrustado { margin: 0; padding: 0.75rem; background: #fff; }
+.incrustado .bloque { margin: 0; }
+.incrustado__origen { margin: 0.75rem 0 0; font-size: 0.8125rem; color: var(--color-texto-secundario); }
+.codigo { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; }
+.incrustar__vista { max-width: 48rem; margin-bottom: 1.5rem; padding: 1rem; border: 1px dashed var(--color-borde, #ccc); border-radius: 6px; }
