@@ -19,3 +19,5 @@ bloque.isbn_no_valido: The ISBN is not valid.
 bloque.diapositiva_sin_imagen: Upload an image for this slide.
 bloque.perfil_obligatorio: Choose a person.
 bloque.video_no_valido: The link must be a YouTube or Vimeo video.
+bloque.libro_no_encontrado: "ISBN %isbn% was not found in the catalogue: enter the title."
+bloque.libro_sin_titulo: Enter the title or an ISBN.

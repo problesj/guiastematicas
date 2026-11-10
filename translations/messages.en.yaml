@@ -591,6 +591,10 @@ bloque:
   libro_titulo: Title
   libro_autor: Author (optional)
   libro_enlace: Link (optional)
+  libro_titulo_opcional: Title (optional if the book is in the catalogue)
+  libro_isbn_ayuda: With the ISBN, the title, author, publisher and year are filled in from the library catalogue, and the book links to its record.
+  libros_isbns: Add several by ISBN
+  libros_isbns_ayuda: Paste one or more ISBNs (one per line or separated by commas); when you save, they are added to the list with catalogue data.
   isbn_no_valido: The ISBN is not valid.
   diapositiva_imagen: Image
   diapositiva_imagen_ayuda: JPG, PNG or WebP up to 4 MB, landscape (1200 × 675 px recommended). If it already has an image, upload another only to replace it.
@@ -647,3 +651,18 @@ bloque:
   busqueda_etiqueta: Search the UCN Libraries catalog
   busqueda_placeholder: Title, author or subject
   busqueda_sin_configurar: The search box will not be shown until Primo VE is configured (PRIMO_URL and PRIMO_VID).
+libro:
+  disponible: Available at %biblioteca%
+  no_disponible: "No copies available now (%biblioteca%)"
+incrustar:
+  enlace: Embed
+  titulo: Embed in another website
+  bajada: Copy one of these codes into another page (for example, a Moodle course or a programme website) to show this block there. Changes you make to the guide will show there too.
+  codigo_script: Recommended code
+  codigo_script_ayuda: Adjusts the height automatically. You can add several blocks to the same page with a single script.
+  codigo_iframe: Iframe code
+  codigo_iframe_ayuda: For sites that do not allow scripts (for example, some Moodle editors). Adjust the height by hand.
+  vista: Preview
+  volver: Back to the guide editor
+  no_publicada: Publish the guide to embed its blocks.
+  no_restringida: Blocks of a restricted guide cannot be embedded in other websites.

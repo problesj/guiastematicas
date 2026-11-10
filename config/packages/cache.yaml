@@ -15,5 +15,14 @@ framework:
         #app: cache.adapter.apcu
 
         # Namespaced pools use the above "app" backend by default
-        #pools:
-            #my.dedicated.cache: null
+        pools:
+            # Respuestas del catálogo (libros por ISBN y disponibilidad), ver App\Servicio\Catalogo.
+            cache.catalogo:
+                adapter: cache.app
+
+when@test:
+    framework:
+        cache:
+            pools:
+                cache.catalogo:
+                    adapter: cache.adapter.array

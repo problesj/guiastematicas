@@ -17,6 +17,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -85,7 +87,7 @@ final class BloqueType extends AbstractType
                 'constraints' => [new Assert\Length(max: 300)],
             ]),
             TipoBloque::Enlaces => $this->lista($builder, EnlaceBloqueType::class),
-            TipoBloque::Libros => $this->lista($builder, LibroBloqueType::class),
+            TipoBloque::Libros => $this->libros($this->lista($builder, LibroBloqueType::class)),
             TipoBloque::Diapositivas => $this->lista($builder, DiapositivaBloqueType::class, 20),
         };
     }
@@ -104,6 +106,34 @@ final class BloqueType extends AbstractType
             'error_bubbling' => false,
             'constraints' => [new Assert\Count(min: 1, max: $maximo, minMessage: 'bloque.lista_vacia')],
         ]);
+    }
+
+    /** Campo para agregar varios libros de una vez, pegando ISBN (uno por línea): cada uno se suma a la lista. */
+    private function libros(FormBuilderInterface $builder): FormBuilderInterface
+    {
+        $builder->add('isbns', TextareaType::class, [
+            'label' => 'bloque.libros_isbns',
+            'help' => 'bloque.libros_isbns_ayuda',
+            'mapped' => false,
+            'required' => false,
+            'attr' => ['rows' => 4, 'spellcheck' => 'false'],
+        ]);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $evento): void {
+            $datos = $evento->getData();
+            if (!\is_array($datos)) {
+                return;
+            }
+            $items = array_values(array_filter((array) ($datos['items'] ?? []), 'is_array'));
+            $isbns = array_map(fn (string $t) => strtoupper(str_replace('-', '', $t)), preg_split('/[\s,;]+/', (string) ($datos['isbns'] ?? '')) ?: []);
+            foreach (\array_slice(array_filter($isbns, fn (string $t) => 1 === preg_match('/^(\d{9}[\dX]|\d{13})$/', $t)), 0, 50) as $isbn) {
+                $items[] = ['isbn' => $isbn, 'titulo' => '', 'autor' => '', 'enlace' => ''];
+            }
+            $datos['items'] = $items;
+            $datos['isbns'] = '';
+            $evento->setData($datos);
+        });
+
+        return $builder;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

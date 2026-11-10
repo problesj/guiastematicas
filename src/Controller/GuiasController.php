@@ -8,9 +8,7 @@ use App\Entity\Usuario;
 use App\Repository\GuiaRepository;
 use App\Repository\MateriaRepository;
 use App\Security\GuiaVoter;
-use App\Servicio\BloquesGuia;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -72,15 +70,5 @@ final class GuiasController extends AbstractController
         }
 
         return $respuesta;
-    }
-
-    /** Envía la búsqueda del bloque "Buscar en el catálogo" a Primo VE. */
-    #[Route('/{_locale}/catalogo', name: 'catalogo', requirements: ['_locale' => 'es|en'], methods: ['GET'])]
-    public function catalogo(Request $request, BloquesGuia $bloques): RedirectResponse
-    {
-        $texto = mb_substr(trim($request->query->getString('q')), 0, 300);
-        $destino = '' === $texto ? null : $bloques->enlacePrimo($texto, $request->getLocale());
-
-        return $destino ? $this->redirect($destino) : $this->redirectToRoute('guias');
     }
 }

@@ -19,3 +19,5 @@ bloque.isbn_no_valido: El ISBN no es válido.
 bloque.diapositiva_sin_imagen: Sube una imagen para esta diapositiva.
 bloque.perfil_obligatorio: Elige una persona.
 bloque.video_no_valido: El enlace debe ser de un video de YouTube o Vimeo.
+bloque.libro_no_encontrado: "No encontramos el ISBN %isbn% en el catálogo: escribe el título."
+bloque.libro_sin_titulo: Escribe el título o un ISBN.

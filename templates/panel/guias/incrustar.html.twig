@@ -1,0 +1,40 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'incrustar.titulo'|trans }}{% endblock %}
+
+{% block contenido %}
+    {% set seccion = bloque.seccion %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}">
+        <a href="{{ path('panel_guias') }}">{{ 'panel.guias'|trans }}</a> ›
+        <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: seccion.pestana.id, _fragment: 'bloque-' ~ bloque.id}) }}">{{ guia.titulo }}</a> ›
+        <span>{{ bloque.titulo ?? bloque.tipo.etiqueta|trans }}</span>
+    </nav>
+    <h1>{{ 'incrustar.titulo'|trans }}</h1>
+    <p class="pagina__bajada">{{ 'incrustar.bajada'|trans }}</p>
+
+    {% if not guia.publicada or guia.restringida %}
+        <p class="aviso">{{ (guia.restringida ? 'incrustar.no_restringida' : 'incrustar.no_publicada')|trans }}</p>
+    {% else %}
+        {% set direccion = url('incrustar_bloque', {_locale: guia.idioma, id: bloque.id}) %}
+        {% set codigo_script = '<div data-guias-bloque="' ~ bloque.id ~ '"' ~ (guia.idioma != 'es' ? ' data-idioma="' ~ guia.idioma ~ '"' : '') ~ '></div>' ~ "\n" ~ '<script src="' ~ absolute_url('/incrustar.js') ~ '" async></script>' %}
+        {% set codigo_iframe = '<iframe src="' ~ direccion ~ '" title="' ~ (bloque.titulo ?? guia.titulo)|replace({'"': '&quot;', '<': '&lt;'}) ~ '" width="100%" height="500" style="border:0" loading="lazy"></iframe>' %}
+        <div class="formulario">
+            <div class="campo">
+                <label for="codigo-script">{{ 'incrustar.codigo_script'|trans }}</label>
+                <textarea id="codigo-script" rows="3" readonly spellcheck="false" class="codigo">{{ codigo_script }}</textarea>
+                <p class="campo__ayuda">{{ 'incrustar.codigo_script_ayuda'|trans }}</p>
+            </div>
+            <div class="campo">
+                <label for="codigo-iframe">{{ 'incrustar.codigo_iframe'|trans }}</label>
+                <textarea id="codigo-iframe" rows="3" readonly spellcheck="false" class="codigo">{{ codigo_iframe }}</textarea>
+                <p class="campo__ayuda">{{ 'incrustar.codigo_iframe_ayuda'|trans }}</p>
+            </div>
+        </div>
+        <h2>{{ 'incrustar.vista'|trans }}</h2>
+        <div class="incrustar__vista">
+            <div data-guias-bloque="{{ bloque.id }}" data-idioma="{{ guia.idioma }}"></div>
+            <script src="{{ asset('incrustar.js') }}" async></script>
+        </div>
+    {% endif %}
+    <p><a href="{{ path('panel_guia_editar', {id: guia.id, pestana: seccion.pestana.id, _fragment: 'bloque-' ~ bloque.id}) }}">{{ 'incrustar.volver'|trans }}</a></p>
+{% endblock %}

@@ -108,7 +108,8 @@ final class BloquesListaTest extends WebTestCase
         self::assertSame(['IEEE Xplore', 'INN'], $crawler->filter('.bloque__enlaces > li > a')->each(fn ($a) => $a->filter('.solo-lectores')->count() ? trim(str_replace($a->filter('.solo-lectores')->text(), '', $a->text())) : $a->text()));
         self::assertSame('https://covers.openlibrary.org/b/isbn/9780262033848-M.jpg?default=false', $crawler->filter('.libro img')->attr('src'));
         self::assertSame('https://ejemplo.cl/libro', $crawler->filter('.libro')->eq(1)->filter('a')->attr('href'));
-        self::assertSame('/es/catalogo?q=9780262033848', $crawler->filter('.libro')->eq(0)->filter('a')->attr('href'));
+        // Encontrado en el catálogo por ISBN: enlaza a su registro en Primo VE.
+        self::assertStringStartsWith('https://primo.ejemplo.cl/discovery/fulldisplay?docid=alma', $crawler->filter('.libro')->eq(0)->filter('a')->attr('href'));
 
         // El orden de la pantalla se respeta al volver a guardar.
         $this->enviar('/es/panel/guias/'.$guia->getId().'/bloques/'.$libros->getId().'/editar', [

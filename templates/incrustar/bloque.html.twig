@@ -1,0 +1,37 @@
+{# Página mínima con un solo bloque, para mostrar dentro de un iframe en otra web. Los enlaces abren una pestaña nueva. #}
+{% set cuerpo = include('guias/bloques/_' ~ bloque.tipo.value ~ '.html.twig') %}
+<!DOCTYPE html>
+<html lang="{{ guia.idioma }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noindex">
+        <title>{{ bloque.titulo ?? bloque.tipo.etiqueta|trans }} · {{ guia.titulo }}</title>
+        <base target="_blank">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+        {{ importmap('app') }}
+    </head>
+    <body class="incrustado">
+        <div class="bloque bloque--{{ bloque.tipo.value }}" id="bloque-{{ bloque.id }}">
+            {% if bloque.titulo %}<h2 class="bloque__titulo">{{ bloque.titulo }}</h2>{% endif %}
+            <div class="bloque__cuerpo">{{ cuerpo }}</div>
+        </div>
+        <p class="incrustado__origen">
+            <a href="{{ url('guia', {slug: guia.slug, _locale: guia.idioma}) }}">{{ guia.titulo }}</a>
+            · {{ 'sitio.institucion'|trans({}, 'messages', guia.idioma) }}
+        </p>
+        <script>
+            // Informa la altura a /incrustar.js para que el iframe no muestre barras de desplazamiento.
+            (function () {
+                if (window.parent === window) return;
+                var avisar = function () {
+                    window.parent.postMessage({ tipo: 'guias-ucn-altura', bloque: {{ bloque.id }}, altura: document.documentElement.scrollHeight }, '*');
+                };
+                window.addEventListener('load', avisar);
+                if ('ResizeObserver' in window) new ResizeObserver(avisar).observe(document.body);
+            })();
+        </script>
+    </body>
+</html>
