@@ -51,7 +51,7 @@
             </p>
         </header>
 
-        <div class="guia__cuerpo">
+        <div class="guia__cuerpo{{ guia.pestanas|length > 1 ? '' : ' guia__cuerpo--una-pagina' }}">
             {% if guia.pestanas|length > 1 %}
                 <nav class="guia__pestanas solo-pantalla" aria-label="{{ 'guia.pestanas'|trans }}">
                     <ul>

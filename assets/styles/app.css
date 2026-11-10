@@ -306,6 +306,7 @@ a:hover { color: var(--color-principal-oscuro); }
 .guia--pestanas .guia__pestanas a[aria-current="page"] { border-bottom-color: var(--color-principal); background: var(--color-fondo-suave); }
 .guia--pestanas .guia__contenido { padding-top: 1.5rem; }
 .guia--menu_lateral .guia__cuerpo { display: grid; grid-template-columns: 15rem 1fr; gap: 2rem; align-items: start; }
+.guia--menu_lateral .guia__cuerpo--una-pagina { grid-template-columns: 1fr; } /* sin menú (una sola página): el contenido usa todo el ancho */
 .guia--menu_lateral .guia__pestanas { position: sticky; top: 1rem; border-left: 2px solid var(--color-principal-suave); }
 .guia--menu_lateral .guia__pestanas a { margin-left: -2px; border-left: 2px solid transparent; }
 .guia--menu_lateral .guia__pestanas a[aria-current="page"] { border-left-color: var(--color-principal); background: var(--color-fondo-suave); }
