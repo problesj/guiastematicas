@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Entity\Usuario;
+use App\Enum\Rol;
 use App\Repository\UsuarioRepository;
 use App\Servicio\MetodosAcceso;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -100,7 +101,11 @@ final class GoogleAuthenticator extends OAuth2Authenticator
         $idioma = $request->getSession()->remove(self::IDIOMA_SESION) ?? 'es';
         $destino = $this->getTargetPath($request->getSession(), $firewallName);
 
-        return new RedirectResponse($destino ?? $this->urlGenerator->generate('panel', ['_locale' => $idioma]));
+        return new RedirectResponse($destino ?? $this->urlGenerator->generate(
+            // Un lector no entra al panel: va a la lista de guías (verá las restringidas que tenga asignadas).
+            \in_array(Rol::Lector->value, $token->getRoleNames(), true) ? 'guias' : 'panel',
+            ['_locale' => $idioma],
+        ));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

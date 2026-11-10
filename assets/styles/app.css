@@ -519,3 +519,7 @@ a.libro__enlace:hover .libro__titulo { color: var(--color-principal-oscuro); tex
     .diapositivas__pista { display: block; overflow: visible; }
     .diapositivas__controles { display: none; }
 }
+
+/* Guías restringidas */
+.insignia--restringida { color: #fff; background: #4a4a48; text-transform: none; letter-spacing: 0; }
+h1 .insignia--restringida { font-size: 0.875rem; }

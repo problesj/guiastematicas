@@ -81,7 +81,13 @@ Para Google, crear un "ID de cliente OAuth" de tipo aplicación web en Google Cl
 `https://<dominio>/conectar/google/verificar`. El ejemplo de cada variable está en [.env](.env).
 
 Roles: **Administrador** (usuarios, departamentos, materias y todo el sitio), **Editor** (crea y publica sus guías)
-y **Colaborador** (edita las guías que le compartan como coeditor).
+**Colaborador** (edita las guías que le compartan como coeditor) y **Lector** (solo inicia sesión para ver
+las guías restringidas que tenga asignadas; no entra al panel ni aparece en el directorio de bibliotecarios).
+
+Cada guía puede ser **pública** o de **usuarios asignados** (en **Datos de la guía → Visibilidad**). Una guía
+restringida no aparece en la lista pública ni en buscadores; al abrirla se pide iniciar sesión y solo la ven las
+personas asignadas, el responsable, los coeditores y los administradores. Las imágenes subidas a la guía siguen
+siendo accesibles por su dirección directa.
 
 ## Recursos bibliográficos A-Z y proxy AccesUM
 

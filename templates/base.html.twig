@@ -23,7 +23,7 @@
                 </nav>
                 <div class="barra-superior__derecha">
                 {% if app.user %}
-                    <a href="{{ path('panel') }}">{{ 'menu.panel'|trans }}</a>
+                    {% if is_granted('ROLE_COLABORADOR') %}<a href="{{ path('panel') }}">{{ 'menu.panel'|trans }}</a>{% endif %}
                     <a href="{{ logout_path('main') }}">{{ 'menu.salir'|trans }}</a>
                 {% else %}
                     <a href="{{ path('acceso') }}">{{ 'menu.acceso'|trans }}</a>

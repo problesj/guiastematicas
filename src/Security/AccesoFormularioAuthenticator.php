@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Entity\Usuario;
+use App\Enum\Rol;
 use App\Repository\UsuarioRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +80,11 @@ final class AccesoFormularioAuthenticator extends AbstractLoginFormAuthenticator
     {
         $destino = $this->getTargetPath($request->getSession(), $firewallName);
 
-        return new RedirectResponse($destino ?? $this->urlGenerator->generate('panel', ['_locale' => $request->getLocale()]));
+        return new RedirectResponse($destino ?? $this->urlGenerator->generate(
+            // Un lector no entra al panel: va a la lista de guías (verá las restringidas que tenga asignadas).
+            \in_array(Rol::Lector->value, $token->getRoleNames(), true) ? 'guias' : 'panel',
+            ['_locale' => $request->getLocale()],
+        ));
     }
 
     protected function getLoginUrl(Request $request): string

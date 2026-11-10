@@ -6,7 +6,9 @@ namespace App\Repository;
 
 use App\Entity\Materia;
 use App\Entity\Usuario;
+use App\Enum\Rol;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -51,6 +53,7 @@ class UsuarioRepository extends ServiceEntityRepository implements PasswordUpgra
             ->leftJoin('u.materias', 'm')->addSelect('m')
             ->where('u.activo = true')
             ->andWhere('u.visibleEnDirectorio = true')
+            ->andWhere('u.rol != :lector')->setParameter('lector', Rol::Lector)
             ->orderBy('d.orden', 'ASC')
             ->addOrderBy('d.nombre', 'ASC')
             ->addOrderBy('u.apellidos', 'ASC')
@@ -61,6 +64,21 @@ class UsuarioRepository extends ServiceEntityRepository implements PasswordUpgra
         }
 
         return $consulta->getQuery()->getResult();
+    }
+
+    /** Consulta del personal activo (sin lectores), para elegir coeditores o el perfil de un bloque. */
+    public function personalActivo(): QueryBuilder
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.activo = true')
+            ->andWhere('u.rol != :lector')->setParameter('lector', Rol::Lector)
+            ->orderBy('u.apellidos')->addOrderBy('u.nombre');
+    }
+
+    /** Consulta de todas las personas activas (personal y lectores), para asignar lectores a una guía. */
+    public function activos(): QueryBuilder
+    {
+        return $this->createQueryBuilder('u')->where('u.activo = true')->orderBy('u.apellidos')->addOrderBy('u.nombre');
     }
 
     /** @return list<Usuario> */

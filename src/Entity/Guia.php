@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Enum\DisposicionGuia;
 use App\Enum\EstadoGuia;
+use App\Enum\VisibilidadGuia;
 use App\Repository\GuiaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -82,6 +83,14 @@ class Guia
     private Collection $coeditores;
 
     /** @var Collection<int, Materia> */
+    #[ORM\Column(length: 20, enumType: VisibilidadGuia::class, options: ['default' => 'publica'])]
+    private VisibilidadGuia $visibilidad = VisibilidadGuia::Publica;
+
+    /** @var Collection<int, Usuario> personas que pueden ver la guía restringida (además de quienes la editan) */
+    #[ORM\ManyToMany(targetEntity: Usuario::class)]
+    #[ORM\JoinTable(name: 'guia_lector')]
+    private Collection $lectores;
+
     #[ORM\ManyToMany(targetEntity: Materia::class)]
     #[ORM\OrderBy(['nombre' => 'ASC'])]
     private Collection $materias;
@@ -106,6 +115,7 @@ class Guia
     public function __construct()
     {
         $this->coeditores = new ArrayCollection();
+        $this->lectores = new ArrayCollection();
         $this->materias = new ArrayCollection();
         $this->pestanas = new ArrayCollection();
         $this->creadaEn = new \DateTimeImmutable();
@@ -293,6 +303,55 @@ class Guia
         $this->coeditores->removeElement($usuario);
 
         return $this;
+    }
+
+    public function getVisibilidad(): VisibilidadGuia
+    {
+        return $this->visibilidad;
+    }
+
+    public function setVisibilidad(VisibilidadGuia $visibilidad): static
+    {
+        $this->visibilidad = $visibilidad;
+
+        return $this;
+    }
+
+    public function isRestringida(): bool
+    {
+        return VisibilidadGuia::Restringida === $this->visibilidad;
+    }
+
+    /** @return Collection<int, Usuario> */
+    public function getLectores(): Collection
+    {
+        return $this->lectores;
+    }
+
+    public function addLector(Usuario $usuario): static
+    {
+        if (!$this->lectores->contains($usuario)) {
+            $this->lectores->add($usuario);
+        }
+
+        return $this;
+    }
+
+    public function removeLector(Usuario $usuario): static
+    {
+        $this->lectores->removeElement($usuario);
+
+        return $this;
+    }
+
+    /** ¿Puede esta persona (null = visitante sin sesión) ver la guía? Los administradores se resuelven en GuiaVoter. */
+    public function puedeVer(?Usuario $usuario): bool
+    {
+        if (!$this->isRestringida()) {
+            return true;
+        }
+
+        return null !== $usuario && ($this->puedeEditar($usuario) || $this->lectores->contains($usuario));
     }
 
     /** Responsable y coeditores, sin repetir. */

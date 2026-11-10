@@ -11,7 +11,7 @@
         <div>
             <h1>{{ guia.titulo }}</h1>
             <p class="editor-guia__estado">
-                <span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span>
+                <span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span>{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}
                 {{ guia.idioma|upper }} · {{ 'guia.actualizada'|trans }} {{ guia.actualizadaEn|date('d-m-Y H:i') }}
                 {% if guia.publicada %} · <a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}" target="_blank" rel="noopener">{{ 'guia.ver_publicada'|trans }}</a>{% endif %}
             </p>

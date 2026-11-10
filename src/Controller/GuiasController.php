@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Usuario;
 use App\Repository\GuiaRepository;
 use App\Repository\MateriaRepository;
+use App\Security\GuiaVoter;
 use App\Servicio\BloquesGuia;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,13 +21,14 @@ final class GuiasController extends AbstractController
     #[Route('/{_locale}/guias', name: 'guias', requirements: ['_locale' => 'es|en'], methods: ['GET'])]
     public function listado(Request $request, GuiaRepository $guias, MateriaRepository $materias): Response
     {
+        $usuario = $this->getUser();
         $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
         $materia = '' !== $request->query->getString('materia')
             ? $materias->findOneBy(['slug' => $request->query->getString('materia'), 'activa' => true])
             : null;
 
         return $this->render('guias/listado.html.twig', [
-            'guias' => $guias->publicadas($materia, $texto),
+            'guias' => $guias->publicadas($materia, $texto, $usuario instanceof Usuario ? $usuario : null, $this->isGranted('ROLE_ADMINISTRADOR')),
             'materias' => $materias->activas(),
             'filtro' => ['materia' => $materia, 'q' => $texto],
         ]);
@@ -35,6 +38,8 @@ final class GuiasController extends AbstractController
     public function ver(Request $request, string $slug, ?string $pestana, GuiaRepository $guias): Response
     {
         $guia = $guias->publicadaPorSlug($slug) ?? throw $this->createNotFoundException();
+        // Restringida: sin sesión lleva al acceso (y vuelve aquí); con sesión y sin permiso, 403.
+        $this->denyAccessUnlessGranted(GuiaVoter::VER, $guia);
         $elegida = $guia->getPestana($pestana);
         if (null === $elegida && null !== $pestana) {
             throw $this->createNotFoundException();
@@ -49,17 +54,24 @@ final class GuiasController extends AbstractController
         // El selector ES/EN lleva a la versión de la guía en ese idioma, si existe y está publicada.
         $enlacesIdioma = [];
         $traduccion = $guia->getTraduccion();
-        if (null !== $traduccion && $traduccion->isPublicada()) {
+        if (null !== $traduccion && $traduccion->isPublicada() && $this->isGranted(GuiaVoter::VER, $traduccion)) {
             $enlacesIdioma[$traduccion->getIdioma()] = $this->generateUrl('guia', ['_locale' => $traduccion->getIdioma(), 'slug' => $traduccion->getSlug()]);
             $enlacesIdioma[$guia->getIdioma()] = $this->generateUrl('guia', ['_locale' => $guia->getIdioma(), 'slug' => $guia->getSlug()]);
         }
 
-        return $this->render('guias/ver.html.twig', [
+        $respuesta = $this->render('guias/ver.html.twig', [
             'guia' => $guia,
             'pestana' => $elegida,
             'vista_previa' => false,
             'enlaces_idioma' => $enlacesIdioma,
         ]);
+        if ($guia->isRestringida()) { // que no la guarden cachés compartidas ni la indexen buscadores
+            $respuesta->setPrivate();
+            $respuesta->headers->addCacheControlDirective('no-store');
+            $respuesta->headers->set('X-Robots-Tag', 'noindex');
+        }
+
+        return $respuesta;
     }
 
     /** Envía la búsqueda del bloque "Buscar en el catálogo" a Primo VE. */

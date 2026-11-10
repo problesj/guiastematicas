@@ -25,8 +25,8 @@ inicio:
 pie:
   sedes: Antofagasta y Coquimbo
 acceso:
-  titulo: Acceso para el personal
-  bajada: Espacio para bibliotecarios y editores de guías.
+  titulo: Iniciar sesión
+  bajada: Para el personal de la biblioteca y las personas con acceso a guías restringidas.
   identificador: Correo electrónico
   identificador_ldap: Usuario UCN o correo electrónico
   contrasena: Contraseña
@@ -35,10 +35,14 @@ acceso:
   o: o
   google: Entrar con Google
   nota: Si necesitas una cuenta, pídela al administrador de Guías temáticas.
+visibilidad:
+  publica: Pública (cualquier visitante)
+  restringida: Solo usuarios asignados (con sesión iniciada)
 rol:
   administrador: Administrador
   editor: Editor
   colaborador: Colaborador
+  lector: Lector
 sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
@@ -92,7 +96,7 @@ usuario:
   grupo_perfil: Perfil público
   email: Correo electrónico
   rol: Rol
-  rol_ayuda: "Administrador: todo el sitio. Editor: crea y publica sus guías. Colaborador: edita las guías que le compartan."
+  rol_ayuda: "Administrador: todo el sitio. Editor: crea y publica sus guías. Colaborador: edita las guías que le compartan. Lector: no entra al panel; solo ve las guías restringidas que tenga asignadas (no aparece en el directorio)."
   nombre: Nombre
   apellidos: Apellidos
   cargo: Cargo
@@ -505,6 +509,11 @@ guia:
   materias: Materias
   coeditores: Coeditores
   coeditores_ayuda: Pueden editar el contenido, pero no publicar ni cambiar estos datos.
+  visibilidad: Visibilidad
+  visibilidad_ayuda: Una guía restringida no aparece en la lista pública ni en buscadores; para verla hay que iniciar sesión y estar asignado (los coeditores y administradores siempre la ven).
+  lectores: Usuarios asignados
+  lectores_ayuda: Quiénes pueden ver la guía si es restringida. Para alguien que no es del personal, crea su cuenta con el rol Lector.
+  restringida: Acceso restringido
   responsable: Responsable
   sin_responsable: (sin responsable)
   estado: Estado
