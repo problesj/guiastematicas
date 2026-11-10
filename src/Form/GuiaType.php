@@ -9,6 +9,7 @@ use App\Entity\Materia;
 use App\Entity\Usuario;
 use App\Enum\DisposicionGuia;
 use App\Enum\Rol;
+use App\Enum\VisibilidadGuia;
 use App\Repository\GuiaRepository;
 use App\Repository\MateriaRepository;
 use App\Repository\UsuarioRepository;
@@ -82,12 +83,30 @@ final class GuiaType extends AbstractType
                 'label' => 'guia.coeditores',
                 'class' => Usuario::class,
                 'choice_label' => fn (Usuario $u) => $u->getNombreCompleto().' ('.$u->getEmail().')',
-                'query_builder' => fn (UsuarioRepository $r) => $r->createQueryBuilder('u')->where('u.activo = true')->orderBy('u.apellidos')->addOrderBy('u.nombre'),
+                'query_builder' => fn (UsuarioRepository $r) => $r->personalActivo(),
                 'multiple' => true,
                 'expanded' => true,
                 'required' => false,
                 'by_reference' => false,
                 'help' => 'guia.coeditores_ayuda',
+            ])
+            ->add('visibilidad', EnumType::class, [
+                'label' => 'guia.visibilidad',
+                'class' => VisibilidadGuia::class,
+                'choice_label' => fn (VisibilidadGuia $v) => $v->etiqueta(),
+                'expanded' => true,
+                'help' => 'guia.visibilidad_ayuda',
+            ])
+            ->add('lectores', EntityType::class, [
+                'label' => 'guia.lectores',
+                'class' => Usuario::class,
+                'choice_label' => fn (Usuario $u) => $u->getNombreCompleto().' ('.$u->getEmail().')',
+                'query_builder' => fn (UsuarioRepository $r) => $r->activos(),
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+                'by_reference' => false,
+                'help' => 'guia.lectores_ayuda',
             ]);
 
         // Imágenes: no se mapean; el controlador las guarda con AlmacenImagenesGuia. Sin SVG (podría llevar scripts).

@@ -25,8 +25,8 @@ inicio:
 pie:
   sedes: Antofagasta and Coquimbo
 acceso:
-  titulo: Staff login
-  bajada: For librarians and guide editors.
+  titulo: Sign in
+  bajada: For library staff and people with access to restricted guides.
   identificador: Email address
   identificador_ldap: UCN username or email address
   contrasena: Password
@@ -35,10 +35,14 @@ acceso:
   o: or
   google: Sign in with Google
   nota: If you need an account, ask the Research guides administrator.
+visibilidad:
+  publica: Public (any visitor)
+  restringida: Assigned users only (signed in)
 rol:
   administrador: Administrator
   editor: Editor
   colaborador: Collaborator
+  lector: Reader
 sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
@@ -92,7 +96,7 @@ usuario:
   grupo_perfil: Public profile
   email: Email address
   rol: Role
-  rol_ayuda: "Administrator: the whole site. Editor: creates and publishes their guides. Collaborator: edits guides shared with them."
+  rol_ayuda: "Administrator: the whole site. Editor: creates and publishes their guides. Collaborator: edits guides shared with them. Reader: no panel access; only sees the restricted guides assigned to them (not listed in the directory)."
   nombre: First name
   apellidos: Last name
   cargo: Position
@@ -505,6 +509,11 @@ guia:
   materias: Subjects
   coeditores: Co-editors
   coeditores_ayuda: They can edit the content but cannot publish or change these details.
+  visibilidad: Visibility
+  visibilidad_ayuda: A restricted guide is not in the public list or search engines; viewers must sign in and be assigned (co-editors and administrators always see it).
+  lectores: Assigned users
+  lectores_ayuda: Who can see the guide when it is restricted. For someone outside the library staff, create their account with the Reader role.
+  restringida: Restricted access
   responsable: Owner
   sin_responsable: (no owner)
   estado: Status

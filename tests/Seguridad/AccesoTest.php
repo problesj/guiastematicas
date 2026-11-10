@@ -34,7 +34,7 @@ final class AccesoTest extends WebTestCase
         $this->cliente->request('GET', '/es/acceso');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Acceso para el personal');
+        self::assertSelectorTextContains('h1', 'Iniciar sesión');
         // Sin GOOGLE_CLIENT_ID no se ofrece Google.
         self::assertSelectorNotExists('a[href^="/conectar/google"]');
     }

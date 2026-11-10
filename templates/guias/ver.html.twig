@@ -42,7 +42,7 @@
             {% if guia.banner %}<img class="guia__banner" src="{{ asset('uploads/guias/' ~ guia.banner) }}" alt="" width="1200" height="300">{% endif %}
             <div class="guia__titular">
                 {% if guia.icono %}<img class="guia__icono" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="64" height="64">{% endif %}
-                <h1>{{ guia.titulo }}</h1>
+                <h1>{{ guia.titulo }}{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}</h1>
             </div>
             {% if guia.descripcion %}<p class="pagina__bajada">{{ guia.descripcion }}</p>{% endif %}
             <p class="guia__meta">

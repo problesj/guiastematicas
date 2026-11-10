@@ -22,6 +22,7 @@ use App\Enum\Sexo;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoBloque;
 use App\Enum\TipoRecurso;
+use App\Enum\VisibilidadGuia;
 use App\Servicio\CatalogoPaises;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -77,6 +78,7 @@ final class AppFixtures extends Fixture
             ['editor2@ucn.cl', 'Bruno', 'Soto Araya', Rol::Editor, 1, [3], 'Bibliotecario sede Coquimbo', true],
             ['editora3@ucn.cl', 'Carla', 'Díaz Muñoz', Rol::Editor, 2, [1, 2], 'Encargada de recursos electrónicos', true],
             ['colaborador@ucn.cl', 'Diego', 'Fuentes Vera', Rol::Colaborador, 0, [5], 'Asistente de biblioteca', true],
+            ['lectora@ucn.cl', 'Elena', 'Rivas Tapia', Rol::Lector, 0, [], null, false],
         ] as [$email, $nombre, $apellidos, $rol, $departamento, $indices, $cargo, $visible]) {
             $usuario = (new Usuario())
                 ->setEmail($email)->setNombre($nombre)->setApellidos($apellidos)->setRol($rol)
@@ -209,5 +211,15 @@ final class AppFixtures extends Fixture
             ->agregarPestana((new Pestana('Videos'))->agregarSeccion((new Seccion())
                 ->agregarBloque($bloque(TipoBloque::Video, 'Cómo buscar en GeoRef', ['url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'descripcion' => 'Tutorial de búsqueda básica.']))));
         $manager->persist($geologia);
+
+        // Guía publicada pero restringida: solo la ven la lectora asignada, su responsable y los administradores.
+        $piloto = (new Guia())->setTitulo('Taller de búsqueda (curso piloto)')->setSlug('taller-busqueda')
+            ->setDescripcion('Material del taller para el grupo piloto.')
+            ->setDisposicion(DisposicionGuia::Pestanas)->setResponsable($usuarios['editora1@ucn.cl'])->addMateria($materias[0])
+            ->setVisibilidad(VisibilidadGuia::Restringida)->addLector($usuarios['lectora@ucn.cl'])
+            ->agregarPestana((new Pestana('Inicio'))->agregarSeccion((new Seccion())
+                ->agregarBloque($bloque(TipoBloque::Texto, 'Bienvenida', ['html' => '<p>Esta guía solo la ven las personas asignadas.</p>']))));
+        $piloto->publicar();
+        $manager->persist($piloto);
     }
 }

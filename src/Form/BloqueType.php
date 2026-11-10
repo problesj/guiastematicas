@@ -54,8 +54,7 @@ final class BloqueType extends AbstractType
                 'label' => 'bloque.perfil',
                 'class' => Usuario::class,
                 'choice_label' => fn (Usuario $u) => $u->getNombreCompleto(),
-                'query_builder' => fn (UsuarioRepository $r) => $r->createQueryBuilder('u')
-                    ->where('u.activo = true')->orderBy('u.apellidos')->addOrderBy('u.nombre'),
+                'query_builder' => fn (UsuarioRepository $r) => $r->personalActivo(),
                 'placeholder' => 'bloque.elegir_persona',
                 'constraints' => [new Assert\NotNull(message: 'bloque.perfil_obligatorio')],
             ]),

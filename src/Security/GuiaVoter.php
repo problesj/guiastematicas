@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * Permisos sobre una guía:
+ * - GUIA_VER (guía publicada): cualquiera si es pública; si es restringida, sus lectores, quienes la editan y los administradores.
  * - GUIA_EDITAR (contenido: pestañas, secciones, bloques): administradores, el responsable y los coeditores.
  * - GUIA_GESTIONAR (publicar, datos, coeditores, eliminar): administradores y el responsable si es editor.
  *
@@ -20,6 +21,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 final class GuiaVoter extends Voter
 {
+    public const string VER = 'GUIA_VER';
     public const string EDITAR = 'GUIA_EDITAR';
     public const string GESTIONAR = 'GUIA_GESTIONAR';
 
@@ -29,12 +31,15 @@ final class GuiaVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return \in_array($attribute, [self::EDITAR, self::GESTIONAR], true) && $subject instanceof Guia;
+        return \in_array($attribute, [self::VER, self::EDITAR, self::GESTIONAR], true) && $subject instanceof Guia;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $usuario = $token->getUser();
+        if (self::VER === $attribute && !$subject->isRestringida()) {
+            return true;
+        }
         if (!$usuario instanceof Usuario) {
             return false;
         }
@@ -43,6 +48,7 @@ final class GuiaVoter extends Voter
         }
 
         return match ($attribute) {
+            self::VER => $subject->puedeVer($usuario),
             self::EDITAR => $subject->puedeEditar($usuario),
             self::GESTIONAR => $subject->getResponsable() === $usuario && $this->security->isGranted('ROLE_EDITOR'),
         };

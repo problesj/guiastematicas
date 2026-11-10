@@ -12,6 +12,7 @@ security:
     role_hierarchy:
         ROLE_ADMINISTRADOR: ROLE_EDITOR
         ROLE_EDITOR: ROLE_COLABORADOR
+        ROLE_COLABORADOR: ROLE_LECTOR
 
     firewalls:
         dev:

@@ -8,6 +8,7 @@ use App\Entity\Guia;
 use App\Entity\Materia;
 use App\Entity\Usuario;
 use App\Enum\EstadoGuia;
+use App\Enum\VisibilidadGuia;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -26,13 +27,23 @@ class GuiaRepository extends ServiceEntityRepository
      *
      * @return list<Guia>
      */
-    public function publicadas(?Materia $materia = null, ?string $texto = null): array
+    public function publicadas(?Materia $materia = null, ?string $texto = null, ?Usuario $lector = null, bool $todas = false): array
     {
         $consulta = $this->createQueryBuilder('g')
             ->leftJoin('g.materias', 'm')->addSelect('m')
             ->leftJoin('g.responsable', 'u')->addSelect('u')
             ->where('g.estado = :publicada')->setParameter('publicada', EstadoGuia::Publicada)
             ->orderBy('g.titulo', 'ASC');
+        // Las restringidas solo aparecen a quien puede verlas ($todas: administradores).
+        if (!$todas) {
+            if (null === $lector) {
+                $consulta->andWhere('g.visibilidad = :publica');
+            } else {
+                $consulta->andWhere('g.visibilidad = :publica OR g.responsable = :lector OR :lector MEMBER OF g.coeditores OR :lector MEMBER OF g.lectores')
+                    ->setParameter('lector', $lector);
+            }
+            $consulta->setParameter('publica', VisibilidadGuia::Publica);
+        }
         if (null !== $materia) {
             $consulta->andWhere(':materia MEMBER OF g.materias')->setParameter('materia', $materia);
         }

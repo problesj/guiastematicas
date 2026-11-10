@@ -49,7 +49,7 @@ final class PersonalController extends AbstractController
     public function perfil(string $slug, UsuarioRepository $usuarios): Response
     {
         $persona = $usuarios->findOneBy(['slug' => $slug]);
-        if (!$persona instanceof Usuario || !$persona->isActivo() || !$persona->isVisibleEnDirectorio()) {
+        if (!$persona instanceof Usuario || !$persona->isActivo() || !$persona->isVisibleEnDirectorio() || !$persona->getRol()->esPersonal()) {
             throw $this->createNotFoundException();
         }
 

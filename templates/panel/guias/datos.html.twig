@@ -41,6 +41,11 @@
             <legend>{{ 'guia.coeditores'|trans }}</legend>
             {{ form_row(formulario.coeditores, {label: false}) }}
         </fieldset>
+        <fieldset>
+            <legend>{{ 'guia.visibilidad'|trans }}</legend>
+            {{ form_row(formulario.visibilidad, {label: false}) }}
+            {{ form_row(formulario.lectores) }}
+        </fieldset>
         <div class="formulario__acciones">
             <button type="submit" class="boton">{{ (guia ? 'formulario.guardar' : 'guia.crear')|trans }}</button>
             <a href="{{ guia ? path('panel_guia_editar', {id: guia.id}) : path('panel_guias') }}">{{ 'formulario.cancelar'|trans }}</a>
