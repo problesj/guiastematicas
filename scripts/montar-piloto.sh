@@ -4,8 +4,8 @@
 # y respaldo diario. Pensado para el servidor piloto (10.21.0.102) y reutilizable para producción.
 #
 # Uso (como root, en el servidor):
-#   curl -fsSL https://raw.githubusercontent.com/problesj/guiastematicas/piloto-2026-11-10/scripts/montar-piloto.sh -o montar-piloto.sh
-#   ADMIN_EMAIL=correo@ucn.cl bash montar-piloto.sh
+#   sudo curl -fsSL https://raw.githubusercontent.com/problesj/guiastematicas/piloto-2026-11-10/scripts/montar-piloto.sh -o montar-piloto.sh
+#   sudo ADMIN_EMAIL=correo@ucn.cl bash montar-piloto.sh
 #
 # Variables (todas opcionales salvo ADMIN_EMAIL):
 #   ADMIN_EMAIL          correo del primer administrador (obligatoria)
@@ -45,7 +45,7 @@ fi
 REANUDAR=0
 if [[ -f "$APP_DIR/.env.local" ]]; then
     if [[ -f "$CREDENCIALES" ]]; then
-        echo "$APP_DIR ya está instalado. Para actualizarlo usar: bash $APP_DIR/scripts/desplegar.sh <versión>" >&2
+        echo "$APP_DIR ya está instalado. Para actualizarlo usar: sudo bash $APP_DIR/scripts/desplegar.sh <versión>" >&2
         exit 1
     fi
     REANUDAR=1
@@ -142,4 +142,4 @@ echo "Salud: ${SALUD:-sin respuesta}"
 echo
 echo "Listo: http://${SERVIDOR}/  (versión $(git rev-parse --short HEAD))"
 echo "Credenciales en $CREDENCIALES (solo root)."
-echo "Para actualizar más adelante: bash $APP_DIR/scripts/desplegar.sh main"
+echo "Para actualizar más adelante: sudo bash $APP_DIR/scripts/desplegar.sh main"

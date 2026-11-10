@@ -5,6 +5,10 @@
 set -euo pipefail
 
 RAMA="${1:-main}"
+if [[ $EUID -ne 0 ]]; then
+    echo "Ejecutar como root: sudo bash $0 $RAMA" >&2
+    exit 1
+fi
 APP_DIR="${APP_DIR:-/var/www/guias}"
 cd "$APP_DIR"
 
