@@ -137,6 +137,14 @@ Cada guía tiene pestañas, cada pestaña secciones y cada sección bloques. Pes
 arrastrando el ícono ⠿ (SortableJS); un bloque puede pasar a otra sección. La guía se muestra con pestañas arriba o
 con menú lateral, según se elija en sus datos.
 
+El esquema sigue el de LibGuides: cada bloque se muestra como una caja con barra de título y cada sección reparte sus
+cajas en 1, 2 o 3 columnas (una sola en celulares). En **Opciones de la pestaña** una pestaña puede ser subpestaña de
+otra (un nivel; se despliega bajo su pestaña o va sangrada en el menú lateral), ser solo un enlace externo (se abre en
+otra ventana) o llevar la etiqueta «Nuevo». La guía publicada muestra la ruta Bibliotecas UCN › Guías por materia ›
+materia › guía › pestaña, botones Anterior / Siguiente en el orden de lectura (sin los enlaces externos) y un pie con
+la última actualización, la dirección de la página, las materias, Imprimir (hoja de estilos de impresión) y Reportar un
+problema (correo al responsable).
+
 | Bloque | Contenido |
 | --- | --- |
 | Texto | Editor CKEditor 5; el HTML se sanea en el servidor (`config/packages/html_sanitizer.yaml`) |

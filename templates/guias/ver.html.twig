@@ -1,17 +1,43 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ pestana and guia.pestanas|length > 1 ? pestana.titulo ~ ' · ' : '' }}{{ guia.titulo }}{% endblock %}
+{% set paginas = guia.paginas %}
+{% set portada = paginas|first %}
+{% set es_portada = pestana and portada and pestana.id == portada.id %}
+
+{% block title %}{{ pestana and not es_portada ? pestana.titulo ~ ' · ' : '' }}{{ guia.titulo }}{% endblock %}
 
 {% block body %}
     {% set idioma = app.request.locale %}
+    {# Dirección de cada pestaña: el enlace externo, la vista previa o la página pública (la portada sin slug). #}
+    {% set enlaces = {} %}
+    {% for p in guia.pestanas %}
+        {% set enlaces = enlaces|merge({('p' ~ p.id): p.enlaceExterno ? p.enlace : (vista_previa
+            ? path('panel_guia_vista_previa', {id: guia.id, pestana: p.id})
+            : path('guia', {slug: guia.slug, pestana: portada and p.id == portada.id ? null : p.slug}))}) %}
+    {% endfor %}
+    {% set url_portada = vista_previa ? path('panel_guia_vista_previa', {id: guia.id}) : path('guia', {slug: guia.slug}) %}
+    {% set materias = guia.materias|filter(m => m.activa)|sort((a, b) => a.nombre <=> b.nombre) %}
+    {% set materia = materias|first %}
+
     <article class="contenedor pagina guia guia--{{ guia.disposicion.value }}" lang="{{ guia.idioma }}">
         {% if vista_previa %}
-            <p class="aviso">
+            <p class="aviso solo-pantalla">
                 {{ 'guia.aviso_vista_previa'|trans({'%estado%': guia.estado.etiqueta|trans}) }}
                 <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: pestana ? pestana.id : null}) }}">{{ 'guia.volver_editor'|trans }}</a>
             </p>
+            {% if pestana and pestana.enlaceExterno %}<p class="aviso solo-pantalla">{{ 'guia.aviso_enlace'|trans({'%enlace%': pestana.enlace}) }}</p>{% endif %}
         {% endif %}
-        <nav class="migas" aria-label="{{ 'guia.migas'|trans }}"><a href="{{ path('guias') }}">{{ 'guias.titulo'|trans }}</a> › <span aria-current="page">{{ guia.titulo }}</span></nav>
+        <nav class="migas solo-pantalla" aria-label="{{ 'guia.migas'|trans }}">
+            <a href="https://bibliotecas.ucn.cl/">{{ 'sitio.institucion'|trans }}</a> ›
+            <a href="{{ path('guias') }}">{{ 'guias.titulo'|trans }}</a> ›
+            {% if materia %}<a href="{{ path('guias', {materia: materia.slug}) }}">{{ materia.nombreTraducido(idioma) }}</a> ›{% endif %}
+            {% if pestana and not es_portada %}
+                <a href="{{ url_portada }}">{{ guia.titulo }}</a> ›
+                <span aria-current="page">{{ pestana.titulo }}</span>
+            {% else %}
+                <span aria-current="page">{{ guia.titulo }}</span>
+            {% endif %}
+        </nav>
         <header class="guia__cabecera{% if guia.banner %} guia__cabecera--banner{% endif %}">
             {% if guia.banner %}<img class="guia__banner" src="{{ asset('uploads/guias/' ~ guia.banner) }}" alt="" width="1200" height="300">{% endif %}
             <div class="guia__titular">
@@ -20,19 +46,26 @@
             </div>
             {% if guia.descripcion %}<p class="pagina__bajada">{{ guia.descripcion }}</p>{% endif %}
             <p class="guia__meta">
-                {% for m in guia.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
+                {% for m in materias %}<a class="etiqueta" href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
                 {% if guia.responsable %}<span>{{ 'guia.responsable'|trans }}: <a href="{{ path('personal_perfil', {slug: guia.responsable.slug}) }}">{{ guia.responsable.nombreCompleto }}</a></span>{% endif %}
-                <span>{{ 'guia.actualizada'|trans }}: {{ guia.actualizadaEn|date('d-m-Y') }}</span>
             </p>
         </header>
 
         <div class="guia__cuerpo">
             {% if guia.pestanas|length > 1 %}
-                <nav class="guia__pestanas" aria-label="{{ 'guia.pestanas'|trans }}">
+                <nav class="guia__pestanas solo-pantalla" aria-label="{{ 'guia.pestanas'|trans }}">
                     <ul>
-                        {% for p in guia.pestanas %}
-                            {% set enlace = vista_previa ? path('panel_guia_vista_previa', {id: guia.id, pestana: p.id}) : path('guia', {slug: guia.slug, pestana: loop.first ? null : p.slug}) %}
-                            <li><a href="{{ enlace }}" {% if pestana and p.id == pestana.id %}aria-current="page"{% endif %}>{{ p.titulo }}</a></li>
+                        {% for principal in guia.pestanasPrincipales %}
+                            {% set hijas = principal.subpestanas %}
+                            {% set activa = pestana and (principal.id == pestana.id or (pestana.padre and pestana.padre.id == principal.id)) %}
+                            <li class="{{ hijas is not empty ? 'guia__pestana--con-hijas' }}{{ activa ? ' guia__pestana--activa' }}">
+                                {{ include('guias/_enlace_pestana.html.twig', {p: principal}) }}
+                                {% if hijas is not empty %}
+                                    <ul class="guia__subpestanas">
+                                        {% for hija in hijas %}<li>{{ include('guias/_enlace_pestana.html.twig', {p: hija}) }}</li>{% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
                         {% endfor %}
                     </ul>
                 </nav>
@@ -40,22 +73,53 @@
 
             <div class="guia__contenido">
                 {% if pestana %}
-                    <h2 class="guia__titulo-pestana solo-lectores">{{ pestana.titulo }}</h2>
+                    <h2 class="guia__titulo-pestana{{ pestana.principal ? ' solo-lectores' }}">{{ pestana.titulo }}</h2>
                     {% for seccion in pestana.secciones %}
                         <section class="guia__seccion" id="seccion-{{ seccion.id }}" {% if seccion.titulo %}aria-labelledby="titulo-seccion-{{ seccion.id }}"{% endif %}>
                             {% if seccion.titulo %}<h3 id="titulo-seccion-{{ seccion.id }}">{{ seccion.titulo }}</h3>{% endif %}
-                            {% for bloque in seccion.bloques %}
-                                <div class="bloque bloque--{{ bloque.tipo.value }}" id="bloque-{{ bloque.id }}">
-                                    {% if bloque.titulo %}<h4 class="bloque__titulo">{{ bloque.titulo }}</h4>{% endif %}
-                                    {% include 'guias/bloques/_' ~ bloque.tipo.value ~ '.html.twig' %}
-                                </div>
-                            {% endfor %}
+                            <div class="guia__cajas guia__cajas--{{ seccion.columnas }}">
+                                {% for bloque in seccion.bloques %}
+                                    {# Una caja sin contenido (perfil dado de baja, catálogo sin configurar) no se muestra. #}
+                                    {% set cuerpo = include('guias/bloques/_' ~ bloque.tipo.value ~ '.html.twig') %}
+                                    {% if cuerpo|trim is not empty %}
+                                        <div class="bloque bloque--{{ bloque.tipo.value }}" id="bloque-{{ bloque.id }}">
+                                            {% if bloque.titulo %}<h4 class="bloque__titulo">{{ bloque.titulo }}</h4>{% endif %}
+                                            <div class="bloque__cuerpo">{{ cuerpo }}</div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                         </section>
                     {% endfor %}
+
+                    {% set vecinas = guia.vecinas(pestana) %}
+                    {% if vecinas.anterior or vecinas.siguiente %}
+                        <nav class="guia__vecinas solo-pantalla" aria-label="{{ 'guia.paginacion'|trans }}">
+                            {% if vecinas.anterior %}<a class="guia__anterior" href="{{ enlaces['p' ~ vecinas.anterior.id] }}" rel="prev"><span>{{ 'guia.anterior'|trans }}</span> {{ vecinas.anterior.titulo }}</a>{% endif %}
+                            {% if vecinas.siguiente %}<a class="guia__siguiente" href="{{ enlaces['p' ~ vecinas.siguiente.id] }}" rel="next"><span>{{ 'guia.siguiente'|trans }}</span> {{ vecinas.siguiente.titulo }}</a>{% endif %}
+                        </nav>
+                    {% endif %}
                 {% else %}
                     <p>{{ 'guia.sin_contenido'|trans }}</p>
                 {% endif %}
             </div>
         </div>
+
+        {% set url_publica = url('guia', {slug: guia.slug, _locale: guia.idioma, pestana: pestana and not es_portada and not pestana.enlaceExterno ? pestana.slug : null}) %}
+        <footer class="guia__pie" data-controller="imprimir">
+            <dl>
+                <div><dt>{{ 'guia.ultima_actualizacion'|trans }}:</dt> <dd><time datetime="{{ guia.actualizadaEn|date('Y-m-d') }}">{{ guia.actualizadaEn|date('d-m-Y') }}</time></dd></div>
+                <div><dt>URL:</dt> <dd><a href="{{ url_publica }}">{{ url_publica }}</a></dd></div>
+                {% if materias is not empty %}
+                    <div><dt>{{ 'guia.materias'|trans }}:</dt> <dd>{% for m in materias %}{{ not loop.first ? ', ' }}<a href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a>{% endfor %}</dd></div>
+                {% endif %}
+            </dl>
+            <p class="guia__pie-acciones solo-pantalla">
+                <button type="button" class="boton-texto" data-action="imprimir#imprimir">{{ 'guia.imprimir'|trans }}</button>
+                {% if guia.responsable %}
+                    <a href="mailto:{{ guia.responsable.email }}?subject={{ ('guia.reportar_asunto'|trans({'%guia%': guia.titulo}))|url_encode }}&amp;body={{ url_publica|url_encode }}">{{ 'guia.reportar'|trans }}</a>
+                {% endif %}
+            </p>
+        </footer>
     </article>
 {% endblock %}

@@ -34,11 +34,16 @@
         {# Pestañas #}
         <div class="editor-guia__pestanas">
             <ul class="editor-guia__lista-pestanas" data-ordenar-target="lista" data-tipo="pestanas" aria-label="{{ 'guia.pestanas'|trans }}">
-                {% for p in guia.pestanas %}
-                    <li data-id="{{ p.id }}">
-                        <span class="asa" aria-hidden="true" title="{{ 'guia.arrastrar'|trans }}">⠿</span>
-                        <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: p.id}) }}" {% if pestana and p.id == pestana.id %}aria-current="page"{% endif %}>{{ p.titulo }}</a>
-                    </li>
+                {% for principal in guia.pestanasPrincipales %}
+                    {% for p in [principal]|merge(principal.subpestanas) %}
+                        <li data-id="{{ p.id }}" {% if not p.principal %}class="editor-guia__subpestana"{% endif %}>
+                            <span class="asa" aria-hidden="true" title="{{ 'guia.arrastrar'|trans }}">⠿</span>
+                            {% if not p.principal %}<span aria-hidden="true">↳</span>{% endif %}
+                            <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: p.id}) }}" {% if pestana and p.id == pestana.id %}aria-current="page"{% endif %}>{% if not p.principal %}<span class="solo-lectores">{{ 'guia.subpestana_de'|trans({'%pestana%': principal.titulo}) }}: </span>{% endif %}{{ p.titulo }}</a>
+                            {% if p.enlaceExterno %}<span title="{{ 'guia.enlace_externo'|trans }}">↗</span>{% endif %}
+                            {% if p.nueva %}<span class="insignia insignia--nuevo">{{ 'guia.nuevo'|trans }}</span>{% endif %}
+                        </li>
+                    {% endfor %}
                 {% endfor %}
             </ul>
             <form method="post" action="{{ path('panel_guia_pestana_nueva', {id: guia.id}) }}" class="editor-guia__nueva-pestana">
@@ -53,12 +58,38 @@
             <section class="editor-guia__pestana" aria-labelledby="titulo-pestana">
                 <div class="editor-guia__barra">
                     <h2 id="titulo-pestana">{{ pestana.titulo }}</h2>
+                    {% if pestana.enlaceExterno %}<p class="aviso">{{ 'guia.aviso_enlace'|trans({'%enlace%': pestana.enlace}) }}</p>{% endif %}
                     <details class="editor-guia__opciones">
                         <summary>{{ 'guia.opciones_pestana'|trans }}</summary>
-                        <form method="post" action="{{ path('panel_guia_pestana_renombrar', {id: guia.id, pestana: pestana.id}) }}">
+                        <form method="post" action="{{ path('panel_guia_pestana_renombrar', {id: guia.id, pestana: pestana.id}) }}" class="editor-guia__form-opciones">
                             <input type="hidden" name="_token" value="{{ token }}">
-                            <label for="renombrar-pestana">{{ 'guia.renombrar'|trans }}</label>
-                            <input type="text" id="renombrar-pestana" name="titulo" value="{{ pestana.titulo }}" maxlength="100" required>
+                            <div class="campo">
+                                <label for="renombrar-pestana">{{ 'guia.titulo_pestana'|trans }}</label>
+                                <input type="text" id="renombrar-pestana" name="titulo" value="{{ pestana.titulo }}" maxlength="100" required>
+                            </div>
+                            <div class="campo">
+                                <label for="padre-pestana">{{ 'guia.padre_pestana'|trans }}</label>
+                                {% if pestana.subpestanas is empty %}
+                                    <select id="padre-pestana" name="padre">
+                                        <option value="">{{ 'guia.pestana_principal'|trans }}</option>
+                                        {% for principal in guia.pestanasPrincipales|filter(p => p.id != pestana.id) %}
+                                            <option value="{{ principal.id }}" {% if pestana.padre and pestana.padre.id == principal.id %}selected{% endif %}>{{ 'guia.subpestana_de'|trans({'%pestana%': principal.titulo}) }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input type="hidden" name="padre" value="">
+                                    <p class="campo__ayuda" id="padre-pestana">{{ 'guia.tiene_subpestanas'|trans }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="campo">
+                                <label for="enlace-pestana">{{ 'guia.enlace_pestana'|trans }}</label>
+                                <input type="url" id="enlace-pestana" name="enlace" value="{{ pestana.enlace }}" maxlength="500" placeholder="https://" aria-describedby="enlace-pestana-ayuda">
+                                <p class="campo__ayuda" id="enlace-pestana-ayuda">{{ 'guia.enlace_pestana_ayuda'|trans }}</p>
+                            </div>
+                            <div class="campo campo--casilla">
+                                <input type="checkbox" id="nueva-pestana-etiqueta" name="nueva" value="1" {% if pestana.nueva %}checked{% endif %}>
+                                <label for="nueva-pestana-etiqueta">{{ 'guia.marcar_nueva'|trans }}</label>
+                            </div>
                             <button type="submit" class="boton boton--secundario">{{ 'formulario.guardar'|trans }}</button>
                         </form>
                         {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_pestana_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: pestana.titulo, extra_ruta: {pestana: pestana.id}} %}
@@ -74,6 +105,10 @@
                                     <input type="hidden" name="_token" value="{{ token }}">
                                     <label for="titulo-seccion-{{ seccion.id }}" class="solo-lectores">{{ 'guia.titulo_seccion'|trans }}</label>
                                     <input type="text" id="titulo-seccion-{{ seccion.id }}" name="titulo" value="{{ seccion.titulo }}" maxlength="150" placeholder="{{ 'guia.seccion_sin_titulo'|trans }}">
+                                    <label for="columnas-seccion-{{ seccion.id }}" class="solo-lectores">{{ 'guia.columnas'|trans }}</label>
+                                    <select id="columnas-seccion-{{ seccion.id }}" name="columnas" title="{{ 'guia.columnas'|trans }}">
+                                        {% for n in 1..3 %}<option value="{{ n }}" {% if seccion.columnas == n %}selected{% endif %}>{{ 'guia.n_columnas'|trans({'%count%': n}) }}</option>{% endfor %}
+                                    </select>
                                     <button type="submit" class="boton-texto">{{ 'formulario.guardar'|trans }}</button>
                                 </form>
                                 {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_seccion_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: seccion.titulo ?? 'guia.seccion_sin_titulo'|trans, extra_ruta: {seccion: seccion.id}} %}

@@ -29,6 +29,10 @@ class Seccion
     #[ORM\Column]
     private int $posicion = 0;
 
+    /** Columnas en que se reparten los bloques (cajas) de la sección: 1, 2 o 3. */
+    #[ORM\Column(options: ['default' => 1])]
+    private int $columnas = 1;
+
     /** @var Collection<int, Bloque> */
     #[ORM\OneToMany(targetEntity: Bloque::class, mappedBy: 'seccion', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['posicion' => 'ASC'])]
@@ -83,6 +87,18 @@ class Seccion
     public function setPosicion(int $posicion): static
     {
         $this->posicion = $posicion;
+
+        return $this;
+    }
+
+    public function getColumnas(): int
+    {
+        return $this->columnas;
+    }
+
+    public function setColumnas(int $columnas): static
+    {
+        $this->columnas = max(1, min(3, $columnas));
 
         return $this;
     }

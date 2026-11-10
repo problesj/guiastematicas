@@ -536,6 +536,29 @@ guia:
   volver_editor: Volver al editor
   migas: Ruta de navegación
   sin_contenido: Esta guía todavía no tiene contenido.
+  titulo_pestana: Título
+  padre_pestana: Ubicación
+  pestana_principal: Pestaña principal
+  subpestana_de: "Subpestaña de «%pestana%»"
+  tiene_subpestanas: Es una pestaña principal porque tiene subpestañas.
+  enlace_pestana: Enlace externo (opcional)
+  enlace_pestana_ayuda: Si lo indicas, la pestaña abre esa dirección en otra ventana en vez de mostrar contenido.
+  enlace_invalido: El enlace debe ser una dirección completa que empiece con http:// o https://.
+  subpestana_con_hijas: Una pestaña con subpestañas no puede ser subpestaña de otra (solo hay un nivel).
+  aviso_enlace: "Esta pestaña es un enlace externo: en la guía publicada lleva a %enlace% y su contenido no se muestra."
+  enlace_externo: Enlace externo
+  abre_ventana: se abre en otra ventana
+  marcar_nueva: Mostrar la etiqueta «Nuevo»
+  nuevo: Nuevo
+  columnas: Columnas de la sección
+  n_columnas: "1 columna|%count% columnas"
+  paginacion: Páginas de la guía
+  anterior: Anterior
+  siguiente: Siguiente
+  ultima_actualizacion: Última actualización
+  imprimir: Imprimir página
+  reportar: Reportar un problema
+  reportar_asunto: "Problema en la guía «%guia%»"
 bloque:
   catalogo_titulo: Buscar y agregar recursos
   catalogo_texto: Texto

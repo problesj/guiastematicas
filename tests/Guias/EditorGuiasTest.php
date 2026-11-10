@@ -416,4 +416,78 @@ final class EditorGuiasTest extends WebTestCase
         self::assertCount(\count(TipoRecurso::cases()) + 1, $crawler->filter('#catalogo-tipo option'));
         self::assertSame(['Todas las materias', 'Física', 'Química'], $crawler->filter('#catalogo-materia option')->each(fn ($o) => $o->text()));
     }
+
+    public function testSubpestanasEnlacesExternosColumnasYNavegacionDeLaGuia(): void
+    {
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $guia = self::crearGuia($ana, publicada: true);
+        $guia->addMateria(self::crearMateria('Química', 'quimica'))->addMateria(self::crearMateria('Física', 'fisica'));
+        self::em()->flush();
+        $this->cliente->loginUser($ana);
+        $token = $this->token($guia);
+        $id = $guia->getId();
+        [$inicio, $bases] = $guia->getPestanas()->toArray();
+        $opciones = fn (Pestana $p, array $datos) => $this->cliente->request('POST', "/es/panel/guias/$id/pestanas/{$p->getId()}/renombrar", ['_token' => $token, 'titulo' => $p->getTitulo()] + $datos);
+
+        // Nueva pestaña "Normas APA" como subpestaña de "Bases de datos", marcada como nueva.
+        $this->cliente->request('POST', "/es/panel/guias/$id/pestanas", ['_token' => $token, 'titulo' => 'Normas APA']);
+        $apa = self::recargar($guia)->getPestanas()->last();
+        $opciones($apa, ['padre' => (string) $bases->getId(), 'nueva' => '1']);
+        $apa = self::em()->find(Pestana::class, $apa->getId());
+        self::assertSame($bases->getId(), $apa->getPadre()?->getId());
+        self::assertTrue($apa->isNueva());
+
+        // Solo un nivel: "Bases de datos" tiene hijas y no puede colgar de "Inicio"; tampoco de sí misma.
+        $opciones($bases, ['padre' => (string) $inicio->getId()]);
+        self::assertNull(self::em()->find(Pestana::class, $bases->getId())->getPadre());
+        $opciones($inicio, ['padre' => (string) $inicio->getId()]);
+        self::assertNull(self::em()->find(Pestana::class, $inicio->getId())->getPadre());
+
+        // Pestaña que es un enlace externo; un enlace no válido se rechaza.
+        $this->cliente->request('POST', "/es/panel/guias/$id/pestanas", ['_token' => $token, 'titulo' => 'Aprende']);
+        $aprende = self::recargar($guia)->getPestanas()->last();
+        $opciones($aprende, ['enlace' => 'javascript:alert(1)']);
+        self::assertNull(self::em()->find(Pestana::class, $aprende->getId())->getEnlace());
+        $opciones($aprende, ['enlace' => 'https://bibliotecas.ucn.cl/aprende']);
+        self::assertSame('https://bibliotecas.ucn.cl/aprende', self::em()->find(Pestana::class, $aprende->getId())->getEnlace());
+
+        // Columnas de la sección (se limitan a 1..3).
+        $seccion = $inicio->getSecciones()->first();
+        $this->cliente->request('POST', "/es/panel/guias/$id/secciones/{$seccion->getId()}/renombrar", ['_token' => $token, 'titulo' => 'Bienvenida', 'columnas' => '2']);
+        self::assertSame(2, self::em()->find(Seccion::class, $seccion->getId())->getColumnas());
+        $this->cliente->request('POST', "/es/panel/guias/$id/secciones/{$seccion->getId()}/renombrar", ['_token' => $token, 'titulo' => 'Bienvenida', 'columnas' => '9']);
+        self::assertSame(3, self::em()->find(Seccion::class, $seccion->getId())->getColumnas());
+
+        // El editor muestra la subpestaña bajo su principal.
+        $crawler = $this->cliente->request('GET', "/es/panel/guias/$id");
+        self::assertSame(['Inicio', 'Bases de datos', 'Normas APA', 'Aprende'], $crawler->filter('.editor-guia__lista-pestanas li > a')->each(fn ($a) => $a->filter('.solo-lectores')->count() ? trim(str_replace($a->filter('.solo-lectores')->text(), '', $a->text())) : $a->text()));
+        self::assertCount(1, $crawler->filter('.editor-guia__subpestana'));
+
+        // Vista pública: menú con subpestañas, enlace externo, columnas, Anterior / Siguiente, migas y pie.
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertCount(1, $crawler->filter('.guia__pestana--con-hijas .guia__subpestanas a[href="/es/guias/quimica/normas-apa"]'));
+        self::assertSelectorTextContains('.guia__subpestanas .insignia--nuevo', 'Nuevo');
+        $externa = $crawler->filter('.guia__pestanas a[href="https://bibliotecas.ucn.cl/aprende"]');
+        self::assertSame('_blank', $externa->attr('target'));
+        self::assertCount(1, $crawler->filter('.guia__cajas--3 .bloque--texto'));
+        self::assertCount(0, $crawler->filter('.guia__anterior'));
+        self::assertSame('/es/guias/quimica/bases-de-datos', $crawler->filter('.guia__siguiente')->attr('href'));
+        self::assertSelectorTextContains('.guia__pie', 'Última actualización');
+        self::assertStringStartsWith('mailto:ana@ucn.cl?subject=', $crawler->filter('.guia__pie a[href^="mailto:"]')->attr('href'));
+
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica/normas-apa');
+        self::assertResponseIsSuccessful();
+        self::assertSame('/es/guias/quimica/bases-de-datos', $crawler->filter('.guia__anterior')->attr('href'));
+        self::assertCount(0, $crawler->filter('.guia__siguiente')); // "Aprende" es externa: no entra en el recorrido
+        self::assertSelectorTextContains('.guia__pie', 'Física');
+        self::assertSame(['Bibliotecas UCN', 'Guías por materia', 'Física', 'Química', 'Normas APA'], array_map('trim', explode('›', $crawler->filter('.migas')->text())));
+        self::assertSelectorTextContains('h2.guia__titulo-pestana', 'Normas APA');
+
+        $this->cliente->request('GET', '/es/guias/quimica/aprende');
+        self::assertResponseRedirects('https://bibliotecas.ucn.cl/aprende');
+
+        // Al eliminar la principal, su subpestaña pasa a ser principal.
+        $this->cliente->request('POST', "/es/panel/guias/$id/pestanas/{$bases->getId()}/eliminar", ['_token' => $token]);
+        self::assertTrue(self::em()->find(Pestana::class, $apa->getId())->isPrincipal());
+    }
 }

@@ -345,16 +345,57 @@ class Guia
         return $this;
     }
 
-    /** Pestaña por su slug, o la primera si no se indica. */
+    /** Sin slug, la primera página con contenido (la portada de la guía). */
     public function getPestana(?string $slug = null): ?Pestana
     {
+        if (null === $slug) {
+            return $this->getPaginas()[0] ?? null;
+        }
         foreach ($this->pestanas as $pestana) {
-            if (null === $slug || $pestana->getSlug() === $slug) {
+            if ($pestana->getSlug() === $slug) {
                 return $pestana;
             }
         }
 
         return null;
+    }
+
+    /** @return list<Pestana> pestañas principales, en orden (las subpestañas cuelgan de ellas) */
+    public function getPestanasPrincipales(): array
+    {
+        return array_values(array_filter($this->pestanas->toArray(), fn (Pestana $p) => $p->isPrincipal()));
+    }
+
+    /**
+     * Páginas con contenido en el orden de lectura (cada principal seguida de sus subpestañas), sin los enlaces externos.
+     * Es el orden de los botones Anterior / Siguiente.
+     *
+     * @return list<Pestana>
+     */
+    public function getPaginas(): array
+    {
+        $paginas = [];
+        foreach ($this->getPestanasPrincipales() as $principal) {
+            foreach ([$principal, ...$principal->getSubpestanas()] as $pestana) {
+                if (!$pestana->isEnlaceExterno()) {
+                    $paginas[] = $pestana;
+                }
+            }
+        }
+
+        return $paginas;
+    }
+
+    /** @return array{anterior: ?Pestana, siguiente: ?Pestana} */
+    public function vecinas(Pestana $pestana): array
+    {
+        $paginas = $this->getPaginas();
+        $i = array_search($pestana, $paginas, true);
+
+        return false === $i ? ['anterior' => null, 'siguiente' => null] : [
+            'anterior' => $paginas[$i - 1] ?? null,
+            'siguiente' => $paginas[$i + 1] ?? null,
+        ];
     }
 
     public function getVisitas(): int

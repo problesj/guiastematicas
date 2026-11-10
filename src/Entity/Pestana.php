@@ -10,7 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/** Pestaña (o página del menú lateral) de una guía. */
+/**
+ * Pestaña (o página del menú lateral) de una guía. Puede ser subpestaña de otra (un solo nivel, como las subpáginas de
+ * LibGuides) o un enlace externo que se abre en otra ventana en vez de tener contenido propio.
+ */
 #[ORM\Entity]
 class Pestana
 {
@@ -34,6 +37,21 @@ class Pestana
 
     #[ORM\Column]
     private int $posicion = 0;
+
+    /** Pestaña principal de la que depende (subpestaña). Solo un nivel. */
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Pestana $padre = null;
+
+    /** Si tiene enlace, la pestaña lleva a esa dirección (otra ventana) y no muestra contenido. */
+    #[ORM\Column(length: 500, nullable: true)]
+    #[Assert\Url(requireTld: true)]
+    #[Assert\Length(max: 500)]
+    private ?string $enlace = null;
+
+    /** Muestra la etiqueta "Nuevo" junto al título. */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $nueva = false;
 
     /** @var Collection<int, Seccion> */
     #[ORM\OneToMany(targetEntity: Seccion::class, mappedBy: 'pestana', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -106,6 +124,59 @@ class Pestana
     public function setPosicion(int $posicion): static
     {
         $this->posicion = $posicion;
+
+        return $this;
+    }
+
+    public function getPadre(): ?Pestana
+    {
+        return $this->padre;
+    }
+
+    public function setPadre(?Pestana $padre): static
+    {
+        $this->padre = $padre;
+
+        return $this;
+    }
+
+    public function isPrincipal(): bool
+    {
+        return null === $this->padre;
+    }
+
+    /** @return list<Pestana> subpestañas en orden */
+    public function getSubpestanas(): array
+    {
+        return array_values(array_filter($this->guia?->getPestanas()->toArray() ?? [], fn (Pestana $p) => $p->getPadre() === $this));
+    }
+
+    public function getEnlace(): ?string
+    {
+        return $this->enlace;
+    }
+
+    public function setEnlace(?string $enlace): static
+    {
+        $enlace = trim((string) $enlace);
+        $this->enlace = '' === $enlace ? null : $enlace;
+
+        return $this;
+    }
+
+    public function isEnlaceExterno(): bool
+    {
+        return null !== $this->enlace;
+    }
+
+    public function isNueva(): bool
+    {
+        return $this->nueva;
+    }
+
+    public function setNueva(bool $nueva): static
+    {
+        $this->nueva = $nueva;
 
         return $this;
     }

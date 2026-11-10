@@ -180,16 +180,40 @@ final class GuiaController extends AbstractController
         return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
     }
 
+    /** Opciones de la pestaña: título, pestaña principal de la que depende, enlace externo y etiqueta "Nuevo". */
     #[Route('/{id<\d+>}/pestanas/{pestana<\d+>}/renombrar', name: 'panel_guia_pestana_renombrar', methods: ['POST'])]
     #[IsGranted(GuiaVoter::EDITAR, 'guia')]
     public function renombrarPestana(Request $request, Guia $guia, #[MapEntity(id: 'pestana')] Pestana $pestana): Response
     {
         $this->comprobarPertenencia($guia, $pestana->getGuia());
-        $titulo = mb_substr(trim($request->getPayload()->getString('titulo')), 0, 100);
-        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId()) && '' !== $titulo) {
-            $pestana->setTitulo($titulo);
-            $this->guardar($guia);
+        $datos = $request->getPayload();
+        $titulo = mb_substr(trim($datos->getString('titulo')), 0, 100);
+        $enlace = trim($datos->getString('enlace'));
+        if (!$this->tokenValido($request, 'editar-guia-'.$guia->getId()) || '' === $titulo) {
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
         }
+        if ('' !== $enlace && !$this->enlaceValido($enlace)) {
+            $this->addFlash('error', 'guia.enlace_invalido');
+
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
+        }
+
+        $padre = null;
+        $idPadre = $datos->getString('padre');
+        if (ctype_digit($idPadre)) {
+            foreach ($guia->getPestanasPrincipales() as $principal) {
+                if ($principal->getId() === (int) $idPadre && $principal !== $pestana) {
+                    $padre = $principal;
+                }
+            }
+            if (null !== $padre && [] !== $pestana->getSubpestanas()) { // un solo nivel
+                $this->addFlash('error', 'guia.subpestana_con_hijas');
+                $padre = $pestana->getPadre();
+            }
+        }
+
+        $pestana->setTitulo($titulo)->setPadre($padre)->setEnlace($enlace)->setNueva($datos->getBoolean('nueva'));
+        $this->guardar($guia);
 
         return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
     }
@@ -200,6 +224,9 @@ final class GuiaController extends AbstractController
     {
         $this->comprobarPertenencia($guia, $pestana->getGuia());
         if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+            foreach ($pestana->getSubpestanas() as $hija) { // las subpestañas pasan a ser principales
+                $hija->setPadre(null);
+            }
             $guia->removePestana($pestana);
             $this->renumerar($guia->getPestanas());
             $this->guardar($guia);
@@ -231,6 +258,10 @@ final class GuiaController extends AbstractController
         $this->comprobarPertenencia($guia, $seccion->getGuia());
         if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
             $seccion->setTitulo(mb_substr($request->getPayload()->getString('titulo'), 0, 150));
+            $columnas = $request->getPayload()->getString('columnas');
+            if (ctype_digit($columnas)) {
+                $seccion->setColumnas((int) $columnas);
+            }
             $this->guardar($guia);
         }
 
@@ -470,7 +501,13 @@ final class GuiaController extends AbstractController
             }
         }
 
-        return $guia->getPestanas()->first() ?: null;
+        return $guia->getPestana() ?? $guia->getPestanasPrincipales()[0] ?? null;
+    }
+
+    private function enlaceValido(string $enlace): bool
+    {
+        return mb_strlen($enlace) <= 500 && 1 === preg_match('#^https?://[^\s.]+\.[^\s]+$#i', $enlace)
+            && false !== filter_var($enlace, \FILTER_VALIDATE_URL);
     }
 
     /**

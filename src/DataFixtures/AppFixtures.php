@@ -154,7 +154,7 @@ final class AppFixtures extends Fixture
             ->addCoeditor($usuarios['editora3@ucn.cl'])->addMateria($materias[0]);
 
         $inicio = new Pestana('Inicio');
-        $inicio->agregarSeccion((new Seccion('Bienvenida'))
+        $inicio->agregarSeccion((new Seccion('Bienvenida'))->setColumnas(2)
             ->agregarBloque($bloque(TipoBloque::Texto, null, ['html' => '<p>Esta guía reúne los recursos de información más útiles para <strong>Ingeniería</strong>. Si necesitas ayuda, escríbenos o agenda una capacitación.</p>']))
             ->agregarBloque($bloque(TipoBloque::Perfil, 'Tu bibliotecaria', ['usuario' => $usuarios['editora1@ucn.cl']->getId()])));
         $inicio->agregarSeccion((new Seccion('Busca en el catálogo'))
@@ -173,6 +173,12 @@ final class AppFixtures extends Fixture
             ->agregarBloque($bloque(TipoBloque::Texto, 'Normas de citación', ['html' => '<p>Las normas más usadas en ingeniería son <strong>IEEE</strong> y <strong>APA</strong>.</p><ul><li>IEEE: referencias numeradas.</li><li>APA: autor y año.</li></ul>']))
             ->agregarBloque($bloque(TipoBloque::Recursos, 'Gestor de referencias', ['ids' => $ids('Zotero'), 'descripcion' => true])));
         $ingenieria->agregarPestana($citar);
+
+        $apa = (new Pestana('Normas APA'))->setPadre($citar)->setNueva(true);
+        $apa->agregarSeccion((new Seccion())
+            ->agregarBloque($bloque(TipoBloque::Texto, 'APA 7.ª edición', ['html' => '<p>Cita con autor y año en el texto y ordena la lista de referencias alfabéticamente.</p>'])));
+        $ingenieria->agregarPestana($apa);
+        $ingenieria->agregarPestana((new Pestana('Aprende'))->setEnlace('https://bibliotecas.ucn.cl/'));
         $ingenieria->publicar();
         $manager->persist($ingenieria);
 
