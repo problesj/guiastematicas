@@ -8,4 +8,7 @@
     {{ bloque.dato('url') }}
 {%- elseif bloque.tipo.value == 'busqueda' -%}
     {{ bloque.dato('texto') ?? 'bloque.busqueda_etiqueta'|trans }}
+{%- elseif bloque.tipo.value in ['enlaces', 'libros', 'diapositivas'] -%}
+    {% set nombres = bloque.dato('items', [])|map(i => i.titulo)|filter(t => t)|join(', ') %}
+    {{- ('bloque.resumen_' ~ bloque.tipo.value)|trans({'%count%': bloque.dato('items', [])|length}) }}{{ nombres ? ': ' ~ (nombres|length > 120 ? nombres|slice(0, 120) ~ '…' : nombres) }}
 {%- endif -%}

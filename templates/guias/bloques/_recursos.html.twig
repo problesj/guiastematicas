@@ -6,7 +6,8 @@
         {% for recurso in recursos %}
             <li>
                 <a href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener">{{ recurso.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>
-                <small>{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}{% if recurso.acceso.value == 'abierto' %} · {{ 'tipo_acceso.abierto'|trans }}{% endif %}</small>
+                <small>{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}</small>
+                {% if recurso.acceso.value == 'abierto' %}<span class="insignia insignia--abierto recurso-libre"><span aria-hidden="true">🔓</span> {{ 'bloque.recurso_libre'|trans }}</span>{% endif %}
                 {% if bloque.dato('descripcion', true) and recurso.descripcionTraducida(guia.idioma) %}<p>{{ recurso.descripcionTraducida(guia.idioma) }}</p>{% endif %}
             </li>
         {% endfor %}

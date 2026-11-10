@@ -35,6 +35,9 @@
                 <dd>{{ persona.ubicacion }}</dd>
             {% endif %}
         </dl>
+        {% if persona.enlaceCita %}
+            <p><a class="boton" href="{{ persona.enlaceCita }}" target="_blank" rel="noopener">{{ 'personal.agenda_cita'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a></p>
+        {% endif %}
 
         {% if persona.biografiaTraducida(idioma) %}
             <h2>{{ 'personal.acerca'|trans }}</h2>

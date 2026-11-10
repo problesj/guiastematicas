@@ -14,3 +14,8 @@ autor.orcid_repetido: Ya hay otro autor con este ORCID.
 editorial.nombre_repetido: Ya existe una editorial con este nombre.
 pais.codigo_repetido: Ya existe un país con este código.
 pais.codigo_no_valido: Usa el código ISO de 2 letras, p. ej. CL.
+bloque.lista_vacia: Agrega al menos un elemento.
+bloque.isbn_no_valido: El ISBN no es válido.
+bloque.diapositiva_sin_imagen: Sube una imagen para esta diapositiva.
+bloque.perfil_obligatorio: Elige una persona.
+bloque.video_no_valido: El enlace debe ser de un video de YouTube o Vimeo.

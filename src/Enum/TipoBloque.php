@@ -11,6 +11,9 @@ enum TipoBloque: string
     case Perfil = 'perfil';
     case Video = 'video';
     case Busqueda = 'busqueda';
+    case Enlaces = 'enlaces';
+    case Libros = 'libros';
+    case Diapositivas = 'diapositivas';
 
     public function etiqueta(): string
     {

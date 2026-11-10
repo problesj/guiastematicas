@@ -81,6 +81,8 @@ contrasena:
   cambiada: Tu contraseña fue cambiada.
   sin_contrasena: Tu cuenta entra con LDAP UCN o con Google, así que no tiene contraseña propia. Si necesitas una, pídela al administrador.
 usuario:
+  enlace_cita: Enlace para agendar una cita (opcional)
+  enlace_cita_ayuda: Página de Google Calendar, Microsoft Bookings u otra donde reservar una hora. Se muestra como botón «Agenda una cita».
   nuevo: Nueva persona
   editar: Editar
   guardado: Los datos quedaron guardados.
@@ -161,6 +163,7 @@ formulario:
   ambas_sedes: Ambas sedes
   sin_pais: (sin país)
 personal:
+  agenda_cita: Agenda una cita
   titulo: Bibliotecarios
   bajada: Conoce al equipo de Bibliotecas UCN y encuentra al especialista de tu área.
   filtrar: Filtrar por materia
@@ -447,6 +450,12 @@ disposicion_guia:
   pestanas: Pestañas arriba del contenido
   menu_lateral: Menú lateral
 tipo_bloque:
+  enlaces: Lista de enlaces
+  enlaces_ayuda: Enlaces a sitios web externos, con una descripción opcional.
+  libros: Libros
+  libros_ayuda: Libros con su portada (se obtiene por ISBN) y enlace al catálogo o a la versión en línea.
+  diapositivas: Diapositivas
+  diapositivas_ayuda: Imágenes que se van pasando, cada una con texto y enlace opcionales (consejos, novedades).
   texto: Texto
   texto_ayuda: Texto con formato, enlaces, listas y tablas.
   recursos: Recursos bibliográficos
@@ -560,6 +569,34 @@ guia:
   reportar: Reportar un problema
   reportar_asunto: "Problema en la guía «%guia%»"
 bloque:
+  items_enlaces: Enlaces
+  items_libros: Libros
+  items_diapositivas: Diapositivas
+  agregar_enlaces: Agregar enlace
+  agregar_libros: Agregar libro
+  agregar_diapositivas: Agregar diapositiva
+  lista_vacia: Agrega al menos un elemento.
+  enlace_titulo: Texto del enlace
+  enlace_url: Dirección (URL)
+  enlace_descripcion: Descripción (opcional)
+  libro_titulo: Título
+  libro_autor: Autor (opcional)
+  libro_enlace: Enlace (opcional)
+  isbn_no_valido: El ISBN no es válido.
+  diapositiva_imagen: Imagen
+  diapositiva_imagen_ayuda: JPG, PNG o WebP de hasta 4 MB, apaisada (recomendado 1200 × 675 px). Si ya tiene imagen, sube otra solo para reemplazarla.
+  diapositiva_titulo: Texto (opcional; también describe la imagen)
+  diapositiva_enlace: Enlace (opcional)
+  diapositiva_sin_imagen: Sube una imagen para esta diapositiva.
+  resumen_enlaces: "1 enlace|%count% enlaces"
+  resumen_libros: "1 libro|%count% libros"
+  resumen_diapositivas: "1 diapositiva|%count% diapositivas"
+  carrusel: carrusel
+  diapositiva: diapositiva
+  diapositiva_contador: "%actual% de %total%"
+  diapositiva_anterior: Diapositiva anterior
+  diapositiva_siguiente: Diapositiva siguiente
+  recurso_libre: Recurso libre
   catalogo_titulo: Buscar y agregar recursos
   catalogo_texto: Texto
   catalogo_tipo: Tipo de recurso

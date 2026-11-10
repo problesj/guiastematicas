@@ -478,3 +478,44 @@ a:hover { color: var(--color-principal-oscuro); }
     .guia__contenido a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; overflow-wrap: anywhere; }
     .guia__pie { background: none; border-top: 1px solid #999; border-radius: 0; }
 }
+
+/* Bloques: lista de enlaces, libros con portada, diapositivas; recurso libre; botón de cita */
+.bloque__enlaces { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.5rem; }
+.bloque__enlaces a[target="_blank"]::after { content: "\2197"; content: "\2197" / ""; margin-left: 0.25em; font-size: 0.8em; }
+.bloque__libros { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.libro { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.9375rem; line-height: 1.35; }
+.libro__enlace { display: flex; flex-direction: column; gap: 0.4rem; color: var(--color-texto); text-decoration: none; }
+a.libro__enlace:hover .libro__titulo { color: var(--color-principal-oscuro); text-decoration: underline; }
+.libro__portada { position: relative; display: block; aspect-ratio: 2 / 3; overflow: hidden; border-radius: 4px; background: var(--color-fondo-suave); box-shadow: 0 2px 6px rgb(0 0 0 / 0.15); }
+.libro__portada img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.libro__sin-portada { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0.5rem; font-size: 0.8125rem; font-weight: 600; text-align: center; color: #fff; background: linear-gradient(160deg, var(--color-principal), var(--color-principal-oscuro)); overflow: hidden; }
+.libro__titulo { font-weight: 600; }
+.libro__autor { color: var(--color-texto-secundario); font-size: 0.875rem; }
+.diapositivas { position: relative; }
+.diapositivas__pista { display: flex; margin: 0; padding: 0; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; border-radius: var(--radio); }
+.diapositivas__pista::-webkit-scrollbar { display: none; }
+.diapositivas__pista:focus-visible { outline: 3px solid var(--color-principal); outline-offset: 2px; }
+.diapositivas__diapositiva { position: relative; flex: 0 0 100%; scroll-snap-align: start; }
+.diapositivas__diapositiva a { display: block; color: inherit; }
+.diapositivas__diapositiva img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.diapositivas__texto { position: absolute; left: 0; right: 0; bottom: 0; padding: 1.5rem 1rem 0.75rem; font-weight: 600; color: #fff; background: linear-gradient(transparent, rgb(0 0 0 / 0.75)); }
+.diapositivas__controles { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem; }
+.diapositivas__boton { width: 2.25rem; height: 2.25rem; padding: 0; font-size: 1.5rem; line-height: 1; color: var(--color-principal-oscuro); background: #fff; border: 1px solid var(--color-principal-suave); border-radius: 50%; cursor: pointer; }
+.diapositivas__boton:hover { background: var(--color-fondo-suave); }
+.diapositivas__contador { font-size: 0.875rem; color: var(--color-texto-secundario); min-width: 4rem; text-align: center; }
+.recurso-libre { margin-left: 0.4rem; text-transform: none; letter-spacing: 0; }
+.persona__oficina { color: var(--color-texto-secundario); }
+.persona__cita { margin: 0.5rem 0 0; }
+.boton--pequeno { padding: 0.35rem 0.8rem; font-size: 0.9375rem; }
+/* Editor: listas de elementos del bloque */
+.coleccion__lista { display: grid; gap: 0.75rem; margin: 0.5rem 0 0.75rem; padding: 0; list-style: none; counter-reset: elemento; }
+.coleccion__item { display: flex; gap: 1rem; align-items: flex-start; padding: 0.75rem 1rem; background: var(--color-fondo-suave); border: 1px solid #e4dccf; border-radius: var(--radio); counter-increment: elemento; }
+.coleccion__item::before { content: counter(elemento); font-weight: 700; color: var(--color-principal-oscuro); }
+.coleccion__campos { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0 1rem; }
+.coleccion__campos > .campo__errores, .coleccion__campos > ul { grid-column: 1 / -1; }
+.coleccion__miniatura { grid-column: 1 / -1; width: 160px; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 0.5rem; }
+.coleccion__acciones { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
+@media print {
+    .diapositivas__pista { display: block; overflow: visible; }
+    .diapositivas__controles { display: none; }
+}

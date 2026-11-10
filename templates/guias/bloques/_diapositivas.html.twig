@@ -1,0 +1,24 @@
+{# Carrusel de imágenes con texto y enlace opcionales (como los "Quick Tips" de LibGuides). #}
+{% set items = bloque.dato('items', []) %}
+{% if items is not empty %}
+    <div class="diapositivas" data-controller="diapositivas" data-diapositivas-contador-value="{{ 'bloque.diapositiva_contador'|trans }}"
+         role="region" aria-roledescription="{{ 'bloque.carrusel'|trans }}" aria-label="{{ bloque.titulo ?? 'tipo_bloque.diapositivas'|trans }}">
+        <ul class="diapositivas__pista" data-diapositivas-target="pista" data-action="scroll->diapositivas#actualizar" tabindex="0">
+            {% for d in items %}
+                <li class="diapositivas__diapositiva" aria-roledescription="{{ 'bloque.diapositiva'|trans }}" aria-label="{{ 'bloque.diapositiva_contador'|trans({'%actual%': loop.index, '%total%': items|length}) }}">
+                    {% if d.enlace %}<a href="{{ d.enlace }}" target="_blank" rel="noopener">{% endif %}
+                        <img src="{{ asset('uploads/guias/' ~ d.imagen) }}" alt="{{ d.titulo }}" loading="lazy">
+                        {% if d.titulo %}<span class="diapositivas__texto" aria-hidden="true">{{ d.titulo }}</span>{% endif %}
+                    {% if d.enlace %}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        {% if items|length > 1 %}
+            <div class="diapositivas__controles">
+                <button type="button" class="diapositivas__boton" data-action="diapositivas#anterior" aria-label="{{ 'bloque.diapositiva_anterior'|trans }}">‹</button>
+                <span class="diapositivas__contador" data-diapositivas-target="contador" aria-live="polite">{{ 'bloque.diapositiva_contador'|trans({'%actual%': 1, '%total%': items|length}) }}</span>
+                <button type="button" class="diapositivas__boton" data-action="diapositivas#siguiente" aria-label="{{ 'bloque.diapositiva_siguiente'|trans }}">›</button>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

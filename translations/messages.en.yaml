@@ -81,6 +81,8 @@ contrasena:
   cambiada: Your password was changed.
   sin_contrasena: Your account logs in with UCN LDAP or Google, so it has no password of its own. Ask the administrator if you need one.
 usuario:
+  enlace_cita: Appointment booking link (optional)
+  enlace_cita_ayuda: Google Calendar, Microsoft Bookings or other page to book a time. Shown as a “Book an appointment” button.
   nuevo: New person
   editar: Edit
   guardado: The details were saved.
@@ -161,6 +163,7 @@ formulario:
   ambas_sedes: Both campuses
   sin_pais: (no country)
 personal:
+  agenda_cita: Book an appointment
   titulo: Librarians
   bajada: Meet the UCN Libraries team and find the specialist for your field.
   filtrar: Filter by subject
@@ -447,6 +450,12 @@ disposicion_guia:
   pestanas: Tabs above the content
   menu_lateral: Side menu
 tipo_bloque:
+  enlaces: Link list
+  enlaces_ayuda: Links to external websites, with an optional description.
+  libros: Books
+  libros_ayuda: Books with their cover (found by ISBN) and a link to the catalogue or the online version.
+  diapositivas: Slides
+  diapositivas_ayuda: Rotating images, each with optional text and link (tips, news).
   texto: Text
   texto_ayuda: Formatted text with links, lists and tables.
   recursos: Library resources
@@ -560,6 +569,34 @@ guia:
   reportar: Report a problem
   reportar_asunto: "Problem in the guide “%guia%”"
 bloque:
+  items_enlaces: Links
+  items_libros: Books
+  items_diapositivas: Slides
+  agregar_enlaces: Add link
+  agregar_libros: Add book
+  agregar_diapositivas: Add slide
+  lista_vacia: Add at least one item.
+  enlace_titulo: Link text
+  enlace_url: Address (URL)
+  enlace_descripcion: Description (optional)
+  libro_titulo: Title
+  libro_autor: Author (optional)
+  libro_enlace: Link (optional)
+  isbn_no_valido: The ISBN is not valid.
+  diapositiva_imagen: Image
+  diapositiva_imagen_ayuda: JPG, PNG or WebP up to 4 MB, landscape (1200 × 675 px recommended). If it already has an image, upload another only to replace it.
+  diapositiva_titulo: Text (optional; also describes the image)
+  diapositiva_enlace: Link (optional)
+  diapositiva_sin_imagen: Upload an image for this slide.
+  resumen_enlaces: "1 link|%count% links"
+  resumen_libros: "1 book|%count% books"
+  resumen_diapositivas: "1 slide|%count% slides"
+  carrusel: carousel
+  diapositiva: slide
+  diapositiva_contador: "%actual% of %total%"
+  diapositiva_anterior: Previous slide
+  diapositiva_siguiente: Next slide
+  recurso_libre: Free resource
   catalogo_titulo: Find and add resources
   catalogo_texto: Text
   catalogo_tipo: Resource type

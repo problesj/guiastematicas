@@ -92,6 +92,12 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 120)]
     private ?string $ubicacion = null;
 
+    /** Página para agendar una cita (Google Calendar, Microsoft Bookings, LibCal…): botón "Agenda una cita". */
+    #[ORM\Column(length: 500, nullable: true)]
+    #[Assert\Url(requireTld: true)]
+    #[Assert\Length(max: 500)]
+    private ?string $enlaceCita = null;
+
     #[ORM\Column(length: 20, nullable: true, enumType: Sede::class)]
     private ?Sede $sede = null;
 
@@ -317,6 +323,19 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelefono(?string $telefono): static
     {
         $this->telefono = $telefono;
+
+        return $this;
+    }
+
+    public function getEnlaceCita(): ?string
+    {
+        return $this->enlaceCita;
+    }
+
+    public function setEnlaceCita(?string $enlaceCita): static
+    {
+        $enlaceCita = trim((string) $enlaceCita);
+        $this->enlaceCita = '' === $enlaceCita ? null : $enlaceCita;
 
         return $this;
     }

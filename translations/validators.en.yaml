@@ -14,3 +14,8 @@ autor.orcid_repetido: Another author already has this ORCID.
 editorial.nombre_repetido: A publisher with this name already exists.
 pais.codigo_repetido: A country with this code already exists.
 pais.codigo_no_valido: Use the two-letter ISO code, e.g. CL.
+bloque.lista_vacia: Add at least one item.
+bloque.isbn_no_valido: The ISBN is not valid.
+bloque.diapositiva_sin_imagen: Upload an image for this slide.
+bloque.perfil_obligatorio: Choose a person.
+bloque.video_no_valido: The link must be a YouTube or Vimeo video.

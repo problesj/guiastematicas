@@ -26,6 +26,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -153,9 +154,9 @@ final class GuiaController extends AbstractController
     {
         if ($this->tokenValido($request, 'eliminar-guia-'.$guia->getId())) {
             $guia->setTraduccion(null);
+            $this->imagenes->eliminarDe($guia); // antes de borrar: después Doctrine deja la guía sin id
             $this->em->remove($guia);
             $this->em->flush();
-            $this->imagenes->eliminarDe($guia);
             $this->addFlash('exito', 'guia.eliminada');
         }
 
@@ -416,7 +417,7 @@ final class GuiaController extends AbstractController
 
         if ($formulario->isSubmitted() && $formulario->isValid()) {
             $datos = $formulario->getData();
-            $bloque->setTitulo($datos['titulo'] ?? null)->setContenido($this->contenido($tipo, $datos));
+            $bloque->setTitulo($datos['titulo'] ?? null)->setContenido($this->contenido($tipo, $datos, $guia));
             if (null === $bloque->getId()) {
                 $seccion->agregarBloque($bloque);
             }
@@ -453,6 +454,7 @@ final class GuiaController extends AbstractController
             TipoBloque::Perfil => ['usuario' => $this->bloques->perfil($bloque)],
             TipoBloque::Video => ['url' => $bloque->dato('url'), 'descripcion' => $bloque->dato('descripcion')],
             TipoBloque::Busqueda => ['texto' => $bloque->dato('texto')],
+            TipoBloque::Enlaces, TipoBloque::Libros, TipoBloque::Diapositivas => ['items' => $bloque->dato('items', [])],
         };
     }
 
@@ -461,8 +463,11 @@ final class GuiaController extends AbstractController
      *
      * @return array<string, mixed>
      */
-    private function contenido(TipoBloque $tipo, array $datos): array
+    private function contenido(TipoBloque $tipo, array $datos, Guia $guia): array
     {
+        $texto = fn (mixed $valor): ?string => '' === trim((string) $valor) ? null : trim((string) $valor);
+        $items = array_values(array_filter($datos['items'] ?? [], 'is_array'));
+
         return match ($tipo) {
             TipoBloque::Texto => ['html' => $this->saneador->sanitize((string) ($datos['html'] ?? ''))],
             TipoBloque::Recursos => [
@@ -472,6 +477,25 @@ final class GuiaController extends AbstractController
             TipoBloque::Perfil => ['usuario' => $datos['usuario'] instanceof Usuario ? $datos['usuario']->getId() : null],
             TipoBloque::Video => ['url' => $datos['url'] ?? null, 'descripcion' => trim((string) ($datos['descripcion'] ?? '')) ?: null],
             TipoBloque::Busqueda => ['texto' => trim((string) ($datos['texto'] ?? '')) ?: null],
+            TipoBloque::Enlaces => ['items' => array_map(fn (array $i) => [
+                'titulo' => $texto($i['titulo'] ?? null), 'url' => $texto($i['url'] ?? null), 'descripcion' => $texto($i['descripcion'] ?? null),
+            ], $items)],
+            TipoBloque::Libros => ['items' => array_map(fn (array $i) => [
+                'titulo' => $texto($i['titulo'] ?? null),
+                'autor' => $texto($i['autor'] ?? null),
+                'isbn' => $texto(preg_replace('/[^0-9X]/', '', strtoupper((string) ($i['isbn'] ?? '')))),
+                'enlace' => $texto($i['enlace'] ?? null),
+            ], $items)],
+            TipoBloque::Diapositivas => ['items' => array_values(array_filter(array_map(function (array $i) use ($texto, $guia) {
+                $imagen = (string) ($i['imagen'] ?? '');
+                if (($i['archivo'] ?? null) instanceof UploadedFile) {
+                    $imagen = $this->imagenes->guardarDiapositiva($guia, $i['archivo']);
+                } elseif (!$this->imagenes->esDiapositivaDe($guia, $imagen)) {
+                    return null;
+                }
+
+                return ['imagen' => $imagen, 'titulo' => $texto($i['titulo'] ?? null), 'enlace' => $texto($i['enlace'] ?? null)];
+            }, $items)))],
         };
     }
 
@@ -549,6 +573,7 @@ final class GuiaController extends AbstractController
     {
         $guia->tocar();
         $this->em->flush();
+        $this->imagenes->podarDiapositivas($guia); // imágenes de diapositivas quitadas o de bloques eliminados
     }
 
     private function tokenValido(Request $request, string $id): bool

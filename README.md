@@ -152,6 +152,12 @@ problema (correo al responsable).
 | Perfil | Ficha de un bibliotecario del directorio |
 | Video | YouTube o Vimeo |
 | Búsqueda en el catálogo | Caja de búsqueda que abre Primo VE (`PRIMO_URL` y `PRIMO_VID` en `.env.local`) |
+| Lista de enlaces | Sitios web externos con descripción opcional |
+| Libros | Título, autor, ISBN y enlace; la portada se carga de Open Library por ISBN y, sin enlace, el libro se busca en Primo VE |
+| Diapositivas | Carrusel de imágenes subidas (`public/uploads/guias/d{id}-*`), cada una con texto y enlace opcionales; las que dejan de usarse se borran |
+
+Los recursos de acceso abierto llevan la marca «Recurso libre», y el perfil muestra la ubicación (oficina) y, si se
+indicó en la ficha de la persona, un botón «Agenda una cita».
 
 Cada guía puede llevar una imagen de cabecera (banner, 4:1) y un ícono cuadrado, que se guardan en `public/uploads/guias` (JPG, PNG o WebP; sin SVG).
 
