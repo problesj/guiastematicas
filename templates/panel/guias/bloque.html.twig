@@ -72,6 +72,18 @@
                 </section>
             </div>
         {% endif %}
+        {% if formulario.items is defined %}
+            <div class="campo coleccion" data-controller="coleccion" data-coleccion-indice-value="{{ formulario.items|length }}">
+                <p class="campo__etiqueta" id="titulo-items">{{ ('bloque.items_' ~ bloque.tipo.value)|trans }}</p>
+                {{ form_errors(formulario.items) }}
+                <ol class="coleccion__lista" data-coleccion-target="lista" aria-labelledby="titulo-items">
+                    {% for item in formulario.items %}{{ include('panel/guias/_item_coleccion.html.twig') }}{% endfor %}
+                </ol>
+                <template data-coleccion-target="plantilla">{{ include('panel/guias/_item_coleccion.html.twig', {item: formulario.items.vars.prototype}) }}</template>
+                <button type="button" class="boton boton--secundario" data-action="coleccion#agregar">{{ ('bloque.agregar_' ~ bloque.tipo.value)|trans }}</button>
+            </div>
+            {% do formulario.items.setRendered %}
+        {% endif %}
         {{ form_rest(formulario) }}
         <div class="formulario__acciones">
             <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>

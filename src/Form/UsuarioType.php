@@ -21,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -68,6 +69,7 @@ final class UsuarioType extends AbstractType
             ])
             ->add('ubicacion', TextType::class, ['label' => 'usuario.ubicacion', 'required' => false, 'help' => 'usuario.ubicacion_ayuda'])
             ->add('telefono', TelType::class, ['label' => 'usuario.telefono', 'required' => false])
+            ->add('enlaceCita', UrlType::class, ['label' => 'usuario.enlace_cita', 'required' => false, 'default_protocol' => 'https', 'help' => 'usuario.enlace_cita_ayuda'])
             ->add('materias', EntityType::class, [
                 'label' => 'usuario.materias',
                 'class' => Materia::class,

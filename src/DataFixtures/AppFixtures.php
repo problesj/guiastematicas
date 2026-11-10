@@ -90,6 +90,8 @@ final class AppFixtures extends Fixture
             $manager->persist($usuario);
             $usuarios[$email] = $usuario;
         }
+        $usuarios['editora1@ucn.cl']->setUbicacion('Biblioteca Central, 2.º piso, oficina 204')
+            ->setEnlaceCita('https://calendar.google.com/');
 
         foreach ([
             ['Scopus', 'https://www.scopus.com', TipoRecurso::BaseDatos, TipoAcceso::Suscripcion, 'Elsevier', [0, 1, 4], 'Base de datos de resúmenes y citas de literatura científica revisada por pares.'],
@@ -166,6 +168,16 @@ final class AppFixtures extends Fixture
             ->agregarBloque($bloque(TipoBloque::Recursos, null, ['ids' => $ids('Scopus', 'Web of Science'), 'descripcion' => true])));
         $bases->agregarSeccion((new Seccion('Normas y libros'))
             ->agregarBloque($bloque(TipoBloque::Recursos, null, ['ids' => $ids('ASTM Compass', 'Springer eBooks'), 'descripcion' => false])));
+        $bases->agregarSeccion((new Seccion('Libros y sitios recomendados'))->setColumnas(2)
+            ->agregarBloque($bloque(TipoBloque::Libros, 'Libros en línea', ['items' => [
+                ['titulo' => 'Introduction to Algorithms', 'autor' => 'Cormen et al.', 'isbn' => '9780262033848', 'enlace' => null],
+                ['titulo' => 'The C Programming Language', 'autor' => 'Kernighan y Ritchie', 'isbn' => '9780131103627', 'enlace' => null],
+                ['titulo' => 'Manual de ingeniería sin ISBN', 'autor' => null, 'isbn' => null, 'enlace' => 'https://bibliotecas.ucn.cl/'],
+            ]]))
+            ->agregarBloque($bloque(TipoBloque::Enlaces, 'Sitios web', ['items' => [
+                ['titulo' => 'IEEE Xplore', 'url' => 'https://ieeexplore.ieee.org/', 'descripcion' => 'Normas y artículos de ingeniería eléctrica y computación.'],
+                ['titulo' => 'Instituto Nacional de Normalización', 'url' => 'https://www.inn.cl/', 'descripcion' => null],
+            ]])));
         $ingenieria->agregarPestana($bases);
 
         $citar = new Pestana('Cómo citar');

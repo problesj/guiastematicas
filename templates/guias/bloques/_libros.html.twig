@@ -1,0 +1,20 @@
+{# Libros con portada de Open Library (por ISBN). Sin enlace propio, el libro se busca en el catálogo (Primo VE). #}
+{% set items = bloque.dato('items', []) %}
+{% if items is not empty %}
+    <ul class="bloque__libros">
+        {% for libro in items %}
+            {% set destino = libro.enlace ?? (hay_buscador_primo() ? path('catalogo', {_locale: guia.idioma, q: libro.isbn ?? libro.titulo}) : null) %}
+            <li class="libro">
+                {% if destino %}<a class="libro__enlace" href="{{ destino }}" target="_blank" rel="noopener">{% else %}<span class="libro__enlace">{% endif %}
+                    <span class="libro__portada" aria-hidden="true">
+                        <span class="libro__sin-portada">{{ libro.titulo }}</span>
+                        {% if libro.isbn %}<img src="https://covers.openlibrary.org/b/isbn/{{ libro.isbn|url_encode }}-M.jpg?default=false" alt="" data-controller="portada" data-action="load->portada#revisar error->portada#revisar" width="120" height="180" loading="lazy" referrerpolicy="no-referrer">{% endif %}
+                    </span>
+                    <span class="libro__titulo">{{ libro.titulo }}</span>
+                    {% if destino %}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span>{% endif %}
+                {% if destino %}</a>{% else %}</span>{% endif %}
+                {% if libro.autor %}<span class="libro__autor">{{ libro.autor }}</span>{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

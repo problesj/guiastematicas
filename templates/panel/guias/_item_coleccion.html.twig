@@ -1,0 +1,15 @@
+{# Un elemento de la lista de un bloque (enlace, libro o diapositiva); también sirve de plantilla para agregar. #}
+<li class="coleccion__item" data-coleccion-target="item">
+    <div class="coleccion__campos">
+        {% if item.imagen is defined and item.imagen.vars.value %}
+            <img class="coleccion__miniatura" src="{{ asset('uploads/guias/' ~ item.imagen.vars.value) }}" alt="" width="160" height="90">
+        {% endif %}
+        {{ form_errors(item) }}
+        {% for campo in item %}{{ form_row(campo) }}{% endfor %}
+    </div>
+    <div class="coleccion__acciones">
+        <button type="button" class="boton-texto" data-action="coleccion#subir" title="{{ 'autor.subir'|trans }}"><span aria-hidden="true">↑</span><span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
+        <button type="button" class="boton-texto" data-action="coleccion#bajar" title="{{ 'autor.bajar'|trans }}"><span aria-hidden="true">↓</span><span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
+        <button type="button" class="boton-texto boton-texto--peligro" data-action="coleccion#quitar">{{ 'autor.quitar'|trans }}</button>
+    </div>
+</li>

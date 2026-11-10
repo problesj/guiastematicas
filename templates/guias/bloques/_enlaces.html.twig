@@ -1,0 +1,11 @@
+{% set items = bloque.dato('items', []) %}
+{% if items is not empty %}
+    <ul class="bloque__enlaces">
+        {% for item in items %}
+            <li>
+                <a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+                {% if item.descripcion %}<p class="bloque__descripcion">{{ item.descripcion }}</p>{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

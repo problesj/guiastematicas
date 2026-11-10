@@ -11,6 +11,7 @@ use App\Servicio\VideoIncrustado;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -84,7 +85,26 @@ final class BloqueType extends AbstractType
                 'help' => 'bloque.busqueda_texto_ayuda',
                 'constraints' => [new Assert\Length(max: 300)],
             ]),
+            TipoBloque::Enlaces => $this->lista($builder, EnlaceBloqueType::class),
+            TipoBloque::Libros => $this->lista($builder, LibroBloqueType::class),
+            TipoBloque::Diapositivas => $this->lista($builder, DiapositivaBloqueType::class, 20),
         };
+    }
+
+    /** Lista de elementos (enlaces, libros, diapositivas) que se agregan, quitan y ordenan con el controlador "coleccion". */
+    private function lista(FormBuilderInterface $builder, string $tipo, int $maximo = 50): FormBuilderInterface
+    {
+        return $builder->add('items', CollectionType::class, [
+            'label' => false,
+            'entry_type' => $tipo,
+            'entry_options' => ['label' => false],
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => fn (?array $item) => null === $item || [] === array_filter($item, fn ($v) => null !== $v && '' !== $v),
+            'prototype' => true,
+            'error_bubbling' => false,
+            'constraints' => [new Assert\Count(min: 1, max: $maximo, minMessage: 'bloque.lista_vacia')],
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
