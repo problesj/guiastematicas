@@ -21,6 +21,8 @@ use App\Repository\RecursoRepository;
 use App\Security\GuiaVoter;
 use App\Servicio\AlmacenImagenesGuia;
 use App\Servicio\BloquesGuia;
+use App\Servicio\DatosLibro;
+use App\Servicio\MetadatosDoi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -305,6 +307,15 @@ final class GuiaController extends AbstractController
         return $this->formularioBloque($request, $guia, $bloque, $bloque->getSeccion());
     }
 
+    /** Datos de un libro por ISBN o DOI, para el botón «Buscar datos» del bloque Libros (no guarda nada). */
+    #[Route('/datos-libro', name: 'panel_guias_datos_libro', methods: ['GET'])]
+    public function datosLibro(Request $request, DatosLibro $datos): JsonResponse
+    {
+        $libro = $datos->buscar(mb_substr($request->query->getString('isbn'), 0, 30), mb_substr($request->query->getString('doi'), 0, 200));
+
+        return null === $libro ? new JsonResponse(['error' => 'no_encontrado'], 404) : new JsonResponse($libro);
+    }
+
     /** Código para mostrar el bloque en otra web (iframe o /incrustar.js). */
     #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/incrustar', name: 'panel_guia_bloque_incrustar', methods: ['GET'])]
     #[IsGranted(GuiaVoter::EDITAR, 'guia')]
@@ -494,10 +505,11 @@ final class GuiaController extends AbstractController
                 'titulo' => $texto($i['titulo'] ?? null),
                 'autor' => $texto($i['autor'] ?? null),
                 'isbn' => $texto(preg_replace('/[^0-9X]/', '', strtoupper((string) ($i['isbn'] ?? '')))),
-                'enlace' => $texto($i['enlace'] ?? null),
-                // Del catálogo (LibroBloqueType): editorial, año, registro en Primo VE y MMS id de Alma.
+                'doi' => MetadatosDoi::normalizar($texto($i['doi'] ?? null)),
                 'editorial' => $texto($i['editorial'] ?? null),
                 'anio' => $texto($i['anio'] ?? null),
+                'enlace' => $texto($i['enlace'] ?? null),
+                // Del catálogo (DatosLibro): registro en Primo VE y MMS id de Alma.
                 'registro' => $texto($i['registro'] ?? null),
                 'mms' => $texto($i['mms'] ?? null),
             ], $items)],

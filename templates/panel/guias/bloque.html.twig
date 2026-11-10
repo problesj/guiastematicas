@@ -75,6 +75,7 @@
         {% if formulario.items is defined %}
             <div class="campo coleccion" data-controller="coleccion" data-coleccion-indice-value="{{ formulario.items|length }}">
                 <p class="campo__etiqueta" id="titulo-items">{{ ('bloque.items_' ~ bloque.tipo.value)|trans }}</p>
+                {% if bloque.tipo.value == 'libros' %}<p class="campo__ayuda">{{ 'bloque.libros_ayuda'|trans }}</p>{% endif %}
                 {{ form_errors(formulario.items) }}
                 <ol class="coleccion__lista" data-coleccion-target="lista" aria-labelledby="titulo-items">
                     {% for item in formulario.items %}{{ include('panel/guias/_item_coleccion.html.twig') }}{% endfor %}

@@ -536,3 +536,21 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .incrustado__origen { margin: 0.75rem 0 0; font-size: 0.8125rem; color: var(--color-texto-secundario); }
 .codigo { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; }
 .incrustar__vista { max-width: 48rem; margin-bottom: 1.5rem; padding: 1rem; border: 1px dashed var(--color-borde, #ccc); border-radius: 6px; }
+
+/* Formulario de un libro (bloque Libros): identificadores arriba, datos debajo */
+.libro-form { grid-column: 1 / -1; display: grid; gap: 0.25rem; }
+.libro-form__identificadores { display: grid; grid-template-columns: minmax(10rem, 1fr) minmax(12rem, 1.4fr) auto; gap: 0 1rem; align-items: start; padding-bottom: 0.75rem; border-bottom: 1px solid #e4dccf; }
+.libro-form__buscar { padding-top: 1.75rem; }
+.libro-form__estado { grid-column: 1 / -1; margin: 0; font-size: 0.875rem; color: #2e7d32; }
+.libro-form__estado:empty { display: none; }
+.libro-form__estado--problema { color: var(--color-error, #b3261e); }
+.libro-form__datos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 1rem; padding-top: 0.75rem; }
+.libro-form__datos > .campo { grid-column: span 2; }
+.libro-form__datos > .libro-form__titulo { grid-column: span 3; }
+.libro-form__datos > .libro-form__anio { grid-column: span 1; }
+.libro-form__datos > .libro-form__enlace { grid-column: 1 / -1; }
+@media (max-width: 40rem) {
+    .libro-form__identificadores, .libro-form__datos { grid-template-columns: 1fr; }
+    .libro-form__datos > .campo, .libro-form__datos > .libro-form__titulo, .libro-form__datos > .libro-form__anio { grid-column: auto; }
+    .libro-form__buscar { padding-top: 0; margin-bottom: 0.75rem; }
+}

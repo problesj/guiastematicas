@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Servicio\Catalogo;
+use App\Servicio\DatosLibro;
+use App\Servicio\MetadatosDoi;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -16,12 +17,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * Un libro del bloque "Libros". Con el ISBN basta: título, autor, editorial, año y registro se toman del catálogo
- * (Primo VE); lo escrito a mano tiene prioridad. La portada se obtiene de Open Library por ISBN.
+ * Un libro del bloque "Libros". Con el ISBN o el DOI basta: título, autor, editorial y año se toman del catálogo de la
+ * biblioteca (Primo VE) o de doi.org; lo escrito a mano tiene prioridad. La portada se obtiene de Open Library por ISBN.
  */
 final class LibroBloqueType extends AbstractType
 {
-    public function __construct(private readonly Catalogo $catalogo)
+    public function __construct(private readonly DatosLibro $datos)
     {
     }
 
@@ -31,41 +32,59 @@ final class LibroBloqueType extends AbstractType
             ->add('isbn', TextType::class, [
                 'label' => 'ISBN',
                 'required' => false,
-                'help' => $this->catalogo->buscaPorIsbn() ? 'bloque.libro_isbn_ayuda' : null,
+                'attr' => ['inputmode' => 'numeric', 'autocomplete' => 'off', 'data-libro-datos-target' => 'isbn'],
                 'constraints' => [new Assert\Isbn(message: 'bloque.isbn_no_valido')],
             ])
-            ->add('titulo', TextType::class, [
-                'label' => $this->catalogo->buscaPorIsbn() ? 'bloque.libro_titulo_opcional' : 'bloque.libro_titulo',
+            ->add('doi', TextType::class, [
+                'label' => 'DOI',
                 'required' => false,
+                'attr' => ['placeholder' => '10.1007/978-…', 'autocomplete' => 'off', 'data-libro-datos-target' => 'doi'],
+                'constraints' => [
+                    new Assert\Length(max: 200),
+                    new Assert\Callback(function (?string $doi, ExecutionContextInterface $contexto): void {
+                        if (null !== $doi && '' !== trim($doi) && null === MetadatosDoi::normalizar($doi)) {
+                            $contexto->buildViolation('bloque.doi_no_valido')->addViolation();
+                        }
+                    }),
+                ],
+            ])
+            ->add('titulo', TextType::class, [
+                'label' => 'bloque.libro_titulo',
+                'required' => false,
+                'attr' => ['data-libro-datos-target' => 'titulo'],
                 'constraints' => [new Assert\Length(max: 300)],
+            ])
+            ->add('anio', TextType::class, [
+                'label' => 'bloque.libro_anio',
+                'required' => false,
+                'attr' => ['inputmode' => 'numeric', 'maxlength' => 4, 'data-libro-datos-target' => 'anio'],
+                'constraints' => [new Assert\Regex('/^\d{4}$/', message: 'bloque.anio_no_valido')],
             ])
             ->add('autor', TextType::class, [
                 'label' => 'bloque.libro_autor',
                 'required' => false,
+                'attr' => ['data-libro-datos-target' => 'autor'],
+                'constraints' => [new Assert\Length(max: 200)],
+            ])
+            ->add('editorial', TextType::class, [
+                'label' => 'bloque.libro_editorial',
+                'required' => false,
+                'attr' => ['data-libro-datos-target' => 'editorial'],
                 'constraints' => [new Assert\Length(max: 200)],
             ])
             ->add('enlace', UrlType::class, [
                 'label' => 'bloque.libro_enlace',
                 'required' => false,
                 'default_protocol' => 'https',
+                'help' => 'bloque.libro_enlace_ayuda',
                 'constraints' => [new Assert\Url(requireTld: true), new Assert\Length(max: 500)],
             ]);
 
-        // Completa el libro con el catálogo. Los datos del catálogo se recalculan siempre desde el ISBN, para que
-        // reordenar o cambiar un ISBN no deje datos de otro libro.
+        // Completa los campos vacíos con el catálogo o doi.org al guardar (el botón «Buscar datos» lo hace antes).
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $evento): void {
-            $libro = $evento->getData();
-            if (!\is_array($libro)) {
-                return;
+            if (\is_array($evento->getData())) {
+                $evento->setData($this->datos->completar($evento->getData()));
             }
-            unset($libro['editorial'], $libro['anio'], $libro['registro'], $libro['mms']);
-            $datos = $this->catalogo->libroPorIsbn((string) ($libro['isbn'] ?? ''));
-            if (null !== $datos) {
-                $libro['titulo'] = ($libro['titulo'] ?? null) ?: $datos['titulo'];
-                $libro['autor'] = ($libro['autor'] ?? null) ?: $datos['autor'];
-                $libro += ['editorial' => $datos['editorial'], 'anio' => $datos['anio'], 'registro' => $datos['registro'], 'mms' => $datos['mms']];
-            }
-            $evento->setData($libro);
         });
     }
 
@@ -75,9 +94,9 @@ final class LibroBloqueType extends AbstractType
             if (!\is_array($libro) || '' !== trim((string) ($libro['titulo'] ?? ''))) {
                 return;
             }
-            $isbn = trim((string) ($libro['isbn'] ?? ''));
-            $contexto->buildViolation('' !== $isbn && $this->catalogo->buscaPorIsbn() ? 'bloque.libro_no_encontrado' : 'bloque.libro_sin_titulo')
-                ->setParameter('%isbn%', $isbn)
+            $identificador = trim((string) (($libro['isbn'] ?? '') ?: ($libro['doi'] ?? '')));
+            $contexto->buildViolation('' !== $identificador ? 'bloque.libro_no_encontrado' : 'bloque.libro_sin_titulo')
+                ->setParameter('%isbn%', $identificador)
                 ->atPath('[titulo]')
                 ->addViolation();
         })]);

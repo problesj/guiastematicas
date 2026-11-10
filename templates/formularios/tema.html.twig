@@ -6,7 +6,7 @@
     {%- if help is not empty -%}
         {%- set widget_attr = {attr: {'aria-describedby': id ~ '_help'}} -%}
     {%- endif -%}
-    <div class="campo{% if not valid %} campo--error{% endif %}{% if 'checkbox' in block_prefixes %} campo--casilla{% endif %}">
+    <div class="campo{% if not valid %} campo--error{% endif %}{% if 'checkbox' in block_prefixes %} campo--casilla{% endif %}{% if row_attr.class is defined %} {{ row_attr.class }}{% endif %}">
         {%- if 'checkbox' in block_prefixes -%}
             {{- form_widget(form, widget_attr) -}}
             {{- form_label(form) -}}

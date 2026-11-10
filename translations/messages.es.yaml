@@ -591,8 +591,16 @@ bloque:
   libro_titulo: Título
   libro_autor: Autor (opcional)
   libro_enlace: Enlace (opcional)
-  libro_titulo_opcional: Título (opcional si el libro está en el catálogo)
-  libro_isbn_ayuda: Con el ISBN se completan el título, el autor, la editorial y el año desde el catálogo de la biblioteca, y el libro enlaza a su registro.
+  libro_anio: Año
+  libro_editorial: Editorial (opcional)
+  libro_enlace_ayuda: Solo si el libro debe abrir otra página; si no, enlaza a su registro en el catálogo o a su DOI.
+  libro_buscar: Buscar datos
+  libro_buscando: Buscando…
+  libro_falta_identificador: Escribe un ISBN o un DOI para buscar.
+  libro_sin_datos: No se encontraron datos para ese ISBN o DOI. Revisa los dígitos o escribe los datos a mano.
+  libro_datos_catalogo: Datos completados desde el catálogo de la biblioteca.
+  libro_datos_doi: Datos completados desde doi.org.
+  libros_ayuda: Escribe el ISBN o el DOI de cada libro y pulsa «Buscar datos» para completar el título, el autor, la editorial y el año (también se completan al guardar). Puedes corregir lo que se trae.
   libros_isbns: Agregar varios por ISBN
   libros_isbns_ayuda: Pega uno o más ISBN (uno por línea o separados por comas); al guardar se suman a la lista con los datos del catálogo.
   isbn_no_valido: El ISBN no es válido.

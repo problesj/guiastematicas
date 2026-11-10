@@ -5,7 +5,35 @@
             <img class="coleccion__miniatura" src="{{ asset('uploads/guias/' ~ item.imagen.vars.value) }}" alt="" width="160" height="90">
         {% endif %}
         {{ form_errors(item) }}
-        {% for campo in item %}{{ form_row(campo) }}{% endfor %}
+        {% if item.doi is defined %}
+            {# Libro: identificadores con el botón para traer los datos, y debajo los datos ordenados. #}
+            <div class="libro-form" data-controller="libro-datos"
+                 data-libro-datos-url-value="{{ path('panel_guias_datos_libro') }}"
+                 data-libro-datos-buscando-value="{{ 'bloque.libro_buscando'|trans }}"
+                 data-libro-datos-falta-value="{{ 'bloque.libro_falta_identificador'|trans }}"
+                 data-libro-datos-vacio-value="{{ 'bloque.libro_sin_datos'|trans }}"
+                 data-libro-datos-error-value="{{ 'bloque.catalogo_error'|trans }}"
+                 data-libro-datos-catalogo-value="{{ 'bloque.libro_datos_catalogo'|trans }}"
+                 data-libro-datos-doi-value="{{ 'bloque.libro_datos_doi'|trans }}">
+                <div class="libro-form__identificadores">
+                    {{ form_row(item.isbn) }}
+                    {{ form_row(item.doi) }}
+                    <div class="libro-form__buscar">
+                        <button type="button" class="boton boton--secundario" data-action="libro-datos#buscar" data-libro-datos-target="boton">{{ 'bloque.libro_buscar'|trans }}</button>
+                    </div>
+                    <p class="libro-form__estado" role="status" data-libro-datos-target="estado"></p>
+                </div>
+                <div class="libro-form__datos">
+                    {{ form_row(item.titulo, {row_attr: {class: 'libro-form__titulo'}}) }}
+                    {{ form_row(item.anio, {row_attr: {class: 'libro-form__anio'}}) }}
+                    {{ form_row(item.autor) }}
+                    {{ form_row(item.editorial) }}
+                    {{ form_row(item.enlace, {row_attr: {class: 'libro-form__enlace'}}) }}
+                </div>
+            </div>
+        {% else %}
+            {% for campo in item %}{{ form_row(campo) }}{% endfor %}
+        {% endif %}
     </div>
     <div class="coleccion__acciones">
         <button type="button" class="boton-texto" data-action="coleccion#subir" title="{{ 'autor.subir'|trans }}"><span aria-hidden="true">↑</span><span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
