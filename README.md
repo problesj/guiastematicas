@@ -33,6 +33,20 @@ las migraciones contra MySQL 8.4, PHPUnit con PHP 8.5, `composer audit` y la con
 
 Sirve igual para la máquina virtual de pruebas y para el servidor de producción de la UCN.
 
+**Instalación en un solo paso** (servidor piloto u otro servidor limpio): `scripts/montar-piloto.sh` hace todos los
+pasos de abajo, genera las contraseñas, crea el primer administrador y programa el respaldo diario. Las credenciales
+quedan en `/root/guias-credenciales.txt`.
+
+```
+curl -fsSL https://raw.githubusercontent.com/problesj/guiastematicas/piloto-2026-11-10/scripts/montar-piloto.sh -o montar-piloto.sh
+sudo ADMIN_EMAIL=correo@ucn.cl bash montar-piloto.sh
+```
+
+Opcional: `RESTAURAR_BD=bd_....sql.gz RESTAURAR_ARCHIVOS=archivos_....tar.gz` para partir con los datos de otro servidor
+(respaldos de `scripts/respaldar.sh`), `VERSION=main` para la última versión y `SERVIDOR=<nombre o IP>`.
+
+Paso a paso:
+
 1. Instalar paquetes, Apache con PHP-FPM, MySQL y cortafuegos:
    `sudo DB_PASSWORD='...' bash scripts/instalar-servidor.sh`
 2. Clonar el repositorio en `/var/www/guias` y crear `/var/www/guias/.env.local`:
