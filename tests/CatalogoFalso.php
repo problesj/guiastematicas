@@ -57,7 +57,9 @@ final class CatalogoFalso
         if (str_contains($url, '/almaws/v1/bibs')) {
             $bibs = [];
             foreach (explode(',', (string) ($query['mms_id'] ?? '')) as $mms) {
-                if (self::MMS_CORMEN === $mms) {
+                if (self::MMS_CORMEN === $mms && 'brief' === ($query['view'] ?? 'full')) {
+                    $bibs[] = ['mms_id' => $mms, 'title' => 'Introduction to algorithms']; // como Alma: la vista breve no trae el MARC
+                } elseif (self::MMS_CORMEN === $mms) {
                     $bibs[] = ['mms_id' => $mms, 'title' => 'Introduction to algorithms', 'anies' => [
                         '<?xml version="1.0" encoding="UTF-16"?><record><datafield ind1="0" ind2=" " tag="AVA">'
                         .'<subfield code="b">CENTRAL</subfield><subfield code="q">Biblioteca Central Antofagasta</subfield>'

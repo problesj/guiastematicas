@@ -122,9 +122,9 @@ final class Catalogo
 
         return $this->cache->get('disponibilidad-'.md5(implode(',', \array_slice($mms, 0, 100))), function (ItemInterface $item) use ($mms): array {
             $item->expiresAfter(1800);
+            // Vista completa: la breve no trae el MARC ("anies") donde Alma agrega los campos AVA de disponibilidad.
             $respuesta = $this->consultar('/almaws/v1/bibs', [
                 'mms_id' => implode(',', \array_slice($mms, 0, 100)),
-                'view' => 'brief',
                 'expand' => 'p_avail',
                 'format' => 'json',
                 'apikey' => $this->almaClave,
