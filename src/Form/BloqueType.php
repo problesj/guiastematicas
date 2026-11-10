@@ -11,6 +11,7 @@ use App\Servicio\VideoIncrustado;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -111,6 +112,20 @@ final class BloqueType extends AbstractType
     /** Campo para agregar varios libros de una vez, pegando ISBN (uno por línea): cada uno se suma a la lista. */
     private function libros(FormBuilderInterface $builder): FormBuilderInterface
     {
+        $builder
+            ->add('presentacion', ChoiceType::class, [
+                'label' => 'bloque.libros_presentacion',
+                'expanded' => true,
+                'choices' => ['bloque.libros_cuadricula' => 'cuadricula', 'bloque.libros_carrusel' => 'carrusel', 'bloque.libros_lista' => 'lista'],
+                'constraints' => [new Assert\Choice(choices: ['cuadricula', 'carrusel', 'lista'])],
+            ])
+            ->add('columnas', ChoiceType::class, [
+                'label' => 'bloque.libros_columnas',
+                'help' => 'bloque.libros_columnas_ayuda',
+                'choices' => ['bloque.libros_columnas_auto' => 0, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6],
+                'choice_translation_domain' => 'messages',
+                'constraints' => [new Assert\Choice(choices: [0, 2, 3, 4, 5, 6])],
+            ]);
         $builder->add('isbns', TextareaType::class, [
             'label' => 'bloque.libros_isbns',
             'help' => 'bloque.libros_isbns_ayuda',

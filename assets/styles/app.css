@@ -554,3 +554,25 @@ h1 .insignia--restringida { font-size: 0.875rem; }
     .libro-form__datos > .campo, .libro-form__datos > .libro-form__titulo, .libro-form__datos > .libro-form__anio { grid-column: auto; }
     .libro-form__buscar { padding-top: 0; margin-bottom: 0.75rem; }
 }
+
+/* Bloque Libros: columnas a elección, carrusel y lista breve */
+.bloque__libros--columnas { grid-template-columns: repeat(var(--columnas-libros), minmax(0, 1fr)); }
+@media (max-width: 40rem) { .bloque__libros--columnas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.libros-carrusel { position: relative; }
+.bloque__libros--carrusel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: thin; padding-bottom: 0.5rem; }
+.bloque__libros--carrusel:focus-visible { outline: 3px solid var(--color-principal); outline-offset: 2px; }
+.bloque__libros--carrusel > .libro { flex: 0 0 8.5rem; scroll-snap-align: start; }
+.libros-carrusel__boton { position: absolute; top: 5.5rem; width: 2.25rem; height: 2.25rem; padding: 0; font-size: 1.5rem; line-height: 1; color: var(--color-principal-oscuro); background: #fff; border: 1px solid var(--color-principal-suave); border-radius: 50%; box-shadow: 0 1px 4px rgb(0 0 0 / 0.2); cursor: pointer; }
+.libros-carrusel__boton--anterior { left: -0.5rem; }
+.libros-carrusel__boton--siguiente { right: -0.5rem; }
+.libros-carrusel__boton:disabled { opacity: 0; pointer-events: none; }
+.bloque__libros--lista { display: flex; flex-direction: column; gap: 0; }
+.libro--lista { flex-direction: row; gap: 0.85rem; align-items: flex-start; padding: 0.75rem 0; border-bottom: 1px solid #ece6dc; }
+.libro--lista:first-child { padding-top: 0; }
+.libro--lista:last-child { border-bottom: 0; padding-bottom: 0; }
+.libro--lista .libro__enlace { flex: 0 0 3.75rem; }
+.libro--lista .libro__portada { box-shadow: 0 1px 3px rgb(0 0 0 / 0.2); }
+.libro__datos { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.libro__datos .libro__titulo a { color: var(--color-texto); }
+.libro__datos .libro__titulo a:hover { color: var(--color-principal-oscuro); }
+.libro__acceso { font-size: 0.875rem; overflow-wrap: anywhere; }

@@ -602,6 +602,16 @@ bloque:
   libro_datos_doi: Details filled in from doi.org.
   libros_ayuda: Enter the ISBN or DOI of each book and press “Find details” to fill in the title, author, publisher and year (they are also filled in when you save). You can correct what is brought in.
   libros_isbns: Add several by ISBN
+  libros_presentacion: Layout
+  libros_cuadricula: Grid of covers
+  libros_carrusel: Carousel
+  libros_lista: Short list (thumbnail and details)
+  libros_columnas: Grid columns
+  libros_columnas_ayuda: Grid only. “Automatic” fits as many as the box width allows; phones show two.
+  libros_columnas_auto: Automatic
+  libro_acceso: Access
+  libro_ver_catalogo: View in the catalogue
+  libro_buscar_catalogo: Search the catalogue
   libros_isbns_ayuda: Paste one or more ISBNs (one per line or separated by commas); when you save, they are added to the list with catalogue data.
   isbn_no_valido: The ISBN is not valid.
   diapositiva_imagen: Image

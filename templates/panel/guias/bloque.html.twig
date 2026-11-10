@@ -72,6 +72,12 @@
                 </section>
             </div>
         {% endif %}
+        {% if formulario.presentacion is defined %}
+            <div class="formulario__columnas">
+                {{ form_row(formulario.presentacion) }}
+                {{ form_row(formulario.columnas) }}
+            </div>
+        {% endif %}
         {% if formulario.items is defined %}
             <div class="campo coleccion" data-controller="coleccion" data-coleccion-indice-value="{{ formulario.items|length }}">
                 <p class="campo__etiqueta" id="titulo-items">{{ ('bloque.items_' ~ bloque.tipo.value)|trans }}</p>

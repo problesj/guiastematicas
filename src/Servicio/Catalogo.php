@@ -176,14 +176,36 @@ final class Catalogo
         $mms = $valor('display.mms') ?? (preg_match('/^alma(\d+)$/', $registro, $m) ? $m[1] : null);
         preg_match('/\d{4}/', (string) $valor('display.creationdate', 'addata.date'), $anio);
 
+        $editorial = $valor('display.publisher', 'addata.pub');
+
         return [
-            'titulo' => $titulo,
-            'autor' => $valor('display.creator', 'display.contributor', 'addata.au'),
-            'editorial' => $valor('display.publisher', 'addata.pub'),
+            'titulo' => self::sinPuntuacionIsbd($titulo),
+            'autor' => self::autorSinFuncion($valor('display.creator', 'display.contributor', 'addata.au')),
+            // "Buenos Aires : Alfagrama Ediciones" → "Alfagrama Ediciones" (el lugar no se muestra en la guía).
+            'editorial' => null === $editorial ? null : self::sinPuntuacionIsbd(trim((string) preg_replace('/^.*\s:\s*/u', '', $editorial), ' ,;')),
             'anio' => $anio[0] ?? null,
             'registro' => $registro,
             'mms' => null !== $mms && preg_match('/^\d{6,25}$/', $mms) ? $mms : null,
         ];
+    }
+
+    /** Quita la puntuación de catalogación: "Título : subtítulo /" → "Título: subtítulo"; punto final (salvo iniciales). */
+    public static function sinPuntuacionIsbd(string $texto): string
+    {
+        $texto = (string) preg_replace('/\s+([:;,])/u', '$1', trim($texto, " \t\n/=;:,"));
+
+        return (string) preg_replace('/(?<!\b\p{Lu})\.$/u', '', $texto);
+    }
+
+    /** "Parada, Alejandro E., author." → "Parada, Alejandro E."; "Cormen, Thomas H., coaut." → "Cormen, Thomas H." */
+    public static function autorSinFuncion(?string $autor): ?string
+    {
+        if (null === $autor) {
+            return null;
+        }
+        $autor = (string) preg_replace('/,\s*(author|autora?|coaut|coautora?|editora?|editor literario|ed|eds|compiladora?|comp|translator|traductora?|trad|illustrator|ilustradora?|director|directora)\.?$/iu', '', trim($autor));
+
+        return self::sinPuntuacionIsbd($autor);
     }
 
     /**

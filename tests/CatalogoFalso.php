@@ -37,7 +37,7 @@ final class CatalogoFalso
                         'control' => ['recordid' => ['alma'.self::MMS_CORMEN]],
                         'display' => [
                             'title' => ['Introduction to algorithms /'],
-                            'creator' => ['Cormen, Thomas H.$$QCormen, Thomas H.'],
+                            'creator' => ['Cormen, Thomas H., author.$$QCormen, Thomas H.'],
                             'publisher' => ['Cambridge, Mass. : MIT Press'],
                             'creationdate' => ['c2009'],
                             'mms' => [self::MMS_CORMEN],
