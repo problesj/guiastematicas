@@ -77,7 +77,7 @@ final class CatalogoApiTest extends WebTestCase
         self::em()->clear();
         $bloque = self::em()->getRepository(Bloque::class)->findOneBy(['seccion' => $seccion->getId()]);
         $items = $bloque->dato('items');
-        self::assertSame(['Apuntes del curso', 'Introduction to algorithms', 'Effective Java'], array_column($items, 'titulo'));
+        self::assertSame(['Apuntes del curso', 'Introduction to algorithms', 'Effective Java'], array_column($items, 'titulo')); // sin la « /» final del catálogo
         self::assertSame('Cormen, Thomas H.', $items[1]['autor']);
         self::assertSame('2009', $items[1]['anio']);
         self::assertSame(CatalogoFalso::MMS_CORMEN, $items[1]['mms']);
@@ -96,7 +96,7 @@ final class CatalogoApiTest extends WebTestCase
         self::assertSame('alma'.CatalogoFalso::MMS_CORMEN, $libro['registro']);
 
         $this->cliente->request('GET', '/es/guias/quimica');
-        self::assertSelectorTextContains('.libro__edicion', 'Cambridge, Mass. : MIT Press, 2009');
+        self::assertSelectorTextContains('.libro__edicion', 'MIT Press, 2009');
         self::assertSelectorExists('.bloque__libros[data-controller="disponibilidad"]');
 
         // Disponibilidad: la primera biblioteca con ejemplares disponibles.
@@ -214,5 +214,39 @@ final class CatalogoApiTest extends WebTestCase
 
         $crawler = $this->cliente->request('GET', '/es/guias/quimica');
         self::assertSame('https://doi.org/'.CatalogoFalso::DOI_LIBRO, $crawler->filter('.libro a')->attr('href'));
+    }
+
+    public function testElBloqueDeLibrosSeMuestraEnCuadriculaCarruselOLista(): void
+    {
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $guia = self::crearGuia($ana);
+        $seccion = $guia->getPestana()->getSecciones()->first();
+        $this->cliente->loginUser($ana);
+        $url = '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/libros';
+        $crawler = $this->cliente->request('GET', $url);
+        $token = $crawler->filter('input[name="bloque[_token]"]')->attr('value');
+        $libros = [['isbn' => '9780262033848'], ['titulo' => 'Apuntes', 'enlace' => 'https://ejemplo.cl/apuntes']];
+
+        $this->cliente->request('POST', $url, ['bloque' => ['items' => $libros, 'presentacion' => 'cuadricula', 'columnas' => '4', '_token' => $token]]);
+        self::assertResponseRedirects();
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertSame('--columnas-libros: 4', $crawler->filter('.bloque__libros--columnas')->attr('style'));
+
+        $bloque = self::em()->getRepository(Bloque::class)->findOneBy(['seccion' => $seccion->getId()]);
+        $editar = '/es/panel/guias/'.$guia->getId().'/bloques/'.$bloque->getId().'/editar';
+        $this->cliente->request('POST', $editar, ['bloque' => ['items' => $libros, 'presentacion' => 'carrusel', 'columnas' => '0', '_token' => $token]]);
+        self::assertResponseRedirects();
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertCount(2, $crawler->filter('[data-controller="carrusel"] .bloque__libros--carrusel > .libro'));
+
+        $this->cliente->request('POST', $editar, ['bloque' => ['items' => $libros, 'presentacion' => 'lista', 'columnas' => '0', '_token' => $token]]);
+        self::assertResponseRedirects();
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        $primero = $crawler->filter('.libro--lista')->eq(0);
+        self::assertSame('Introduction to algorithms', $primero->filter('.libro__titulo a')->text(null, false) === '' ? '' : trim(str_replace($primero->filter('.libro__titulo .solo-lectores')->text(), '', $primero->filter('.libro__titulo a')->text())));
+        self::assertSame('Cormen, Thomas H.', $primero->filter('.libro__autor')->text());
+        self::assertSame('MIT Press, 2009', $primero->filter('.libro__edicion')->text());
+        self::assertStringStartsWith('Ver en el catálogo', $primero->filter('.libro__acceso a')->text());
+        self::assertStringStartsWith('Acceder', $crawler->filter('.libro--lista')->eq(1)->filter('.libro__acceso a')->text());
     }
 }

@@ -475,7 +475,12 @@ final class GuiaController extends AbstractController
             TipoBloque::Perfil => ['usuario' => $this->bloques->perfil($bloque)],
             TipoBloque::Video => ['url' => $bloque->dato('url'), 'descripcion' => $bloque->dato('descripcion')],
             TipoBloque::Busqueda => ['texto' => $bloque->dato('texto')],
-            TipoBloque::Enlaces, TipoBloque::Libros, TipoBloque::Diapositivas => ['items' => $bloque->dato('items', [])],
+            TipoBloque::Libros => [
+                'items' => $bloque->dato('items', []),
+                'presentacion' => $bloque->dato('presentacion', 'cuadricula'),
+                'columnas' => (int) $bloque->dato('columnas', 0),
+            ],
+            TipoBloque::Enlaces, TipoBloque::Diapositivas => ['items' => $bloque->dato('items', [])],
         };
     }
 
@@ -501,18 +506,22 @@ final class GuiaController extends AbstractController
             TipoBloque::Enlaces => ['items' => array_map(fn (array $i) => [
                 'titulo' => $texto($i['titulo'] ?? null), 'url' => $texto($i['url'] ?? null), 'descripcion' => $texto($i['descripcion'] ?? null),
             ], $items)],
-            TipoBloque::Libros => ['items' => array_map(fn (array $i) => [
-                'titulo' => $texto($i['titulo'] ?? null),
-                'autor' => $texto($i['autor'] ?? null),
-                'isbn' => $texto(preg_replace('/[^0-9X]/', '', strtoupper((string) ($i['isbn'] ?? '')))),
-                'doi' => MetadatosDoi::normalizar($texto($i['doi'] ?? null)),
-                'editorial' => $texto($i['editorial'] ?? null),
-                'anio' => $texto($i['anio'] ?? null),
-                'enlace' => $texto($i['enlace'] ?? null),
-                // Del catálogo (DatosLibro): registro en Primo VE y MMS id de Alma.
-                'registro' => $texto($i['registro'] ?? null),
-                'mms' => $texto($i['mms'] ?? null),
-            ], $items)],
+            TipoBloque::Libros => [
+                'presentacion' => \in_array($datos['presentacion'] ?? null, ['carrusel', 'lista'], true) ? $datos['presentacion'] : 'cuadricula',
+                'columnas' => \in_array((int) ($datos['columnas'] ?? 0), [2, 3, 4, 5, 6], true) ? (int) $datos['columnas'] : 0,
+                'items' => array_map(fn (array $i) => [
+                    'titulo' => $texto($i['titulo'] ?? null),
+                    'autor' => $texto($i['autor'] ?? null),
+                    'isbn' => $texto(preg_replace('/[^0-9X]/', '', strtoupper((string) ($i['isbn'] ?? '')))),
+                    'doi' => MetadatosDoi::normalizar($texto($i['doi'] ?? null)),
+                    'editorial' => $texto($i['editorial'] ?? null),
+                    'anio' => $texto($i['anio'] ?? null),
+                    'enlace' => $texto($i['enlace'] ?? null),
+                    // Del catálogo (DatosLibro): registro en Primo VE y MMS id de Alma.
+                    'registro' => $texto($i['registro'] ?? null),
+                    'mms' => $texto($i['mms'] ?? null),
+                ], $items),
+            ],
             TipoBloque::Diapositivas => ['items' => array_values(array_filter(array_map(function (array $i) use ($texto, $guia) {
                 $imagen = (string) ($i['imagen'] ?? '');
                 if (($i['archivo'] ?? null) instanceof UploadedFile) {

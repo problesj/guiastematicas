@@ -602,6 +602,16 @@ bloque:
   libro_datos_doi: Datos completados desde doi.org.
   libros_ayuda: Escribe el ISBN o el DOI de cada libro y pulsa «Buscar datos» para completar el título, el autor, la editorial y el año (también se completan al guardar). Puedes corregir lo que se trae.
   libros_isbns: Agregar varios por ISBN
+  libros_presentacion: Presentación
+  libros_cuadricula: Cuadrícula de portadas
+  libros_carrusel: Carrusel
+  libros_lista: Lista breve (miniatura y datos)
+  libros_columnas: Columnas de la cuadrícula
+  libros_columnas_ayuda: Solo para la cuadrícula. «Automático» pone tantas como quepan en el ancho de la caja; en celulares se ven dos.
+  libros_columnas_auto: Automático
+  libro_acceso: Acceder
+  libro_ver_catalogo: Ver en el catálogo
+  libro_buscar_catalogo: Buscar en el catálogo
   libros_isbns_ayuda: Pega uno o más ISBN (uno por línea o separados por comas); al guardar se suman a la lista con los datos del catálogo.
   isbn_no_valido: El ISBN no es válido.
   diapositiva_imagen: Imagen
