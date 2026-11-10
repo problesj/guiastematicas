@@ -30,6 +30,10 @@ else
 fi
 
 export APP_ENV=prod
+# Como root, Composer desactiva sus plugins (symfony/flex) si no se le autoriza, y entonces falla "symfony-cmd".
+if [[ $EUID -eq 0 ]]; then
+    export COMPOSER_ALLOW_SUPERUSER=1
+fi
 composer install --no-dev --optimize-autoloader --no-interaction
 php bin/console importmap:install
 php bin/console asset-map:compile

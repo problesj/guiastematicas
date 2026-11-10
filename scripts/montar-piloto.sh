@@ -17,6 +17,7 @@
 #   APP_DIR              carpeta de la aplicación (por defecto /var/www/guias)
 #
 # Las contraseñas generadas (base de datos y administrador) quedan solo en /root/guias-credenciales.txt.
+# Si se corta después de configurar .env.local, basta con volver a ejecutarlo igual: retoma desde las dependencias.
 # Las claves de las API de Alma y Primo NO se instalan aquí: agregarlas a mano en $APP_DIR/.env.local.
 set -euo pipefail
 
@@ -29,6 +30,8 @@ APP_DIR="${APP_DIR:-/var/www/guias}"
 SERVIDOR="${SERVIDOR:-$(hostname -I | awk '{print $1}')}"
 CREDENCIALES=/root/guias-credenciales.txt
 export DB_NAME="${DB_NAME:-guias}" DB_USER="${DB_USER:-guias}" APP_DIR
+# Composer corre como root: sin esto desactiva sus plugins (symfony/flex) y falla "symfony-cmd".
+export COMPOSER_ALLOW_SUPERUSER=1
 
 paso() { printf '\n==> %s\n' "$*"; }
 aleatorio() { openssl rand -base64 48 | tr -dc 'A-Za-z0-9' | head -c "$1"; }
@@ -37,9 +40,17 @@ if [[ $EUID -ne 0 ]]; then
     echo "Ejecutar como root (sudo)." >&2
     exit 1
 fi
+# Si una ejecución anterior se cortó después de configurar .env.local (y aún no hay credenciales), se retoma
+# desde la instalación de dependencias, con la base de datos y la contraseña ya creadas.
+REANUDAR=0
 if [[ -f "$APP_DIR/.env.local" ]]; then
-    echo "$APP_DIR ya está instalado. Para actualizarlo usar: bash $APP_DIR/scripts/desplegar.sh <versión>" >&2
-    exit 1
+    if [[ -f "$CREDENCIALES" ]]; then
+        echo "$APP_DIR ya está instalado. Para actualizarlo usar: bash $APP_DIR/scripts/desplegar.sh <versión>" >&2
+        exit 1
+    fi
+    REANUDAR=1
+    DB_PASSWORD="$(sed -n 's#^DATABASE_URL="mysql://[^:]*:\([^@]*\)@.*#\1#p' "$APP_DIR/.env.local")"
+    echo "Se retoma una instalación incompleta en $APP_DIR."
 fi
 # os-release se lee en una subshell: define VERSION, que pisaría la versión del código.
 SISTEMA="$(. /etc/os-release && echo "${VERSION_ID:-}|${PRETTY_NAME:-desconocido}")"
@@ -53,12 +64,13 @@ for respaldo in "${RESTAURAR_BD:-}" "${RESTAURAR_ARCHIVOS:-}"; do
     fi
 done
 
+if [[ $REANUDAR -eq 0 ]]; then
+# (sin sangría: los documentos "aquí" necesitan su delimitador al inicio de la línea)
 paso "Descargando el código ($VERSION)"
 apt-get update
 apt-get install -y git openssl curl
 install -d "$(dirname "$APP_DIR")"
 git clone --branch "$VERSION" "$REPO" "$APP_DIR"
-export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$APP_DIR"
 
 paso "Instalando Apache, PHP 8.5, MySQL 8.4 y cortafuegos"
 DB_PASSWORD="$(aleatorio 32)"
@@ -98,6 +110,8 @@ if [[ -n "${RESTAURAR_ARCHIVOS:-}" ]]; then
     paso "Restaurando fotos e imágenes desde $RESTAURAR_ARCHIVOS"
     tar -xzf "$RESTAURAR_ARCHIVOS" -C "$APP_DIR/public"
 fi
+fi
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$APP_DIR"
 
 paso "Instalando dependencias y aplicando migraciones"
 bash "$APP_DIR/scripts/desplegar.sh" "$VERSION"
