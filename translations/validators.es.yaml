@@ -24,3 +24,4 @@ bloque.libro_sin_titulo: Escribe el título, un ISBN o un DOI.
 bloque.doi_no_valido: "El DOI no es válido. Debe empezar con 10. (por ejemplo 10.1007/978-3-030-12345-6)."
 bloque.anio_no_valido: Escribe el año con 4 dígitos.
 configuracion.direccion_no_valida: "Escribe una dirección completa (https://… o ldap://…)."
+apariencia.contraste_bajo: "El contraste con el texto es de %contraste%:1; debe ser al menos 4,5:1. Elige un tono más oscuro (o más claro en la barra superior)."

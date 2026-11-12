@@ -59,6 +59,7 @@ panel:
   departamentos: Departamentos
   materias: Materias
   paises: Países
+  apariencia: Apariencia
   configuracion: Integraciones
   autores: Autores
   editoriales: Editoriales
@@ -803,3 +804,28 @@ configuracion:
     clave_servidor: 'Vacío en el panel: se usa la clave definida en el servidor.'
     sin_definir: Sin definir.
     ilegible: La clave guardada ya no se puede leer (cambió APP_SECRET). Vuelve a escribirla.
+apariencia:
+  titulo: Apariencia
+  bajada: Nombre del sitio, logo y colores. Lo que dejes vacío usa el tema base de Bibliotecas UCN.
+  guardada: La apariencia se guardó.
+  logo_actual: Logo actual
+  quitar_logo: Quitar el logo (volver al nombre en texto)
+  restablecer: Volver a los colores del tema base
+  colores_ayuda: Para que el sitio cumpla con WCAG 2.1 AA, cada color debe tener un contraste de al menos 4,5:1 con el texto que lleva encima; si no, no se guarda.
+  grupo:
+    nombre: Nombre del sitio
+    logo: Logo
+    colores: Colores
+  ajuste:
+    SITIO_TITULO: Título del sitio (español)
+    SITIO_TITULO_EN: Título del sitio (inglés)
+    SITIO_INSTITUCION: Institución
+    COLOR_PRINCIPAL: Color principal
+    COLOR_BARRA: Barra superior
+    COLOR_PIE: Pie de página
+    LOGO: Archivo del logo
+  ayuda:
+    COLOR_PRINCIPAL: Enlaces, botones y títulos de las cajas (texto blanco encima).
+    COLOR_BARRA: Franja con los enlaces UCN y el idioma (texto oscuro encima).
+    COLOR_PIE: Fondo del pie de página (texto claro encima).
+    LOGO: PNG, JPG o WebP de hasta 1 MB, idealmente horizontal y con fondo transparente. Reemplaza al nombre de la institución en la cabecera.

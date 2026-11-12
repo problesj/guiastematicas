@@ -28,7 +28,7 @@
             {% if pestana and pestana.enlaceExterno %}<p class="aviso solo-pantalla">{{ 'guia.aviso_enlace'|trans({'%enlace%': pestana.enlace}) }}</p>{% endif %}
         {% endif %}
         <nav class="migas solo-pantalla" aria-label="{{ 'guia.migas'|trans }}">
-            <a href="https://bibliotecas.ucn.cl/">{{ 'sitio.institucion'|trans }}</a> ›
+            <a href="https://bibliotecas.ucn.cl/">{{ sitio_institucion() }}</a> ›
             <a href="{{ path('guias') }}">{{ 'guias.titulo'|trans }}</a> ›
             {% if materia %}<a href="{{ path('guias', {materia: materia.slug}) }}">{{ materia.nombreTraducido(idioma) }}</a> ›{% endif %}
             {% if pestana and not es_portada %}
