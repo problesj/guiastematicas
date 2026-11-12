@@ -13,7 +13,8 @@ use Twig\Attribute\AsTwigFunction;
 
 /**
  * Consulta el catálogo de la biblioteca (Ex Libris):
- * - Primo VE (API de búsqueda) para encontrar un libro por ISBN y su registro en el descubridor;
+ * - Primo VE (API de búsqueda) para encontrar un libro por ISBN, o varios por título, autor y editorial, y su registro
+ *   en el descubridor;
  * - Alma (API de registros bibliográficos) para saber si los ejemplares están disponibles.
  *
  * Las claves (PRIMO_API_KEY, ALMA_API_KEY) solo están en el .env.local del servidor. Sin ellas, o si el catálogo no
@@ -87,6 +88,96 @@ final class Catalogo
         });
 
         return [] === $libro ? null : $libro;
+    }
+
+    /**
+     * Libros del catálogo por título exacto, autor y/o editorial, para elegir cuáles agregar a un bloque (caché de una
+     * hora). Primo no tiene un campo de búsqueda por editorial: se busca en todos los campos y se filtra por la
+     * editorial del registro.
+     *
+     * @return array{total: int, libros: list<array{titulo: string, autor: ?string, editorial: ?string, anio: ?string, isbn: ?string, registro: string, mms: ?string, local: bool}>}|null null si no hay criterios o el catálogo no responde
+     */
+    public function buscarLibros(?string $titulo, ?string $autor, ?string $editorial, int $desde = 0, int $cantidad = 20): ?array
+    {
+        $criterios = array_filter([
+            'title,exact' => self::criterio($titulo),
+            'creator,contains' => self::criterio($autor),
+            'any,contains' => self::criterio($editorial),
+        ], fn (?string $v) => null !== $v);
+        if (!$this->buscaPorIsbn() || [] === $criterios) {
+            return null;
+        }
+        $q = implode(',AND;', array_map(fn (string $campo, string $valor) => $campo.','.$valor, array_keys($criterios), $criterios));
+        $desde = max(0, min($desde, 1980));
+
+        $resultado = $this->cache->get('buscar-'.md5($q.'|'.$desde.'|'.$cantidad), function (ItemInterface $item) use ($q, $desde, $cantidad): array {
+            $item->expiresAfter(3600);
+            $respuesta = $this->consultar('/primo/v1/search', [
+                'vid' => $this->primoVid,
+                'tab' => 'Everything',
+                'scope' => 'MyInst_and_CI',
+                'q' => $q,
+                'qInclude' => 'facet_rtype,exact,books',
+                'offset' => $desde,
+                'limit' => $cantidad,
+                'apikey' => $this->primoClave,
+            ]);
+            if (!\is_array($respuesta['docs'] ?? null)) {
+                $item->expiresAfter(60); // error del catálogo: se reintenta pronto
+
+                return [];
+            }
+            $libros = [];
+            foreach ($respuesta['docs'] as $doc) {
+                $libro = \is_array($doc) ? self::datosDeRegistro($doc) : [];
+                if ([] !== $libro) {
+                    $libros[] = $libro + ['isbn' => self::isbnDeRegistro($doc), 'local' => 'L' === ($doc['context'] ?? null)];
+                }
+            }
+
+            return ['total' => (int) ($respuesta['info']['total'] ?? \count($libros)), 'libros' => $libros];
+        });
+        if ([] === $resultado) {
+            return null;
+        }
+        $editorial = self::criterio($editorial);
+        if (null !== $editorial) {
+            $buscada = self::comparable($editorial);
+            $resultado['libros'] = array_values(array_filter(
+                $resultado['libros'],
+                fn (array $l) => null !== $l['editorial'] && str_contains(self::comparable($l['editorial']), $buscada),
+            ));
+        }
+
+        return $resultado;
+    }
+
+    /** Valor de búsqueda sin comas ni punto y coma (separan los criterios en la consulta de Primo). */
+    private static function criterio(?string $texto): ?string
+    {
+        $texto = trim((string) preg_replace('/[,;]+|\s+/u', ' ', (string) $texto));
+
+        return '' === $texto ? null : mb_substr($texto, 0, 200);
+    }
+
+    private static function comparable(string $texto): string
+    {
+        return mb_strtolower((string) preg_replace('/\p{Mn}/u', '', (string) \Normalizer::normalize($texto, \Normalizer::FORM_D)));
+    }
+
+    /** Primer ISBN válido del registro (prefiere el de 13 dígitos). */
+    private static function isbnDeRegistro(array $doc): ?string
+    {
+        $candidatos = [];
+        foreach ((array) ($doc['pnx']['addata']['isbn'] ?? []) as $valor) {
+            $isbn = strtoupper((string) preg_replace('/[^0-9Xx]/', '', explode(' ', trim((string) $valor))[0]));
+            if (1 === preg_match('/^(\d{13}|\d{9}[\dX])$/', $isbn)) {
+                $candidatos[] = $isbn;
+            }
+        }
+        usort($candidatos, fn (string $a, string $b) => \strlen($b) <=> \strlen($a));
+
+        return $candidatos[0] ?? null;
     }
 
     /** Dirección del registro completo en Primo VE. */

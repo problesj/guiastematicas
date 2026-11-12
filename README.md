@@ -183,6 +183,19 @@ ejemplares disponibles y en qué biblioteca (API de Alma, `expand=p_avail`); se 
 para los libros guardados en el bloque, y se guarda en caché 30 minutos (los datos por ISBN, una semana). Si el
 catálogo no responde, la guía se muestra igual. Las claves van solo en `.env.local` del servidor. Los datos por DOI se piden a doi.org (formato CSL JSON, sin clave).
 
+#### Buscador de libros
+
+Bajo la lista del bloque Libros hay un buscador para agregar varios libros de una vez: se marcan los resultados y
+«Agregar los marcados» los suma a la lista con sus datos (nada se guarda hasta «Guardar»; los que ya están en la lista
+aparecen marcados).
+
+- **Catálogo (Primo VE)**: por título exacto, autor y/o editorial (libros de la institución y del índice central).
+  Primo no busca por editorial: se busca en todos los campos y se filtra por la editorial del registro.
+- **Biblioges**: bibliografía de una carrera (agrupada por asignatura) o de una asignatura, por su código; tipo básica,
+  complementaria, otra o todas; declarada (la del programa) o disponible (las ediciones de la biblioteca, con su MMS o
+  enlace de acceso). Necesita `BIBLIOGES_API_KEY` en `.env.local` (la genera un administrador de Biblioges en
+  Administración → API Keys); `BIBLIOGES_API_URL` ya apunta a `https://biblioges.ucn.cl/biblioges/api/v1`.
+
 #### Libros en la lista de recursos
 
 Al guardar un bloque Libros, cada libro se incorpora a la lista de recursos bibliográficos (A-Z) como recurso de tipo

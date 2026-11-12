@@ -1,0 +1,96 @@
+{# Bloque Libros: buscar en el catálogo (Primo VE) o en Biblioges, marcar los resultados y agregarlos a la lista. #}
+<section class="buscador-libros" data-controller="buscador-libros"
+         data-buscador-libros-catalogo-url-value="{{ path('panel_guias_buscar_libros_catalogo') }}"
+         data-buscador-libros-biblioges-url-value="{{ path('panel_guias_buscar_libros_biblioges') }}"
+         data-buscador-libros-carreras-url-value="{{ path('panel_guias_buscar_libros_carreras') }}"
+         data-buscador-libros-buscando-value="{{ 'bloque.buscador_buscando'|trans }}"
+         data-buscador-libros-resumen-value="{{ 'bloque.buscador_resumen'|trans }}"
+         data-buscador-libros-vacio-value="{{ 'bloque.buscador_vacio'|trans }}"
+         data-buscador-libros-falta-value="{{ 'bloque.buscador_falta'|trans }}"
+         data-buscador-libros-error-value="{{ 'bloque.buscador_error'|trans }}"
+         data-buscador-libros-no-encontrado-value="{{ 'bloque.buscador_no_encontrado'|trans }}"
+         data-buscador-libros-no-autorizado-value="{{ 'bloque.buscador_no_autorizado'|trans }}"
+         data-buscador-libros-ya-value="{{ 'bloque.catalogo_ya_agregado'|trans }}"
+         data-buscador-libros-agregados-value="{{ 'bloque.buscador_agregados'|trans }}"
+         data-buscador-libros-biblioteca-value="{{ 'bloque.buscador_en_biblioteca'|trans }}"
+         data-buscador-libros-tipos-value="{{ {basica: 'bloque.biblioges_basica'|trans, complementaria: 'bloque.biblioges_complementaria'|trans, otro: 'bloque.biblioges_otro'|trans}|json_encode }}"
+         aria-labelledby="titulo-buscador-libros">
+    <h2 id="titulo-buscador-libros" class="catalogo-recursos__titulo">{{ 'bloque.buscador_titulo'|trans }}</h2>
+    <div class="buscador-libros__fuentes" role="radiogroup" aria-label="{{ 'bloque.buscador_fuente'|trans }}">
+        {% if buscador_libros.catalogo %}
+            <label class="casillas__opcion"><input type="radio" name="buscador-libros-fuente" value="catalogo" checked data-action="buscador-libros#cambiarFuente"> {{ 'bloque.buscador_catalogo'|trans }}</label>
+        {% endif %}
+        {% if buscador_libros.biblioges %}
+            <label class="casillas__opcion"><input type="radio" name="buscador-libros-fuente" value="biblioges" {{ buscador_libros.catalogo ? '' : 'checked' }} data-action="buscador-libros#cambiarFuente"> {{ 'bloque.buscador_biblioges'|trans }}</label>
+        {% endif %}
+    </div>
+
+    {% if buscador_libros.catalogo %}
+        <div class="buscador-libros__panel" data-buscador-libros-target="panel" data-fuente="catalogo">
+            <div class="buscador-libros__campos">
+                <div class="campo">
+                    <label for="buscador-titulo">{{ 'bloque.buscador_titulo_exacto'|trans }}</label>
+                    <input type="search" id="buscador-titulo" autocomplete="off" data-buscador-libros-target="titulo" data-action="keydown.enter->buscador-libros#buscar:prevent">
+                </div>
+                <div class="campo">
+                    <label for="buscador-autor">{{ 'bloque.buscador_autor'|trans }}</label>
+                    <input type="search" id="buscador-autor" autocomplete="off" data-buscador-libros-target="autor" data-action="keydown.enter->buscador-libros#buscar:prevent">
+                </div>
+                <div class="campo">
+                    <label for="buscador-editorial">{{ 'bloque.buscador_editorial'|trans }}</label>
+                    <input type="search" id="buscador-editorial" autocomplete="off" data-buscador-libros-target="editorial" data-action="keydown.enter->buscador-libros#buscar:prevent">
+                </div>
+            </div>
+            <p class="campo__ayuda">{{ 'bloque.buscador_catalogo_ayuda'|trans }}</p>
+        </div>
+    {% endif %}
+
+    {% if buscador_libros.biblioges %}
+        <div class="buscador-libros__panel" data-buscador-libros-target="panel" data-fuente="biblioges"{{ buscador_libros.catalogo ? ' hidden' }}>
+            <div class="buscador-libros__campos">
+                <div class="campo">
+                    <label for="buscador-modo">{{ 'bloque.biblioges_modo'|trans }}</label>
+                    <select id="buscador-modo" data-buscador-libros-target="modo" data-action="buscador-libros#cambiarModo">
+                        <option value="carrera">{{ 'bloque.biblioges_carrera'|trans }}</option>
+                        <option value="asignatura">{{ 'bloque.biblioges_asignatura'|trans }}</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="buscador-codigo" data-buscador-libros-target="etiquetaCodigo"
+                           data-carrera="{{ 'bloque.biblioges_codigo_carrera'|trans }}" data-asignatura="{{ 'bloque.biblioges_codigo_asignatura'|trans }}">{{ 'bloque.biblioges_codigo_carrera'|trans }}</label>
+                    <input type="search" id="buscador-codigo" autocomplete="off" list="buscador-carreras" maxlength="40"
+                           data-buscador-libros-target="codigo" data-action="keydown.enter->buscador-libros#buscar:prevent">
+                    <datalist id="buscador-carreras" data-buscador-libros-target="carreras"></datalist>
+                </div>
+                <div class="campo">
+                    <label for="buscador-tipo">{{ 'bloque.biblioges_tipo'|trans }}</label>
+                    <select id="buscador-tipo" data-buscador-libros-target="tipo">
+                        <option value="todas">{{ 'bloque.biblioges_todas'|trans }}</option>
+                        <option value="basica">{{ 'bloque.biblioges_basica'|trans }}</option>
+                        <option value="complementaria">{{ 'bloque.biblioges_complementaria'|trans }}</option>
+                        <option value="otro">{{ 'bloque.biblioges_otro'|trans }}</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="buscador-origen">{{ 'bloque.biblioges_origen'|trans }}</label>
+                    <select id="buscador-origen" data-buscador-libros-target="origen">
+                        <option value="declaradas">{{ 'bloque.biblioges_declaradas'|trans }}</option>
+                        <option value="disponibles">{{ 'bloque.biblioges_disponibles'|trans }}</option>
+                    </select>
+                </div>
+            </div>
+            <p class="campo__ayuda">{{ 'bloque.biblioges_ayuda'|trans }}</p>
+        </div>
+    {% endif %}
+
+    <div class="buscador-libros__buscar">
+        <button type="button" class="boton boton--secundario" data-buscador-libros-target="boton" data-action="buscador-libros#buscar">{{ 'bloque.buscador_buscar'|trans }}</button>
+    </div>
+    <p class="catalogo-recursos__estado" role="status" data-buscador-libros-target="estado"></p>
+    <div class="catalogo-recursos__acciones" data-buscador-libros-target="acciones" hidden>
+        <label class="casillas__opcion"><input type="checkbox" data-buscador-libros-target="todos" data-action="buscador-libros#marcarTodos"> {{ 'bloque.catalogo_marcar_todos'|trans }}</label>
+        <button type="button" class="boton" data-buscador-libros-target="agregar" data-action="buscador-libros#agregar" disabled>{{ 'bloque.buscador_agregar'|trans }}</button>
+    </div>
+    <div class="catalogo-recursos__lista buscador-libros__resultados" data-buscador-libros-target="lista" hidden></div>
+    <button type="button" class="boton boton--secundario" data-buscador-libros-target="mas" data-action="buscador-libros#verMas" hidden>{{ 'bloque.catalogo_ver_mas'|trans }}</button>
+</section>

@@ -613,6 +613,39 @@ bloque:
   libro_ver_catalogo: View in the catalogue
   libro_buscar_catalogo: Search the catalogue
   libros_isbns_ayuda: Paste one or more ISBNs (one per line or separated by commas); when you save, they are added to the list with catalogue data.
+  buscador_titulo: Find books to add
+  buscador_fuente: Where to search
+  buscador_catalogo: Library catalogue (Primo)
+  buscador_biblioges: Programme and course reading lists (Biblioges)
+  buscador_titulo_exacto: Exact title
+  buscador_autor: Author
+  buscador_editorial: Publisher
+  buscador_catalogo_ayuda: Fill in one or more fields. The title must be exact; the author and publisher can be part of the name.
+  buscador_buscar: Search
+  buscador_buscando: Searching…
+  buscador_resumen: "%mostrados% of %total% results. Tick the books you want to add."
+  buscador_vacio: No books were found with those details.
+  buscador_falta: Enter at least one detail to search.
+  buscador_error: The search is not available right now. Please try again later.
+  buscador_no_encontrado: There is no programme or course with that code.
+  buscador_no_autorizado: Biblioges rejected the API key. Ask an administrator to check it.
+  buscador_agregar: Add the ticked books
+  buscador_agregados: "%count% book(s) added to the list. Check their details and save the block."
+  buscador_en_biblioteca: In the library
+  biblioges_modo: Search by
+  biblioges_carrera: Programme
+  biblioges_asignatura: Course
+  biblioges_codigo_carrera: Programme code
+  biblioges_codigo_asignatura: Course code
+  biblioges_tipo: Reading list type
+  biblioges_todas: All
+  biblioges_basica: Core
+  biblioges_complementaria: Supplementary
+  biblioges_otro: Other
+  biblioges_origen: Reading list
+  biblioges_declaradas: Declared
+  biblioges_disponibles: Available
+  biblioges_ayuda: Enter the code (e.g. 8213 for a programme or ECDE-00666 for a course); as you type a programme code, current programmes are suggested. The declared list is what the syllabus requires; the available list shows the editions the library holds, with their access link if they are electronic.
   libro_materias: Subjects
   libro_materias_ayuda: The book's subjects in the resource list. If you choose none, a new book takes the guide's subjects.
   libro_en_recursos: This book is in the list of library resources.

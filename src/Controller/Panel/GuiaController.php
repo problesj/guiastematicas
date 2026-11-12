@@ -20,7 +20,9 @@ use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
 use App\Security\GuiaVoter;
 use App\Servicio\AlmacenImagenesGuia;
+use App\Servicio\Biblioges;
 use App\Servicio\BloquesGuia;
+use App\Servicio\Catalogo;
 use App\Servicio\DatosLibro;
 use App\Servicio\LibrosEnRecursos;
 use App\Servicio\MetadatosDoi;
@@ -53,6 +55,8 @@ final class GuiaController extends AbstractController
         private readonly TranslatorInterface $traductor,
         private readonly AlmacenImagenesGuia $imagenes,
         private readonly LibrosEnRecursos $librosEnRecursos,
+        private readonly Catalogo $catalogo,
+        private readonly Biblioges $biblioges,
     ) {
     }
 
@@ -318,6 +322,61 @@ final class GuiaController extends AbstractController
         return null === $libro ? new JsonResponse(['error' => 'no_encontrado'], 404) : new JsonResponse($libro);
     }
 
+    /** Libros del catálogo (Primo VE) por título exacto, autor y editorial, para elegir cuáles agregar al bloque Libros. */
+    #[Route('/buscar-libros/catalogo', name: 'panel_guias_buscar_libros_catalogo', methods: ['GET'])]
+    public function buscarLibrosCatalogo(Request $request): JsonResponse
+    {
+        $porPagina = 20;
+        $pagina = max(1, min(50, $request->query->getInt('pagina', 1)));
+        $resultado = $this->catalogo->buscarLibros(
+            $request->query->getString('titulo'),
+            $request->query->getString('autor'),
+            $request->query->getString('editorial'),
+            ($pagina - 1) * $porPagina,
+            $porPagina,
+        );
+        if (null === $resultado) {
+            $sinCriterios = '' === trim($request->query->getString('titulo').$request->query->getString('autor').$request->query->getString('editorial'));
+
+            return new JsonResponse(['error' => $sinCriterios ? 'parametros' : 'sin_respuesta'], $sinCriterios ? 400 : 502);
+        }
+        $idioma = $request->getLocale();
+
+        return new JsonResponse([
+            'total' => $resultado['total'],
+            'pagina' => $pagina,
+            'paginas' => (int) ceil(min($resultado['total'], 1000) / $porPagina),
+            // Sin ISBN el registro no se puede recalcular al guardar: el libro enlaza a su registro en el catálogo.
+            'libros' => array_map(fn (array $l) => $l + ['enlace' => null === $l['isbn'] ? $this->catalogo->enlaceRegistro($l['registro'], $idioma) : null], $resultado['libros']),
+        ]);
+    }
+
+    /** Carreras vigentes de Biblioges, para la lista del buscador (se piden al abrirlo, no al cargar el formulario). */
+    #[Route('/buscar-libros/carreras', name: 'panel_guias_buscar_libros_carreras', methods: ['GET'])]
+    public function carrerasBiblioges(): JsonResponse
+    {
+        return new JsonResponse(['carreras' => $this->biblioges->carreras()]);
+    }
+
+    /** Bibliografías de una carrera o asignatura en Biblioges, para elegir cuáles agregar al bloque Libros. */
+    #[Route('/buscar-libros/biblioges', name: 'panel_guias_buscar_libros_biblioges', methods: ['GET'])]
+    public function buscarLibrosBiblioges(Request $request): JsonResponse
+    {
+        $resultado = $this->biblioges->bibliografias(
+            $request->query->getString('modo'),
+            mb_substr($request->query->getString('codigo'), 0, 40),
+            $request->query->getString('tipo', 'todas'),
+            $request->query->getString('fuente', 'declaradas'),
+        );
+
+        return new JsonResponse($resultado, match ($resultado['error'] ?? null) {
+            null => 200,
+            'parametros' => 400,
+            'no_encontrado' => 404,
+            default => 502,
+        });
+    }
+
     /** Código para mostrar el bloque en otra web (iframe o /incrustar.js). */
     #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/incrustar', name: 'panel_guia_bloque_incrustar', methods: ['GET'])]
     #[IsGranted(GuiaVoter::EDITAR, 'guia')]
@@ -457,6 +516,10 @@ final class GuiaController extends AbstractController
             'seccion' => $seccion,
             'tipos_recurso' => TipoRecurso::cases(),
             'materias' => TipoBloque::Recursos === $tipo ? $this->em->getRepository(Materia::class)->findBy(['activa' => true], ['nombre' => 'ASC']) : [],
+            'buscador_libros' => TipoBloque::Libros === $tipo ? [
+                'catalogo' => $this->catalogo->buscaPorIsbn(),
+                'biblioges' => $this->biblioges->disponible(),
+            ] : null,
         ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
     }
 
