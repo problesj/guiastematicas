@@ -1,0 +1,43 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'configuracion.titulo'|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ 'configuracion.titulo'|trans }}</h1>
+    <p class="pagina__bajada">{{ 'configuracion.bajada'|trans }}</p>
+
+    {{ form_start(formulario, {attr: {class: 'formulario formulario--configuracion', novalidate: 'novalidate'}}) }}
+        {% for grupo, claves in grupos %}
+            <fieldset class="configuracion__grupo">
+                <legend>{{ ('configuracion.grupo.' ~ grupo)|trans }}</legend>
+                <p class="campo__ayuda">{{ ('configuracion.grupo_ayuda.' ~ grupo)|trans }}</p>
+                {% for clave in claves %}
+                    {% set e = estado[clave] %}
+                    <div class="configuracion__ajuste">
+                        {{ form_row(attribute(formulario, clave)) }}
+                        <p class="configuracion__estado">
+                            <code>{{ clave }}</code> ·
+                            {% if e.ilegible %}
+                                <strong class="configuracion__alerta">{{ 'configuracion.estado.ilegible'|trans }}</strong>
+                            {% elseif e.secreto and e.panel %}
+                                {{ 'configuracion.estado.clave_panel'|trans }}
+                            {% elseif e.panel %}
+                                {{ 'configuracion.estado.panel'|trans }}
+                            {% elseif e.servidor is not empty %}
+                                {{ e.secreto ? 'configuracion.estado.clave_servidor'|trans : 'configuracion.estado.servidor'|trans({'%valor%': e.servidor}) }}
+                            {% else %}
+                                {{ 'configuracion.estado.sin_definir'|trans }}
+                            {% endif %}
+                        </p>
+                        {% if e.secreto %}
+                            {% if e.panel %}{{ form_row(attribute(formulario, clave ~ '__borrar')) }}{% else %}{% do attribute(formulario, clave ~ '__borrar').setRendered %}{% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </fieldset>
+        {% endfor %}
+        <div class="formulario__acciones">
+            <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
+        </div>
+    {{ form_end(formulario) }}
+{% endblock %}

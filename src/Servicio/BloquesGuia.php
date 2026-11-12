@@ -25,9 +25,9 @@ final class BloquesGuia
         private readonly RecursoRepository $recursos,
         private readonly UsuarioRepository $usuarios,
         private readonly MateriaRepository $materias,
-        #[Autowire('%env(string:default::PRIMO_URL)%')]
+        #[Autowire('%env(string:default::ajuste:PRIMO_URL)%')]
         private readonly string $primoUrl,
-        #[Autowire('%env(string:default::PRIMO_VID)%')]
+        #[Autowire('%env(string:default::ajuste:PRIMO_VID)%')]
         private readonly string $primoVid,
     ) {
     }

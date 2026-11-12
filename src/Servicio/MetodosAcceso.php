@@ -12,7 +12,7 @@ final class MetodosAcceso
 {
     public function __construct(
         private readonly VerificadorLdapInterface $ldap,
-        #[Autowire('%env(string:default::GOOGLE_CLIENT_ID)%')]
+        #[Autowire('%env(string:default::ajuste:GOOGLE_CLIENT_ID)%')]
         private readonly string $googleClientId = '',
     ) {
     }

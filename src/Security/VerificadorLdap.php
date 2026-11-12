@@ -25,19 +25,19 @@ final class VerificadorLdap implements VerificadorLdapInterface
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-        #[Autowire('%env(string:default::LDAP_URL)%')]
+        #[Autowire('%env(string:default::ajuste:LDAP_URL)%')]
         private readonly string $url = '',
-        #[Autowire('%env(string:default::LDAP_CIFRADO)%')]
+        #[Autowire('%env(string:default::ajuste:LDAP_CIFRADO)%')]
         private readonly string $cifrado = '',
-        #[Autowire('%env(string:default::LDAP_DN_USUARIO)%')]
+        #[Autowire('%env(string:default::ajuste:LDAP_DN_USUARIO)%')]
         private readonly string $patronDn = '',
-        #[Autowire('%env(string:default::LDAP_BASE_DN)%')]
+        #[Autowire('%env(string:default::ajuste:LDAP_BASE_DN)%')]
         private readonly string $baseDn = '',
-        #[Autowire('%env(string:default::LDAP_FILTRO)%')]
+        #[Autowire('%env(string:default::ajuste:LDAP_FILTRO)%')]
         private readonly string $filtro = '',
-        #[Autowire('%env(string:default::LDAP_BIND_DN)%')]
+        #[Autowire('%env(string:default::ajuste:LDAP_BIND_DN)%')]
         private readonly string $bindDn = '',
-        #[Autowire('%env(string:default::LDAP_BIND_PASSWORD)%')]
+        #[Autowire('%env(string:default::ajuste:LDAP_BIND_PASSWORD)%')]
         private readonly string $bindPassword = '',
     ) {
     }

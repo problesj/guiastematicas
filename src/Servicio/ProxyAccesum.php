@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class ProxyAccesum
 {
     public function __construct(
-        #[Autowire('%env(string:default::PROXY_URL)%')]
+        #[Autowire('%env(string:default::ajuste:PROXY_URL)%')]
         private readonly string $proxy = '',
     ) {
     }

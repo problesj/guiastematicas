@@ -41,7 +41,7 @@ final class GoogleAuthenticator extends OAuth2Authenticator
         private readonly UsuarioRepository $usuarios,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MetodosAcceso $metodos,
-        #[Autowire('%env(string:default::GOOGLE_DOMINIO)%')]
+        #[Autowire('%env(string:default::ajuste:GOOGLE_DOMINIO)%')]
         private readonly string $dominio = '',
     ) {
     }
