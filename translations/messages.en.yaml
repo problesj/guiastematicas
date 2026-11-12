@@ -669,6 +669,21 @@ bloque:
   busqueda_etiqueta: Search the UCN Libraries catalog
   busqueda_placeholder: Title, author or subject
   busqueda_sin_configurar: The search box will not be shown until Primo VE is configured (PRIMO_URL and PRIMO_VID).
+  busqueda_tipo: Default material type
+  busqueda_tipo_ayuda: Readers can change it when searching.
+  busqueda_tipo_publico: Material type
+  busqueda_materias: Subjects selected by default
+  busqueda_materias_ayuda: New blocks start with the guide's subjects ticked. Readers can untick them; if none are ticked, the search is not limited by subject.
+  busqueda_materias_publico: Subjects
+  busqueda_otras: Let readers choose other subjects
+  busqueda_otras_ayuda: Shows readers the list of the other subjects so they can add them to the search.
+  busqueda_otras_publico: Other subjects
+  tipo_material:
+    todos: All
+    libros: Books
+    tesis: Theses
+    articulos: Articles
+    revistas: Journals
 libro:
   disponible: Available at %biblioteca%
   no_disponible: "No copies available now (%biblioteca%)"

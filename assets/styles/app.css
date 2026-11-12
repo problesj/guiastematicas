@@ -328,6 +328,15 @@ a:hover { color: var(--color-principal-oscuro); }
 .bloque--perfil .persona { max-width: 32rem; }
 .buscador--bloque { display: block; max-width: 40rem; padding: 1rem 1.25rem; background: var(--color-fondo-suave); border-radius: var(--radio); }
 .buscador__fila { display: flex; gap: 0.5rem; margin-top: 0.375rem; }
+.buscador__filtros { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; margin-top: 0.75rem; font-size: 0.9375rem; }
+.buscador__tipo { display: flex; flex-direction: column; gap: 0.25rem; }
+.buscador__tipo select { padding: 0.4rem 0.6rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); background: #fff; }
+.buscador__materias { flex: 1 1 16rem; display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0; padding: 0; border: 0; }
+.buscador__materias legend { width: 100%; padding: 0; margin-bottom: 0.25rem; }
+.buscador .buscador__materias input { flex: none; padding: 0; }
+.buscador__otras { width: 100%; }
+.buscador__otras summary { cursor: pointer; color: var(--color-principal-oscuro); }
+.buscador__otras .casillas { margin-top: 0.375rem; }
 
 /* Guías temáticas: editor del panel */
 .etiqueta--publicada { color: #fff; background: #2e7d32; border-color: #2e7d32; }

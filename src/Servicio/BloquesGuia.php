@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Servicio;
 
 use App\Entity\Bloque;
+use App\Entity\Guia;
+use App\Entity\Materia;
 use App\Entity\Recurso;
 use App\Entity\Usuario;
+use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
 use App\Repository\UsuarioRepository;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -15,9 +18,13 @@ use Twig\Attribute\AsTwigFunction;
 /** Datos que necesitan los bloques de una guía al mostrarse (recursos, perfil, búsqueda en Primo VE). */
 final class BloquesGuia
 {
+    /** Tipos de material del bloque de búsqueda y su valor en la faceta «rtype» de Primo VE. */
+    public const TIPOS_MATERIAL = ['libros' => 'books', 'tesis' => 'dissertations', 'articulos' => 'articles', 'revistas' => 'journals'];
+
     public function __construct(
         private readonly RecursoRepository $recursos,
         private readonly UsuarioRepository $usuarios,
+        private readonly MateriaRepository $materias,
         #[Autowire('%env(string:default::PRIMO_URL)%')]
         private readonly string $primoUrl,
         #[Autowire('%env(string:default::PRIMO_VID)%')]
@@ -68,21 +75,80 @@ final class BloquesGuia
         return '' !== $this->primoUrl && '' !== $this->primoVid;
     }
 
-    /** Dirección de resultados de Primo VE para un texto, p. ej. .../discovery/search?query=any,contains,agua&vid=... */
-    public function enlacePrimo(string $texto, string $idioma): ?string
+    /**
+     * Materias marcadas por defecto en el bloque de búsqueda: las elegidas al editarlo o, si nunca se eligieron, las de
+     * la guía. Solo las activas.
+     *
+     * @return list<Materia>
+     */
+    #[AsTwigFunction('materias_busqueda')]
+    public function materiasBusqueda(Bloque $bloque, ?Guia $guia = null): array
     {
-        if (!$this->hayBuscadorPrimo()) {
+        $ids = $bloque->dato('materias');
+        $lista = \is_array($ids)
+            ? ([] === $ids ? [] : $this->materias->findBy(['id' => array_map('intval', $ids)]))
+            : (($guia ?? $bloque->getGuia())?->getMaterias()->toArray() ?? []);
+        $lista = array_values(array_filter($lista, fn (Materia $m) => $m->isActiva()));
+        usort($lista, fn (Materia $a, Materia $b) => strcoll($a->getNombre(), $b->getNombre()));
+
+        return $lista;
+    }
+
+    /**
+     * Materias activas que no están en la lista dada (para «Otras materias»).
+     *
+     * @param list<Materia> $excepto
+     *
+     * @return list<Materia>
+     */
+    #[AsTwigFunction('otras_materias_busqueda')]
+    public function otrasMaterias(array $excepto): array
+    {
+        return array_values(array_filter($this->materias->activas(), fn (Materia $m) => !\in_array($m, $excepto, true)));
+    }
+
+    /**
+     * Dirección de resultados de Primo VE, p. ej. .../discovery/search?query=any,contains,agua&vid=...
+     *
+     * Con materias, la búsqueda pasa a modo avanzado y agrega una línea por tema (sub) con las materias unidas por OR;
+     * el tipo de material se aplica como faceta (rtype).
+     *
+     * @param list<string> $materias nombres de materias
+     */
+    public function enlacePrimo(string $texto, string $idioma, array $materias = [], ?string $tipo = null): ?string
+    {
+        $limpiar = fn (string $v): string => trim((string) preg_replace('/\s+/', ' ', str_replace([',', '"'], ' ', $v)));
+        $texto = $limpiar($texto);
+        $materias = array_values(array_filter(array_map($limpiar, $materias)));
+        if (!$this->hayBuscadorPrimo() || ('' === $texto && [] === $materias)) {
             return null;
         }
 
-        // RFC 3986 (espacios como %20) y comas y dos puntos legibles, como en las direcciones del propio Primo.
-        return rtrim($this->primoUrl, '/').'/discovery/search?'.strtr(http_build_query([
-            'query' => 'any,contains,'.str_replace(',', ' ', trim($texto)),
+        $consultas = [];
+        if ('' !== $texto) {
+            $consultas[] = 'any,contains,'.$texto.([] === $materias ? '' : ',AND');
+        }
+        if ([] !== $materias) {
+            $consultas[] = 'sub,contains,'.implode(' OR ', array_map(fn ($m) => '"'.$m.'"', $materias)).',AND';
+        }
+        $parametros = array_map(fn ($c) => 'query='.self::codificar($c), $consultas);
+        foreach ([
             'tab' => 'Everything',
             'search_scope' => 'MyInst_and_CI',
             'vid' => $this->primoVid,
             'lang' => $idioma,
-            'offset' => 0,
-        ], '', '&', \PHP_QUERY_RFC3986), ['%2C' => ',', '%3A' => ':']);
+            'offset' => '0',
+        ] + ([] === $materias ? [] : ['mode' => 'advanced'])
+          + (isset(self::TIPOS_MATERIAL[$tipo ?? '']) ? ['facet' => 'rtype,include,'.self::TIPOS_MATERIAL[$tipo]] : []) as $clave => $valor) {
+            $parametros[] = $clave.'='.self::codificar($valor);
+        }
+
+        return rtrim($this->primoUrl, '/').'/discovery/search?'.implode('&', $parametros);
+    }
+
+    /** RFC 3986 (espacios como %20) y comas y dos puntos legibles, como en las direcciones del propio Primo. */
+    private static function codificar(string $valor): string
+    {
+        return strtr(rawurlencode($valor), ['%2C' => ',', '%3A' => ':']);
     }
 }

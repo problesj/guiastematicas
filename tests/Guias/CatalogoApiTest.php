@@ -249,4 +249,49 @@ final class CatalogoApiTest extends WebTestCase
         self::assertStringStartsWith('Ver en el catálogo', $primero->filter('.libro__acceso a')->text());
         self::assertStringStartsWith('Acceder', $crawler->filter('.libro--lista')->eq(1)->filter('.libro__acceso a')->text());
     }
+
+    public function testLaBusquedaEnElCatalogoUsaLasMateriasYElTipoDeMaterial(): void
+    {
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $biblio = self::crearMateria('Bibliotecología', 'bibliotecologia');
+        $archivo = self::crearMateria('Archivística', 'archivistica');
+        self::crearMateria('Geología', 'geologia');
+        $guia = self::crearGuia($ana)->addMateria($biblio);
+        $seccion = $guia->getPestana()->getSecciones()->first();
+        self::em()->flush();
+
+        // Bloque nuevo: viene marcada la materia de la guía; se agrega otra y se elige «Tesis».
+        $this->cliente->loginUser($ana);
+        $url = '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/busqueda';
+        $crawler = $this->cliente->request('GET', $url);
+        self::assertSame([(string) $biblio->getId()], $crawler->filter('input[name="bloque[materias][]"]:checked')->each(fn ($n) => $n->attr('value')));
+        self::assertSame('todos', $crawler->filter('select[name="bloque[tipo]"] option[selected]')->attr('value'));
+        $this->cliente->request('POST', $url, ['bloque' => [
+            'titulo' => 'Busca', 'tipo' => 'tesis', 'materias' => [(string) $biblio->getId(), (string) $archivo->getId()], 'otras' => '1',
+            '_token' => $crawler->filter('input[name="bloque[_token]"]')->attr('value'),
+        ]]);
+        self::assertResponseRedirects();
+        self::em()->clear();
+        $bloque = self::em()->getRepository(Bloque::class)->findOneBy(['seccion' => $seccion->getId()]);
+        self::assertSame('tesis', $bloque->dato('tipo'));
+        self::assertTrue($bloque->dato('otras'));
+
+        // En la guía: las dos materias marcadas, Geología entre «Otras materias» y «Tesis» elegido.
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertSame(['archivistica', 'bibliotecologia'], $crawler->filter('.buscador__materias > label input:checked')->each(fn ($n) => $n->attr('value')));
+        self::assertSame(['geologia'], $crawler->filter('.buscador__otras input')->each(fn ($n) => $n->attr('value')));
+        self::assertSame('tesis', $crawler->filter('select[name=tipo] option[selected]')->attr('value'));
+
+        // Primo VE: modo avanzado con las materias unidas por OR y la faceta del tipo de material.
+        $this->cliente->request('GET', '/es/catalogo?q=gestión documental&tipo=tesis&materia[]=bibliotecologia&materia[]=archivistica&materia[]=no-existe');
+        self::assertResponseRedirects('https://primo.ejemplo.cl/discovery/search?query=any,contains,gesti%C3%B3n%20documental,AND'
+            .'&query=sub,contains,%22Archiv%C3%ADstica%22%20OR%20%22Bibliotecolog%C3%ADa%22,AND'
+            .'&tab=Everything&search_scope=MyInst_and_CI&vid=56UCN_INST:UCN&lang=es&offset=0&mode=advanced&facet=rtype,include,dissertations');
+        // Solo materias, sin texto; y solo texto, sin filtros (como antes).
+        $this->cliente->request('GET', '/es/catalogo?materia[]=geologia&tipo=libros');
+        self::assertResponseRedirects('https://primo.ejemplo.cl/discovery/search?query=sub,contains,%22Geolog%C3%ADa%22,AND'
+            .'&tab=Everything&search_scope=MyInst_and_CI&vid=56UCN_INST:UCN&lang=es&offset=0&mode=advanced&facet=rtype,include,books');
+        $this->cliente->request('GET', '/es/catalogo?q=agua&tipo=');
+        self::assertResponseRedirects('https://primo.ejemplo.cl/discovery/search?query=any,contains,agua&tab=Everything&search_scope=MyInst_and_CI&vid=56UCN_INST:UCN&lang=es&offset=0');
+    }
 }
