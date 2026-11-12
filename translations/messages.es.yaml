@@ -547,8 +547,23 @@ guia:
   agregar_bloque: Agregar bloque
   bloque_guardado: Bloque guardado.
   bloque_eliminado: Bloque eliminado.
+  bloque_movido: Bloque movido.
+  bloque_movido_guia: Bloque movido a la otra guía. Estás viendo la guía de destino.
+  mover: Mover
+  mover_titulo: Mover bloque
+  mover_ubicacion: 'Ahora en: %pestana% › %seccion%'
+  mover_destino: Mover a
+  mover_esta_guia: '%guia% (esta guía)'
+  mover_actual: (actual)
+  mover_nueva_seccion: Nueva sección al final
+  mover_ayuda: Puedes llevarlo a otra sección o pestaña de esta guía, o a cualquier otra guía que puedas editar. Los códigos para incrustar el bloque siguen funcionando.
+  mover_posicion: Posición en la sección
+  mover_final: Al final
+  mover_inicio: Al principio
+  mover_boton: Mover bloque
+  mover_sin_destino: Elige una sección de destino válida.
   arrastrar: Arrastrar para ordenar
-  ayuda_arrastrar: Arrastra pestañas, secciones y bloques desde el ícono ⠿ para cambiar su orden. Los bloques también se pueden mover a otra sección.
+  ayuda_arrastrar: Arrastra pestañas, secciones y bloques desde el ícono ⠿ para cambiar su orden. Los bloques también se pueden arrastrar a otra sección, o llevar a otra pestaña u otra guía con «Mover».
   error_orden: No se pudo guardar el nuevo orden. La página se recargará.
   aviso_vista_previa: "Vista previa (%estado%): así se verá la guía publicada."
   volver_editor: Volver al editor

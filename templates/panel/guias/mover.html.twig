@@ -1,0 +1,55 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'guia.mover_titulo'|trans }}{% endblock %}
+
+{% block contenido %}
+    {% set origen = bloque.seccion %}
+    {% set volver = path('panel_guia_editar', {id: guia.id, pestana: origen.pestana.id, _fragment: 'bloque-' ~ bloque.id}) %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}">
+        <a href="{{ path('panel_guias') }}">{{ 'panel.guias'|trans }}</a> ›
+        <a href="{{ volver }}">{{ guia.titulo }}</a> ›
+        <span aria-current="page">{{ 'guia.mover_titulo'|trans }}</span>
+    </nav>
+    <h1>{{ 'guia.mover_titulo'|trans }}</h1>
+    <p class="pagina__bajada">
+        <span class="etiqueta">{{ bloque.tipo.etiqueta|trans }}</span>
+        <strong>{{ bloque.titulo ?? bloque.tipo.etiqueta|trans }}</strong>
+        · {{ 'guia.mover_ubicacion'|trans({'%pestana%': origen.pestana.titulo, '%seccion%': origen.titulo ?? 'guia.seccion_sin_titulo'|trans}) }}
+    </p>
+
+    <form method="post" class="formulario">
+        <input type="hidden" name="_token" value="{{ csrf_token('editar-guia-' ~ guia.id) }}">
+        <div class="campo">
+            <label for="destino">{{ 'guia.mover_destino'|trans }}</label>
+            <select id="destino" name="destino" required aria-describedby="destino-ayuda">
+                {% for g in destinos %}
+                    <optgroup label="{{ g.id == guia.id ? 'guia.mover_esta_guia'|trans({'%guia%': g.titulo}) : g.titulo }}{{ g.idioma != guia.idioma ? ' (' ~ g.idioma|upper ~ ')' : '' }}">
+                        {% for p in g.paginas %}
+                            {% set nombre_pestana = (p.principal ? '' : p.padre.titulo ~ ' › ') ~ p.titulo %}
+                            {% for s in p.secciones %}
+                                <option value="s{{ s.id }}" {% if s.id == origen.id %}selected{% endif %}>{{ nombre_pestana }} › {{ s.titulo ?? 'guia.seccion_sin_titulo'|trans }}{% if s.id == origen.id %} {{ 'guia.mover_actual'|trans }}{% endif %}</option>
+                            {% endfor %}
+                            <option value="p{{ p.id }}">{{ nombre_pestana }} › {{ 'guia.mover_nueva_seccion'|trans }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% endfor %}
+            </select>
+            <p class="campo__ayuda" id="destino-ayuda">{{ 'guia.mover_ayuda'|trans }}</p>
+        </div>
+        <fieldset class="campo">
+            <legend>{{ 'guia.mover_posicion'|trans }}</legend>
+            <div class="campo--casilla">
+                <input type="radio" id="posicion-final" name="posicion" value="final" checked>
+                <label for="posicion-final">{{ 'guia.mover_final'|trans }}</label>
+            </div>
+            <div class="campo--casilla">
+                <input type="radio" id="posicion-inicio" name="posicion" value="inicio">
+                <label for="posicion-inicio">{{ 'guia.mover_inicio'|trans }}</label>
+            </div>
+        </fieldset>
+        <div class="formulario__acciones">
+            <button type="submit" class="boton">{{ 'guia.mover_boton'|trans }}</button>
+            <a href="{{ volver }}" class="boton boton--secundario">{{ 'formulario.cancelar'|trans }}</a>
+        </div>
+    </form>
+{% endblock %}

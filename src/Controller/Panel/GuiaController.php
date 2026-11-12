@@ -388,6 +388,63 @@ final class GuiaController extends AbstractController
         return $this->render('panel/guias/incrustar.html.twig', ['guia' => $guia, 'bloque' => $bloque]);
     }
 
+    /**
+     * Mueve un bloque a otra sección, de esta pestaña, de otra pestaña o de otra guía que el usuario pueda editar.
+     * El destino es "s{id}" (al principio o al final de una sección) o "p{id}" (una sección nueva al final de esa pestaña).
+     * El bloque conserva su id, así que los códigos para incrustarlo siguen funcionando.
+     */
+    #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/mover', name: 'panel_guia_bloque_mover', methods: ['GET', 'POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function moverBloque(Request $request, Guia $guia, #[MapEntity(id: 'bloque')] Bloque $bloque, GuiaRepository $guias, #[CurrentUser] Usuario $usuario): Response
+    {
+        $this->comprobarPertenencia($guia, $bloque->getGuia());
+        $origen = $bloque->getSeccion();
+        $destinos = $guias->editablesPor($usuario, $this->isGranted('ROLE_ADMINISTRADOR'));
+        usort($destinos, fn (Guia $a, Guia $b) => [$b === $guia, mb_strtolower($a->getTitulo())] <=> [$a === $guia, mb_strtolower($b->getTitulo())]);
+
+        if ($request->isMethod('POST')) {
+            if (!$this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+                throw $this->createAccessDeniedException();
+            }
+            $seccion = $this->seccionDestino($request->getPayload()->getString('destino'));
+            if (null === $seccion) {
+                $this->addFlash('error', 'guia.mover_sin_destino');
+
+                return $this->redirectToRoute('panel_guia_bloque_mover', ['id' => $guia->getId(), 'bloque' => $bloque->getId()]);
+            }
+            $destino = $seccion->getGuia();
+            $alInicio = 'inicio' === $request->getPayload()->getString('posicion');
+
+            // Sin quitar el bloque de la colección de origen: con orphanRemoval Doctrine lo borraría.
+            $restoOrigen = array_filter($origen->getBloques()->toArray(), fn (Bloque $b) => $b !== $bloque);
+            $restoDestino = array_values(array_filter($seccion->getBloques()->toArray(), fn (Bloque $b) => $b !== $bloque));
+            $renombres = $this->imagenes->prepararTraslado($bloque, $guia, $destino);
+            $bloque->setSeccion($seccion);
+            if (!$seccion->getBloques()->contains($bloque)) {
+                $seccion->getBloques()->add($bloque);
+            }
+            foreach ($alInicio ? [$bloque, ...$restoDestino] : [...$restoDestino, $bloque] as $i => $b) {
+                $b->setPosicion($i);
+            }
+            if ($seccion !== $origen) {
+                $this->renumerar($restoOrigen);
+            }
+            $guia->tocar();
+            $destino->tocar();
+            $this->em->flush();
+            $this->imagenes->renombrar($renombres);
+            $this->addFlash('exito', $destino === $guia ? 'guia.bloque_movido' : 'guia.bloque_movido_guia');
+
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $destino->getId(), 'pestana' => $seccion->getPestana()?->getId(), '_fragment' => 'bloque-'.$bloque->getId()]);
+        }
+
+        return $this->render('panel/guias/mover.html.twig', [
+            'guia' => $guia,
+            'bloque' => $bloque,
+            'destinos' => $destinos,
+        ]);
+    }
+
     #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/eliminar', name: 'panel_guia_bloque_eliminar', methods: ['POST'])]
     #[IsGranted(GuiaVoter::EDITAR, 'guia')]
     public function eliminarBloque(Request $request, Guia $guia, #[MapEntity(id: 'bloque')] Bloque $bloque): Response
@@ -654,6 +711,29 @@ final class GuiaController extends AbstractController
         }
 
         return $guia->getPestana() ?? $guia->getPestanasPrincipales()[0] ?? null;
+    }
+
+    /**
+     * Sección de destino de «Mover bloque»: "s{id}" es una sección existente y "p{id}" crea una sección nueva al final
+     * de esa pestaña. Null si no existe, si es una pestaña de enlace externo o si el usuario no puede editar esa guía.
+     */
+    private function seccionDestino(string $valor): ?Seccion
+    {
+        if (1 !== preg_match('/^([sp])(\d+)$/', $valor, $m)) {
+            return null;
+        }
+        $pestana = 's' === $m[1] ? $this->em->find(Seccion::class, (int) $m[2])?->getPestana() : $this->em->find(Pestana::class, (int) $m[2]);
+        $guia = $pestana?->getGuia();
+        if (null === $guia || $pestana->isEnlaceExterno() || !$this->isGranted(GuiaVoter::EDITAR, $guia)) {
+            return null;
+        }
+        if ('s' === $m[1]) {
+            return $this->em->find(Seccion::class, (int) $m[2]);
+        }
+        $seccion = new Seccion();
+        $pestana->agregarSeccion($seccion);
+
+        return $seccion;
     }
 
     private function enlaceValido(string $enlace): bool

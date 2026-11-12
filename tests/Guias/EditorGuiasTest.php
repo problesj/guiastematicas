@@ -254,6 +254,68 @@ final class EditorGuiasTest extends WebTestCase
         self::assertSame($otra->getId(), self::em()->find(Bloque::class, $ajeno->getId())->getGuia()?->getId());
     }
 
+    public function testMoverUnBloqueAOtraPestanaOAOtraGuiaQueSePuedaEditar(): void
+    {
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $luis = self::crearUsuario('luis@ucn.cl', Rol::Editor);
+        $guia = self::crearGuia($ana);
+        $otra = self::crearGuia($ana, 'fisica');
+        $ajena = self::crearGuia($luis, 'historia');
+        [$texto, $perfil] = $guia->getPestana()->getSecciones()->first()->getBloques()->toArray();
+        $bases = $guia->getPestana('bases-de-datos');
+        $destinoOtra = $otra->getPestana()->getSecciones()->first();
+        $diapositivas = (new Bloque(TipoBloque::Diapositivas))->setContenido(['items' => [['titulo' => 'Uno', 'imagen' => 'd'.$guia->getId().'-'.str_repeat('a', 24).'.png']]]);
+        $guia->getPestana()->getSecciones()->last()->agregarBloque($diapositivas);
+        self::em()->flush();
+        $directorio = static::getContainer()->getParameter('kernel.project_dir').'/public/'.AlmacenImagenesGuia::RUTA_PUBLICA;
+        @mkdir($directorio, 0o777, true);
+        file_put_contents($directorio.'/d'.$guia->getId().'-'.str_repeat('a', 24).'.png', 'png');
+        $this->cliente->loginUser($ana);
+        $mover = fn (Bloque $b, array $datos) => $this->cliente->request('POST', '/es/panel/guias/'.$guia->getId().'/bloques/'.$b->getId().'/mover', $datos);
+
+        // El formulario ofrece las secciones de las guías que Ana edita (no la de Luis) y una sección nueva por pestaña.
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/bloques/'.$texto->getId().'/mover');
+        self::assertResponseIsSuccessful();
+        $valores = $crawler->filter('#destino option')->each(fn ($o) => $o->attr('value'));
+        self::assertContains('s'.$destinoOtra->getId(), $valores);
+        self::assertContains('p'.$bases->getId(), $valores);
+        self::assertNotContains('s'.$ajena->getPestana()->getSecciones()->first()->getId(), $valores);
+        self::assertStringStartsWith('Química (esta guía)', $crawler->filter('#destino optgroup')->first()->attr('label'));
+        $token = $crawler->filter('input[name="_token"]')->attr('value');
+
+        // Token inválido o guía ajena: no se mueve.
+        $mover($texto, ['_token' => 'malo', 'destino' => 'p'.$bases->getId()]);
+        self::assertResponseStatusCodeSame(403);
+        $mover($texto, ['_token' => $token, 'destino' => 's'.$ajena->getPestana()->getSecciones()->first()->getId()]);
+        self::assertResponseRedirects('/es/panel/guias/'.$guia->getId().'/bloques/'.$texto->getId().'/mover');
+
+        // A otra pestaña de la misma guía, en una sección nueva.
+        $mover($texto, ['_token' => $token, 'destino' => 'p'.$bases->getId(), 'posicion' => 'final']);
+        self::assertResponseRedirects('/es/panel/guias/'.$guia->getId().'?pestana='.$bases->getId().'#bloque-'.$texto->getId());
+
+        // A otra guía, al principio de una sección que ya tiene bloques; las diapositivas se llevan sus imágenes.
+        $mover($perfil, ['_token' => $token, 'destino' => 's'.$destinoOtra->getId(), 'posicion' => 'inicio']);
+        self::assertResponseRedirects('/es/panel/guias/'.$otra->getId().'?pestana='.$otra->getPestana()->getId().'#bloque-'.$perfil->getId());
+        $mover($diapositivas, ['_token' => $token, 'destino' => 's'.$destinoOtra->getId()]);
+
+        $guia = self::recargar($guia);
+        $otra = self::em()->find(Guia::class, $otra->getId());
+        self::assertSame([], $guia->getPestana()->getSecciones()->first()->getBloques()->toArray());
+        $secciones = $guia->getPestana('bases-de-datos')->getSecciones();
+        self::assertCount(1, $secciones);
+        self::assertSame([$texto->getId()], array_map(fn (Bloque $b) => $b->getId(), $secciones->first()->getBloques()->toArray()));
+        $bloquesOtra = $otra->getPestana()->getSecciones()->first()->getBloques()->toArray();
+        self::assertCount(4, $bloquesOtra);
+        self::assertSame($perfil->getId(), $bloquesOtra[0]->getId());
+        self::assertSame($diapositivas->getId(), $bloquesOtra[3]->getId());
+        self::assertSame([0, 1, 2, 3], array_map(fn (Bloque $b) => $b->getPosicion(), $bloquesOtra));
+        $imagen = $bloquesOtra[3]->dato('items')[0]['imagen'];
+        self::assertSame('d'.$otra->getId().'-'.str_repeat('a', 24).'.png', $imagen);
+        self::assertFileExists($directorio.'/'.$imagen);
+        self::assertFileDoesNotExist($directorio.'/d'.$guia->getId().'-'.str_repeat('a', 24).'.png');
+        @unlink($directorio.'/'.$imagen);
+    }
+
     public function testPestanasYSeccionesSeAgreganRenombranYEliminan(): void
     {
         $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
