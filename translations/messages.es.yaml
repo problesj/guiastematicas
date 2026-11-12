@@ -831,13 +831,20 @@ apariencia:
   quitar_logo: Quitar el logo (volver al nombre en texto)
   portada_actual: Imagen actual de la portada
   quitar_imagen_portada: Quitar la imagen (usar un degradado con los colores del sitio)
-  restablecer: Volver a los colores del tema base
-  colores_ayuda: Para que el sitio cumpla con WCAG 2.1 AA, cada color debe tener un contraste de al menos 4,5:1 con el texto que lleva encima; si no, no se guarda.
+  restablecer: Volver a los colores del tema base (fondos y textos)
+  colores_ayuda: Para que el sitio cumpla con WCAG 2.1 AA, cada texto debe tener un contraste de al menos 4,5:1 con su fondo; si no, no se guarda. Si cambias un fondo, revisa también el color del texto que va encima.
   grupo:
     nombre: Nombre del sitio
     logo: Logo
     portada: Imagen de la portada
-    colores: Colores
+    colores: Colores de fondo
+    textos: Colores del texto
+  fondo:
+    blanco: el fondo blanco
+    COLOR_PRINCIPAL: el color principal
+    COLOR_PRINCIPAL_OSCURO: el tono oscuro del color principal (títulos de los bloques)
+    COLOR_BARRA: la barra superior
+    COLOR_PIE: el pie de página
   ajuste:
     SITIO_TITULO: Título del sitio (español)
     SITIO_TITULO_EN: Título del sitio (inglés)
@@ -845,11 +852,23 @@ apariencia:
     COLOR_PRINCIPAL: Color principal
     COLOR_BARRA: Barra superior
     COLOR_PIE: Pie de página
+    TEXTO_GENERAL: Texto general
+    TEXTO_TITULOS: Títulos de las páginas
+    TEXTO_CABECERA: Nombre del sitio y menú
+    TEXTO_BARRA: Texto de la barra superior
+    TEXTO_BOTON: Texto sobre el color principal
+    TEXTO_PIE: Texto del pie de página
     LOGO: Archivo del logo
     IMAGEN_PORTADA: Imagen de fondo
   ayuda:
-    COLOR_PRINCIPAL: Enlaces, botones y títulos de las cajas (texto blanco encima).
-    COLOR_BARRA: Franja con los enlaces UCN y el idioma (texto oscuro encima).
-    COLOR_PIE: Fondo del pie de página (texto claro encima).
+    COLOR_PRINCIPAL: Enlaces (sobre fondo blanco), botones y títulos de los bloques.
+    COLOR_BARRA: Franja con los enlaces UCN y el idioma.
+    COLOR_PIE: Fondo del pie de página.
+    TEXTO_GENERAL: Párrafos, listas y formularios (sobre fondo blanco).
+    TEXTO_TITULOS: Títulos y subtítulos de las páginas y guías (sobre fondo blanco).
+    TEXTO_CABECERA: Título del sitio y enlaces del menú principal (sobre fondo blanco).
+    TEXTO_BARRA: Enlaces UCN, acceso e idioma (sobre la barra superior).
+    TEXTO_BOTON: Botones, títulos de los bloques de las guías e insignias (sobre el color principal).
+    TEXTO_PIE: Texto y enlaces del pie de página.
     LOGO: PNG, JPG o WebP de hasta 1 MB, idealmente horizontal y con fondo transparente. Reemplaza al nombre de la institución en la cabecera.
     IMAGEN_PORTADA: JPG, WebP o PNG de hasta 3 MB y al menos 800 px de ancho, idealmente apaisada (por ejemplo 1920 × 800). Se oscurece para que el texto blanco se lea bien.

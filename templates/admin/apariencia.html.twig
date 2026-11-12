@@ -43,6 +43,17 @@
                 {{ form_row(formulario.COLOR_BARRA) }}
                 {{ form_row(formulario.COLOR_PIE) }}
             </div>
+        </fieldset>
+        <fieldset class="configuracion__grupo">
+            <legend>{{ 'apariencia.grupo.textos'|trans }}</legend>
+            <div class="formulario__columnas">
+                {{ form_row(formulario.TEXTO_GENERAL) }}
+                {{ form_row(formulario.TEXTO_TITULOS) }}
+                {{ form_row(formulario.TEXTO_CABECERA) }}
+                {{ form_row(formulario.TEXTO_BARRA) }}
+                {{ form_row(formulario.TEXTO_BOTON) }}
+                {{ form_row(formulario.TEXTO_PIE) }}
+            </div>
             {{ form_row(formulario.restablecer) }}
         </fieldset>
         <div class="formulario__acciones">

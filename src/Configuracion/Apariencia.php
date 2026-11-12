@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Attribute\AsTwigFunction;
 
 /**
- * Nombre del sitio, logo y colores definidos en Administración → Apariencia. Lo que no se define usa el tema base
+ * Nombre del sitio, logo, imagen de la portada y colores (de fondo y de texto) definidos en Administración → Apariencia. Lo que no se define usa el tema base
  * (colores de la UCN en app.css y los textos de las traducciones).
  */
 final class Apariencia
@@ -21,8 +21,37 @@ final class Apariencia
     /** Contraste mínimo (WCAG 2.1 AA, texto normal). */
     public const float CONTRASTE_MINIMO = 4.5;
 
-    /** Colores con el texto contra el que se comprueban: principal (texto y botones sobre blanco), barra (texto oscuro), pie (texto claro). */
-    public const array COLORES = ['COLOR_PRINCIPAL' => '#ffffff', 'COLOR_BARRA' => '#1d1d1b', 'COLOR_PIE' => '#f2f2f2'];
+    /**
+     * Colores personalizables: valor del tema base (app.css) y variable CSS que reemplazan. Los de fondo (COLOR_*) y los
+     * de texto (TEXTO_*) se comprueban en pares, ver PARES.
+     */
+    public const array COLORES = [
+        'COLOR_PRINCIPAL' => ['#9a602c', '--color-principal'],
+        'COLOR_BARRA' => ['#7e9bc0', '--color-azul'],
+        'COLOR_PIE' => ['#2b2b2a', '--color-pie'],
+        'TEXTO_GENERAL' => ['#1d1d1b', '--color-texto'],
+        'TEXTO_TITULOS' => ['#1d1d1b', '--color-texto-titulos'],
+        'TEXTO_CABECERA' => ['#1d1d1b', '--color-texto-cabecera'],
+        'TEXTO_BARRA' => ['#1d1d1b', '--color-texto-barra'],
+        'TEXTO_BOTON' => ['#ffffff', '--color-texto-boton'],
+        'TEXTO_PIE' => ['#f2f2f2', '--color-texto-pie'],
+    ];
+
+    /**
+     * Pares texto / fondo que deben tener contraste AA. El fondo es otra clave de COLORES o un color fijo (#ffffff: el
+     * fondo blanco de las páginas y de la cabecera). El color principal también es el de los enlaces sobre blanco, y
+     * el texto de los botones se comprueba además sobre el tono oscuro del principal (encabezados de los bloques).
+     */
+    public const array PARES = [
+        ['COLOR_PRINCIPAL', '#ffffff'],
+        ['TEXTO_GENERAL', '#ffffff'],
+        ['TEXTO_TITULOS', '#ffffff'],
+        ['TEXTO_CABECERA', '#ffffff'],
+        ['TEXTO_BARRA', 'COLOR_BARRA'],
+        ['TEXTO_BOTON', 'COLOR_PRINCIPAL'],
+        ['TEXTO_BOTON', 'COLOR_PRINCIPAL_OSCURO'],
+        ['TEXTO_PIE', 'COLOR_PIE'],
+    ];
 
     public function __construct(
         private readonly Ajustes $ajustes,
@@ -75,17 +104,15 @@ final class Apariencia
     public function css(): string
     {
         $variables = [];
+        foreach (self::COLORES as $clave => [, $variable]) {
+            if (null !== $color = $this->color($clave)) {
+                $variables[$variable] = $color;
+            }
+        }
         if (null !== $principal = $this->color('COLOR_PRINCIPAL')) {
-            $variables['--color-principal'] = $principal;
             $variables['--color-principal-oscuro'] = 'color-mix(in srgb, '.$principal.' 80%, #000)';
             $variables['--color-principal-suave'] = 'color-mix(in srgb, '.$principal.' 60%, #fff)';
             $variables['--color-fondo-suave'] = 'color-mix(in srgb, '.$principal.' 8%, #fff)';
-        }
-        if (null !== $barra = $this->color('COLOR_BARRA')) {
-            $variables['--color-azul'] = $barra;
-        }
-        if (null !== $pie = $this->color('COLOR_PIE')) {
-            $variables['--color-pie'] = $pie;
         }
 
         return [] === $variables ? '' : 'html:root{'.implode('', array_map(fn ($k, $v) => $k.':'.$v.';', array_keys($variables), $variables)).'}';
@@ -136,6 +163,12 @@ final class Apariencia
             $this->filesystem->remove($this->directorio.'/'.basename($actual));
         }
         $this->ajustes->guardar($clave, null);
+    }
+
+    /** Tono oscuro del color principal, como lo calcula color-mix(in srgb, principal 80%, #000). */
+    public static function oscuro(string $color): string
+    {
+        return '#'.implode('', array_map(fn (string $c): string => \sprintf('%02x', (int) round(hexdec($c) * 0.8)), str_split(ltrim($color, '#'), 2)));
     }
 
     /** Relación de contraste WCAG entre dos colores #rrggbb. */

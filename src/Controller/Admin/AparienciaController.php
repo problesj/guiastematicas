@@ -11,21 +11,20 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** Nombre del sitio, logo, imagen de la portada y colores. Los colores deben tener contraste AA con el texto que llevan encima. */
 #[Route('/{_locale}/admin/apariencia', requirements: ['_locale' => 'es|en'])]
 final class AparienciaController extends AbstractController
 {
-    /** Colores del tema base (app.css), que se muestran cuando no hay uno propio. */
-    private const BASE = ['COLOR_PRINCIPAL' => '#9a602c', 'COLOR_BARRA' => '#7e9bc0', 'COLOR_PIE' => '#2b2b2a'];
-
-    public function __construct(private readonly Ajustes $ajustes, private readonly Apariencia $apariencia)
+    public function __construct(private readonly Ajustes $ajustes, private readonly Apariencia $apariencia, private readonly TranslatorInterface $traductor)
     {
     }
 
@@ -42,20 +41,14 @@ final class AparienciaController extends AbstractController
                 'constraints' => [new Assert\Length(max: 80)],
             ]);
         }
-        foreach (Apariencia::COLORES as $clave => $texto) {
+        foreach (Apariencia::COLORES as $clave => [$base]) {
             $constructor->add($clave, ColorType::class, [
                 'label' => 'apariencia.ajuste.'.$clave,
                 'help' => 'apariencia.ayuda.'.$clave,
-                'data' => $this->apariencia->color($clave) ?? self::BASE[$clave],
+                'data' => $this->apariencia->color($clave) ?? $base,
                 'constraints' => [
                     new Assert\Regex(pattern: '/^#[0-9a-fA-F]{6}$/'),
-                    new Assert\Callback(function (?string $color, ExecutionContextInterface $contexto) use ($texto): void {
-                        if (null !== $color && preg_match('/^#[0-9a-fA-F]{6}$/', $color) && Apariencia::contraste($color, $texto) < Apariencia::CONTRASTE_MINIMO) {
-                            $contexto->buildViolation('apariencia.contraste_bajo')
-                                ->setParameter('%contraste%', number_format(Apariencia::contraste($color, $texto), 1, ','))
-                                ->addViolation();
-                        }
-                    }),
+                    new Assert\Callback(fn (?string $color, ExecutionContextInterface $contexto) => $this->validarContraste($clave, $contexto)),
                 ],
             ]);
         }
@@ -79,15 +72,10 @@ final class AparienciaController extends AbstractController
         $formulario->handleRequest($request);
 
         if ($formulario->isSubmitted() && $formulario->isValid()) {
-            if ($formulario->get('restablecer')->getData()) {
-                foreach (array_keys(Apariencia::COLORES) as $clave) {
-                    $this->ajustes->guardar($clave, null);
-                }
-            } else {
-                foreach (array_keys(Apariencia::COLORES) as $clave) {
-                    $color = strtolower((string) $formulario->get($clave)->getData());
-                    $this->ajustes->guardar($clave, $color === self::BASE[$clave] ? null : $color);
-                }
+            $restablecer = (bool) $formulario->get('restablecer')->getData();
+            foreach (Apariencia::COLORES as $clave => [$base]) {
+                $color = strtolower((string) $formulario->get($clave)->getData());
+                $this->ajustes->guardar($clave, $restablecer || $color === $base ? null : $color);
             }
             foreach (['SITIO_TITULO', 'SITIO_TITULO_EN', 'SITIO_INSTITUCION'] as $clave) {
                 $this->ajustes->guardar($clave, trim((string) $formulario->get($clave)->getData()) ?: null);
@@ -110,5 +98,42 @@ final class AparienciaController extends AbstractController
         }
 
         return $this->render('admin/apariencia.html.twig', ['formulario' => $formulario], new Response(status: $formulario->isSubmitted() ? 422 : 200));
+    }
+
+    /**
+     * Comprueba los pares de Apariencia::PARES en que participa el color (como texto o como fondo) con los demás
+     * valores del formulario. «Volver al tema base» omite la comprobación.
+     */
+    private function validarContraste(string $clave, ExecutionContextInterface $contexto): void
+    {
+        $formulario = $contexto->getRoot();
+        if (!$formulario instanceof FormInterface || $formulario->get('restablecer')->getData()) {
+            return;
+        }
+        $valor = function (string $c) use ($formulario): ?string {
+            if ('COLOR_PRINCIPAL_OSCURO' === $c) {
+                $principal = $formulario->get('COLOR_PRINCIPAL')->getData();
+
+                return \is_string($principal) && preg_match('/^#[0-9a-fA-F]{6}$/', $principal) ? Apariencia::oscuro($principal) : null;
+            }
+            $color = str_starts_with($c, '#') ? $c : $formulario->get($c)->getData();
+
+            return \is_string($color) && preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? $color : null;
+        };
+        foreach (Apariencia::PARES as [$texto, $fondo]) {
+            // El error se muestra en el campo de texto del par (o en el de fondo cuando el otro es un color fijo).
+            if ($texto !== $clave) {
+                continue;
+            }
+            [$a, $b] = [$valor($texto), $valor($fondo)];
+            if (null !== $a && null !== $b && ($contraste = Apariencia::contraste($a, $b)) < Apariencia::CONTRASTE_MINIMO) {
+                $contexto->buildViolation('apariencia.contraste_bajo')
+                    ->setParameter('%contraste%', number_format($contraste, 1, ','))
+                    ->setParameter('%fondo%', $this->traductor->trans('apariencia.fondo.'.(str_starts_with($fondo, '#') ? 'blanco' : $fondo)))
+                    ->addViolation();
+
+                return;
+            }
+        }
     }
 }
