@@ -31,6 +31,7 @@
                     <li><a href="{{ path('admin_departamentos') }}" {% if ruta starts with 'admin_departamento' %}aria-current="page"{% endif %}>{{ 'panel.departamentos'|trans }}</a></li>
                     <li><a href="{{ path('admin_materias') }}" {% if ruta starts with 'admin_materia' %}aria-current="page"{% endif %}>{{ 'panel.materias'|trans }}</a></li>
                     <li><a href="{{ path('admin_paises') }}" {% if ruta starts with 'admin_pais' %}aria-current="page"{% endif %}>{{ 'panel.paises'|trans }}</a></li>
+                    <li><a href="{{ path('admin_configuracion') }}" {% if ruta == 'admin_configuracion' %}aria-current="page"{% endif %}>{{ 'panel.configuracion'|trans }}</a></li>
                 </ul>
             {% endif %}
         </nav>

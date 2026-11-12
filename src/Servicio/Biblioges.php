@@ -33,9 +33,9 @@ final class Biblioges
         #[Autowire(service: 'cache.catalogo')]
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
-        #[Autowire('%env(string:default::BIBLIOGES_API_URL)%')]
+        #[Autowire('%env(string:default::ajuste:BIBLIOGES_API_URL)%')]
         private readonly string $apiUrl = '',
-        #[Autowire('%env(string:default::BIBLIOGES_API_KEY)%')]
+        #[Autowire('%env(string:default::ajuste:BIBLIOGES_API_KEY)%')]
         private readonly string $clave = '',
     ) {
     }

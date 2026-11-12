@@ -59,6 +59,7 @@ panel:
   departamentos: Departments
   materias: Subjects
   paises: Countries
+  configuracion: Integrations
   autores: Authors
   editoriales: Publishers
   guias: Research guides
@@ -753,3 +754,52 @@ incrustar:
   volver: Back to the guide editor
   no_publicada: Publish the guide to embed its blocks.
   no_restringida: Blocks of a restricted guide cannot be embedded in other websites.
+configuracion:
+  titulo: Integrations
+  bajada: Connection details for external services. Anything left empty uses the value in the server's .env.local file. Keys are stored encrypted and are never shown again.
+  guardada: Changes saved. They apply from the next page load.
+  usar_servidor: Use the server's value
+  borrar_clave: Remove the key stored in the panel
+  grupo:
+    proxy: AccesUM proxy
+    catalogo: Catalogue (Primo VE and Alma)
+    biblioges: Biblioges
+    ldap: LDAP sign-in
+    google: Google sign-in
+  grupo_ayuda:
+    proxy: Prefix or template with {url} for subscribed resources, e.g. https://itmsp.museknowledge.com/UCN?qurl={url}. Empty in the panel and on the server = direct links.
+    catalogo: Primo VE for the search box and record links; the Ex Libris API for book data by ISBN and Alma availability.
+    biblioges: Reading lists by programme or course for the Books block. The key is generated in Biblioges (Administration → API Keys).
+    ldap: With an LDAP address, staff can sign in with their institutional account. Use the DN pattern or a search with a service account.
+    google: OAuth credentials of the Google Cloud project. The domain restricts access to accounts in that domain (e.g. ucn.cl).
+  ajuste:
+    PROXY_URL: Proxy address
+    PRIMO_URL: Primo VE address
+    PRIMO_VID: Primo VE view (vid)
+    EXLIBRIS_API_URL: Ex Libris API address
+    PRIMO_API_KEY: Primo API key
+    ALMA_API_KEY: Alma API key
+    BIBLIOGES_API_URL: Biblioges API address
+    BIBLIOGES_API_KEY: Biblioges API key
+    LDAP_URL: LDAP server address
+    LDAP_CIFRADO: Encryption
+    LDAP_DN_USUARIO: User DN pattern
+    LDAP_BASE_DN: Search base DN
+    LDAP_FILTRO: Search filter
+    LDAP_BIND_DN: Service account DN
+    LDAP_BIND_PASSWORD: Service account password
+    GOOGLE_CLIENT_ID: Client ID
+    GOOGLE_CLIENT_SECRET: Client secret
+    GOOGLE_DOMINIO: Allowed domain
+  opcion:
+    LDAP_CIFRADO:
+      none: No encryption
+      ssl: SSL (ldaps)
+      tls: StartTLS
+  estado:
+    panel: Set in the panel.
+    clave_panel: Key stored in the panel. Type another one to replace it.
+    servidor: 'Empty in the panel: the server value is used ("%valor%").'
+    clave_servidor: 'Empty in the panel: the key set on the server is used.'
+    sin_definir: Not set.
+    ilegible: The stored key can no longer be read (APP_SECRET changed). Type it again.

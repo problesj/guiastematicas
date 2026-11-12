@@ -65,6 +65,14 @@ Paso a paso:
 
 El VirtualHost de Apache está en [deploy/apache/guias.conf](deploy/apache/guias.conf).
 
+## Integraciones desde el panel
+
+Un administrador puede definir en **Administración → Integraciones** el proxy AccesUM, Primo VE y la API de Ex Libris,
+Biblioges, LDAP y Google. Lo definido en el panel reemplaza a la variable de entorno del mismo nombre; lo que queda
+vacío usa el `.env.local` del servidor. Las claves se guardan cifradas (sodium) con una llave derivada de `APP_SECRET`
+y nunca se vuelven a mostrar: si `APP_SECRET` cambia, hay que escribirlas de nuevo. Los servicios leen estos valores
+con `%env(ajuste:NOMBRE)%` (`App\Configuracion\AjusteEnvVarProcessor`).
+
 ## Inicio de sesión del personal
 
 El personal entra en `/es/acceso` (o `/en/acceso`). Solo pueden entrar personas creadas antes por un administrador

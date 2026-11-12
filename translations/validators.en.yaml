@@ -23,3 +23,4 @@ bloque.libro_no_encontrado: "No details were found for %isbn%: enter the title."
 bloque.libro_sin_titulo: Enter the title, an ISBN or a DOI.
 bloque.doi_no_valido: "The DOI is not valid. It must start with 10. (for example 10.1007/978-3-030-12345-6)."
 bloque.anio_no_valido: Enter the year with 4 digits.
+configuracion.direccion_no_valida: "Enter a full address (https://… or ldap://…)."

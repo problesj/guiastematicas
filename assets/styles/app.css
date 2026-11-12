@@ -601,3 +601,11 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .libro__datos .libro__titulo a { color: var(--color-texto); }
 .libro__datos .libro__titulo a:hover { color: var(--color-principal-oscuro); }
 .libro__acceso { font-size: 0.875rem; overflow-wrap: anywhere; }
+
+/* Administración: integraciones */
+.configuracion__grupo { margin: 0 0 2rem; padding: 1.25rem 1.5rem 0.5rem; border: 1px solid #e4dccf; border-radius: var(--radio); }
+.configuracion__grupo legend { padding: 0 0.5rem; font-size: 1.125rem; font-weight: 700; }
+.configuracion__grupo > .campo__ayuda { margin-top: 0; }
+.configuracion__ajuste { padding: 0.75rem 0; border-top: 1px solid #f0eae0; }
+.configuracion__estado { margin: -0.5rem 0 0.5rem; font-size: 0.875rem; color: var(--color-texto-suave, #555); overflow-wrap: anywhere; }
+.configuracion__alerta { color: #a4262c; }

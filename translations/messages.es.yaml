@@ -59,6 +59,7 @@ panel:
   departamentos: Departamentos
   materias: Materias
   paises: Países
+  configuracion: Integraciones
   autores: Autores
   editoriales: Editoriales
   guias: Guías temáticas
@@ -753,3 +754,52 @@ incrustar:
   volver: Volver al editor de la guía
   no_publicada: Publica la guía para poder incrustar sus bloques.
   no_restringida: Los bloques de una guía restringida no se pueden incrustar en otras webs.
+configuracion:
+  titulo: Integraciones
+  bajada: Datos de conexión con los servicios externos. Lo que dejes vacío usa lo definido en el archivo .env.local del servidor. Las claves se guardan cifradas y no se vuelven a mostrar.
+  guardada: Los cambios se guardaron. Rigen desde la próxima página que se cargue.
+  usar_servidor: Usar el valor del servidor
+  borrar_clave: Quitar la clave guardada en el panel
+  grupo:
+    proxy: Proxy AccesUM
+    catalogo: Catálogo (Primo VE y Alma)
+    biblioges: Biblioges
+    ldap: Inicio de sesión con LDAP
+    google: Inicio de sesión con Google
+  grupo_ayuda:
+    proxy: Prefijo o plantilla con {url} para los recursos suscritos, p. ej. https://itmsp.museknowledge.com/UCN?qurl={url}. Vacío en el panel y en el servidor = enlaces directos.
+    catalogo: Primo VE para el buscador y los enlaces a los registros; la API de Ex Libris para los datos de libros por ISBN y la disponibilidad en Alma.
+    biblioges: Bibliografías por carrera o asignatura para el bloque Libros. La clave se genera en Biblioges (Administración → API Keys).
+    ldap: Con una dirección LDAP, el personal puede entrar con su cuenta institucional. Usa el patrón del DN o la búsqueda con cuenta de servicio.
+    google: Credenciales OAuth del proyecto de Google Cloud. El dominio limita el acceso a cuentas de ese dominio (p. ej. ucn.cl).
+  ajuste:
+    PROXY_URL: Dirección del proxy
+    PRIMO_URL: Dirección de Primo VE
+    PRIMO_VID: Vista de Primo VE (vid)
+    EXLIBRIS_API_URL: Dirección de la API de Ex Libris
+    PRIMO_API_KEY: Clave de la API de Primo
+    ALMA_API_KEY: Clave de la API de Alma
+    BIBLIOGES_API_URL: Dirección de la API de Biblioges
+    BIBLIOGES_API_KEY: Clave de la API de Biblioges
+    LDAP_URL: Dirección del servidor LDAP
+    LDAP_CIFRADO: Cifrado
+    LDAP_DN_USUARIO: Patrón del DN de usuario
+    LDAP_BASE_DN: DN base de búsqueda
+    LDAP_FILTRO: Filtro de búsqueda
+    LDAP_BIND_DN: DN de la cuenta de servicio
+    LDAP_BIND_PASSWORD: Contraseña de la cuenta de servicio
+    GOOGLE_CLIENT_ID: ID de cliente
+    GOOGLE_CLIENT_SECRET: Secreto de cliente
+    GOOGLE_DOMINIO: Dominio permitido
+  opcion:
+    LDAP_CIFRADO:
+      none: Sin cifrado
+      ssl: SSL (ldaps)
+      tls: StartTLS
+  estado:
+    panel: Definido en el panel.
+    clave_panel: Clave guardada en el panel. Escribe otra para reemplazarla.
+    servidor: 'Vacío en el panel: se usa el valor del servidor («%valor%»).'
+    clave_servidor: 'Vacío en el panel: se usa la clave definida en el servidor.'
+    sin_definir: Sin definir.
+    ilegible: La clave guardada ya no se puede leer (cambió APP_SECRET). Vuelve a escribirla.

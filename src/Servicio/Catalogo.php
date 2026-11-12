@@ -29,15 +29,15 @@ final class Catalogo
         #[Autowire(service: 'cache.catalogo')]
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
-        #[Autowire('%env(string:default::EXLIBRIS_API_URL)%')]
+        #[Autowire('%env(string:default::ajuste:EXLIBRIS_API_URL)%')]
         private readonly string $apiUrl = '',
-        #[Autowire('%env(string:default::PRIMO_API_KEY)%')]
+        #[Autowire('%env(string:default::ajuste:PRIMO_API_KEY)%')]
         private readonly string $primoClave = '',
-        #[Autowire('%env(string:default::ALMA_API_KEY)%')]
+        #[Autowire('%env(string:default::ajuste:ALMA_API_KEY)%')]
         private readonly string $almaClave = '',
-        #[Autowire('%env(string:default::PRIMO_URL)%')]
+        #[Autowire('%env(string:default::ajuste:PRIMO_URL)%')]
         private readonly string $primoUrl = '',
-        #[Autowire('%env(string:default::PRIMO_VID)%')]
+        #[Autowire('%env(string:default::ajuste:PRIMO_VID)%')]
         private readonly string $primoVid = '',
     ) {
     }
