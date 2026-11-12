@@ -73,6 +73,14 @@ vacío usa el `.env.local` del servidor. Las claves se guardan cifradas (sodium)
 y nunca se vuelven a mostrar: si `APP_SECRET` cambia, hay que escribirlas de nuevo. Los servicios leen estos valores
 con `%env(ajuste:NOMBRE)%` (`App\Configuracion\AjusteEnvVarProcessor`).
 
+## Accesibilidad (WCAG 2.1 AA)
+
+Revisión automática con axe-core 4.10 (reglas wcag2a, wcag2aa, wcag21a, wcag21aa y buenas prácticas) sobre 24 páginas
+públicas y del panel, en escritorio (1280 px) y celular (390 px): sin errores y sin desplazamiento horizontal
+(12-11-2026). El color principal del tema es el 471 C oscurecido (#9a602c) para llegar a 4,5:1; los colores propios
+que se definan en Apariencia deben cumplir el mismo contraste. La revisión automática no reemplaza una prueba con
+lector de pantalla y teclado.
+
 ## Inicio de sesión del personal
 
 El personal entra en `/es/acceso` (o `/en/acceso`). Solo pueden entrar personas creadas antes por un administrador

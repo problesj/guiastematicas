@@ -24,12 +24,14 @@
                     <a href="https://bibliotecas.ucn.cl/">{{ sitio_institucion() }}</a>
                 </nav>
                 <div class="barra-superior__derecha">
+                <nav aria-label="{{ 'sitio.cuenta'|trans }}">
                 {% if app.user %}
                     {% if is_granted('ROLE_COLABORADOR') %}<a href="{{ path('panel') }}">{{ 'menu.panel'|trans }}</a>{% endif %}
                     <a href="{{ logout_path('main') }}">{{ 'menu.salir'|trans }}</a>
                 {% else %}
                     <a href="{{ path('acceso') }}">{{ 'menu.acceso'|trans }}</a>
                 {% endif %}
+                </nav>
                 <nav class="idiomas" aria-label="{{ 'sitio.idioma'|trans }}">
                     {% set ruta = app.request.attributes.get('_route') ?? 'inicio' %}
                     {% set parametros = app.request.attributes.get('_route_params') ?? {} %}
