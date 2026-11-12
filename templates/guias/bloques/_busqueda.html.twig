@@ -1,9 +1,42 @@
 {% if hay_buscador_primo() %}
-    <form class="buscador buscador--bloque" role="search" action="{{ path('catalogo', {_locale: guia.idioma}) }}" method="get" target="_blank">
-        <label for="catalogo-{{ bloque.id }}">{{ bloque.dato('texto') ?? 'bloque.busqueda_etiqueta'|trans }}</label>
+    {% set id = 'catalogo-' ~ bloque.id %}
+    {% set materias = materias_busqueda(bloque) %}
+    {% set otras = bloque.dato('otras', true) ? otras_materias_busqueda(materias) : [] %}
+    {% set tipo = bloque.dato('tipo', 'todos') %}
+    {% set idioma = guia.idioma %}
+    <form class="buscador buscador--bloque" role="search" action="{{ path('catalogo', {_locale: idioma}) }}" method="get" target="_blank">
+        <label for="{{ id }}">{{ bloque.dato('texto') ?? 'bloque.busqueda_etiqueta'|trans }}</label>
         <div class="buscador__fila">
-            <input id="catalogo-{{ bloque.id }}" name="q" type="search" required placeholder="{{ 'bloque.busqueda_placeholder'|trans }}">
+            <input id="{{ id }}" name="q" type="search"{% if materias is empty and otras is empty %} required{% endif %} placeholder="{{ 'bloque.busqueda_placeholder'|trans }}">
             <button type="submit">{{ 'inicio.buscar'|trans }}</button>
+        </div>
+        <div class="buscador__filtros">
+            <div class="buscador__tipo">
+                <label for="{{ id }}-tipo">{{ 'bloque.busqueda_tipo_publico'|trans }}</label>
+                <select id="{{ id }}-tipo" name="tipo">
+                    {% for valor in ['todos', 'libros', 'tesis', 'articulos', 'revistas'] %}
+                        <option value="{{ valor == 'todos' ? '' : valor }}"{% if valor == tipo %} selected{% endif %}>{{ ('bloque.tipo_material.' ~ valor)|trans }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% if materias is not empty or otras is not empty %}
+                <fieldset class="buscador__materias">
+                    <legend>{{ 'bloque.busqueda_materias_publico'|trans }}</legend>
+                    {% for materia in materias %}
+                        <label class="casillas__opcion"><input type="checkbox" name="materia[]" value="{{ materia.slug }}" checked> {{ materia.nombreTraducido(idioma) }}</label>
+                    {% endfor %}
+                    {% if otras is not empty %}
+                        <details class="buscador__otras">
+                            <summary>{{ 'bloque.busqueda_otras_publico'|trans }}</summary>
+                            <div class="casillas">
+                                {% for materia in otras %}
+                                    <label class="casillas__opcion"><input type="checkbox" name="materia[]" value="{{ materia.slug }}"> {{ materia.nombreTraducido(idioma) }}</label>
+                                {% endfor %}
+                            </div>
+                        </details>
+                    {% endif %}
+                </fieldset>
+            {% endif %}
         </div>
     </form>
 {% elseif vista_previa %}

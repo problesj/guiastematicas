@@ -552,7 +552,7 @@ final class GuiaController extends AbstractController
     private function formularioBloque(Request $request, Guia $guia, Bloque $bloque, Seccion $seccion): Response
     {
         $tipo = $bloque->getTipo();
-        $formulario = $this->createForm(BloqueType::class, $this->datosFormulario($bloque), ['tipo' => $tipo]);
+        $formulario = $this->createForm(BloqueType::class, $this->datosFormulario($bloque, $guia), ['tipo' => $tipo]);
         $formulario->handleRequest($request);
 
         if ($formulario->isSubmitted() && $formulario->isValid()) {
@@ -582,7 +582,7 @@ final class GuiaController extends AbstractController
     }
 
     /** @return array<string, mixed> */
-    private function datosFormulario(Bloque $bloque): array
+    private function datosFormulario(Bloque $bloque, Guia $guia): array
     {
         $datos = ['titulo' => $bloque->getTitulo()];
 
@@ -597,7 +597,12 @@ final class GuiaController extends AbstractController
             ],
             TipoBloque::Perfil => ['usuario' => $this->bloques->perfil($bloque)],
             TipoBloque::Video => ['url' => $bloque->dato('url'), 'descripcion' => $bloque->dato('descripcion')],
-            TipoBloque::Busqueda => ['texto' => $bloque->dato('texto')],
+            TipoBloque::Busqueda => [
+                'texto' => $bloque->dato('texto'),
+                'tipo' => $bloque->dato('tipo', 'todos'),
+                'materias' => $this->bloques->materiasBusqueda($bloque, $guia),
+                'otras' => (bool) $bloque->dato('otras', true),
+            ],
             TipoBloque::Libros => [
                 'items' => $this->librosConMaterias($bloque->dato('items', [])),
                 'presentacion' => $bloque->dato('presentacion', 'cuadricula'),
@@ -625,7 +630,12 @@ final class GuiaController extends AbstractController
             ],
             TipoBloque::Perfil => ['usuario' => $datos['usuario'] instanceof Usuario ? $datos['usuario']->getId() : null],
             TipoBloque::Video => ['url' => $datos['url'] ?? null, 'descripcion' => trim((string) ($datos['descripcion'] ?? '')) ?: null],
-            TipoBloque::Busqueda => ['texto' => trim((string) ($datos['texto'] ?? '')) ?: null],
+            TipoBloque::Busqueda => [
+                'texto' => trim((string) ($datos['texto'] ?? '')) ?: null,
+                'tipo' => isset(BloquesGuia::TIPOS_MATERIAL[$datos['tipo'] ?? '']) ? $datos['tipo'] : 'todos',
+                'materias' => array_values(array_map(fn (Materia $m) => $m->getId(), array_filter([...($datos['materias'] ?? [])], fn ($m) => $m instanceof Materia))),
+                'otras' => (bool) ($datos['otras'] ?? false),
+            ],
             TipoBloque::Enlaces => ['items' => array_map(fn (array $i) => [
                 'titulo' => $texto($i['titulo'] ?? null), 'url' => $texto($i['url'] ?? null), 'descripcion' => $texto($i['descripcion'] ?? null),
             ], $items)],

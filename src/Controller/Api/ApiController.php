@@ -164,7 +164,12 @@ final class ApiController extends AbstractController
             TipoBloque::Recursos => ['recursos' => array_map(fn (Recurso $r) => $this->recurso($r, $idioma), $this->bloques->recursos($bloque))],
             TipoBloque::Perfil => ['persona' => $this->bloques->perfil($bloque)?->getNombreCompleto()],
             TipoBloque::Video => ['url' => $bloque->dato('url'), 'descripcion' => $bloque->dato('descripcion')],
-            TipoBloque::Busqueda => ['texto' => $bloque->dato('texto')],
+            TipoBloque::Busqueda => [
+                'texto' => $bloque->dato('texto'),
+                'tipo' => $bloque->dato('tipo', 'todos'),
+                'materias' => array_map(fn (Materia $m) => $m->getSlug(), $this->bloques->materiasBusqueda($bloque)),
+                'buscar' => $this->generateUrl('catalogo', ['_locale' => $idioma], UrlGeneratorInterface::ABSOLUTE_URL),
+            ],
             TipoBloque::Enlaces => ['enlaces' => $items],
             TipoBloque::Libros => ['libros' => array_map(fn (array $l) => [
                 'titulo' => $l['titulo'] ?? null,

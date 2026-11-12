@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Materia;
 use App\Entity\Usuario;
 use App\Enum\TipoBloque;
+use App\Repository\MateriaRepository;
 use App\Repository\UsuarioRepository;
+use App\Servicio\BloquesGuia;
 use App\Servicio\VideoIncrustado;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -81,12 +84,37 @@ final class BloqueType extends AbstractType
                     'attr' => ['rows' => 3],
                     'constraints' => [new Assert\Length(max: 1000)],
                 ]),
-            TipoBloque::Busqueda => $builder->add('texto', TextType::class, [
-                'label' => 'bloque.busqueda_texto',
-                'required' => false,
-                'help' => 'bloque.busqueda_texto_ayuda',
-                'constraints' => [new Assert\Length(max: 300)],
-            ]),
+            TipoBloque::Busqueda => $builder
+                ->add('texto', TextType::class, [
+                    'label' => 'bloque.busqueda_texto',
+                    'required' => false,
+                    'help' => 'bloque.busqueda_texto_ayuda',
+                    'constraints' => [new Assert\Length(max: 300)],
+                ])
+                ->add('tipo', ChoiceType::class, [
+                    'label' => 'bloque.busqueda_tipo',
+                    'help' => 'bloque.busqueda_tipo_ayuda',
+                    'choices' => ['bloque.tipo_material.todos' => 'todos'] + array_combine(
+                        array_map(fn ($t) => 'bloque.tipo_material.'.$t, array_keys(BloquesGuia::TIPOS_MATERIAL)),
+                        array_keys(BloquesGuia::TIPOS_MATERIAL),
+                    ),
+                    'constraints' => [new Assert\Choice(choices: ['todos', ...array_keys(BloquesGuia::TIPOS_MATERIAL)])],
+                ])
+                ->add('materias', EntityType::class, [
+                    'label' => 'bloque.busqueda_materias',
+                    'help' => 'bloque.busqueda_materias_ayuda',
+                    'class' => Materia::class,
+                    'choice_label' => 'nombre',
+                    'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
+                    'multiple' => true,
+                    'expanded' => true,
+                    'required' => false,
+                ])
+                ->add('otras', CheckboxType::class, [
+                    'label' => 'bloque.busqueda_otras',
+                    'help' => 'bloque.busqueda_otras_ayuda',
+                    'required' => false,
+                ]),
             TipoBloque::Enlaces => $this->lista($builder, EnlaceBloqueType::class),
             TipoBloque::Libros => $this->libros($this->lista($builder, LibroBloqueType::class)),
             TipoBloque::Diapositivas => $this->lista($builder, DiapositivaBloqueType::class, 20),

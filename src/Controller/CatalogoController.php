@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\Bloque;
 use App\Enum\TipoBloque;
+use App\Repository\MateriaRepository;
 use App\Security\GuiaVoter;
 use App\Servicio\BloquesGuia;
 use App\Servicio\Catalogo;
@@ -20,12 +21,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/{_locale}/catalogo', requirements: ['_locale' => 'es|en'])]
 final class CatalogoController extends AbstractController
 {
-    /** Envía la búsqueda del bloque "Buscar en el catálogo" a Primo VE. */
+    /**
+     * Envía la búsqueda del bloque "Buscar en el catálogo" a Primo VE: texto (q), materias (materia[], por slug) y
+     * tipo de material (tipo: libros, tesis, articulos o revistas).
+     */
     #[Route('', name: 'catalogo', methods: ['GET'])]
-    public function buscar(Request $request, BloquesGuia $bloques): RedirectResponse
+    public function buscar(Request $request, BloquesGuia $bloques, MateriaRepository $materias): RedirectResponse
     {
         $texto = mb_substr(trim($request->query->getString('q')), 0, 300);
-        $destino = '' === $texto ? null : $bloques->enlacePrimo($texto, $request->getLocale());
+        $slugs = array_slice(array_filter((array) ($request->query->all()['materia'] ?? []), 'is_string'), 0, 30);
+        $nombres = [] === $slugs ? [] : array_map(
+            fn ($m) => $m->getNombre(),
+            $materias->findBy(['slug' => array_values($slugs), 'activa' => true], ['nombre' => 'ASC']),
+        );
+        $destino = $bloques->enlacePrimo($texto, $request->getLocale(), $nombres, $request->query->getString('tipo'));
 
         return $destino ? $this->redirect($destino) : $this->redirectToRoute('guias');
     }

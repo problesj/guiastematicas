@@ -723,6 +723,21 @@ bloque:
   busqueda_etiqueta: Buscar en el catálogo de Bibliotecas UCN
   busqueda_placeholder: Título, autor o tema
   busqueda_sin_configurar: El buscador no se mostrará hasta configurar Primo VE (PRIMO_URL y PRIMO_VID).
+  busqueda_tipo: Tipo de material por defecto
+  busqueda_tipo_ayuda: El lector puede cambiarlo al buscar.
+  busqueda_tipo_publico: Tipo de material
+  busqueda_materias: Materias marcadas por defecto
+  busqueda_materias_ayuda: Al crear el bloque vienen marcadas las materias de la guía. El lector puede desmarcarlas; si no marcas ninguna, la búsqueda no se limita por tema.
+  busqueda_materias_publico: Materias
+  busqueda_otras: Permitir elegir otras materias
+  busqueda_otras_ayuda: Muestra al lector la lista de las demás materias para sumarlas a la búsqueda.
+  busqueda_otras_publico: Otras materias
+  tipo_material:
+    todos: Todos
+    libros: Libros
+    tesis: Tesis
+    articulos: Artículos
+    revistas: Revistas
 libro:
   disponible: Disponible en %biblioteca%
   no_disponible: "Sin ejemplares disponibles ahora (%biblioteca%)"
