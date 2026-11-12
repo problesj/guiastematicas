@@ -55,6 +55,7 @@ a:hover { color: var(--color-principal-oscuro); }
 .marca { display: flex; flex-direction: column; text-decoration: none; }
 .marca__institucion { font-size: 0.875rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-principal); }
 .marca__titulo { font-size: 1.5rem; font-weight: 700; color: var(--color-texto); }
+.marca__logo { display: block; max-height: 3rem; max-width: 16rem; width: auto; height: auto; margin-bottom: 0.25rem; }
 .menu { display: flex; flex-wrap: wrap; gap: 1.25rem; }
 .menu a { color: var(--color-texto); font-weight: 600; text-decoration: none; }
 .menu a:hover { color: var(--color-principal); }
@@ -609,3 +610,6 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .configuracion__ajuste { padding: 0.75rem 0; border-top: 1px solid #f0eae0; }
 .configuracion__estado { margin: -0.5rem 0 0.5rem; font-size: 0.875rem; color: var(--color-texto-suave, #555); overflow-wrap: anywhere; }
 .configuracion__alerta { color: #a4262c; }
+
+.apariencia__logo img { max-height: 4rem; max-width: 100%; padding: 0.5rem; border: 1px solid #e4dccf; border-radius: var(--radio); background: #fff; }
+.formulario--configuracion input[type=color] { width: 4rem; height: 2.5rem; padding: 0.15rem; }

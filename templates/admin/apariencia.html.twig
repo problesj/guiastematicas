@@ -1,0 +1,41 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'apariencia.titulo'|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ 'apariencia.titulo'|trans }}</h1>
+    <p class="pagina__bajada">{{ 'apariencia.bajada'|trans }}</p>
+
+    {{ form_start(formulario, {attr: {class: 'formulario formulario--configuracion', novalidate: 'novalidate'}}) }}
+        <fieldset class="configuracion__grupo">
+            <legend>{{ 'apariencia.grupo.nombre'|trans }}</legend>
+            {{ form_row(formulario.SITIO_TITULO) }}
+            {{ form_row(formulario.SITIO_TITULO_EN) }}
+            {{ form_row(formulario.SITIO_INSTITUCION) }}
+        </fieldset>
+        <fieldset class="configuracion__grupo">
+            <legend>{{ 'apariencia.grupo.logo'|trans }}</legend>
+            {% if sitio_logo() %}
+                <p class="apariencia__logo"><img src="{{ asset(sitio_logo()) }}" alt="{{ 'apariencia.logo_actual'|trans }}"></p>
+                {{ form_row(formulario.logo) }}
+                {{ form_row(formulario.quitar_logo) }}
+            {% else %}
+                {{ form_row(formulario.logo) }}
+                {% do formulario.quitar_logo.setRendered %}
+            {% endif %}
+        </fieldset>
+        <fieldset class="configuracion__grupo">
+            <legend>{{ 'apariencia.grupo.colores'|trans }}</legend>
+            <p class="campo__ayuda">{{ 'apariencia.colores_ayuda'|trans }}</p>
+            <div class="formulario__columnas">
+                {{ form_row(formulario.COLOR_PRINCIPAL) }}
+                {{ form_row(formulario.COLOR_BARRA) }}
+                {{ form_row(formulario.COLOR_PIE) }}
+            </div>
+            {{ form_row(formulario.restablecer) }}
+        </fieldset>
+        <div class="formulario__acciones">
+            <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
+        </div>
+    {{ form_end(formulario) }}
+{% endblock %}

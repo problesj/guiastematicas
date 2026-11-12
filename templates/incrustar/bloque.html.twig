@@ -9,6 +9,7 @@
         <title>{{ bloque.titulo ?? bloque.tipo.etiqueta|trans }} · {{ guia.titulo }}</title>
         <base target="_blank">
         <link rel="preconnect" href="https://fonts.googleapis.com">
+        {% set css_sitio = sitio_css() %}{% if css_sitio %}<style>{{ css_sitio|raw }}</style>{% endif %}
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
         {{ importmap('app') }}
@@ -20,7 +21,7 @@
         </div>
         <p class="incrustado__origen">
             <a href="{{ url('guia', {slug: guia.slug, _locale: guia.idioma}) }}">{{ guia.titulo }}</a>
-            · {{ 'sitio.institucion'|trans({}, 'messages', guia.idioma) }}
+            · {{ sitio_institucion() }}
         </p>
         <script>
             // Informa la altura a /incrustar.js para que el iframe no muestre barras de desplazamiento.

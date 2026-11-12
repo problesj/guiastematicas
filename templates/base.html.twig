@@ -3,11 +3,13 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}{{ 'sitio.titulo'|trans }}{% endblock %} · {{ 'sitio.institucion'|trans }}</title>
+        <title>{% block title %}{{ sitio_titulo() }}{% endblock %} · {{ sitio_institucion() }}</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap">
         {% block stylesheets %}{% endblock %}
+        {% set css_sitio = sitio_css() %}
+        {% if css_sitio %}<style>{{ css_sitio|raw }}</style>{% endif %}
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
@@ -19,7 +21,7 @@
             <div class="contenedor barra-superior__interior">
                 <nav aria-label="{{ 'sitio.enlaces_ucn'|trans }}">
                     <a href="https://www.ucn.cl/">UCN.cl</a>
-                    <a href="https://bibliotecas.ucn.cl/">{{ 'sitio.institucion'|trans }}</a>
+                    <a href="https://bibliotecas.ucn.cl/">{{ sitio_institucion() }}</a>
                 </nav>
                 <div class="barra-superior__derecha">
                 {% if app.user %}
@@ -45,9 +47,12 @@
         <header class="cabecera">
             <div class="contenedor cabecera__interior">
                 <a class="marca" href="{{ path('inicio') }}">
-                    {# Reemplazar por el logo oficial de Bibliotecas UCN cuando se reciban los archivos originales. #}
-                    <span class="marca__institucion">{{ 'sitio.institucion'|trans }}</span>
-                    <span class="marca__titulo">{{ 'sitio.titulo'|trans }}</span>
+                    {% if sitio_logo() %}
+                        <img class="marca__logo" src="{{ asset(sitio_logo()) }}" alt="{{ sitio_institucion() }}">
+                    {% else %}
+                        <span class="marca__institucion">{{ sitio_institucion() }}</span>
+                    {% endif %}
+                    <span class="marca__titulo">{{ sitio_titulo() }}</span>
                 </a>
                 <nav class="menu" aria-label="{{ 'menu.principal'|trans }}">
                     <a href="{{ path('guias') }}">{{ 'menu.guias'|trans }}</a>
@@ -68,7 +73,7 @@
 
         <footer class="pie">
             <div class="contenedor pie__interior">
-                <p><strong>{{ 'sitio.institucion'|trans }}</strong> · Universidad Católica del Norte</p>
+                <p><strong>{{ sitio_institucion() }}</strong> · Universidad Católica del Norte</p>
                 <p>{{ 'pie.sedes'|trans }}</p>
                 <p><a href="https://bibliotecas.ucn.cl/">bibliotecas.ucn.cl</a></p>
             </div>

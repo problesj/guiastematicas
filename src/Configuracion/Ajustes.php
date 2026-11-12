@@ -48,6 +48,9 @@ final class Ajustes implements ResetInterface
         ],
     ];
 
+    /** Ajustes de apariencia (sin variable de entorno equivalente), ver App\Configuracion\Apariencia. */
+    public const APARIENCIA = ['SITIO_TITULO', 'SITIO_TITULO_EN', 'SITIO_INSTITUCION', 'COLOR_PRINCIPAL', 'COLOR_BARRA', 'COLOR_PIE', 'LOGO'];
+
     /** @var array<string, string|false>|null valores guardados (false: secreto que no se pudo descifrar) */
     private ?array $valores = null;
 
@@ -59,6 +62,7 @@ final class Ajustes implements ResetInterface
     ) {
     }
 
+    /** Ajuste de integración (reemplaza a una variable de entorno). */
     public static function existe(string $clave): bool
     {
         return null !== self::opciones($clave);
@@ -103,7 +107,7 @@ final class Ajustes implements ResetInterface
     /** Guarda un ajuste; null lo borra del panel y vuelve a regir la variable de entorno. */
     public function guardar(string $clave, ?string $valor): void
     {
-        if (!self::existe($clave)) {
+        if (!self::existe($clave) && !\in_array($clave, self::APARIENCIA, true)) {
             throw new \InvalidArgumentException(\sprintf('Ajuste desconocido: %s', $clave));
         }
         $this->conexion->delete('ajuste', ['clave' => $clave]);

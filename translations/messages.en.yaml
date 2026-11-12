@@ -59,6 +59,7 @@ panel:
   departamentos: Departments
   materias: Subjects
   paises: Countries
+  apariencia: Appearance
   configuracion: Integrations
   autores: Authors
   editoriales: Publishers
@@ -803,3 +804,28 @@ configuracion:
     clave_servidor: 'Empty in the panel: the key set on the server is used.'
     sin_definir: Not set.
     ilegible: The stored key can no longer be read (APP_SECRET changed). Type it again.
+apariencia:
+  titulo: Appearance
+  bajada: Site name, logo and colours. Anything left empty uses the Bibliotecas UCN base theme.
+  guardada: Appearance saved.
+  logo_actual: Current logo
+  quitar_logo: Remove the logo (show the name as text)
+  restablecer: Go back to the base theme colours
+  colores_ayuda: To meet WCAG 2.1 AA, each colour needs a contrast of at least 4.5:1 with the text on top of it; otherwise it is not saved.
+  grupo:
+    nombre: Site name
+    logo: Logo
+    colores: Colours
+  ajuste:
+    SITIO_TITULO: Site title (Spanish)
+    SITIO_TITULO_EN: Site title (English)
+    SITIO_INSTITUCION: Institution
+    COLOR_PRINCIPAL: Main colour
+    COLOR_BARRA: Top bar
+    COLOR_PIE: Footer
+    LOGO: Logo file
+  ayuda:
+    COLOR_PRINCIPAL: Links, buttons and box titles (white text on top).
+    COLOR_BARRA: Strip with the UCN links and language (dark text on top).
+    COLOR_PIE: Footer background (light text on top).
+    LOGO: PNG, JPG or WebP up to 1 MB, ideally landscape with a transparent background. Replaces the institution name in the header.
