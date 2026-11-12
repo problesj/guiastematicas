@@ -83,7 +83,9 @@
                                     {% set cuerpo = include('guias/bloques/_' ~ bloque.tipo.value ~ '.html.twig') %}
                                     {% if cuerpo|trim is not empty %}
                                         <div class="bloque bloque--{{ bloque.tipo.value }}" id="bloque-{{ bloque.id }}">
-                                            {% if bloque.titulo %}<h4 class="bloque__titulo">{{ bloque.titulo }}</h4>{% endif %}
+                                            {# Sin título de sección, la caja cuelga directo del título de la página (h2). #}
+                                            {% set nivel = seccion.titulo ? 4 : 3 %}
+                                            {% if bloque.titulo %}<h{{ nivel }} class="bloque__titulo">{{ bloque.titulo }}</h{{ nivel }}>{% endif %}
                                             <div class="bloque__cuerpo">{{ cuerpo }}</div>
                                         </div>
                                     {% endif %}

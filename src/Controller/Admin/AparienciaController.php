@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 final class AparienciaController extends AbstractController
 {
     /** Colores del tema base (app.css), que se muestran cuando no hay uno propio. */
-    private const BASE = ['COLOR_PRINCIPAL' => '#ac6d33', 'COLOR_BARRA' => '#7e9bc0', 'COLOR_PIE' => '#2b2b2a'];
+    private const BASE = ['COLOR_PRINCIPAL' => '#9a602c', 'COLOR_BARRA' => '#7e9bc0', 'COLOR_PIE' => '#2b2b2a'];
 
     public function __construct(private readonly Ajustes $ajustes, private readonly Apariencia $apariencia)
     {
@@ -49,9 +49,8 @@ final class AparienciaController extends AbstractController
                 'data' => $this->apariencia->color($clave) ?? self::BASE[$clave],
                 'constraints' => [
                     new Assert\Regex(pattern: '/^#[0-9a-fA-F]{6}$/'),
-                    new Assert\Callback(function (?string $color, ExecutionContextInterface $contexto) use ($texto, $clave): void {
-                        // El color del tema base se acepta tal cual (su contraste se revisa en la auditoría de accesibilidad).
-                        if (null !== $color && strtolower($color) !== self::BASE[$clave] && preg_match('/^#[0-9a-fA-F]{6}$/', $color) && Apariencia::contraste($color, $texto) < Apariencia::CONTRASTE_MINIMO) {
+                    new Assert\Callback(function (?string $color, ExecutionContextInterface $contexto) use ($texto): void {
+                        if (null !== $color && preg_match('/^#[0-9a-fA-F]{6}$/', $color) && Apariencia::contraste($color, $texto) < Apariencia::CONTRASTE_MINIMO) {
                             $contexto->buildViolation('apariencia.contraste_bajo')
                                 ->setParameter('%contraste%', number_format(Apariencia::contraste($color, $texto), 1, ','))
                                 ->addViolation();
