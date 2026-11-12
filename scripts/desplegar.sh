@@ -44,6 +44,8 @@ php bin/console asset-map:compile
 php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 php bin/console cache:clear
 php bin/console cache:warmup
+# Libros de los bloques que aún no están en la lista de recursos (no duplica; se puede repetir).
+php bin/console app:incorporar-libros --no-interaction
 
 # Fotos del personal (se respaldan con scripts/respaldar.sh).
 install -d public/uploads/personal public/uploads/guias
