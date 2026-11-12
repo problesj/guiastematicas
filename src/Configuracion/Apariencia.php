@@ -58,6 +58,15 @@ final class Apariencia
         return null !== $logo && preg_match('/^logo-[a-f0-9]{16}\.(png|jpe?g|webp)$/', $logo) ? self::RUTA_PUBLICA.'/'.$logo : null;
     }
 
+    /** Imagen de fondo de la portada en public/uploads/sitio, o null (se usa un degradado con los colores del sitio). */
+    #[AsTwigFunction('sitio_imagen_portada')]
+    public function imagenPortada(): ?string
+    {
+        $imagen = $this->ajustes->valor('IMAGEN_PORTADA');
+
+        return null !== $imagen && preg_match('/^portada-[a-f0-9]{16}\.(png|jpe?g|webp)$/', $imagen) ? self::RUTA_PUBLICA.'/'.$imagen : null;
+    }
+
     /**
      * Variables CSS que reemplazan a las del tema base (vacío si no hay colores propios). Los tonos oscuro y suave se
      * derivan del color principal.
@@ -92,20 +101,41 @@ final class Apariencia
     /** Guarda el logo con un nombre aleatorio y borra el anterior. */
     public function guardarLogo(UploadedFile $archivo): void
     {
-        $nombre = 'logo-'.bin2hex(random_bytes(8)).'.'.($archivo->guessExtension() ?? 'png');
-        $this->filesystem->mkdir($this->directorio);
-        $archivo->move($this->directorio, $nombre);
-        $this->quitarLogo();
-        $this->ajustes->guardar('LOGO', $nombre);
+        $this->guardarImagen($archivo, 'logo', 'LOGO', $this->logo());
     }
 
     public function quitarLogo(): void
     {
-        $actual = $this->logo();
+        $this->quitarImagen('LOGO', $this->logo());
+    }
+
+    /** Guarda la imagen de fondo de la portada con un nombre aleatorio y borra la anterior. */
+    public function guardarImagenPortada(UploadedFile $archivo): void
+    {
+        $this->guardarImagen($archivo, 'portada', 'IMAGEN_PORTADA', $this->imagenPortada());
+    }
+
+    public function quitarImagenPortada(): void
+    {
+        $this->quitarImagen('IMAGEN_PORTADA', $this->imagenPortada());
+    }
+
+    private function guardarImagen(UploadedFile $archivo, string $prefijo, string $clave, ?string $anterior): void
+    {
+        $extension = $archivo->guessExtension() ?? 'png';
+        $nombre = $prefijo.'-'.bin2hex(random_bytes(8)).'.'.('jpeg' === $extension ? 'jpg' : $extension);
+        $this->filesystem->mkdir($this->directorio);
+        $archivo->move($this->directorio, $nombre);
+        $this->quitarImagen($clave, $anterior);
+        $this->ajustes->guardar($clave, $nombre);
+    }
+
+    private function quitarImagen(string $clave, ?string $actual): void
+    {
         if (null !== $actual) {
             $this->filesystem->remove($this->directorio.'/'.basename($actual));
         }
-        $this->ajustes->guardar('LOGO', null);
+        $this->ajustes->guardar($clave, null);
     }
 
     /** Relación de contraste WCAG entre dos colores #rrggbb. */

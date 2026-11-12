@@ -14,6 +14,16 @@ menu:
   panel: My dashboard
   salir: Log out
 inicio:
+  bienvenida: Welcome to
+  pregunta: What are you looking for?
+  buscar_catalogo: Search the catalog
+  buscar_sitio: Search the website
+  accesos: Quick links
+  acceso_az: A–Z resources
+  acceso_ayuda: Ask a librarian
+  acceso_sitio: '%institucion% website'
+  recientes: Recently added resources
+  ver_recursos: See all resources
   titulo: Research guides
   bajada: Resources selected by librarians for each field of study.
   buscar_etiqueta: Search guides and resources
@@ -23,6 +33,14 @@ inicio:
   guias_texto: Guides with databases, journals, books and search tips for every program and course.
   bases_texto: Databases, journals, e-books and standards, filterable by subject and type.
   personal_texto: Subject specialist librarians and how to contact them.
+buscar:
+  titulo: Search the website
+  en_catalogo: Search “%texto%” in the library catalog
+  guias: '{0}Guides|{1}1 guide|]1,Inf[%count% guides'
+  sin_guias: No guides match your search.
+  recursos: '{0}Resources|{1}1 resource|]1,Inf[%count% resources'
+  sin_recursos: No resources match your search.
+  ver_todos: See all %count% resources
 pie:
   sedes: Antofagasta and Coquimbo
 acceso:
@@ -811,11 +829,14 @@ apariencia:
   guardada: Appearance saved.
   logo_actual: Current logo
   quitar_logo: Remove the logo (show the name as text)
+  portada_actual: Current home page image
+  quitar_imagen_portada: Remove the image (use a gradient with the site colours)
   restablecer: Go back to the base theme colours
   colores_ayuda: To meet WCAG 2.1 AA, each colour needs a contrast of at least 4.5:1 with the text on top of it; otherwise it is not saved.
   grupo:
     nombre: Site name
     logo: Logo
+    portada: Home page image
     colores: Colours
   ajuste:
     SITIO_TITULO: Site title (Spanish)
@@ -825,8 +846,10 @@ apariencia:
     COLOR_BARRA: Top bar
     COLOR_PIE: Footer
     LOGO: Logo file
+    IMAGEN_PORTADA: Background image
   ayuda:
     COLOR_PRINCIPAL: Links, buttons and box titles (white text on top).
     COLOR_BARRA: Strip with the UCN links and language (dark text on top).
     COLOR_PIE: Footer background (light text on top).
     LOGO: PNG, JPG or WebP up to 1 MB, ideally landscape with a transparent background. Replaces the institution name in the header.
+    IMAGEN_PORTADA: JPG, WebP or PNG up to 3 MB and at least 800 px wide, ideally landscape (e.g. 1920 × 800). It is darkened so white text stays readable.

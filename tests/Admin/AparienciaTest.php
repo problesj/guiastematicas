@@ -77,6 +77,31 @@ final class AparienciaTest extends WebTestCase
         self::assertSelectorNotExists('head style');
     }
 
+    public function testImagenDeFondoDeLaPortada(): void
+    {
+        $jpg = tempnam(sys_get_temp_dir(), 'portada').'.jpg';
+        imagejpeg(imagecreatetruecolor(1200, 500), $jpg);
+        $this->guardar(['imagen_portada' => new UploadedFile($jpg, 'portada.jpg', 'image/jpeg', null, true)]);
+        self::assertResponseRedirects('/es/admin/apariencia');
+
+        $crawler = $this->cliente->request('GET', '/es');
+        $portada = $crawler->filter('.portada--imagen');
+        self::assertCount(1, $portada);
+        self::assertMatchesRegularExpression("#--imagen-portada: url\\('/uploads/sitio/portada-[a-f0-9]{16}\\.jpg'\\)#", (string) $portada->attr('style'));
+        $archivo = static::getContainer()->getParameter('kernel.project_dir').'/public/'.Apariencia::RUTA_PUBLICA.'/'.basename((string) preg_replace("#.*/(portada-[^']+)'.*#", '$1', (string) $portada->attr('style')));
+        self::assertFileExists($archivo);
+
+        // Una imagen demasiado pequeña no se acepta; «Quitar la imagen» borra el archivo y vuelve al degradado.
+        $chica = tempnam(sys_get_temp_dir(), 'portada').'.jpg';
+        imagejpeg(imagecreatetruecolor(300, 200), $chica);
+        $this->guardar(['imagen_portada' => new UploadedFile($chica, 'chica.jpg', 'image/jpeg', null, true)]);
+        self::assertResponseStatusCodeSame(422);
+        $this->guardar(['quitar_imagen_portada' => true]);
+        self::assertFileDoesNotExist($archivo);
+        $this->cliente->request('GET', '/es');
+        self::assertSelectorNotExists('.portada--imagen');
+    }
+
     public function testContrasteWcag(): void
     {
         self::assertEqualsWithDelta(21.0, Apariencia::contraste('#000000', '#ffffff'), 0.01);

@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'buscar.titulo'|trans }}{% endblock %}
+
+{% block body %}
+    {% set idioma = app.request.locale %}
+    <section class="contenedor pagina">
+        <h1>{{ 'buscar.titulo'|trans }}</h1>
+        <form class="buscador" role="search" action="{{ path('buscar') }}" method="get">
+            <label for="q" class="solo-lectores">{{ 'inicio.buscar_etiqueta'|trans }}</label>
+            <input id="q" name="q" type="search" value="{{ texto }}" required placeholder="{{ 'inicio.buscar_placeholder'|trans }}">
+            <button type="submit">{{ 'inicio.buscar'|trans }}</button>
+        </form>
+        {% if texto %}
+            {% if hay_buscador_primo() %}
+                <p class="buscar__catalogo"><a href="{{ path('catalogo', {_locale: idioma, q: texto}) }}" target="_blank" rel="noopener">{{ 'buscar.en_catalogo'|trans({'%texto%': texto}) }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a></p>
+            {% endif %}
+
+            <h2>{{ 'buscar.guias'|trans({'%count%': guias|length}) }}</h2>
+            {% if guias is empty %}
+                <p>{{ 'buscar.sin_guias'|trans }}</p>
+            {% else %}
+                <ul class="buscar__lista">
+                    {% for guia in guias %}
+                        <li><a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}">{{ guia.titulo }}</a>{% if guia.descripcion %}<br><span class="buscar__detalle">{{ guia.descripcion }}</span>{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <h2>{{ 'buscar.recursos'|trans({'%count%': recursos.total}) }}</h2>
+            {% if recursos.total == 0 %}
+                <p>{{ 'buscar.sin_recursos'|trans }}</p>
+            {% else %}
+                <ul class="buscar__lista">
+                    {% for recurso in recursos.elementos %}
+                        <li><a href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener">{{ recurso.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a><br><span class="buscar__detalle">{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}</span></li>
+                    {% endfor %}
+                </ul>
+                {% if recursos.total > recursos.elementos|length %}
+                    <p><a href="{{ path('recursos', {q: texto}) }}">{{ 'buscar.ver_todos'|trans({'%count%': recursos.total}) }} →</a></p>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </section>
+{% endblock %}

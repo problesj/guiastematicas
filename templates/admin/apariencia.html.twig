@@ -25,6 +25,17 @@
             {% endif %}
         </fieldset>
         <fieldset class="configuracion__grupo">
+            <legend>{{ 'apariencia.grupo.portada'|trans }}</legend>
+            {% if sitio_imagen_portada() %}
+                <p class="apariencia__portada"><img src="{{ asset(sitio_imagen_portada()) }}" alt="{{ 'apariencia.portada_actual'|trans }}"></p>
+                {{ form_row(formulario.imagen_portada) }}
+                {{ form_row(formulario.quitar_imagen_portada) }}
+            {% else %}
+                {{ form_row(formulario.imagen_portada) }}
+                {% do formulario.quitar_imagen_portada.setRendered %}
+            {% endif %}
+        </fieldset>
+        <fieldset class="configuracion__grupo">
             <legend>{{ 'apariencia.grupo.colores'|trans }}</legend>
             <p class="campo__ayuda">{{ 'apariencia.colores_ayuda'|trans }}</p>
             <div class="formulario__columnas">

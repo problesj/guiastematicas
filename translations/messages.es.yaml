@@ -14,6 +14,16 @@ menu:
   panel: Mi panel
   salir: Cerrar sesión
 inicio:
+  bienvenida: Bienvenidos a
+  pregunta: ¿Qué estás buscando?
+  buscar_catalogo: Buscar en el catálogo
+  buscar_sitio: Buscar en el sitio
+  accesos: Accesos rápidos
+  acceso_az: Recursos de la A a la Z
+  acceso_ayuda: Pide ayuda a un bibliotecario
+  acceso_sitio: Sitio web de %institucion%
+  recientes: Recursos incorporados recientemente
+  ver_recursos: Ver todos los recursos
   titulo: Guías temáticas
   bajada: Recursos seleccionados por bibliotecarios para cada área de estudio.
   buscar_etiqueta: Buscar guías y recursos
@@ -23,6 +33,14 @@ inicio:
   guias_texto: Guías con bases de datos, revistas, libros y consejos de búsqueda para cada carrera y asignatura.
   bases_texto: Bases de datos, revistas, libros electrónicos y normas, con filtros por materia y tipo.
   personal_texto: Bibliotecarios especialistas por materia y cómo contactarlos.
+buscar:
+  titulo: Buscar en el sitio
+  en_catalogo: Buscar «%texto%» en el catálogo de la biblioteca
+  guias: '{0}Guías|{1}1 guía|]1,Inf[%count% guías'
+  sin_guias: Ninguna guía coincide con la búsqueda.
+  recursos: '{0}Recursos|{1}1 recurso|]1,Inf[%count% recursos'
+  sin_recursos: Ningún recurso coincide con la búsqueda.
+  ver_todos: Ver los %count% recursos
 pie:
   sedes: Antofagasta y Coquimbo
 acceso:
@@ -811,11 +829,14 @@ apariencia:
   guardada: La apariencia se guardó.
   logo_actual: Logo actual
   quitar_logo: Quitar el logo (volver al nombre en texto)
+  portada_actual: Imagen actual de la portada
+  quitar_imagen_portada: Quitar la imagen (usar un degradado con los colores del sitio)
   restablecer: Volver a los colores del tema base
   colores_ayuda: Para que el sitio cumpla con WCAG 2.1 AA, cada color debe tener un contraste de al menos 4,5:1 con el texto que lleva encima; si no, no se guarda.
   grupo:
     nombre: Nombre del sitio
     logo: Logo
+    portada: Imagen de la portada
     colores: Colores
   ajuste:
     SITIO_TITULO: Título del sitio (español)
@@ -825,8 +846,10 @@ apariencia:
     COLOR_BARRA: Barra superior
     COLOR_PIE: Pie de página
     LOGO: Archivo del logo
+    IMAGEN_PORTADA: Imagen de fondo
   ayuda:
     COLOR_PRINCIPAL: Enlaces, botones y títulos de las cajas (texto blanco encima).
     COLOR_BARRA: Franja con los enlaces UCN y el idioma (texto oscuro encima).
     COLOR_PIE: Fondo del pie de página (texto claro encima).
     LOGO: PNG, JPG o WebP de hasta 1 MB, idealmente horizontal y con fondo transparente. Reemplaza al nombre de la institución en la cabecera.
+    IMAGEN_PORTADA: JPG, WebP o PNG de hasta 3 MB y al menos 800 px de ancho, idealmente apaisada (por ejemplo 1920 × 800). Se oscurece para que el texto blanco se lea bien.
