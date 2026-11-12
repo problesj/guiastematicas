@@ -600,7 +600,7 @@ bloque:
   libro_sin_datos: No se encontraron datos para ese ISBN o DOI. Revisa los dígitos o escribe los datos a mano.
   libro_datos_catalogo: Datos completados desde el catálogo de la biblioteca.
   libro_datos_doi: Datos completados desde doi.org.
-  libros_ayuda: Escribe el ISBN o el DOI de cada libro y pulsa «Buscar datos» para completar el título, el autor, la editorial y el año (también se completan al guardar). Puedes corregir lo que se trae.
+  libros_ayuda: Escribe el ISBN o el DOI de cada libro y pulsa «Buscar datos» para completar el título, el autor, la editorial y el año (también se completan al guardar). Puedes corregir lo que se trae. Cada libro se incorpora también a la lista de recursos bibliográficos, con las materias que elijas.
   libros_isbns: Agregar varios por ISBN
   libros_presentacion: Presentación
   libros_cuadricula: Cuadrícula de portadas
@@ -613,6 +613,45 @@ bloque:
   libro_ver_catalogo: Ver en el catálogo
   libro_buscar_catalogo: Buscar en el catálogo
   libros_isbns_ayuda: Pega uno o más ISBN (uno por línea o separados por comas); al guardar se suman a la lista con los datos del catálogo.
+  buscador_titulo: Buscar libros para agregar
+  buscador_fuente: Dónde buscar
+  buscador_catalogo: Catálogo de la biblioteca (Primo)
+  buscador_biblioges: Bibliografía de carreras y asignaturas (Biblioges)
+  buscador_titulo_exacto: Título exacto
+  buscador_autor: Autor
+  buscador_editorial: Editorial
+  buscador_catalogo_ayuda: Completa uno o más campos. El título debe ser exacto; el autor y la editorial pueden ser parte del nombre.
+  buscador_buscar: Buscar
+  buscador_buscando: Buscando…
+  buscador_resumen: "%mostrados% de %total% resultados. Marca los libros que quieres agregar."
+  buscador_vacio: No se encontraron libros con esos datos.
+  buscador_falta: Escribe al menos un dato para buscar.
+  buscador_error: No se pudo consultar en este momento. Intenta de nuevo más tarde.
+  buscador_no_encontrado: No existe una carrera o asignatura con ese código.
+  buscador_no_autorizado: Biblioges rechazó la clave de la API. Pide a un administrador que la revise.
+  buscador_agregar: Agregar los marcados
+  buscador_agregados: "%count% libro(s) agregado(s) a la lista. Revisa sus datos y guarda el bloque."
+  buscador_en_biblioteca: En la biblioteca
+  biblioges_modo: Buscar por
+  biblioges_carrera: Carrera
+  biblioges_asignatura: Asignatura
+  biblioges_codigo_carrera: Código de carrera
+  biblioges_codigo_asignatura: Código de asignatura
+  biblioges_tipo: Tipo de bibliografía
+  biblioges_todas: Todas
+  biblioges_basica: Básica
+  biblioges_complementaria: Complementaria
+  biblioges_otro: Otra
+  biblioges_origen: Bibliografía
+  biblioges_declaradas: Declarada
+  biblioges_disponibles: Disponible
+  biblioges_ultima: Solo la última edición
+  biblioges_ayuda: Escribe el código (p. ej. 8213 para una carrera o ECDE-00666 para una asignatura); al escribir el de una carrera se sugieren las vigentes. La bibliografía declarada es la que pide el programa; la disponible, las ediciones que tiene la biblioteca (todas o solo la última), con su enlace de acceso si es electrónica.
+  libro_materias: Materias
+  libro_materias_ayuda: Las materias del libro en la lista de recursos. Si no eliges ninguna, un libro nuevo toma las materias de la guía.
+  libro_en_recursos: Este libro está en la lista de recursos bibliográficos.
+  libro_editar_recurso: Editar el recurso
+  libro_se_incorporara: Al guardar, el libro se incorporará a la lista de recursos bibliográficos.
   isbn_no_valido: El ISBN no es válido.
   diapositiva_imagen: Imagen
   diapositiva_imagen_ayuda: JPG, PNG o WebP de hasta 4 MB, apaisada (recomendado 1200 × 675 px). Si ya tiene imagen, sube otra solo para reemplazarla.

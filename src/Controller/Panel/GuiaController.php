@@ -20,8 +20,11 @@ use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
 use App\Security\GuiaVoter;
 use App\Servicio\AlmacenImagenesGuia;
+use App\Servicio\Biblioges;
 use App\Servicio\BloquesGuia;
+use App\Servicio\Catalogo;
 use App\Servicio\DatosLibro;
+use App\Servicio\LibrosEnRecursos;
 use App\Servicio\MetadatosDoi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -51,6 +54,9 @@ final class GuiaController extends AbstractController
         private readonly HtmlSanitizerInterface $saneador,
         private readonly TranslatorInterface $traductor,
         private readonly AlmacenImagenesGuia $imagenes,
+        private readonly LibrosEnRecursos $librosEnRecursos,
+        private readonly Catalogo $catalogo,
+        private readonly Biblioges $biblioges,
     ) {
     }
 
@@ -316,6 +322,62 @@ final class GuiaController extends AbstractController
         return null === $libro ? new JsonResponse(['error' => 'no_encontrado'], 404) : new JsonResponse($libro);
     }
 
+    /** Libros del catálogo (Primo VE) por título exacto, autor y editorial, para elegir cuáles agregar al bloque Libros. */
+    #[Route('/buscar-libros/catalogo', name: 'panel_guias_buscar_libros_catalogo', methods: ['GET'])]
+    public function buscarLibrosCatalogo(Request $request): JsonResponse
+    {
+        $porPagina = 20;
+        $pagina = max(1, min(50, $request->query->getInt('pagina', 1)));
+        $resultado = $this->catalogo->buscarLibros(
+            $request->query->getString('titulo'),
+            $request->query->getString('autor'),
+            $request->query->getString('editorial'),
+            ($pagina - 1) * $porPagina,
+            $porPagina,
+        );
+        if (null === $resultado) {
+            $sinCriterios = '' === trim($request->query->getString('titulo').$request->query->getString('autor').$request->query->getString('editorial'));
+
+            return new JsonResponse(['error' => $sinCriterios ? 'parametros' : 'sin_respuesta'], $sinCriterios ? 400 : 502);
+        }
+        $idioma = $request->getLocale();
+
+        return new JsonResponse([
+            'total' => $resultado['total'],
+            'pagina' => $pagina,
+            'paginas' => (int) ceil(min($resultado['total'], 1000) / $porPagina),
+            // Sin ISBN el registro no se puede recalcular al guardar: el libro enlaza a su registro en el catálogo.
+            'libros' => array_map(fn (array $l) => $l + ['enlace' => null === $l['isbn'] ? $this->catalogo->enlaceRegistro($l['registro'], $idioma) : null], $resultado['libros']),
+        ]);
+    }
+
+    /** Carreras vigentes de Biblioges, para la lista del buscador (se piden al abrirlo, no al cargar el formulario). */
+    #[Route('/buscar-libros/carreras', name: 'panel_guias_buscar_libros_carreras', methods: ['GET'])]
+    public function carrerasBiblioges(): JsonResponse
+    {
+        return new JsonResponse(['carreras' => $this->biblioges->carreras()]);
+    }
+
+    /** Bibliografías de una carrera o asignatura en Biblioges, para elegir cuáles agregar al bloque Libros. */
+    #[Route('/buscar-libros/biblioges', name: 'panel_guias_buscar_libros_biblioges', methods: ['GET'])]
+    public function buscarLibrosBiblioges(Request $request): JsonResponse
+    {
+        $resultado = $this->biblioges->bibliografias(
+            $request->query->getString('modo'),
+            mb_substr($request->query->getString('codigo'), 0, 40),
+            $request->query->getString('tipo', 'todas'),
+            $request->query->getString('fuente', 'declaradas'),
+            $request->query->getBoolean('ultima'),
+        );
+
+        return new JsonResponse($resultado, match ($resultado['error'] ?? null) {
+            null => 200,
+            'parametros' => 400,
+            'no_encontrado' => 404,
+            default => 502,
+        });
+    }
+
     /** Código para mostrar el bloque en otra web (iframe o /incrustar.js). */
     #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/incrustar', name: 'panel_guia_bloque_incrustar', methods: ['GET'])]
     #[IsGranted(GuiaVoter::EDITAR, 'guia')]
@@ -455,6 +517,10 @@ final class GuiaController extends AbstractController
             'seccion' => $seccion,
             'tipos_recurso' => TipoRecurso::cases(),
             'materias' => TipoBloque::Recursos === $tipo ? $this->em->getRepository(Materia::class)->findBy(['activa' => true], ['nombre' => 'ASC']) : [],
+            'buscador_libros' => TipoBloque::Libros === $tipo ? [
+                'catalogo' => $this->catalogo->buscaPorIsbn(),
+                'biblioges' => $this->biblioges->disponible(),
+            ] : null,
         ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
     }
 
@@ -476,7 +542,7 @@ final class GuiaController extends AbstractController
             TipoBloque::Video => ['url' => $bloque->dato('url'), 'descripcion' => $bloque->dato('descripcion')],
             TipoBloque::Busqueda => ['texto' => $bloque->dato('texto')],
             TipoBloque::Libros => [
-                'items' => $bloque->dato('items', []),
+                'items' => $this->librosConMaterias($bloque->dato('items', [])),
                 'presentacion' => $bloque->dato('presentacion', 'cuadricula'),
                 'columnas' => (int) $bloque->dato('columnas', 0),
             ],
@@ -509,7 +575,9 @@ final class GuiaController extends AbstractController
             TipoBloque::Libros => [
                 'presentacion' => \in_array($datos['presentacion'] ?? null, ['carrusel', 'lista'], true) ? $datos['presentacion'] : 'cuadricula',
                 'columnas' => \in_array((int) ($datos['columnas'] ?? 0), [2, 3, 4, 5, 6], true) ? (int) $datos['columnas'] : 0,
-                'items' => array_map(fn (array $i) => [
+                // Cada libro se incorpora a la lista de recursos y guarda el id del recurso con que quedó vinculado.
+                'items' => $this->librosEnRecursos->incorporar(array_map(fn (array $i) => [
+                    'recurso' => ctype_digit((string) ($i['recurso'] ?? '')) ? (int) $i['recurso'] : null,
                     'titulo' => $texto($i['titulo'] ?? null),
                     'autor' => $texto($i['autor'] ?? null),
                     'isbn' => $texto(preg_replace('/[^0-9X]/', '', strtoupper((string) ($i['isbn'] ?? '')))),
@@ -520,7 +588,7 @@ final class GuiaController extends AbstractController
                     // Del catálogo (DatosLibro): registro en Primo VE y MMS id de Alma.
                     'registro' => $texto($i['registro'] ?? null),
                     'mms' => $texto($i['mms'] ?? null),
-                ], $items),
+                ], $items), array_map(fn (array $i) => $i['materias'] ?? null, $items), $guia),
             ],
             TipoBloque::Diapositivas => ['items' => array_values(array_filter(array_map(function (array $i) use ($texto, $guia) {
                 $imagen = (string) ($i['imagen'] ?? '');
@@ -533,6 +601,30 @@ final class GuiaController extends AbstractController
                 return ['imagen' => $imagen, 'titulo' => $texto($i['titulo'] ?? null), 'enlace' => $texto($i['enlace'] ?? null)];
             }, $items)))],
         };
+    }
+
+    /**
+     * Libros guardados en el bloque, con las materias del recurso vinculado para el formulario.
+     *
+     * @param list<array<string, mixed>> $items
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function librosConMaterias(array $items): array
+    {
+        $ids = array_values(array_filter(array_map(fn (array $i) => $i['recurso'] ?? null, $items), 'is_int'));
+        $recursos = [];
+        foreach ([] === $ids ? [] : $this->em->getRepository(Recurso::class)->findBy(['id' => $ids]) as $recurso) {
+            $recursos[$recurso->getId()] = $recurso;
+        }
+
+        return array_map(function (array $i) use ($recursos): array {
+            $recurso = \is_int($i['recurso'] ?? null) ? ($recursos[$i['recurso']] ?? null) : null;
+            $i['recurso'] = $recurso?->getId();
+            $i['materias'] = null === $recurso ? [] : array_values(array_filter($recurso->getMaterias()->toArray(), fn (Materia $m) => $m->isActiva()));
+
+            return $i;
+        }, $items);
     }
 
     /** @return list<int> ids de recursos existentes, en el orden elegido y sin repetir */

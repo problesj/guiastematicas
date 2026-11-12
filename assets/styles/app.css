@@ -550,6 +550,21 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .libro-form__datos > .libro-form__titulo { grid-column: span 3; }
 .libro-form__datos > .libro-form__anio { grid-column: span 1; }
 .libro-form__datos > .libro-form__enlace { grid-column: 1 / -1; }
+.libro-form__materias { padding: 0.5rem 0 0.25rem; border-top: 1px solid #e4dccf; }
+.libro-form__materias > summary { cursor: pointer; font-weight: 600; padding: 0.25rem 0; }
+.libro-form__materias .casillas { max-height: 14rem; overflow-y: auto; padding: 0.5rem 0; }
+.buscador-libros { margin-top: 1.25rem; padding: 1rem 1.25rem; background: var(--color-fondo-suave); border-radius: var(--radio); }
+.buscador-libros__fuentes { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; margin-bottom: 0.75rem; }
+.buscador-libros__campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); gap: 0 1rem; }
+.buscador-libros__campos input, .buscador-libros__campos select { width: 100%; padding: 0.5rem 0.6rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); background: #fff; }
+.buscador-libros__campos .buscador-libros__ultima { display: flex; margin-top: 0.4rem; font-weight: normal; }
+.buscador-libros__campos .buscador-libros__ultima[hidden] { display: none; }
+.buscador-libros__campos input[type="checkbox"] { width: auto; }
+.buscador-libros__buscar { margin: 0.5rem 0 0.75rem; }
+.buscador-libros__resultados ul { margin: 0; padding: 0; list-style: none; }
+.buscador-libros__resultados ul + .buscador-libros__grupo, .buscador-libros__resultados li + li { border-top: 1px solid #ece5da; }
+.buscador-libros__grupo { margin: 0; padding: 0.5rem 0.75rem; font-size: 0.9375rem; background: #f4efe7; position: sticky; top: 0; }
+.libro-form__recurso { margin: 0; font-size: 0.875rem; color: var(--color-texto-secundario); }
 @media (max-width: 40rem) {
     .libro-form__identificadores, .libro-form__datos { grid-template-columns: 1fr; }
     .libro-form__datos > .campo, .libro-form__datos > .libro-form__titulo, .libro-form__datos > .libro-form__anio { grid-column: auto; }
