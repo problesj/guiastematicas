@@ -24,4 +24,4 @@ bloque.libro_sin_titulo: Enter the title, an ISBN or a DOI.
 bloque.doi_no_valido: "The DOI is not valid. It must start with 10. (for example 10.1007/978-3-030-12345-6)."
 bloque.anio_no_valido: Enter the year with 4 digits.
 configuracion.direccion_no_valida: "Enter a full address (https://… or ldap://…)."
-apariencia.contraste_bajo: "The contrast with the text is %contraste%:1; it must be at least 4.5:1. Choose a darker shade (or a lighter one for the top bar)."
+apariencia.contraste_bajo: "The contrast with %fondo% is %contraste%:1; it must be at least 4.5:1. Choose a darker or lighter shade."

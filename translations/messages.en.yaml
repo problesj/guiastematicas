@@ -831,13 +831,20 @@ apariencia:
   quitar_logo: Remove the logo (show the name as text)
   portada_actual: Current home page image
   quitar_imagen_portada: Remove the image (use a gradient with the site colours)
-  restablecer: Go back to the base theme colours
-  colores_ayuda: To meet WCAG 2.1 AA, each colour needs a contrast of at least 4.5:1 with the text on top of it; otherwise it is not saved.
+  restablecer: Go back to the base theme colours (backgrounds and text)
+  colores_ayuda: To meet WCAG 2.1 AA, each text colour needs a contrast of at least 4.5:1 with its background; otherwise it is not saved. If you change a background, check the text colour on top of it too.
   grupo:
     nombre: Site name
     logo: Logo
     portada: Home page image
-    colores: Colours
+    colores: Background colours
+    textos: Text colours
+  fondo:
+    blanco: the white background
+    COLOR_PRINCIPAL: the main colour
+    COLOR_PRINCIPAL_OSCURO: the dark shade of the main colour (block titles)
+    COLOR_BARRA: the top bar
+    COLOR_PIE: the footer
   ajuste:
     SITIO_TITULO: Site title (Spanish)
     SITIO_TITULO_EN: Site title (English)
@@ -845,11 +852,23 @@ apariencia:
     COLOR_PRINCIPAL: Main colour
     COLOR_BARRA: Top bar
     COLOR_PIE: Footer
+    TEXTO_GENERAL: Body text
+    TEXTO_TITULOS: Page headings
+    TEXTO_CABECERA: Site name and menu
+    TEXTO_BARRA: Top bar text
+    TEXTO_BOTON: Text on the main colour
+    TEXTO_PIE: Footer text
     LOGO: Logo file
     IMAGEN_PORTADA: Background image
   ayuda:
-    COLOR_PRINCIPAL: Links, buttons and box titles (white text on top).
-    COLOR_BARRA: Strip with the UCN links and language (dark text on top).
-    COLOR_PIE: Footer background (light text on top).
+    COLOR_PRINCIPAL: Links (on white), buttons and block titles.
+    COLOR_BARRA: Strip with the UCN links and language.
+    COLOR_PIE: Footer background.
+    TEXTO_GENERAL: Paragraphs, lists and forms (on white).
+    TEXTO_TITULOS: Page and guide headings (on white).
+    TEXTO_CABECERA: Site title and main menu links (on white).
+    TEXTO_BARRA: UCN links, login and language (on the top bar).
+    TEXTO_BOTON: Buttons, guide block titles and badges (on the main colour).
+    TEXTO_PIE: Footer text and links.
     LOGO: PNG, JPG or WebP up to 1 MB, ideally landscape with a transparent background. Replaces the institution name in the header.
     IMAGEN_PORTADA: JPG, WebP or PNG up to 3 MB and at least 800 px wide, ideally landscape (e.g. 1920 × 800). It is darkened so white text stays readable.

@@ -102,6 +102,35 @@ final class AparienciaTest extends WebTestCase
         self::assertSelectorNotExists('.portada--imagen');
     }
 
+    public function testColoresDeTexto(): void
+    {
+        // Barra superior oscura con texto blanco, pie claro con texto oscuro, títulos y menú en azul.
+        $this->guardar(['COLOR_BARRA' => '#1a3d6d', 'TEXTO_BARRA' => '#ffffff', 'COLOR_PIE' => '#eeeeee', 'TEXTO_PIE' => '#222222', 'TEXTO_TITULOS' => '#1a5276', 'TEXTO_CABECERA' => '#1a5276']);
+        self::assertResponseRedirects('/es/admin/apariencia');
+        $css = $this->cliente->request('GET', '/es')->filter('head style')->text();
+        foreach (['--color-azul:#1a3d6d;', '--color-texto-barra:#ffffff;', '--color-pie:#eeeeee;', '--color-texto-pie:#222222;', '--color-texto-titulos:#1a5276;', '--color-texto-cabecera:#1a5276;'] as $variable) {
+            self::assertStringContainsString($variable, $css);
+        }
+        // Lo que queda igual al tema base no se guarda.
+        self::assertStringNotContainsString('--color-texto:', $css);
+
+        // Cada texto se compara con su fondo: texto de la barra casi igual a la barra, o fondo del pie oscuro con su texto oscuro.
+        $this->guardar(['TEXTO_BARRA' => '#2a4d7d']);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.formulario--configuracion', 'El contraste con la barra superior');
+        $this->guardar(['COLOR_PIE' => '#333333']);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.formulario--configuracion', 'El contraste con el pie de página');
+        // Texto oscuro sobre botones exige un color principal claro, pero el principal sigue siendo el color de los enlaces sobre blanco.
+        $this->guardar(['TEXTO_BOTON' => '#1d1d1b']);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.formulario--configuracion', 'El contraste con el color principal');
+
+        $this->guardar(['restablecer' => true]);
+        $this->cliente->request('GET', '/es');
+        self::assertSelectorNotExists('head style');
+    }
+
     public function testContrasteWcag(): void
     {
         self::assertEqualsWithDelta(21.0, Apariencia::contraste('#000000', '#ffffff'), 0.01);
