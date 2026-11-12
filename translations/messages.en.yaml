@@ -547,8 +547,23 @@ guia:
   agregar_bloque: Add block
   bloque_guardado: Block saved.
   bloque_eliminado: Block deleted.
+  bloque_movido: Block moved.
+  bloque_movido_guia: Block moved to the other guide. You are now viewing the destination guide.
+  mover: Move
+  mover_titulo: Move block
+  mover_ubicacion: 'Currently in: %pestana% › %seccion%'
+  mover_destino: Move to
+  mover_esta_guia: '%guia% (this guide)'
+  mover_actual: (current)
+  mover_nueva_seccion: New section at the end
+  mover_ayuda: You can move it to another section or tab of this guide, or to any other guide you can edit. Embed codes for the block keep working.
+  mover_posicion: Position in the section
+  mover_final: At the end
+  mover_inicio: At the beginning
+  mover_boton: Move block
+  mover_sin_destino: Choose a valid destination section.
   arrastrar: Drag to reorder
-  ayuda_arrastrar: Drag tabs, sections and blocks by the ⠿ icon to change their order. Blocks can also be moved to another section.
+  ayuda_arrastrar: Drag tabs, sections and blocks by the ⠿ icon to change their order. Blocks can also be dragged to another section, or sent to another tab or guide with «Move».
   error_orden: The new order could not be saved. The page will reload.
   aviso_vista_previa: "Preview (%estado%): this is how the published guide will look."
   volver_editor: Back to the editor

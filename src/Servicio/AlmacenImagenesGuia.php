@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Servicio;
 
+use App\Entity\Bloque;
 use App\Entity\Guia;
 use App\Enum\TipoBloque;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -54,6 +55,45 @@ final class AlmacenImagenesGuia
     {
         return 1 === preg_match('/^d'.$guia->getId().'-[a-f0-9]{24}\.(jpg|jpeg|png|webp)$/', $nombre)
             && is_file($this->directorio.'/'.$nombre);
+    }
+
+    /**
+     * Prepara el paso de un bloque de diapositivas a otra guía: cambia en el bloque el prefijo "d{id}-" de sus
+     * imágenes por el de la guía de destino (si no, la poda de una u otra guía las borraría) y devuelve los
+     * cambios de nombre pendientes, que se aplican con renombrar() una vez guardado el bloque.
+     *
+     * @return array<string, string> nombre actual => nombre nuevo
+     */
+    public function prepararTraslado(Bloque $bloque, Guia $origen, Guia $destino): array
+    {
+        if (TipoBloque::Diapositivas !== $bloque->getTipo() || $origen === $destino || null === $destino->getId()) {
+            return [];
+        }
+        $renombres = [];
+        $items = $bloque->dato('items', []);
+        foreach ($items as $i => $item) {
+            $imagen = (string) ($item['imagen'] ?? '');
+            if ($this->esDiapositivaDe($origen, $imagen)) {
+                $nuevo = 'd'.$destino->getId().'-'.substr($imagen, \strlen('d'.$origen->getId().'-'));
+                $renombres[$imagen] = $nuevo;
+                $items[$i]['imagen'] = $nuevo;
+            }
+        }
+        if ([] !== $renombres) {
+            $bloque->setContenido(['items' => $items] + $bloque->getContenido());
+        }
+
+        return $renombres;
+    }
+
+    /** @param array<string, string> $renombres nombre actual => nombre nuevo (de prepararTraslado) */
+    public function renombrar(array $renombres): void
+    {
+        foreach ($renombres as $actual => $nuevo) {
+            if (is_file($this->directorio.'/'.$actual)) {
+                $this->filesystem->rename($this->directorio.'/'.$actual, $this->directorio.'/'.$nuevo, true);
+            }
+        }
     }
 
     /**
