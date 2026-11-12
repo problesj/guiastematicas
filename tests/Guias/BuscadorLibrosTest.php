@@ -109,6 +109,11 @@ final class BuscadorLibrosTest extends WebTestCase
         self::assertSame('https://ebooks.ejemplo.cl/quimica', $libros[1]['enlace']);
         self::assertSame('Chang, Raymond; Goldsby, Kenneth', $libros[1]['autor']); // sin autores: los de la declarada
 
+        // Solo la última edición de cada bibliografía declarada (con una sola edición, el ISBN declarado se mantiene).
+        $libros = $this->json('/es/panel/guias/buscar-libros/biblioges?modo=carrera&codigo=8606&tipo=todas&fuente=disponibles&ultima=1')['grupos'][0]['libros'];
+        self::assertSame(['Química (e-book)'], array_column($libros, 'titulo'));
+        self::assertSame('9786071509284', $libros[0]['isbn']);
+
         self::assertSame('no_encontrado', $this->json('/es/panel/guias/buscar-libros/biblioges?modo=asignatura&codigo=NO-EXISTE', 404)['error']);
         self::assertSame('no_autorizado', $this->json('/es/panel/guias/buscar-libros/biblioges?modo=asignatura&codigo=CLAVE-MALA', 502)['error']);
         self::assertSame('parametros', $this->json('/es/panel/guias/buscar-libros/biblioges?modo=asignatura&codigo=../x', 400)['error']);

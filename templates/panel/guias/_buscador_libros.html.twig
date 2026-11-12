@@ -73,10 +73,13 @@
                 </div>
                 <div class="campo">
                     <label for="buscador-origen">{{ 'bloque.biblioges_origen'|trans }}</label>
-                    <select id="buscador-origen" data-buscador-libros-target="origen">
+                    <select id="buscador-origen" data-buscador-libros-target="origen" data-action="buscador-libros#cambiarOrigen">
                         <option value="declaradas">{{ 'bloque.biblioges_declaradas'|trans }}</option>
                         <option value="disponibles">{{ 'bloque.biblioges_disponibles'|trans }}</option>
                     </select>
+                    <label class="casillas__opcion buscador-libros__ultima" data-buscador-libros-target="opcionUltima" hidden>
+                        <input type="checkbox" data-buscador-libros-target="ultima" checked> {{ 'bloque.biblioges_ultima'|trans }}
+                    </label>
                 </div>
             </div>
             <p class="campo__ayuda">{{ 'bloque.biblioges_ayuda'|trans }}</p>

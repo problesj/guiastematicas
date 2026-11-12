@@ -557,6 +557,9 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .buscador-libros__fuentes { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; margin-bottom: 0.75rem; }
 .buscador-libros__campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); gap: 0 1rem; }
 .buscador-libros__campos input, .buscador-libros__campos select { width: 100%; padding: 0.5rem 0.6rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); background: #fff; }
+.buscador-libros__campos .buscador-libros__ultima { display: flex; margin-top: 0.4rem; font-weight: normal; }
+.buscador-libros__campos .buscador-libros__ultima[hidden] { display: none; }
+.buscador-libros__campos input[type="checkbox"] { width: auto; }
 .buscador-libros__buscar { margin: 0.5rem 0 0.75rem; }
 .buscador-libros__resultados ul { margin: 0; padding: 0; list-style: none; }
 .buscador-libros__resultados ul + .buscador-libros__grupo, .buscador-libros__resultados li + li { border-top: 1px solid #ece5da; }

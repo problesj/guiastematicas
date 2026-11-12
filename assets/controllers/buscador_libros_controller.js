@@ -8,7 +8,7 @@ import { Controller } from '@hotwired/stimulus';
  */
 export default class extends Controller {
     static targets = ['panel', 'titulo', 'autor', 'editorial', 'modo', 'codigo', 'etiquetaCodigo', 'carreras', 'tipo', 'origen',
-        'boton', 'estado', 'acciones', 'todos', 'agregar', 'lista', 'mas'];
+        'ultima', 'opcionUltima', 'boton', 'estado', 'acciones', 'todos', 'agregar', 'lista', 'mas'];
 
     static values = {
         catalogoUrl: String, bibliogesUrl: String, carrerasUrl: String, buscando: String, resumen: String, vacio: String,
@@ -49,6 +49,11 @@ export default class extends Controller {
         this.codigoTarget.value = '';
     }
 
+    // «Solo la última edición» se aplica solo a la bibliografía disponible.
+    cambiarOrigen() {
+        this.opcionUltimaTarget.hidden = this.origenTarget.value !== 'disponibles';
+    }
+
     async cargarCarreras() {
         if (this.carrerasCargadas || !this.hasCarrerasTarget) {
             return;
@@ -83,7 +88,7 @@ export default class extends Controller {
         const fuente = this.fuente();
         const parametros = fuente === 'catalogo'
             ? { titulo: this.tituloTarget.value.trim(), autor: this.autorTarget.value.trim(), editorial: this.editorialTarget.value.trim(), pagina: String(this.pagina) }
-            : { modo: this.modoTarget.value, codigo: this.codigoTarget.value.trim(), tipo: this.tipoTarget.value, fuente: this.origenTarget.value };
+            : { modo: this.modoTarget.value, codigo: this.codigoTarget.value.trim(), tipo: this.tipoTarget.value, fuente: this.origenTarget.value, ultima: this.ultimaTarget.checked ? '1' : '0' };
         const criterios = fuente === 'catalogo' ? [parametros.titulo, parametros.autor, parametros.editorial] : [parametros.codigo];
         if (!criterios.some(Boolean)) {
             this.avisar(this.faltaValue);

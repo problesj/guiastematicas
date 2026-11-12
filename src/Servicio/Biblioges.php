@@ -19,7 +19,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *
  * Las bibliografías se entregan en un formato común para el bloque Libros, agrupadas por asignatura:
  * - declaradas: las que el programa de la asignatura declara (título, autores, editorial, año, ISBN, DOI, URL);
- * - disponibles: los ejemplares que la biblioteca tiene de cada declarada (MMS de Alma, enlace de acceso).
+ * - disponibles: los ejemplares que la biblioteca tiene de cada declarada (MMS de Alma, enlace de acceso), todas las
+ *   ediciones o solo la última (mayor año de edición).
  */
 final class Biblioges
 {
@@ -81,7 +82,7 @@ final class Biblioges
      *
      * @return array{titulo: string, grupos: list<array{nombre: string, libros: list<array<string, mixed>>}>}|array{error: string}
      */
-    public function bibliografias(string $modo, string $codigo, string $tipo = 'todas', string $fuente = 'declaradas'): array
+    public function bibliografias(string $modo, string $codigo, string $tipo = 'todas', string $fuente = 'declaradas', bool $ultimaEdicion = false): array
     {
         $codigo = trim($codigo);
         if (!$this->disponible() || !\in_array($modo, ['carrera', 'asignatura'], true) || 1 !== preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$/', $codigo)) {
@@ -89,12 +90,13 @@ final class Biblioges
         }
         $tipo = \in_array($tipo, self::TIPOS, true) ? $tipo : 'todas';
         $fuente = \in_array($fuente, self::FUENTES, true) ? $fuente : 'declaradas';
+        $parametros = ['tipo_bibliografia' => $tipo] + ('disponibles' === $fuente ? ['ediciones' => $ultimaEdicion ? 'ultima' : 'todas'] : []);
         $ruta = \sprintf('/%s/%s/bibliografias-%s', 'carrera' === $modo ? 'carreras' : 'asignaturas', rawurlencode($codigo), $fuente);
 
-        return $this->cache->get('biblioges-'.md5($ruta.'|'.$tipo), function (ItemInterface $item) use ($ruta, $tipo, $modo, $fuente): array {
+        return $this->cache->get('biblioges-'.md5($ruta.'|'.http_build_query($parametros)), function (ItemInterface $item) use ($ruta, $parametros, $modo, $fuente): array {
             $item->expiresAfter(3600);
             $estado = 0;
-            $datos = $this->consultar($ruta, ['tipo_bibliografia' => $tipo], $estado);
+            $datos = $this->consultar($ruta, $parametros, $estado);
             if (null === $datos) {
                 $item->expiresAfter(60);
 

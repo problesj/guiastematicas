@@ -367,6 +367,7 @@ final class GuiaController extends AbstractController
             mb_substr($request->query->getString('codigo'), 0, 40),
             $request->query->getString('tipo', 'todas'),
             $request->query->getString('fuente', 'declaradas'),
+            $request->query->getBoolean('ultima'),
         );
 
         return new JsonResponse($resultado, match ($resultado['error'] ?? null) {

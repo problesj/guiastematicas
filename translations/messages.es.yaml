@@ -645,7 +645,8 @@ bloque:
   biblioges_origen: Bibliografía
   biblioges_declaradas: Declarada
   biblioges_disponibles: Disponible
-  biblioges_ayuda: Escribe el código (p. ej. 8213 para una carrera o ECDE-00666 para una asignatura); al escribir el de una carrera se sugieren las vigentes. La bibliografía declarada es la que pide el programa; la disponible, las ediciones que tiene la biblioteca, con su enlace de acceso si es electrónica.
+  biblioges_ultima: Solo la última edición
+  biblioges_ayuda: Escribe el código (p. ej. 8213 para una carrera o ECDE-00666 para una asignatura); al escribir el de una carrera se sugieren las vigentes. La bibliografía declarada es la que pide el programa; la disponible, las ediciones que tiene la biblioteca (todas o solo la última), con su enlace de acceso si es electrónica.
   libro_materias: Materias
   libro_materias_ayuda: Las materias del libro en la lista de recursos. Si no eliges ninguna, un libro nuevo toma las materias de la guía.
   libro_en_recursos: Este libro está en la lista de recursos bibliográficos.

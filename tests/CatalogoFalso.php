@@ -135,6 +135,13 @@ final class CatalogoFalso
             ]),
             $declarada(2, 'complementaria', 'Química orgánica', null),
         ];
+        if ('ultima' === ($query['ediciones'] ?? 'todas')) {
+            foreach ($quimica as &$d) {
+                usort($d['disponibles'], fn (array $x, array $y) => $y['anio_edicion'] <=> $x['anio_edicion']);
+                $d['disponibles'] = \array_slice($d['disponibles'], 0, 1);
+            }
+            unset($d);
+        }
         $tipo = (string) ($query['tipo_bibliografia'] ?? 'todas');
         $filtrar = fn (array $lista) => array_values(array_filter($lista, fn (array $d) => 'todas' === $tipo || $d['tipo_bibliografia'] === $tipo));
 

@@ -645,7 +645,8 @@ bloque:
   biblioges_origen: Reading list
   biblioges_declaradas: Declared
   biblioges_disponibles: Available
-  biblioges_ayuda: Enter the code (e.g. 8213 for a programme or ECDE-00666 for a course); as you type a programme code, current programmes are suggested. The declared list is what the syllabus requires; the available list shows the editions the library holds, with their access link if they are electronic.
+  biblioges_ultima: Latest edition only
+  biblioges_ayuda: Enter the code (e.g. 8213 for a programme or ECDE-00666 for a course); as you type a programme code, current programmes are suggested. The declared list is what the syllabus requires; the available list shows the editions the library holds (all or only the latest), with their access link if they are electronic.
   libro_materias: Subjects
   libro_materias_ayuda: The book's subjects in the resource list. If you choose none, a new book takes the guide's subjects.
   libro_en_recursos: This book is in the list of library resources.
