@@ -45,6 +45,12 @@ sudo ADMIN_EMAIL=correo@ucn.cl bash montar-piloto.sh
 Opcional: `RESTAURAR_BD=bd_....sql.gz RESTAURAR_ARCHIVOS=archivos_....tar.gz` para partir con los datos de otro servidor
 (respaldos de `scripts/respaldar.sh`), `VERSION=main` para la última versión y `SERVIDOR=<nombre o IP>`.
 
+**Pasar los datos de un servidor a otro** (por ejemplo, de pruebas al piloto) en una instalación que ya funciona: en el
+origen `sudo bash /var/www/guias/scripts/respaldar.sh`, copiar los dos archivos de `/var/backups/guias` al destino y ahí
+`sudo bash /var/www/guias/scripts/restaurar.sh bd_....sql.gz archivos_....tar.gz`. Respalda antes los datos del destino;
+las cuentas y contraseñas pasan con la base de datos y las claves cifradas del panel de integraciones se borran (el
+destino tiene otro `APP_SECRET`).
+
 Paso a paso:
 
 1. Instalar paquetes, Apache con PHP-FPM, MySQL y cortafuegos:
