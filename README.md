@@ -109,7 +109,7 @@ Cada tipo de recurso tiene sus propios datos bibliográficos (definidos en `Tipo
 
 | Tipo | Datos |
 | --- | --- |
-| Libros | Autores, editorial, año de edición, ISBN, e-ISBN |
+| Libros | Autores, editorial, año de edición, ISBN, e-ISBN, DOI |
 | Revistas | Editorial, ISSN, e-ISSN, disponible desde |
 | Artículo científico | Autores, fuente (revista), año, volumen, fascículo, páginas, DOI |
 | Base de datos | Disponible desde |
@@ -182,6 +182,19 @@ a su registro (`/discovery/fulldisplay`). Lo escrito a mano tiene prioridad. Con
 ejemplares disponibles y en qué biblioteca (API de Alma, `expand=p_avail`); se pide después de cargar la página, solo
 para los libros guardados en el bloque, y se guarda en caché 30 minutos (los datos por ISBN, una semana). Si el
 catálogo no responde, la guía se muestra igual. Las claves van solo en `.env.local` del servidor. Los datos por DOI se piden a doi.org (formato CSL JSON, sin clave).
+
+#### Libros en la lista de recursos
+
+Al guardar un bloque Libros, cada libro se incorpora a la lista de recursos bibliográficos (A-Z) como recurso de tipo
+Libros. Si ya estaba (mismo ISBN de 10 o 13 dígitos, impreso o electrónico; mismo DOI o enlace; o, sin identificadores,
+mismo título), se vincula con ese recurso sin modificar sus datos. El recurso nuevo enlaza al enlace propio del libro o
+a su DOI (con proxy), o a su registro en Primo VE (sin proxy). Cada libro del bloque tiene un selector de **materias**,
+que son las del recurso: en un libro nuevo sin materias elegidas se usan las de la guía. Quitar un libro del bloque no
+lo borra de la lista. Para incorporar los libros guardados antes de esta función (se puede repetir sin duplicar):
+
+```bash
+php bin/console app:incorporar-libros
+```
 
 ### API pública e incrustación
 

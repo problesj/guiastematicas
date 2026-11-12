@@ -550,6 +550,10 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .libro-form__datos > .libro-form__titulo { grid-column: span 3; }
 .libro-form__datos > .libro-form__anio { grid-column: span 1; }
 .libro-form__datos > .libro-form__enlace { grid-column: 1 / -1; }
+.libro-form__materias { padding: 0.5rem 0 0.25rem; border-top: 1px solid #e4dccf; }
+.libro-form__materias > summary { cursor: pointer; font-weight: 600; padding: 0.25rem 0; }
+.libro-form__materias .casillas { max-height: 14rem; overflow-y: auto; padding: 0.5rem 0; }
+.libro-form__recurso { margin: 0; font-size: 0.875rem; color: var(--color-texto-secundario); }
 @media (max-width: 40rem) {
     .libro-form__identificadores, .libro-form__datos { grid-template-columns: 1fr; }
     .libro-form__datos > .campo, .libro-form__datos > .libro-form__titulo, .libro-form__datos > .libro-form__anio { grid-column: auto; }

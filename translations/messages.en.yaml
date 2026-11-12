@@ -600,7 +600,7 @@ bloque:
   libro_sin_datos: No details were found for that ISBN or DOI. Check the digits or enter the details by hand.
   libro_datos_catalogo: Details filled in from the library catalogue.
   libro_datos_doi: Details filled in from doi.org.
-  libros_ayuda: Enter the ISBN or DOI of each book and press “Find details” to fill in the title, author, publisher and year (they are also filled in when you save). You can correct what is brought in.
+  libros_ayuda: Enter the ISBN or DOI of each book and press “Find details” to fill in the title, author, publisher and year (they are also filled in when you save). You can correct what is brought in. Each book is also added to the list of library resources, with the subjects you choose.
   libros_isbns: Add several by ISBN
   libros_presentacion: Layout
   libros_cuadricula: Grid of covers
@@ -613,6 +613,11 @@ bloque:
   libro_ver_catalogo: View in the catalogue
   libro_buscar_catalogo: Search the catalogue
   libros_isbns_ayuda: Paste one or more ISBNs (one per line or separated by commas); when you save, they are added to the list with catalogue data.
+  libro_materias: Subjects
+  libro_materias_ayuda: The book's subjects in the resource list. If you choose none, a new book takes the guide's subjects.
+  libro_en_recursos: This book is in the list of library resources.
+  libro_editar_recurso: Edit the resource
+  libro_se_incorporara: When you save, the book will be added to the list of library resources.
   isbn_no_valido: The ISBN is not valid.
   diapositiva_imagen: Image
   diapositiva_imagen_ayuda: JPG, PNG or WebP up to 4 MB, landscape (1200 × 675 px recommended). If it already has an image, upload another only to replace it.

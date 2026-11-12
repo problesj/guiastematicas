@@ -30,6 +30,20 @@
                     {{ form_row(item.editorial) }}
                     {{ form_row(item.enlace, {row_attr: {class: 'libro-form__enlace'}}) }}
                 </div>
+                {# Lista de recursos: el libro se incorpora al guardar; sus materias son las del recurso. #}
+                <details class="libro-form__materias"{% if item.materias.vars.value is not empty %} open{% endif %}>
+                    <summary>{{ 'bloque.libro_materias'|trans }}{% if item.materias.vars.value is not empty %} ({{ item.materias.vars.value|length }}){% endif %}</summary>
+                    {{ form_widget(item.materias) }}
+                    {{ form_help(item.materias) }}
+                </details>
+                {{ form_widget(item.recurso) }}
+                <p class="libro-form__recurso">
+                    {% if item.recurso.vars.value %}
+                        {{ 'bloque.libro_en_recursos'|trans }} <a href="{{ path('panel_recurso_editar', {id: item.recurso.vars.value}) }}" target="_blank" rel="noopener">{{ 'bloque.libro_editar_recurso'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+                    {% else %}
+                        {{ 'bloque.libro_se_incorporara'|trans }}
+                    {% endif %}
+                </p>
             </div>
         {% else %}
             {% for campo in item %}{{ form_row(campo) }}{% endfor %}

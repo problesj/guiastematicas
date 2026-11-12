@@ -600,7 +600,7 @@ bloque:
   libro_sin_datos: No se encontraron datos para ese ISBN o DOI. Revisa los dígitos o escribe los datos a mano.
   libro_datos_catalogo: Datos completados desde el catálogo de la biblioteca.
   libro_datos_doi: Datos completados desde doi.org.
-  libros_ayuda: Escribe el ISBN o el DOI de cada libro y pulsa «Buscar datos» para completar el título, el autor, la editorial y el año (también se completan al guardar). Puedes corregir lo que se trae.
+  libros_ayuda: Escribe el ISBN o el DOI de cada libro y pulsa «Buscar datos» para completar el título, el autor, la editorial y el año (también se completan al guardar). Puedes corregir lo que se trae. Cada libro se incorpora también a la lista de recursos bibliográficos, con las materias que elijas.
   libros_isbns: Agregar varios por ISBN
   libros_presentacion: Presentación
   libros_cuadricula: Cuadrícula de portadas
@@ -613,6 +613,11 @@ bloque:
   libro_ver_catalogo: Ver en el catálogo
   libro_buscar_catalogo: Buscar en el catálogo
   libros_isbns_ayuda: Pega uno o más ISBN (uno por línea o separados por comas); al guardar se suman a la lista con los datos del catálogo.
+  libro_materias: Materias
+  libro_materias_ayuda: Las materias del libro en la lista de recursos. Si no eliges ninguna, un libro nuevo toma las materias de la guía.
+  libro_en_recursos: Este libro está en la lista de recursos bibliográficos.
+  libro_editar_recurso: Editar el recurso
+  libro_se_incorporara: Al guardar, el libro se incorporará a la lista de recursos bibliográficos.
   isbn_no_valido: El ISBN no es válido.
   diapositiva_imagen: Imagen
   diapositiva_imagen_ayuda: JPG, PNG o WebP de hasta 4 MB, apaisada (recomendado 1200 × 675 px). Si ya tiene imagen, sube otra solo para reemplazarla.

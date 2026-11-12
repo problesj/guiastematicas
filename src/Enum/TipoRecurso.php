@@ -32,7 +32,7 @@ enum TipoRecurso: string
     public function campos(): array
     {
         return match ($this) {
-            self::Libros => ['autores', 'editorial', 'anio', 'isbn', 'eisbn'],
+            self::Libros => ['autores', 'editorial', 'anio', 'isbn', 'eisbn', 'doi'],
             self::Revistas => ['editorial', 'issn', 'eissn', 'disponibleDesde'],
             self::Articulo => ['autores', 'fuente', 'anio', 'volumen', 'fasciculo', 'paginas', 'doi'],
             self::BaseDatos => ['disponibleDesde'],

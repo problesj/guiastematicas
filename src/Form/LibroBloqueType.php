@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Materia;
+use App\Repository\MateriaRepository;
 use App\Servicio\DatosLibro;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Servicio\MetadatosDoi;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,6 +23,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * Un libro del bloque "Libros". Con el ISBN o el DOI basta: título, autor, editorial y año se toman del catálogo de la
  * biblioteca (Primo VE) o de doi.org; lo escrito a mano tiene prioridad. La portada se obtiene de Open Library por ISBN.
+ *
+ * Al guardar, el libro se incorpora a la lista de recursos (ver LibrosEnRecursos): "recurso" guarda el id del recurso
+ * vinculado y "materias" son las materias de ese recurso.
  */
 final class LibroBloqueType extends AbstractType
 {
@@ -78,7 +85,18 @@ final class LibroBloqueType extends AbstractType
                 'default_protocol' => 'https',
                 'help' => 'bloque.libro_enlace_ayuda',
                 'constraints' => [new Assert\Url(requireTld: true), new Assert\Length(max: 500)],
-            ]);
+            ])
+            ->add('materias', EntityType::class, [
+                'label' => 'bloque.libro_materias',
+                'help' => 'bloque.libro_materias_ayuda',
+                'class' => Materia::class,
+                'choice_label' => 'nombre',
+                'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+            ])
+            ->add('recurso', HiddenType::class, ['required' => false]);
 
         // Completa los campos vacíos con el catálogo o doi.org al guardar (el botón «Buscar datos» lo hace antes).
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $evento): void {

@@ -22,6 +22,7 @@ use App\Security\GuiaVoter;
 use App\Servicio\AlmacenImagenesGuia;
 use App\Servicio\BloquesGuia;
 use App\Servicio\DatosLibro;
+use App\Servicio\LibrosEnRecursos;
 use App\Servicio\MetadatosDoi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -51,6 +52,7 @@ final class GuiaController extends AbstractController
         private readonly HtmlSanitizerInterface $saneador,
         private readonly TranslatorInterface $traductor,
         private readonly AlmacenImagenesGuia $imagenes,
+        private readonly LibrosEnRecursos $librosEnRecursos,
     ) {
     }
 
@@ -476,7 +478,7 @@ final class GuiaController extends AbstractController
             TipoBloque::Video => ['url' => $bloque->dato('url'), 'descripcion' => $bloque->dato('descripcion')],
             TipoBloque::Busqueda => ['texto' => $bloque->dato('texto')],
             TipoBloque::Libros => [
-                'items' => $bloque->dato('items', []),
+                'items' => $this->librosConMaterias($bloque->dato('items', [])),
                 'presentacion' => $bloque->dato('presentacion', 'cuadricula'),
                 'columnas' => (int) $bloque->dato('columnas', 0),
             ],
@@ -509,7 +511,9 @@ final class GuiaController extends AbstractController
             TipoBloque::Libros => [
                 'presentacion' => \in_array($datos['presentacion'] ?? null, ['carrusel', 'lista'], true) ? $datos['presentacion'] : 'cuadricula',
                 'columnas' => \in_array((int) ($datos['columnas'] ?? 0), [2, 3, 4, 5, 6], true) ? (int) $datos['columnas'] : 0,
-                'items' => array_map(fn (array $i) => [
+                // Cada libro se incorpora a la lista de recursos y guarda el id del recurso con que quedó vinculado.
+                'items' => $this->librosEnRecursos->incorporar(array_map(fn (array $i) => [
+                    'recurso' => ctype_digit((string) ($i['recurso'] ?? '')) ? (int) $i['recurso'] : null,
                     'titulo' => $texto($i['titulo'] ?? null),
                     'autor' => $texto($i['autor'] ?? null),
                     'isbn' => $texto(preg_replace('/[^0-9X]/', '', strtoupper((string) ($i['isbn'] ?? '')))),
@@ -520,7 +524,7 @@ final class GuiaController extends AbstractController
                     // Del catálogo (DatosLibro): registro en Primo VE y MMS id de Alma.
                     'registro' => $texto($i['registro'] ?? null),
                     'mms' => $texto($i['mms'] ?? null),
-                ], $items),
+                ], $items), array_map(fn (array $i) => $i['materias'] ?? null, $items), $guia),
             ],
             TipoBloque::Diapositivas => ['items' => array_values(array_filter(array_map(function (array $i) use ($texto, $guia) {
                 $imagen = (string) ($i['imagen'] ?? '');
@@ -533,6 +537,30 @@ final class GuiaController extends AbstractController
                 return ['imagen' => $imagen, 'titulo' => $texto($i['titulo'] ?? null), 'enlace' => $texto($i['enlace'] ?? null)];
             }, $items)))],
         };
+    }
+
+    /**
+     * Libros guardados en el bloque, con las materias del recurso vinculado para el formulario.
+     *
+     * @param list<array<string, mixed>> $items
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function librosConMaterias(array $items): array
+    {
+        $ids = array_values(array_filter(array_map(fn (array $i) => $i['recurso'] ?? null, $items), 'is_int'));
+        $recursos = [];
+        foreach ([] === $ids ? [] : $this->em->getRepository(Recurso::class)->findBy(['id' => $ids]) as $recurso) {
+            $recursos[$recurso->getId()] = $recurso;
+        }
+
+        return array_map(function (array $i) use ($recursos): array {
+            $recurso = \is_int($i['recurso'] ?? null) ? ($recursos[$i['recurso']] ?? null) : null;
+            $i['recurso'] = $recurso?->getId();
+            $i['materias'] = null === $recurso ? [] : array_values(array_filter($recurso->getMaterias()->toArray(), fn (Materia $m) => $m->isActiva()));
+
+            return $i;
+        }, $items);
     }
 
     /** @return list<int> ids de recursos existentes, en el orden elegido y sin repetir */
