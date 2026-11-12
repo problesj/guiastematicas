@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/** Nombre del sitio, logo y colores. Los colores deben tener contraste AA con el texto que llevan encima. */
+/** Nombre del sitio, logo, imagen de la portada y colores. Los colores deben tener contraste AA con el texto que llevan encima. */
 #[Route('/{_locale}/admin/apariencia', requirements: ['_locale' => 'es|en'])]
 final class AparienciaController extends AbstractController
 {
@@ -67,6 +67,13 @@ final class AparienciaController extends AbstractController
                 'constraints' => [new Assert\Image(maxSize: '1M', mimeTypes: ['image/png', 'image/jpeg', 'image/webp'], maxWidth: 2000, maxHeight: 1000)],
             ])
             ->add('quitar_logo', CheckboxType::class, ['label' => 'apariencia.quitar_logo', 'required' => false])
+            ->add('imagen_portada', FileType::class, [
+                'label' => 'apariencia.ajuste.IMAGEN_PORTADA',
+                'help' => 'apariencia.ayuda.IMAGEN_PORTADA',
+                'required' => false,
+                'constraints' => [new Assert\Image(maxSize: '3M', mimeTypes: ['image/png', 'image/jpeg', 'image/webp'], minWidth: 800, maxWidth: 4000, maxHeight: 3000)],
+            ])
+            ->add('quitar_imagen_portada', CheckboxType::class, ['label' => 'apariencia.quitar_imagen_portada', 'required' => false])
             ->add('restablecer', CheckboxType::class, ['label' => 'apariencia.restablecer', 'required' => false]);
         $formulario = $constructor->getForm();
         $formulario->handleRequest($request);
@@ -90,6 +97,12 @@ final class AparienciaController extends AbstractController
                 $this->apariencia->guardarLogo($logo);
             } elseif ($formulario->get('quitar_logo')->getData()) {
                 $this->apariencia->quitarLogo();
+            }
+            $imagen = $formulario->get('imagen_portada')->getData();
+            if ($imagen instanceof UploadedFile) {
+                $this->apariencia->guardarImagenPortada($imagen);
+            } elseif ($formulario->get('quitar_imagen_portada')->getData()) {
+                $this->apariencia->quitarImagenPortada();
             }
             $this->addFlash('exito', 'apariencia.guardada');
 

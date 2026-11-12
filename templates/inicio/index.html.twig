@@ -1,30 +1,87 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <section class="portada">
+    {% set imagen = sitio_imagen_portada() %}
+    {% set idioma = app.request.locale %}
+    <section class="portada{{ imagen ? ' portada--imagen' }}"{% if imagen %} style="--imagen-portada: url('{{ asset(imagen) }}')"{% endif %}>
+        <div class="contenedor portada__titular">
+            <p class="portada__antetitulo">{{ 'inicio.bienvenida'|trans }}</p>
+            <h1>{{ sitio_titulo() }}</h1>
+        </div>
         <div class="contenedor">
-            <h1>{{ 'inicio.titulo'|trans }}</h1>
-            <p class="portada__bajada">{{ 'inicio.bajada'|trans }}</p>
-            <form class="buscador" role="search" action="{{ path('recursos') }}" method="get">
-                <label for="q" class="solo-lectores">{{ 'inicio.buscar_etiqueta'|trans }}</label>
-                <input id="q" name="q" type="search" placeholder="{{ 'inicio.buscar_placeholder'|trans }}">
-                <button type="submit">{{ 'inicio.buscar'|trans }}</button>
-            </form>
+            <div class="portada__caja">
+                <form class="portada__busqueda" role="search" action="{{ path('buscar') }}" method="get">
+                    <label for="q" class="portada__pregunta">{{ 'inicio.pregunta'|trans }}</label>
+                    <input id="q" name="q" type="search" required placeholder="{{ 'inicio.buscar_placeholder'|trans }}">
+                    <div class="portada__botones">
+                        {% if hay_buscador_primo() %}
+                            <button type="submit" formaction="{{ path('catalogo', {_locale: idioma}) }}" formtarget="_blank" class="portada__boton">
+                                <span aria-hidden="true">📖</span> {{ 'inicio.buscar_catalogo'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span>
+                            </button>
+                        {% endif %}
+                        <button type="submit" class="portada__boton"><span aria-hidden="true">🔎</span> {{ 'inicio.buscar_sitio'|trans }}</button>
+                    </div>
+                </form>
+                <nav class="portada__accesos" aria-label="{{ 'inicio.accesos'|trans }}">
+                    <ul>
+                        {% if app.user and is_granted('ROLE_COLABORADOR') %}
+                            <li><a href="{{ path('panel') }}"><span aria-hidden="true">👤</span> {{ 'menu.panel'|trans }}</a></li>
+                        {% elseif not app.user %}
+                            <li><a href="{{ path('acceso') }}"><span aria-hidden="true">👤</span> {{ 'menu.acceso'|trans }}</a></li>
+                        {% endif %}
+                        <li><a href="{{ path('recursos') }}"><span aria-hidden="true">🔤</span> {{ 'inicio.acceso_az'|trans }}</a></li>
+                        <li><a href="{{ path('personal') }}"><span aria-hidden="true">💬</span> {{ 'inicio.acceso_ayuda'|trans }}</a></li>
+                        <li><a href="https://bibliotecas.ucn.cl/"><span aria-hidden="true">🏛</span> {{ 'inicio.acceso_sitio'|trans({'%institucion%': sitio_institucion()}) }}</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </section>
 
-    <section class="contenedor tarjetas" aria-label="{{ 'inicio.secciones'|trans }}">
-        <article class="tarjeta">
-            <h2><a href="{{ path('guias') }}">{{ 'menu.guias'|trans }}</a></h2>
-            <p>{{ 'inicio.guias_texto'|trans }}</p>
-        </article>
-        <article class="tarjeta">
-            <h2><a href="{{ path('recursos') }}">{{ 'menu.bases_datos'|trans }}</a></h2>
-            <p>{{ 'inicio.bases_texto'|trans }}</p>
-        </article>
-        <article class="tarjeta">
-            <h2><a href="{{ path('personal') }}">{{ 'menu.personal'|trans }}</a></h2>
-            <p>{{ 'inicio.personal_texto'|trans }}</p>
-        </article>
+    <section class="contenedor inicio__seccion" aria-labelledby="titulo-modulos">
+        <h2 id="titulo-modulos" class="inicio__subtitulo">{{ 'inicio.secciones'|trans }}</h2>
+        <ul class="modulos">
+            {% for modulo in [
+                {ruta: 'guias', titulo: 'menu.guias', texto: 'inicio.guias_texto', icono: '📚'},
+                {ruta: 'recursos', titulo: 'menu.bases_datos', texto: 'inicio.bases_texto', icono: '🗂'},
+                {ruta: 'personal', titulo: 'menu.personal', texto: 'inicio.personal_texto', icono: '🧑‍🏫'},
+            ] %}
+                <li class="modulo modulo--{{ loop.index }}">
+                    <a href="{{ path(modulo.ruta) }}">
+                        <span class="modulo__icono" aria-hidden="true">{{ modulo.icono }}</span>
+                        <span class="modulo__titulo">{{ modulo.titulo|trans }}</span>
+                        <span class="modulo__texto">{{ modulo.texto|trans }}</span>
+                        <span class="modulo__flecha" aria-hidden="true">→</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
     </section>
+
+    {% if recientes is not empty %}
+        <section class="contenedor inicio__seccion">
+            <h2 id="titulo-recientes" class="inicio__subtitulo">{{ 'inicio.recientes'|trans }}</h2>
+            <div class="libros-carrusel" data-controller="carrusel" role="region" aria-roledescription="{{ 'bloque.carrusel'|trans }}" aria-labelledby="titulo-recientes">
+                <ul class="bloque__libros bloque__libros--carrusel recientes" data-carrusel-target="pista" data-action="scroll->carrusel#actualizar" tabindex="0">
+                    {% for recurso in recientes %}
+                        {% set isbn = recurso.isbn ?? recurso.eisbn %}
+                        <li class="libro reciente">
+                            <a class="libro__enlace" href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener">
+                                <span class="libro__portada" aria-hidden="true">
+                                    <span class="libro__sin-portada reciente__tipo">{{ recurso.tipo.etiqueta|trans }}</span>
+                                    {% if isbn %}<img src="https://covers.openlibrary.org/b/isbn/{{ isbn|replace({'-': ''})|url_encode }}-M.jpg?default=false" alt="" data-controller="portada" data-action="load->portada#revisar error->portada#revisar" width="120" height="180" loading="lazy" referrerpolicy="no-referrer">{% endif %}
+                                </span>
+                                <span class="libro__titulo">{{ recurso.titulo }}</span>
+                                <span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span>
+                            </a>
+                            <span class="libro__autor">{{ recurso.autoresTexto ?? recurso.proveedor ?? recurso.tipo.etiqueta|trans }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <button type="button" class="libros-carrusel__boton libros-carrusel__boton--anterior" data-action="carrusel#anterior" data-carrusel-target="anterior" aria-label="{{ 'bloque.diapositiva_anterior'|trans }}">‹</button>
+                <button type="button" class="libros-carrusel__boton libros-carrusel__boton--siguiente" data-action="carrusel#siguiente" data-carrusel-target="siguiente" aria-label="{{ 'bloque.diapositiva_siguiente'|trans }}">›</button>
+            </div>
+            <p class="inicio__mas"><a href="{{ path('recursos') }}">{{ 'inicio.ver_recursos'|trans }} →</a></p>
+        </section>
+    {% endif %}
 {% endblock %}

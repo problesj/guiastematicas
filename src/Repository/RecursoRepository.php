@@ -67,6 +67,20 @@ class RecursoRepository extends ServiceEntityRepository
     }
 
     /**
+     * Últimos recursos públicos agregados (para el carrusel de la portada).
+     *
+     * @return list<Recurso>
+     */
+    public function recientes(int $cantidad = 10): array
+    {
+        return $this->disponibles()
+            ->orderBy('r.creadoEn', 'DESC')
+            ->addOrderBy('r.id', 'DESC')
+            ->setMaxResults($cantidad)
+            ->getQuery()->getResult();
+    }
+
+    /**
      * Letras que tienen al menos un recurso público, para el índice A-Z.
      *
      * @return list<string>
