@@ -53,6 +53,9 @@ final class Apariencia
         ['TEXTO_PIE', 'COLOR_PIE'],
     ];
 
+    /** Presentaciones de la lista pública de guías por materia (la primera es la predeterminada). */
+    public const array VISTAS_GUIAS = ['lista', 'cuadricula', 'carrusel'];
+
     public function __construct(
         private readonly Ajustes $ajustes,
         private readonly TranslatorInterface $traductor,
@@ -70,6 +73,15 @@ final class Apariencia
         return ('en' === $idioma ? $this->ajustes->valor('SITIO_TITULO_EN') : null)
             ?? $this->ajustes->valor('SITIO_TITULO')
             ?? $this->traductor->trans('sitio.titulo', locale: $idioma);
+    }
+
+    /** Presentación de la lista de guías por materia: lista, cuadricula o carrusel. */
+    #[AsTwigFunction('sitio_vista_guias')]
+    public function vistaGuias(): string
+    {
+        $vista = $this->ajustes->valor('VISTA_GUIAS');
+
+        return \in_array($vista, self::VISTAS_GUIAS, true) ? $vista : self::VISTAS_GUIAS[0];
     }
 
     #[AsTwigFunction('sitio_institucion')]

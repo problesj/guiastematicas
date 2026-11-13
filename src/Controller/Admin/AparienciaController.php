@@ -8,6 +8,7 @@ use App\Configuracion\Ajustes;
 use App\Configuracion\Apariencia;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -53,6 +54,14 @@ final class AparienciaController extends AbstractController
             ]);
         }
         $constructor
+            ->add('VISTA_GUIAS', ChoiceType::class, [
+                'label' => 'apariencia.ajuste.VISTA_GUIAS',
+                'help' => 'apariencia.ayuda.VISTA_GUIAS',
+                'choices' => array_combine(array_map(fn (string $v) => 'apariencia.vista_guias.'.$v, Apariencia::VISTAS_GUIAS), Apariencia::VISTAS_GUIAS),
+                'expanded' => true,
+                'data' => $this->apariencia->vistaGuias(),
+                'constraints' => [new Assert\Choice(choices: Apariencia::VISTAS_GUIAS)],
+            ])
             ->add('logo', FileType::class, [
                 'label' => 'apariencia.ajuste.LOGO',
                 'help' => 'apariencia.ayuda.LOGO',
@@ -80,6 +89,8 @@ final class AparienciaController extends AbstractController
             foreach (['SITIO_TITULO', 'SITIO_TITULO_EN', 'SITIO_INSTITUCION'] as $clave) {
                 $this->ajustes->guardar($clave, trim((string) $formulario->get($clave)->getData()) ?: null);
             }
+            $vista = (string) $formulario->get('VISTA_GUIAS')->getData();
+            $this->ajustes->guardar('VISTA_GUIAS', Apariencia::VISTAS_GUIAS[0] === $vista ? null : $vista);
             $logo = $formulario->get('logo')->getData();
             if ($logo instanceof UploadedFile) {
                 $this->apariencia->guardarLogo($logo);

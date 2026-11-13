@@ -895,8 +895,13 @@ apariencia:
   portada_actual: Imagen actual de la portada
   quitar_imagen_portada: Quitar la imagen (usar un degradado con los colores del sitio)
   restablecer: Volver a los colores del tema base (fondos y textos)
+  vista_guias:
+    lista: "Lista: una guía por fila, con descripción"
+    cuadricula: "Cuadrícula: tarjetas con el icono grande"
+    carrusel: "Carrusel: una fila de tarjetas que se desplaza"
   colores_ayuda: Para que el sitio cumpla con WCAG 2.1 AA, cada texto debe tener un contraste de al menos 4,5:1 con su fondo; si no, no se guarda. Si cambias un fondo, revisa también el color del texto que va encima.
   grupo:
+    guias: Guías por materia
     nombre: Nombre del sitio
     logo: Logo
     portada: Imagen de la portada
@@ -909,6 +914,7 @@ apariencia:
     COLOR_BARRA: la barra superior
     COLOR_PIE: el pie de página
   ajuste:
+    VISTA_GUIAS: Presentación de la lista
     SITIO_TITULO: Título del sitio (español)
     SITIO_TITULO_EN: Título del sitio (inglés)
     SITIO_INSTITUCION: Institución
@@ -924,6 +930,7 @@ apariencia:
     LOGO: Archivo del logo
     IMAGEN_PORTADA: Imagen de fondo
   ayuda:
+    VISTA_GUIAS: Cómo se muestran las guías en la página «Guías por materia». Cada guía se representa con su icono (o con su inicial si no tiene).
     COLOR_PRINCIPAL: Enlaces (sobre fondo blanco), botones y títulos de los bloques.
     COLOR_BARRA: Franja con los enlaces UCN y el idioma.
     COLOR_PIE: Fondo del pie de página.
