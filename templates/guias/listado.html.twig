@@ -39,6 +39,8 @@
                         <div class="lista-guias__texto">
                         <h2><a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}">{{ guia.titulo }}</a>{% if guia.idioma != idioma %} <span class="insignia">{{ guia.idioma|upper }}</span>{% endif %}{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}</h2>
                         {% if guia.descripcion %}<p>{{ guia.descripcion }}</p>{% endif %}
+                        {% set madre = guia.principal %}
+                        {% if madre and madre.publicada and is_granted('GUIA_VER', madre) %}<p class="lista-guias__parte">{{ 'guia.parte_de'|trans }}: <a href="{{ path('guia', {slug: madre.slug, _locale: madre.idioma}) }}">{{ madre.titulo }}</a></p>{% endif %}
                         <p class="lista-guias__meta">
                             {% for m in guia.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
                             {% if guia.responsable %}<span>{{ guia.responsable.nombreCompleto }}</span>{% endif %}

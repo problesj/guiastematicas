@@ -528,6 +528,11 @@ guia:
   traduccion: Versión en el otro idioma
   traduccion_ayuda: Si la guía existe en el otro idioma, enlázala para que el botón ES/EN lleve de una a otra.
   sin_traduccion: (ninguna)
+  principal: Guía principal
+  principal_ayuda: Si esta guía es parte de otra más general, elígela aquí. La principal mostrará esta guía entre sus subguías y esta mostrará la ruta de vuelta.
+  sin_principal: (ninguna, es una guía de primer nivel)
+  subguias: Subguías
+  parte_de: Parte de
   disposicion: Presentación de las pestañas
   materias: Materias
   coeditores: Coeditores

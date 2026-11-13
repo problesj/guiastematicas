@@ -32,7 +32,7 @@
                 <tbody>
                     {% for guia in guias %}
                         <tr>
-                            <td>{% if guia.icono %}<img class="icono-tabla" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="28" height="28"> {% endif %}<a href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ guia.titulo }}</a> <small>{{ guia.idioma|upper }}</small></td>
+                            <td>{% if guia.icono %}<img class="icono-tabla" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="28" height="28"> {% endif %}<a href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ guia.titulo }}</a> <small>{{ guia.idioma|upper }}</small>{% if guia.principal %}<br><small>{{ 'guia.parte_de'|trans }}: {{ guia.principal.titulo }}</small>{% endif %}</td>
                             <td><span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span>{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}</td>
                             <td>{{ guia.responsable ? guia.responsable.nombreCompleto : '—' }}</td>
                             <td>{{ guia.actualizadaEn|date('d-m-Y H:i') }}</td>

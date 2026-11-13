@@ -63,6 +63,17 @@ final class GuiaType extends AbstractType
                 'placeholder' => 'guia.sin_traduccion',
                 'help' => 'guia.traduccion_ayuda',
             ])
+            ->add('principal', EntityType::class, [
+                'label' => 'guia.principal',
+                'class' => Guia::class,
+                'choice_label' => fn (Guia $g) => implode(' › ', array_map(fn (Guia $s) => $s->getTitulo(), [...$g->getSuperiores(), $g])),
+                'query_builder' => fn (GuiaRepository $r) => $r->createQueryBuilder('g')
+                    ->where('g.id <> :propia')->setParameter('propia', $guia instanceof Guia ? ($guia->getId() ?? 0) : 0)
+                    ->orderBy('g.titulo'),
+                'required' => false,
+                'placeholder' => 'guia.sin_principal',
+                'help' => 'guia.principal_ayuda',
+            ])
             ->add('disposicion', EnumType::class, [
                 'label' => 'guia.disposicion',
                 'class' => DisposicionGuia::class,
