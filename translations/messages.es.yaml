@@ -479,6 +479,8 @@ tipo_bloque:
   enlaces_ayuda: Enlaces a sitios web externos, con una descripción opcional.
   libros: Libros
   libros_ayuda: Libros con su portada (se obtiene por ISBN) y enlace al catálogo o a la versión en línea.
+  revistas: Revistas
+  revistas_ayuda: Revistas con su editorial e ISSN y enlace al catálogo o a la revista en línea. Se agregan a mano, por ISSN o desde la búsqueda de revistas de Primo (por título o categoría).
   diapositivas: Diapositivas
   diapositivas_ayuda: Imágenes que se van pasando, cada una con texto y enlace opcionales (consejos, novedades).
   texto: Texto
@@ -616,9 +618,11 @@ guia:
 bloque:
   items_enlaces: Enlaces
   items_libros: Libros
+  items_revistas: Revistas
   items_diapositivas: Diapositivas
   agregar_enlaces: Agregar enlace
   agregar_libros: Agregar libro
+  agregar_revistas: Agregar revista
   agregar_diapositivas: Agregar diapositiva
   lista_vacia: Agrega al menos un elemento.
   enlace_titulo: Texto del enlace
@@ -702,6 +706,35 @@ bloque:
   libros_vacio: Aún no hay libros en el bloque.
   libro_se_incorporara: Al guardar, el libro se incorporará a la lista de recursos bibliográficos.
   isbn_no_valido: El ISBN no es válido.
+  revistas_ayuda: Escribe el ISSN de cada revista y pulsa «Buscar datos» para completar el título y la editorial (también se completan al guardar), o búscalas en el catálogo más abajo. Cada revista se incorpora también a la lista de recursos bibliográficos (tipo Revistas), con las materias que elijas.
+  revistas_issns: Agregar varias por ISSN
+  revistas_issns_ayuda: Pega uno o más ISSN (uno por línea o separados por comas); al guardar se suman a la lista con los datos del catálogo.
+  revistas_orden: Orden de las revistas
+  revistas_orden_ayuda: Por título, las revistas se ordenan alfabéticamente al guardar (también las que agregues después).
+  revistas_por_pagina: Revistas por página
+  revistas_rango: Revistas %desde%–%hasta% de %total%
+  revistas_pagina: Página %pagina% de %paginas%
+  revistas_paginas: Páginas de la lista de revistas
+  revistas_vacio: Aún no hay revistas en el bloque.
+  revista_nueva: Revista nueva (sin título)
+  revista_eissn: e-ISSN (ISSN electrónico)
+  revista_enlace_ayuda: Solo si la revista debe abrir otra página (p. ej. el sitio de la revista); si no, enlaza a su registro en el catálogo.
+  revista_materias_ayuda: Las materias de la revista en la lista de recursos. Si no eliges ninguna, una revista nueva toma las materias de la guía.
+  revista_en_recursos: Esta revista está en la lista de recursos bibliográficos.
+  revista_se_incorporara: Al guardar, la revista se incorporará a la lista de recursos bibliográficos.
+  revista_falta_issn: Escribe un ISSN para buscar.
+  revista_sin_datos: No se encontró una revista con ese ISSN en el catálogo. Revisa los dígitos o escribe los datos a mano.
+  revista_acceso: Acceder
+  buscador_revistas_titulo: Buscar revistas en el catálogo
+  buscador_revistas_texto: Palabras del título
+  buscador_revistas_categoria: Categoría o enlace de la búsqueda de revistas de Primo
+  buscador_revistas_ayuda: "Escribe palabras del título, una categoría (p. ej. Health_Biological_Sciences─Human_Anatomy_Physiology) o pega el enlace de una búsqueda de revistas de Primo después de elegir la categoría y los filtros; se pueden combinar."
+  buscador_revistas_abrir: Abrir la búsqueda de revistas de Primo
+  buscador_revistas_resumen: "%mostrados% de %total% revistas. Marca las que quieres agregar."
+  buscador_revistas_vacio: No se encontraron revistas con esos datos.
+  buscador_revistas_falta: Escribe palabras del título o una categoría para buscar.
+  buscador_revistas_agregar: Agregar las marcadas
+  buscador_revistas_agregadas: "%count% revista(s) agregada(s) a la lista. Revisa sus datos y guarda el bloque."
   diapositiva_imagen: Imagen
   diapositiva_imagen_ayuda: JPG, PNG o WebP de hasta 4 MB, apaisada (recomendado 1200 × 675 px). Si ya tiene imagen, sube otra solo para reemplazarla.
   diapositiva_titulo: Texto (opcional; también describe la imagen)
@@ -709,6 +742,7 @@ bloque:
   diapositiva_sin_imagen: Sube una imagen para esta diapositiva.
   resumen_enlaces: "1 enlace|%count% enlaces"
   resumen_libros: "1 libro|%count% libros"
+  resumen_revistas: "1 revista|%count% revistas"
   resumen_diapositivas: "1 diapositiva|%count% diapositivas"
   carrusel: carrusel
   diapositiva: diapositiva

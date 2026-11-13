@@ -181,6 +181,13 @@ final class ApiController extends AbstractController
                 'url' => $l['enlace'] ?? (isset($l['registro']) ? $this->catalogo->enlaceRegistro($l['registro'], $idioma) : null) ?? (isset($l['doi']) ? 'https://doi.org/'.$l['doi'] : null),
                 'portada' => isset($l['isbn']) ? 'https://covers.openlibrary.org/b/isbn/'.rawurlencode($l['isbn']).'-M.jpg?default=false' : null,
             ], $items)],
+            TipoBloque::Revistas => ['revistas' => array_map(fn (array $r) => [
+                'titulo' => $r['titulo'] ?? null,
+                'editorial' => $r['editorial'] ?? null,
+                'issn' => $r['issn'] ?? null,
+                'eissn' => $r['eissn'] ?? null,
+                'url' => $r['enlace'] ?? (isset($r['registro']) ? $this->catalogo->enlaceRegistro($r['registro'], $idioma) : null),
+            ], $items)],
             TipoBloque::Diapositivas => ['diapositivas' => array_map(fn (array $d) => [
                 'titulo' => $d['titulo'] ?? null,
                 'enlace' => $d['enlace'] ?? null,

@@ -24,7 +24,9 @@ use App\Servicio\Biblioges;
 use App\Servicio\BloquesGuia;
 use App\Servicio\Catalogo;
 use App\Servicio\DatosLibro;
+use App\Servicio\DatosRevista;
 use App\Servicio\LibrosEnRecursos;
+use App\Servicio\RevistasEnRecursos;
 use App\Servicio\MetadatosDoi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -55,6 +57,7 @@ final class GuiaController extends AbstractController
         private readonly TranslatorInterface $traductor,
         private readonly AlmacenImagenesGuia $imagenes,
         private readonly LibrosEnRecursos $librosEnRecursos,
+        private readonly RevistasEnRecursos $revistasEnRecursos,
         private readonly Catalogo $catalogo,
         private readonly Biblioges $biblioges,
     ) {
@@ -351,6 +354,71 @@ final class GuiaController extends AbstractController
         ]);
     }
 
+    /** Datos de una revista por ISSN, para el botón «Buscar datos» del bloque Revistas (no guarda nada). */
+    #[Route('/datos-revista', name: 'panel_guias_datos_revista', methods: ['GET'])]
+    public function datosRevista(Request $request, DatosRevista $datos): JsonResponse
+    {
+        $revista = $datos->buscar(mb_substr($request->query->getString('issn'), 0, 20));
+
+        return null === $revista ? new JsonResponse(['error' => 'no_encontrado'], 404) : new JsonResponse($revista);
+    }
+
+    /**
+     * Revistas del catálogo (búsqueda de revistas de Primo VE) por palabras del título y/o una categoría, para elegir
+     * cuáles agregar al bloque Revistas. La categoría puede venir sola o dentro de un enlace copiado de la búsqueda de
+     * revistas de Primo (parámetro "journals=category,…"; si el enlace trae también palabras de búsqueda, se usan).
+     */
+    #[Route('/buscar-revistas/catalogo', name: 'panel_guias_buscar_revistas_catalogo', methods: ['GET'])]
+    public function buscarRevistasCatalogo(Request $request): JsonResponse
+    {
+        $porPagina = 20;
+        $pagina = max(1, min(50, $request->query->getInt('pagina', 1)));
+        [$texto, $categoria] = self::criteriosRevistas(
+            mb_substr($request->query->getString('texto'), 0, 200),
+            mb_substr($request->query->getString('categoria'), 0, 1000),
+        );
+        $resultado = null === $texto && null === $categoria ? null
+            : $this->catalogo->buscarRevistas($texto, $categoria, ($pagina - 1) * $porPagina, $porPagina);
+        if (null === $resultado) {
+            $sinCriterios = null === $texto && null === $categoria;
+
+            return new JsonResponse(['error' => $sinCriterios ? 'parametros' : 'sin_respuesta'], $sinCriterios ? 400 : 502);
+        }
+        $idioma = $request->getLocale();
+
+        return new JsonResponse([
+            'total' => $resultado['total'],
+            'pagina' => $pagina,
+            'paginas' => (int) ceil(min($resultado['total'], 2000) / $porPagina),
+            // Sin ISSN el registro no se puede recalcular al guardar: la revista enlaza a su registro en el catálogo.
+            'revistas' => array_map(fn (array $r) => $r + ['enlace' => null === $r['issn'] ? $this->catalogo->enlaceRegistro($r['registro'], $idioma) : null], $resultado['revistas']),
+        ]);
+    }
+
+    /**
+     * Palabras del título y categoría de revistas. La categoría puede ser un enlace de la búsqueda de revistas de Primo
+     * (…/discovery/jsearch?query=…&journals=category,Health_Biological_Sciences─Human_Anatomy_Physiology…).
+     *
+     * @return array{0: ?string, 1: ?string}
+     */
+    public static function criteriosRevistas(string $texto, string $categoria): array
+    {
+        $texto = trim($texto);
+        $categoria = trim($categoria);
+        if (str_contains($categoria, '://') || str_contains($categoria, 'journals=')) {
+            parse_str((string) parse_url(str_contains($categoria, '?') ? $categoria : '?'.$categoria, \PHP_URL_QUERY), $parametros);
+            $categoria = \is_string($parametros['journals'] ?? null) ? $parametros['journals'] : '';
+            // query=contains,dbcategory,<palabras> (o any,contains,<palabras>): el último tramo son las palabras.
+            $consulta = \is_string($parametros['query'] ?? null) ? explode(',', $parametros['query'], 3) : [];
+            if ('' === $texto && 3 === \count($consulta)) {
+                $texto = trim($consulta[2]);
+            }
+        }
+        $categoria = trim((string) preg_replace('/^category,/', '', $categoria));
+
+        return ['' === $texto ? null : $texto, '' === $categoria ? null : $categoria];
+    }
+
     /** Carreras vigentes de Biblioges, para la lista del buscador (se piden al abrirlo, no al cargar el formulario). */
     #[Route('/buscar-libros/carreras', name: 'panel_guias_buscar_libros_carreras', methods: ['GET'])]
     public function carrerasBiblioges(): JsonResponse
@@ -578,6 +646,7 @@ final class GuiaController extends AbstractController
                 'catalogo' => $this->catalogo->buscaPorIsbn(),
                 'biblioges' => $this->biblioges->disponible(),
             ] : null,
+            'buscador_revistas' => TipoBloque::Revistas === $tipo && $this->catalogo->buscaPorIsbn(),
         ], new Response(status: $formulario->isSubmitted() ? 422 : 200));
     }
 
@@ -603,7 +672,7 @@ final class GuiaController extends AbstractController
                 'materias' => $this->bloques->materiasBusqueda($bloque, $guia),
                 'otras' => (bool) $bloque->dato('otras', true),
             ],
-            TipoBloque::Libros => [
+            TipoBloque::Libros, TipoBloque::Revistas => [
                 'items' => $this->librosConMaterias($bloque->dato('items', [])),
                 'presentacion' => $bloque->dato('presentacion', 'cuadricula'),
                 'columnas' => (int) $bloque->dato('columnas', 0),
@@ -634,6 +703,22 @@ final class GuiaController extends AbstractController
     }
 
     /**
+     * Orden, presentación y columnas de los bloques Libros y Revistas.
+     *
+     * @param array<string, mixed> $datos
+     *
+     * @return array{orden: string, presentacion: string, columnas: int}
+     */
+    private static function presentacion(array $datos): array
+    {
+        return [
+            'orden' => 'titulo' === ($datos['orden'] ?? null) ? 'titulo' : 'manual',
+            'presentacion' => \in_array($datos['presentacion'] ?? null, ['carrusel', 'lista'], true) ? $datos['presentacion'] : 'cuadricula',
+            'columnas' => \in_array((int) ($datos['columnas'] ?? 0), [2, 3, 4, 5, 6], true) ? (int) $datos['columnas'] : 0,
+        ];
+    }
+
+    /**
      * @param array<string, mixed> $datos
      *
      * @return array<string, mixed>
@@ -661,9 +746,7 @@ final class GuiaController extends AbstractController
                 'titulo' => $texto($i['titulo'] ?? null), 'url' => $texto($i['url'] ?? null), 'descripcion' => $texto($i['descripcion'] ?? null),
             ], $items)],
             TipoBloque::Libros => self::ordenarLibros([
-                'orden' => 'titulo' === ($datos['orden'] ?? null) ? 'titulo' : 'manual',
-                'presentacion' => \in_array($datos['presentacion'] ?? null, ['carrusel', 'lista'], true) ? $datos['presentacion'] : 'cuadricula',
-                'columnas' => \in_array((int) ($datos['columnas'] ?? 0), [2, 3, 4, 5, 6], true) ? (int) $datos['columnas'] : 0,
+                ...self::presentacion($datos),
                 // Cada libro se incorpora a la lista de recursos y guarda el id del recurso con que quedó vinculado.
                 'items' => $this->librosEnRecursos->incorporar(array_map(fn (array $i) => [
                     'recurso' => ctype_digit((string) ($i['recurso'] ?? '')) ? (int) $i['recurso'] : null,
@@ -675,6 +758,21 @@ final class GuiaController extends AbstractController
                     'anio' => $texto($i['anio'] ?? null),
                     'enlace' => $texto($i['enlace'] ?? null),
                     // Del catálogo (DatosLibro): registro en Primo VE y MMS id de Alma.
+                    'registro' => $texto($i['registro'] ?? null),
+                    'mms' => $texto($i['mms'] ?? null),
+                ], $items), array_map(fn (array $i) => $i['materias'] ?? null, $items), $guia),
+            ]),
+            TipoBloque::Revistas => self::ordenarLibros([
+                ...self::presentacion($datos),
+                // Como los libros, cada revista se incorpora a la lista de recursos (tipo Revistas).
+                'items' => $this->revistasEnRecursos->incorporar(array_map(fn (array $i) => [
+                    'recurso' => ctype_digit((string) ($i['recurso'] ?? '')) ? (int) $i['recurso'] : null,
+                    'titulo' => $texto($i['titulo'] ?? null),
+                    'issn' => Catalogo::issn($texto($i['issn'] ?? null)),
+                    'eissn' => Catalogo::issn($texto($i['eissn'] ?? null)),
+                    'editorial' => $texto($i['editorial'] ?? null),
+                    'enlace' => $texto($i['enlace'] ?? null),
+                    // Del catálogo (DatosRevista): registro en Primo VE y MMS id de Alma.
                     'registro' => $texto($i['registro'] ?? null),
                     'mms' => $texto($i['mms'] ?? null),
                 ], $items), array_map(fn (array $i) => $i['materias'] ?? null, $items), $guia),

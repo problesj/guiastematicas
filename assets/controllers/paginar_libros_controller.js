@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 /*
- * Libros del bloque «Libros» en el editor: cada libro se muestra como una fila (portada, título, autor, año, ISBN) con
+ * Libros del bloque «Libros» (y revistas del bloque «Revistas») en el editor: cada libro se muestra como una fila (portada, título, autor, año, ISBN) con
  * Ver, Editar y Borrar, y la lista se pagina de 5, 10, 15 o 20. El formulario de cada libro sigue en la página (oculto
  * hasta pulsar «Editar»), así que todo se guarda junto con «Guardar», como antes. Sin JavaScript se ve todo abierto.
  */
@@ -73,12 +73,12 @@ export default class extends Controller {
         return Number(this.tamanoTarget.value) || 10;
     }
 
-    /** «Agregar libro»: el nuevo queda abierto y con el cursor en el ISBN. */
+    /** «Agregar libro» o «Agregar revista»: el nuevo queda abierto y con el cursor en el ISBN o el ISSN. */
     nuevo() {
         const item = this.items().at(-1);
         if (item) {
             this.abrir(item, true);
-            item.querySelector('input[name$="[isbn]"]')?.focus();
+            item.querySelector('input[name$="[isbn]"], input[name$="[issn]"]')?.focus();
         }
     }
 
@@ -144,15 +144,16 @@ export default class extends Controller {
 
     fila(item) {
         const valor = (nombre) => item.querySelector(`[name$="[${nombre}]"]`)?.value.trim() ?? '';
-        const [titulo, autor, anio, isbn, doi, enlace] = ['titulo', 'autor', 'anio', 'isbn', 'doi', 'enlace'].map(valor);
+        const [titulo, autor, anio, isbn, doi, enlace, issn, editorial] = ['titulo', 'autor', 'anio', 'isbn', 'doi', 'enlace', 'issn', 'editorial'].map(valor);
+        const revista = item.classList.contains('coleccion__item--revista');
         const nombre = titulo || this.nuevoValue;
         const poner = (clave, texto) => item.querySelectorAll(`[data-fila="${clave}"]`).forEach((e) => { e.textContent = texto; });
         poner('titulo', nombre);
         poner('nombre', nombre);
-        poner('detalle', [autor, anio, isbn ? `ISBN ${isbn}` : ''].filter(Boolean).join(' · '));
+        poner('detalle', (revista ? [editorial, issn ? `ISSN ${issn}` : ''] : [autor, anio, isbn ? `ISBN ${isbn}` : '']).filter(Boolean).join(' · '));
 
         // «Ver»: lo que abre el libro en la guía (enlace propio, registro del catálogo, DOI o búsqueda en el catálogo).
-        const busqueda = isbn || titulo;
+        const busqueda = isbn || issn || titulo;
         const destino = enlace || item.dataset.registro || (doi ? `https://doi.org/${doi}` : '')
             || (this.catalogoValue && busqueda ? `${this.catalogoValue}?${new URLSearchParams({ q: busqueda })}` : '');
         const ver = item.querySelector('[data-fila="ver"]');

@@ -152,6 +152,132 @@ final class Catalogo
         return $resultado;
     }
 
+    /**
+     * Revista del catálogo por ISSN (búsqueda de revistas de Primo VE), con caché de un día.
+     *
+     * @return array{titulo: string, issn: ?string, eissn: ?string, editorial: ?string, registro: string, mms: ?string}|null
+     */
+    public function revistaPorIssn(string $issn): ?array
+    {
+        $issn = self::issn($issn);
+        if (null === $issn || !$this->buscaPorIsbn()) {
+            return null;
+        }
+        $revista = $this->cache->get('issn-'.$issn, function (ItemInterface $item) use ($issn): array {
+            $item->expiresAfter(86400);
+            $respuesta = $this->consultar('/primo/v1/search', [
+                'vid' => $this->primoVid,
+                'tab' => 'jsearch_slot',
+                'scope' => 'MyInst_and_CI',
+                'q' => 'issn,exact,'.$issn,
+                'limit' => 5,
+                'apikey' => $this->primoClave,
+            ]);
+            if (!\is_array($respuesta['docs'] ?? null)) {
+                $item->expiresAfter(60);
+
+                return [];
+            }
+            foreach ($respuesta['docs'] as $doc) {
+                if (\is_array($doc) && [] !== $revista = self::datosDeRevista($doc)) {
+                    return $revista;
+                }
+            }
+
+            return [];
+        });
+
+        return [] === $revista ? null : $revista;
+    }
+
+    /**
+     * Revistas del catálogo (búsqueda de revistas de Primo VE) por palabras del título y/o por categoría (las del sitio
+     * «Revistas» de Primo, p. ej. "Health_Biological_Sciences─Human_Anatomy_Physiology"), ordenadas por título.
+     *
+     * @return array{total: int, revistas: list<array{titulo: string, issn: ?string, eissn: ?string, editorial: ?string, registro: string, mms: ?string}>}|null null si no hay criterios o el catálogo no responde
+     */
+    public function buscarRevistas(?string $texto, ?string $categoria, int $desde = 0, int $cantidad = 20): ?array
+    {
+        $texto = self::criterio($texto);
+        $categoria = trim((string) preg_replace('/^category,/', '', trim((string) $categoria)));
+        $categoria = 1 === preg_match('/^[\p{L}\p{N}_─&,.\- ]{1,150}$/u', $categoria) ? $categoria : null;
+        if (!$this->buscaPorIsbn() || (null === $texto && null === $categoria)) {
+            return null;
+        }
+        $desde = max(0, min($desde, 1980));
+        $parametros = [
+            'vid' => $this->primoVid,
+            'tab' => 'jsearch_slot',
+            'scope' => 'MyInst_and_CI',
+            'q' => null !== $texto ? 'title,contains,'.$texto : 'any,contains,*',
+            'sort' => 'title',
+            'offset' => $desde,
+            'limit' => $cantidad,
+            'apikey' => $this->primoClave,
+        ];
+        if (null !== $categoria) {
+            $parametros['journals'] = 'category,'.$categoria;
+        }
+
+        $resultado = $this->cache->get('revistas-'.md5(json_encode([$texto, $categoria, $desde, $cantidad])), function (ItemInterface $item) use ($parametros): array {
+            $item->expiresAfter(3600);
+            $respuesta = $this->consultar('/primo/v1/search', $parametros);
+            if (!\is_array($respuesta['docs'] ?? null)) {
+                $item->expiresAfter(60);
+
+                return [];
+            }
+            $revistas = [];
+            foreach ($respuesta['docs'] as $doc) {
+                $revista = \is_array($doc) ? self::datosDeRevista($doc) : [];
+                if ([] !== $revista) {
+                    $revistas[] = $revista;
+                }
+            }
+
+            return ['total' => (int) ($respuesta['info']['total'] ?? \count($revistas)), 'revistas' => $revistas];
+        });
+
+        return [] === $resultado ? null : $resultado;
+    }
+
+    /**
+     * @param array<string, mixed> $doc registro de la búsqueda de revistas de Primo
+     *
+     * @return array{titulo: string, issn: ?string, eissn: ?string, editorial: ?string, registro: string, mms: ?string}|array{}
+     */
+    private static function datosDeRevista(array $doc): array
+    {
+        $datos = self::datosDeRegistro($doc);
+        if ([] === $datos) {
+            return [];
+        }
+        $issns = [];
+        foreach ([...(array) ($doc['pnx']['addata']['issn'] ?? []), ...(array) ($doc['pnx']['addata']['eissn'] ?? [])] as $valor) {
+            if (null !== $issn = self::issn((string) $valor)) {
+                $issns[$issn] = true;
+            }
+        }
+        $issns = array_keys($issns);
+
+        return [
+            'titulo' => $datos['titulo'],
+            'issn' => $issns[0] ?? null,
+            'eissn' => $issns[1] ?? null,
+            'editorial' => $datos['editorial'],
+            'registro' => $datos['registro'],
+            'mms' => $datos['mms'],
+        ];
+    }
+
+    /** ISSN con guion ("1873-2380") si el texto tiene la forma de un ISSN; null si no. */
+    public static function issn(?string $texto): ?string
+    {
+        $issn = strtoupper((string) preg_replace('/[^0-9Xx]/', '', (string) $texto));
+
+        return 1 === preg_match('/^\d{7}[\dX]$/', $issn) ? substr($issn, 0, 4).'-'.substr($issn, 4) : null;
+    }
+
     /** Valor de búsqueda sin comas ni punto y coma (separan los criterios en la consulta de Primo). */
     private static function criterio(?string $texto): ?string
     {
@@ -178,6 +304,20 @@ final class Catalogo
         usort($candidatos, fn (string $a, string $b) => \strlen($b) <=> \strlen($a));
 
         return $candidatos[0] ?? null;
+    }
+
+    /** Búsqueda de revistas de Primo VE (de ahí se copia el enlace de una categoría para el bloque Revistas). */
+    #[AsTwigFunction('catalogo_url_revistas')]
+    public function urlRevistas(string $idioma): ?string
+    {
+        if ('' === $this->primoUrl || '' === $this->primoVid) {
+            return null;
+        }
+
+        return rtrim($this->primoUrl, '/').'/discovery/jsearch?'.strtr(http_build_query([
+            'vid' => $this->primoVid,
+            'lang' => $idioma,
+        ], '', '&', \PHP_QUERY_RFC3986), ['%3A' => ':']);
     }
 
     /** Dirección del registro completo en Primo VE. */

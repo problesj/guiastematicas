@@ -1,17 +1,20 @@
 {# Libros en cuadrícula (con columnas a elección), en carrusel o en lista breve. La portada viene de Open Library por
    ISBN. El enlace va al propio del libro, a su registro en el catálogo (Primo VE), a su DOI o a una búsqueda en el
    catálogo. La disponibilidad (Alma) se pide después de cargar la página. #}
+{# El bloque Revistas usa la misma presentación (ver _revistas.html.twig), con _revista.html.twig y sin disponibilidad. #}
+{% set revistas = revistas ?? false %}
+{% set plantilla = revistas ? 'guias/bloques/_revista.html.twig' : 'guias/bloques/_libro.html.twig' %}
 {% set items = bloque.dato('items', []) %}
 {% if items is not empty %}
     {% set presentacion = bloque.dato('presentacion', 'cuadricula') %}
     {% set columnas = bloque.dato('columnas', 0) %}
-    {% set disponibilidad = catalogo_informa_disponibilidad() and items|filter(l => l.mms ?? false) is not empty %}
+    {% set disponibilidad = not revistas and catalogo_informa_disponibilidad() and items|filter(l => l.mms ?? false) is not empty %}
     {% set atributos_disponibilidad = disponibilidad ? ' data-controller="disponibilidad" data-disponibilidad-url-value="' ~ path('catalogo_disponibilidad', {_locale: guia.idioma, id: bloque.id})|e('html_attr') ~ '"' : '' %}
 
     {% if presentacion == 'carrusel' %}
-        <div class="libros-carrusel" data-controller="carrusel" role="region" aria-roledescription="{{ 'bloque.carrusel'|trans }}" aria-label="{{ bloque.titulo ?? 'tipo_bloque.libros'|trans }}">
+        <div class="libros-carrusel" data-controller="carrusel" role="region" aria-roledescription="{{ 'bloque.carrusel'|trans }}" aria-label="{{ bloque.titulo ?? ('tipo_bloque.' ~ bloque.tipo.value)|trans }}">
             <ul class="bloque__libros bloque__libros--carrusel" data-carrusel-target="pista" data-action="scroll->carrusel#actualizar" tabindex="0"{{ atributos_disponibilidad|raw }}>
-                {% for libro in items %}{{ include('guias/bloques/_libro.html.twig') }}{% endfor %}
+                {% for libro in items %}{{ include(plantilla) }}{% endfor %}
             </ul>
             {% if items|length > 1 %}
                 <button type="button" class="libros-carrusel__boton libros-carrusel__boton--anterior" data-action="carrusel#anterior" data-carrusel-target="anterior" aria-label="{{ 'bloque.diapositiva_anterior'|trans }}">‹</button>
@@ -20,11 +23,11 @@
         </div>
     {% elseif presentacion == 'lista' %}
         <ul class="bloque__libros bloque__libros--lista"{{ atributos_disponibilidad|raw }}>
-            {% for libro in items %}{{ include('guias/bloques/_libro.html.twig', {lista: true}) }}{% endfor %}
+            {% for libro in items %}{{ include(plantilla, {lista: true}) }}{% endfor %}
         </ul>
     {% else %}
         <ul class="bloque__libros{% if columnas %} bloque__libros--columnas{% endif %}"{% if columnas %} style="--columnas-libros: {{ columnas }}"{% endif %}{{ atributos_disponibilidad|raw }}>
-            {% for libro in items %}{{ include('guias/bloques/_libro.html.twig') }}{% endfor %}
+            {% for libro in items %}{{ include(plantilla) }}{% endfor %}
         </ul>
     {% endif %}
 {% endif %}

@@ -30,6 +30,13 @@ final class CatalogoFalso
                 return new MockResponse('{"errorsExist":true}', ['http_code' => 401]);
             }
 
+            // Búsqueda de revistas (pestaña jsearch_slot): por ISSN, por palabras del título y/o por categoría.
+            if ('jsearch_slot' === ($query['tab'] ?? null)) {
+                $docs = self::revistas((string) ($query['q'] ?? ''), (string) ($query['journals'] ?? ''));
+
+                return new MockResponse(json_encode(['info' => ['total' => 'any,contains,*' === ($query['q'] ?? '') ? 925 : \count($docs)], 'docs' => $docs]));
+            }
+
             $docs = match ($query['q'] ?? '') {
                 'isbn,exact,9780262033848' => [
                     ['context' => 'PC', 'pnx' => ['control' => ['recordid' => ['cdi_otro']], 'display' => ['title' => ['Otra edición']]]],
@@ -118,6 +125,25 @@ final class CatalogoFalso
                 'addata' => ['date' => ['1990']],
             ]],
         ];
+    }
+
+    /** @return list<array<string, mixed>> revistas como las entrega la búsqueda de revistas de Primo VE */
+    private static function revistas(string $q, string $journals): array
+    {
+        $revista = fn (string $mms, string $titulo, string $editorial, array $issn) => ['context' => 'L', 'pnx' => [
+            'control' => ['recordid' => ['alma'.$mms]],
+            'display' => ['title' => [$titulo], 'publisher' => [$editorial], 'mms' => [$mms]],
+            'addata' => ['issn' => $issn, 'jtitle' => [$titulo]],
+        ]];
+        $biomecanica = $revista('99641303307936', 'Journal of biomechanics.', 'New York : Elsevier Science', ['1873-2380', '0021-9290']);
+        $anatomia = $revista('99641303307937', 'Annals of anatomy', 'Jena : Elsevier', ['0940-9602']);
+
+        return match (true) {
+            'issn,exact,0021-9290' === $q, 'issn,exact,1873-2380' === $q => [$biomecanica],
+            'title,contains,biomechanics' === $q => [$biomecanica],
+            'any,contains,*' === $q && 'category,Health_Biological_Sciences─Human_Anatomy_Physiology' === $journals => [$anatomia, $biomecanica],
+            default => [],
+        };
     }
 
     /** @param array<string, mixed> $query */
