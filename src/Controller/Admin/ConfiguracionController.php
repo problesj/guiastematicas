@@ -34,6 +34,9 @@ final class ConfiguracionController extends AbstractController
         'EXLIBRIS_API_URL' => '#^https?://#i',
         'BIBLIOGES_API_URL' => '#^https?://#i',
         'LDAP_URL' => '#^ldaps?://#i',
+        'LTI_ISSUER' => '#^https?://#i',
+        'LTI_AUTH_URL' => '#^https?://#i',
+        'LTI_JWKS_URL' => '#^https?://#i',
     ];
 
     public function __construct(private readonly Ajustes $ajustes)

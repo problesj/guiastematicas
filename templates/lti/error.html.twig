@@ -1,0 +1,9 @@
+{% extends 'lti/_base.html.twig' %}
+
+{% block title %}{{ 'lti.error.titulo'|trans }}{% endblock %}
+
+{% block body %}
+    <h1>{{ 'lti.error.titulo'|trans }}</h1>
+    <p>{{ mensaje|trans }}</p>
+    <p><a href="{{ path('guias', {_locale: 'es'}) }}" target="_blank" rel="noopener">{{ 'lti.error.ver_guias'|trans }}</a></p>
+{% endblock %}

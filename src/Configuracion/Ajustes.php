@@ -46,6 +46,18 @@ final class Ajustes implements ResetInterface
             'GOOGLE_CLIENT_SECRET' => ['secreto' => true],
             'GOOGLE_DOMINIO' => [],
         ],
+        'moodle' => [
+            'LTI_ISSUER' => [],
+            'LTI_CLIENT_ID' => [],
+            'LTI_DEPLOYMENT_ID' => [],
+            'LTI_AUTH_URL' => [],
+            'LTI_JWKS_URL' => [],
+        ],
+    ];
+
+    /** Ajustes internos que no aparecen en el panel (la llave privada LTI se genera sola y se guarda cifrada). */
+    public const INTERNOS = [
+        'LTI_LLAVE_PRIVADA' => ['secreto' => true],
     ];
 
     /** Ajustes de apariencia (sin variable de entorno equivalente), ver App\Configuracion\Apariencia. */
@@ -82,7 +94,7 @@ final class Ajustes implements ResetInterface
             }
         }
 
-        return null;
+        return self::INTERNOS[$clave] ?? null;
     }
 
     /** Valor definido en el panel, o null si no lo está (entonces rige la variable de entorno). */

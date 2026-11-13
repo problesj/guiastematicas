@@ -838,6 +838,18 @@ incrustar:
   no_publicada: Publica la guía para poder incrustar sus bloques.
   no_restringida: Los bloques de una guía restringida no se pueden incrustar en otras webs.
 configuracion:
+  moodle:
+    titulo: "Registrar la herramienta en Moodle"
+    bajada: "Datos para el administrador de Moodle (Administración del sitio → Plugins → Herramienta externa → Gestionar herramientas → «configurar una herramienta manualmente», versión LTI 1.3):"
+    url_herramienta: "URL de la herramienta"
+    url_login: "URL de inicio de sesión"
+    url_redireccion: "URI de redireccionamiento"
+    tipo_llave: "Tipo de clave pública"
+    tipo_llave_valor: "Conjunto de claves (keyset URL)"
+    url_llaves: "URL del conjunto de claves públicas"
+    url_contenido: "URL de selección de contenido"
+    opciones: "Marca «Soporta vinculación profunda (Selección de contenido)» y, en Privacidad, no es necesario compartir nombre ni correo."
+    despues: "Luego copia en el grupo «Moodle (LTI 1.3)» de arriba los datos que muestra Moodle. Para usarla, el docente agrega la actividad «Guías temáticas» al curso y elige la guía."
   wordpress:
     titulo: "Sitio web en WordPress"
     bajada: "Con el plugin «Guías temáticas UCN», el sitio de Bibliotecas (WordPress) muestra guías, bloques y recursos de esta plataforma, siempre actualizados. Solo se muestran guías públicas."
@@ -860,12 +872,14 @@ configuracion:
     biblioges: Biblioges
     ldap: Inicio de sesión con LDAP
     google: Inicio de sesión con Google
+    moodle: "Moodle (LTI 1.3)"
   grupo_ayuda:
     proxy: Prefijo o plantilla con {url} para los recursos suscritos, p. ej. https://itmsp.museknowledge.com/UCN?qurl={url}. Vacío en el panel y en el servidor = enlaces directos.
     catalogo: Primo VE para el buscador y los enlaces a los registros; la API de Ex Libris para los datos de libros por ISBN y la disponibilidad en Alma.
     biblioges: Bibliografías por carrera o asignatura para el bloque Libros. La clave se genera en Biblioges (Administración → API Keys).
     ldap: Con una dirección LDAP, el personal puede entrar con su cuenta institucional. Usa el patrón del DN o la búsqueda con cuenta de servicio.
     google: Credenciales OAuth del proyecto de Google Cloud. El dominio limita el acceso a cuentas de ese dominio (p. ej. ucn.cl).
+    moodle: "Datos que entrega el administrador de Moodle al registrar la herramienta (Administración del sitio → Plugins → Herramienta externa → Gestionar herramientas → «Detalles de configuración»)."
   ajuste:
     PROXY_URL: Dirección del proxy
     PRIMO_URL: Dirección de Primo VE
@@ -885,6 +899,11 @@ configuracion:
     GOOGLE_CLIENT_ID: ID de cliente
     GOOGLE_CLIENT_SECRET: Secreto de cliente
     GOOGLE_DOMINIO: Dominio permitido
+    LTI_ISSUER: "ID de la plataforma (issuer)"
+    LTI_CLIENT_ID: "ID de cliente"
+    LTI_DEPLOYMENT_ID: "ID de despliegue (uno o varios, separados por comas)"
+    LTI_AUTH_URL: "URL de solicitud de autenticación"
+    LTI_JWKS_URL: "URL del conjunto de claves públicas"
   opcion:
     LDAP_CIFRADO:
       none: Sin cifrado
@@ -965,3 +984,26 @@ compartir:
   copiado: "Enlace copiado."
   copiar_error: "No se pudo copiar; selecciona y copia este enlace:"
   ventana_nueva: "(se abre en una ventana nueva)"
+lti:
+  elegir:
+    titulo: "Elegir una guía temática"
+    bajada: "Elige la guía que verán los estudiantes desde esta actividad."
+    bajada_curso: "Elige la guía que verán los estudiantes de «%curso%» desde esta actividad."
+    filtrar: "Filtrar por título o materia"
+    guias: "Guías publicadas"
+    falta: "Elige una guía."
+    agregar: "Agregar al curso"
+  enviar:
+    titulo: "Agregando «%guia%» al curso…"
+    continuar: "Continuar"
+  error:
+    titulo: "No se pudo abrir la guía"
+    plataforma: "Esta plataforma no está registrada en Guías temáticas. Revisa los datos de Moodle en Administración → Integraciones."
+    sin_configurar: "La conexión con Moodle no está configurada."
+    estado: "La solicitud venció o ya se usó. Vuelve a abrir la actividad desde el curso."
+    firma: "No se pudo verificar la firma de Moodle."
+    datos: "Los datos del lanzamiento no corresponden a la plataforma registrada."
+    despliegue: "Este despliegue de la herramienta no está autorizado."
+    tipo: "Tipo de solicitud no admitido."
+    vinculo_vencido: "La elección de guía venció. Vuelve a agregar la actividad desde el curso."
+    ver_guias: "Ver las guías temáticas"

@@ -786,3 +786,16 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .compartir__icono { flex: none; }
 .compartir__estado { flex-basis: 100%; margin: 0; font-size: 0.875rem; color: var(--color-texto-secundario); overflow-wrap: anywhere; }
 .compartir__estado:empty { display: none; }
+
+/* Herramienta LTI dentro de Moodle */
+.lti { margin: 0; background: #fff; }
+.lti__contenido { max-width: 56rem; margin: 0 auto; padding: 1rem; }
+.lti__sitio { margin: 0 0 0.5rem; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-principal); }
+.lti__guias { display: grid; gap: 0.5rem; margin: 0.5rem 0 0; padding: 0; list-style: none; }
+.lti__guias > li[hidden] { display: none; }
+.lti__guia { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border: 1px solid var(--color-principal-suave); border-radius: var(--radio); cursor: pointer; }
+.lti__guia:has(input:checked) { border-color: var(--color-principal); box-shadow: inset 4px 0 0 var(--color-principal); background: var(--color-fondo-suave); }
+.lti__guia .lista-guias__icono { width: 48px; height: 48px; font-size: 1.25rem; }
+.lti__guia-texto { display: flex; flex-direction: column; gap: 0.125rem; }
+.lti__guia-descripcion { font-size: 0.9375rem; color: var(--color-texto-secundario); }
+.lti__elegir input[type="search"] { width: 100%; max-width: 24rem; padding: 0.5rem 0.75rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); }
