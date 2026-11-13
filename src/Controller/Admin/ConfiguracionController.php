@@ -11,9 +11,13 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,6 +38,36 @@ final class ConfiguracionController extends AbstractController
 
     public function __construct(private readonly Ajustes $ajustes)
     {
+    }
+
+    /**
+     * Plugin de WordPress (integraciones/wordpress/guias-ucn) en un .zip listo para subir, con la dirección de este
+     * servidor ya puesta (servidor.php).
+     */
+    #[Route('/wordpress.zip', name: 'admin_configuracion_wordpress', methods: ['GET'])]
+    public function pluginWordpress(#[Autowire('%kernel.project_dir%/integraciones/wordpress/guias-ucn')] string $origen): Response
+    {
+        $archivo = tempnam(sys_get_temp_dir(), 'guias-ucn');
+        $zip = new \ZipArchive();
+        if (false === $archivo || true !== $zip->open($archivo, \ZipArchive::OVERWRITE)) {
+            throw new \RuntimeException('No se pudo crear el paquete del plugin.');
+        }
+        $iterador = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($origen, \FilesystemIterator::SKIP_DOTS));
+        foreach ($iterador as $ruta => $info) {
+            if ($info->isFile()) {
+                $zip->addFile($ruta, 'guias-ucn/'.str_replace('\\', '/', substr($ruta, \strlen($origen) + 1)));
+            }
+        }
+        $servidor = rtrim($this->generateUrl('raiz', [], UrlGeneratorInterface::ABSOLUTE_URL), '/');
+        $zip->addFromString('guias-ucn/servidor.php', "<?php\n\n// Dirección de la plataforma de Guías temáticas desde la que se descargó el plugin.\nreturn ".var_export($servidor, true).";\n");
+        $zip->close();
+
+        $respuesta = new BinaryFileResponse($archivo);
+        $respuesta->headers->set('Content-Type', 'application/zip');
+        $respuesta->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'guias-ucn.zip');
+        $respuesta->deleteFileAfterSend();
+
+        return $respuesta;
     }
 
     #[Route('', name: 'admin_configuracion', methods: ['GET', 'POST'])]

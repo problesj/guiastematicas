@@ -143,6 +143,11 @@ final class ApiController extends AbstractController
             'url' => $this->generateUrl('guia', ['_locale' => $idioma, 'slug' => $guia->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
             'api' => $this->generateUrl('api_guia', ['slug' => $guia->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
             'actualizada' => $guia->getActualizadaEn()->format(\DATE_ATOM),
+            'icono' => null !== $guia->getIcono() ? $this->urlArchivo('uploads/guias/'.$guia->getIcono()) : null,
+            // Guía de la que esta es subguía, si es pública.
+            'principal' => null !== ($principal = $guia->getPrincipal()) && $principal->isPublicada() && !$principal->isRestringida()
+                ? ['titulo' => $principal->getTitulo(), 'slug' => $principal->getSlug()]
+                : null,
             'materias' => array_values(array_map(
                 fn (Materia $m) => ['slug' => $m->getSlug(), 'nombre' => $m->getNombreTraducido($idioma)],
                 array_filter($guia->getMaterias()->toArray(), fn (Materia $m) => $m->isActiva()),
@@ -217,6 +222,12 @@ final class ApiController extends AbstractController
             'url' => $this->generateUrl('recursos_ir', ['id' => $recurso->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             'materias' => array_values(array_map(fn (Materia $m) => $m->getSlug(), $recurso->getMaterias()->toArray())),
         ];
+    }
+
+    /** Dirección absoluta de un archivo de public/ (iconos de las guías). */
+    private function urlArchivo(string $ruta): string
+    {
+        return $this->generateUrl('raiz', [], UrlGeneratorInterface::ABSOLUTE_URL).$ruta;
     }
 
     /** @param array<string, mixed> $datos */

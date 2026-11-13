@@ -79,5 +79,46 @@ final class ConfiguracionTest extends WebTestCase
         $this->cliente->loginUser(self::crearUsuario('ana@ucn.cl', Rol::Editor));
         $this->cliente->request('GET', '/es/admin/configuracion');
         self::assertResponseStatusCodeSame(403);
+        $this->cliente->request('GET', '/es/admin/configuracion/wordpress.zip');
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testDescargaElPluginDeWordpressConLaDireccionDelServidor(): void
+    {
+        $this->cliente->loginUser(self::crearUsuario('admin@ucn.cl', Rol::Administrador));
+        $crawler = $this->cliente->request('GET', '/es/admin/configuracion');
+        self::assertSelectorExists('a[href="/es/admin/configuracion/wordpress.zip"]');
+
+        $this->cliente->request('GET', '/es/admin/configuracion/wordpress.zip');
+        $contenido = $this->cliente->getInternalResponse()->getContent();
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('guias-ucn.zip', (string) $this->cliente->getResponse()->headers->get('Content-Disposition'));
+
+        $archivo = tempnam(sys_get_temp_dir(), 'zip');
+        file_put_contents($archivo, $contenido);
+        $zip = new \ZipArchive();
+        self::assertTrue($zip->open($archivo));
+        self::assertNotFalse($zip->locateName('guias-ucn/guias-ucn.php'));
+        self::assertNotFalse($zip->locateName('guias-ucn/assets/guias-ucn.css'));
+        self::assertStringContainsString("return 'http://localhost';", (string) $zip->getFromName('guias-ucn/servidor.php'));
+        $zip->close();
+        unlink($archivo);
+    }
+
+    public function testLaApiEntregaElIconoYLaGuiaPrincipal(): void
+    {
+        $principal = (new \App\Entity\Guia())->setTitulo('Salud')->setSlug('salud');
+        $guia = (new \App\Entity\Guia())->setTitulo('Enfermería')->setSlug('enfermeria')->setIcono('icono-abc.png')->setPrincipal($principal);
+        foreach ([$principal, $guia] as $g) {
+            $g->agregarPestana((new \App\Entity\Pestana('Inicio'))->agregarSeccion(new \App\Entity\Seccion()));
+            $g->publicar();
+            self::em()->persist($g);
+        }
+        self::em()->flush();
+
+        $this->cliente->request('GET', '/api/v1/guias/enfermeria');
+        $datos = json_decode((string) $this->cliente->getResponse()->getContent(), true);
+        self::assertSame('http://localhost/uploads/guias/icono-abc.png', $datos['icono']);
+        self::assertSame(['titulo' => 'Salud', 'slug' => 'salud'], $datos['principal']);
     }
 }

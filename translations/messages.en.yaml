@@ -838,6 +838,17 @@ incrustar:
   no_publicada: Publish the guide to embed its blocks.
   no_restringida: Blocks of a restricted guide cannot be embedded in other websites.
 configuracion:
+  wordpress:
+    titulo: "WordPress website"
+    bajada: "With the «Guías temáticas UCN» plugin, the Library website (WordPress) shows guides, blocks and resources from this platform, always up to date. Only public guides are shown."
+    descargar: "Download the WordPress plugin (.zip)"
+    paso1: "In WordPress, go to Plugins → Add New → Upload Plugin, choose the downloaded file and activate it."
+    paso2: "Check Settings → Guías temáticas UCN: the package already includes this server address and should say «Connected»."
+    paso3: "Add a «Shortcode» block on the page where you want the content, with one of these codes:"
+    codigo_lista: "list of guides (all, by subject, as a list or grid)"
+    codigo_guia: "one guide with its pages"
+    codigo_bloque: "one block of a guide (the number is under «Embed» in the editor)"
+    codigo_recursos: "resources from the A-Z list"
   titulo: Integrations
   bajada: Connection details for external services. Anything left empty uses the value in the server's .env.local file. Keys are stored encrypted and are never shown again.
   guardada: Changes saved. They apply from the next page load.
