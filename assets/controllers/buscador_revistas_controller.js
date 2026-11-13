@@ -7,10 +7,10 @@ import { Controller } from '@hotwired/stimulus';
  * Nada se guarda hasta «Guardar»; las revistas que ya están en la lista aparecen marcadas y deshabilitadas.
  */
 export default class extends Controller {
-    static targets = ['texto', 'categoria', 'boton', 'estado', 'acciones', 'todos', 'agregar', 'lista', 'mas'];
+    static targets = ['texto', 'categoria', 'categorias', 'campoNivel', 'nivel', 'avisoCategorias', 'boton', 'estado', 'acciones', 'todos', 'agregar', 'lista', 'mas'];
 
     static values = {
-        url: String, buscando: String, resumen: String, vacio: String, falta: String, error: String, ya: String, agregados: String,
+        url: String, categoriasUrl: String, sinCategorias: String, buscando: String, resumen: String, vacio: String, falta: String, error: String, ya: String, agregados: String,
     };
 
     static CAMPOS = ['issn', 'eissn', 'titulo', 'editorial', 'enlace'];
@@ -18,6 +18,60 @@ export default class extends Controller {
     connect() {
         this.revistas = [];
         this.pagina = 1;
+        this.arbol = [];
+        this.cargarCategorias();
+    }
+
+    // Árbol de categorías de Primo (área → subárea → especialidad) para las listas desplegables.
+    async cargarCategorias() {
+        try {
+            const respuesta = await fetch(this.categoriasUrlValue, { headers: { Accept: 'application/json' } });
+            const datos = respuesta.ok ? await respuesta.json() : {};
+            this.arbol = datos.categorias ?? [];
+        } catch {
+            this.arbol = [];
+        }
+        if (this.arbol.length === 0) {
+            this.avisoCategoriasTarget.textContent = this.sinCategoriasValue;
+            this.avisoCategoriasTarget.hidden = false;
+            return;
+        }
+        this.llenar(0, this.arbol);
+    }
+
+    llenar(nivel, nodos) {
+        const lista = this.nivelTargets[nivel];
+        lista.replaceChildren(lista.options[0], ...nodos.map((nodo, i) => {
+            const opcion = document.createElement('option');
+            opcion.value = String(i);
+            opcion.textContent = nodo.nombre;
+            return opcion;
+        }));
+        lista.value = '';
+        lista.disabled = nodos.length === 0;
+        this.campoNivelTargets[nivel].hidden = nodos.length === 0;
+        this.nodosPorNivel = (this.nodosPorNivel ?? []).slice(0, nivel);
+        this.nodosPorNivel[nivel] = nodos;
+    }
+
+    elegirNivel(evento) {
+        const nivel = this.nivelTargets.indexOf(evento.currentTarget);
+        const elegido = this.nodo(nivel);
+        for (let siguiente = nivel + 1; siguiente < this.nivelTargets.length; siguiente++) {
+            this.llenar(siguiente, siguiente === nivel + 1 && elegido ? elegido.hijos : []);
+        }
+    }
+
+    nodo(nivel) {
+        const valor = this.nivelTargets[nivel]?.value;
+        return valor === '' || valor === undefined ? null : this.nodosPorNivel?.[nivel]?.[Number(valor)] ?? null;
+    }
+
+    // La categoría más específica elegida en las listas («Área─Subárea─Especialidad»), o null.
+    categoriaElegida() {
+        let ruta = null;
+        this.nivelTargets.forEach((_, nivel) => { ruta = this.nodo(nivel)?.ruta ?? ruta; });
+        return ruta;
     }
 
     disconnect() {
@@ -35,7 +89,7 @@ export default class extends Controller {
     }
 
     async cargar(agregarAlFinal) {
-        const parametros = { texto: this.textoTarget.value.trim(), categoria: this.categoriaTarget.value.trim(), pagina: String(this.pagina) };
+        const parametros = { texto: this.textoTarget.value.trim(), categoria: this.categoriaElegida() ?? this.categoriaTarget.value.trim(), pagina: String(this.pagina) };
         if (!parametros.texto && !parametros.categoria) {
             this.avisar(this.faltaValue);
             return;

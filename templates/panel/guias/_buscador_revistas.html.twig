@@ -1,6 +1,8 @@
 {# Bloque Revistas: buscar en la búsqueda de revistas del catálogo (Primo VE) por título y/o categoría, marcar y agregar. #}
 <section class="buscador-libros" data-controller="buscador-revistas"
          data-buscador-revistas-url-value="{{ path('panel_guias_buscar_revistas_catalogo') }}"
+         data-buscador-revistas-categorias-url-value="{{ path('panel_guias_buscar_revistas_categorias') }}"
+         data-buscador-revistas-sin-categorias-value="{{ 'bloque.buscador_revistas_sin_categorias'|trans }}"
          data-buscador-revistas-buscando-value="{{ 'bloque.buscador_buscando'|trans }}"
          data-buscador-revistas-resumen-value="{{ 'bloque.buscador_revistas_resumen'|trans }}"
          data-buscador-revistas-vacio-value="{{ 'bloque.buscador_revistas_vacio'|trans }}"
@@ -15,8 +17,25 @@
             <label for="buscador-revistas-texto">{{ 'bloque.buscador_revistas_texto'|trans }}</label>
             <input type="search" id="buscador-revistas-texto" autocomplete="off" maxlength="200" data-buscador-revistas-target="texto" data-action="keydown.enter->buscador-revistas#buscar:prevent">
         </div>
+    </div>
+    {# Categorías de revistas de Primo: área, subárea y especialidad (el árbol se carga desde Primo al abrir el editor). #}
+    <fieldset class="buscador-revistas__categorias" data-buscador-revistas-target="categorias">
+        <legend>{{ 'bloque.buscador_revistas_categorias'|trans }}</legend>
+        <div class="buscador-libros__campos">
+            {% for nivel in ['area', 'subarea', 'especialidad'] %}
+                <div class="campo" data-buscador-revistas-target="campoNivel"{% if not loop.first %} hidden{% endif %}>
+                    <label for="buscador-revistas-{{ nivel }}">{{ ('bloque.buscador_revistas_' ~ nivel)|trans }}</label>
+                    <select id="buscador-revistas-{{ nivel }}" data-buscador-revistas-target="nivel" data-action="buscador-revistas#elegirNivel" disabled>
+                        <option value="">{{ ('bloque.buscador_revistas_' ~ nivel ~ '_todas')|trans }}</option>
+                    </select>
+                </div>
+            {% endfor %}
+        </div>
+        <p class="campo__ayuda" data-buscador-revistas-target="avisoCategorias" hidden></p>
+    </fieldset>
+    <div class="buscador-libros__campos">
         <div class="campo buscador-libros__ancho">
-            <label for="buscador-revistas-categoria">{{ 'bloque.buscador_revistas_categoria'|trans }}</label>
+            <label for="buscador-revistas-categoria">{{ 'bloque.buscador_revistas_enlace'|trans }}</label>
             <input type="search" id="buscador-revistas-categoria" autocomplete="off" maxlength="1000" spellcheck="false"
                    aria-describedby="buscador-revistas-ayuda" data-buscador-revistas-target="categoria" data-action="keydown.enter->buscador-revistas#buscar:prevent">
         </div>

@@ -396,6 +396,15 @@ final class GuiaController extends AbstractController
         ]);
     }
 
+    /** Árbol de categorías de revistas de Primo (áreas, subáreas y especialidades) para el buscador del bloque Revistas. */
+    #[Route('/buscar-revistas/categorias', name: 'panel_guias_buscar_revistas_categorias', methods: ['GET'])]
+    public function categoriasRevistas(Request $request): JsonResponse
+    {
+        $arbol = $this->catalogo->categoriasRevistas($request->getLocale());
+
+        return null === $arbol ? new JsonResponse(['error' => 'sin_respuesta'], 502) : new JsonResponse(['categorias' => $arbol]);
+    }
+
     /**
      * Palabras del título y categoría de revistas. La categoría puede ser un enlace de la búsqueda de revistas de Primo
      * (…/discovery/jsearch?query=…&journals=category,Health_Biological_Sciences─Human_Anatomy_Physiology…).

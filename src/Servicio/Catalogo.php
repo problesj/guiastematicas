@@ -250,7 +250,7 @@ final class Catalogo
         $categoria = trim((string) preg_replace('/^category,/', '', trim((string) $categoria)));
         $categoria = str_replace(['--', '—', '–'], '─', $categoria);
 
-        return 1 === preg_match('/^[\p{L}\p{N}_─&,.\- ]{1,150}$/u', $categoria) ? $categoria : null;
+        return 1 === preg_match('/^[\p{L}\p{N}_─&,.\- ]{1,300}$/u', $categoria) ? $categoria : null;
     }
 
     /**
@@ -364,6 +364,84 @@ final class Catalogo
         usort($candidatos, fn (string $a, string $b) => \strlen($b) <=> \strlen($a));
 
         return $candidatos[0] ?? null;
+    }
+
+    /**
+     * Árbol de categorías de revistas de Primo VE (el mismo de «Publicaciones periódicas por categoría» en la búsqueda
+     * de revistas): áreas, subáreas y especialidades, con su nombre en el idioma pedido. Cada nodo trae la "ruta" que va
+     * en la búsqueda (journals=category,<ruta>): los códigos de cada nivel unidos por "─", p. ej.
+     * "Health_Biological_Sciences─Human_Anatomy_Physiology". Son servicios públicos de Primo (sin clave); caché de 7 días.
+     *
+     * @return list<array{ruta: string, nombre: string, hijos: list<array<string, mixed>>}>|null null si Primo no responde
+     */
+    public function categoriasRevistas(string $idioma): ?array
+    {
+        if ('' === $this->primoUrl || '' === $this->primoVid) {
+            return null;
+        }
+        $idioma = 'en' === $idioma ? 'en' : 'es';
+        $arbol = $this->cache->get('categorias-revistas-'.$idioma, function (ItemInterface $item) use ($idioma): array {
+            $item->expiresAfter(7 * 86400);
+            $base = rtrim($this->primoUrl, '/').'/primaws/rest/pub';
+            $categorias = $this->leerPublico($base.'/restDlf/categories', ['type' => 'journal', 'vid' => $this->primoVid, 'lang' => $idioma]);
+            if (!\is_array($categorias['data'] ?? null)) {
+                $item->expiresAfter(300);
+
+                return [];
+            }
+            $traducciones = $this->leerPublico($base.'/translations/'.$this->primoVid, ['lang' => $idioma]) ?? [];
+            $comparador = class_exists(\Collator::class) ? new \Collator($idioma) : null;
+
+            $nodos = function (array $grupos, string $padre) use (&$nodos, $traducciones, $comparador): array {
+                $lista = [];
+                foreach ($grupos as $grupo) {
+                    foreach ((array) ($grupo['dbcategory'] ?? []) as $categoria) {
+                        $clave = (string) ($categoria['name'] ?? '');
+                        if (1 !== preg_match('/^nui\.journalsearch\.category\.lvl\d\.([\w&.,\-]{1,100})$/u', $clave, $m)) {
+                            continue;
+                        }
+                        $ruta = ('' === $padre ? '' : $padre.'─').$m[1];
+                        $nombre = \is_string($traducciones[$clave] ?? null) && '' !== trim($traducciones[$clave])
+                            ? trim((string) preg_replace('/\s+,/', ',', $traducciones[$clave]))
+                            : str_replace('_', ' ', $m[1]);
+                        $lista[] = ['ruta' => $ruta, 'nombre' => $nombre, 'hijos' => $nodos((array) ($categoria['dbcategories'] ?? []), $ruta)];
+                    }
+                }
+                usort($lista, fn (array $a, array $b) => null !== $comparador ? $comparador->compare($a['nombre'], $b['nombre']) : strnatcasecmp($a['nombre'], $b['nombre']));
+
+                return $lista;
+            };
+
+            return $nodos([$categorias['data']], '');
+        });
+
+        return [] === $arbol ? null : $arbol;
+    }
+
+    /**
+     * JSON de un servicio público de Primo VE (sin clave).
+     *
+     * @param array<string, string> $parametros
+     *
+     * @return array<mixed>|null
+     */
+    private function leerPublico(string $url, array $parametros): ?array
+    {
+        try {
+            $respuesta = $this->http->request('GET', $url, [
+                'query' => $parametros,
+                'headers' => ['Accept' => 'application/json'],
+                'timeout' => self::ESPERA,
+                'max_duration' => self::ESPERA * 2,
+            ]);
+            $datos = 200 === $respuesta->getStatusCode() ? json_decode($respuesta->getContent(false), true) : null;
+
+            return \is_array($datos) ? $datos : null;
+        } catch (\Throwable $e) {
+            $this->logger->warning('Primo no respondió a {url}: {error}', ['url' => $url, 'error' => $e::class]);
+
+            return null;
+        }
     }
 
     /** Búsqueda de revistas de Primo VE (de ahí se copia el enlace de una categoría para el bloque Revistas). */

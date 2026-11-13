@@ -149,6 +149,22 @@ final class BloqueRevistasTest extends WebTestCase
         self::assertSame('no_encontrado', $this->json('/es/panel/guias/datos-revista?issn=2049-3630', 404)['error']);
     }
 
+    public function testEntregaElArbolDeCategoriasDeRevistasDePrimo(): void
+    {
+        $arbol = $this->json('/es/panel/guias/buscar-revistas/categorias')['categorias'];
+        // Ordenadas por nombre; la ruta une los códigos de cada nivel con "─", como en journals=category,<ruta>.
+        self::assertSame(['Ciencias de la salud y biológicas', 'Economía y empresa'], array_column($arbol, 'nombre'));
+        self::assertSame(['Anatomía humana y fisiología', 'Biología'], array_column($arbol[0]['hijos'], 'nombre'));
+        self::assertSame('Health_Biological_Sciences─Human_Anatomy_Physiology', $arbol[0]['hijos'][0]['ruta']);
+        $biologia = $arbol[0]['hijos'][1];
+        // Sin traducción, el código con espacios.
+        self::assertSame(['Botánica', 'Microbiology'], array_column($biologia['hijos'], 'nombre'));
+        self::assertSame('Health_Biological_Sciences─Biology─Microbiology', $biologia['hijos'][1]['ruta']);
+
+        $datos = $this->json('/es/panel/guias/buscar-revistas/catalogo?categoria='.rawurlencode('Health_Biological_Sciences─Human_Anatomy_Physiology'));
+        self::assertSame(925, $datos['total']);
+    }
+
     public function testBuscaRevistasPorTituloCategoriaOEnlaceDePrimo(): void
     {
         $datos = $this->json('/es/panel/guias/buscar-revistas/catalogo?texto=biomechanics');

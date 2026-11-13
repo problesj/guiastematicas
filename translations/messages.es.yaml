@@ -727,8 +727,16 @@ bloque:
   revista_acceso: Acceder
   buscador_revistas_titulo: Buscar revistas en el catálogo
   buscador_revistas_texto: Palabras del título
-  buscador_revistas_categoria: Categoría o enlace de la búsqueda de revistas de Primo
-  buscador_revistas_ayuda: "Escribe palabras del título, una categoría (p. ej. Health_Biological_Sciences─Human_Anatomy_Physiology) o pega el enlace de una búsqueda de revistas de Primo después de elegir la categoría y los filtros; se pueden combinar."
+  buscador_revistas_categorias: Categoría de Primo (opcional)
+  buscador_revistas_area: Área
+  buscador_revistas_area_todas: Todas las áreas
+  buscador_revistas_subarea: Subárea
+  buscador_revistas_subarea_todas: Toda el área
+  buscador_revistas_especialidad: Especialidad
+  buscador_revistas_especialidad_todas: Toda la subárea
+  buscador_revistas_sin_categorias: No se pudieron cargar las categorías desde Primo; puedes pegar el enlace de una búsqueda de revistas de Primo.
+  buscador_revistas_enlace: O pega el enlace de una búsqueda de revistas de Primo
+  buscador_revistas_ayuda: "Elige una categoría (las mismas de «Publicaciones periódicas por categoría» de Primo), escribe palabras del título o ambas cosas. También puedes pegar el enlace de una búsqueda de revistas hecha en Primo."
   buscador_revistas_abrir: Abrir la búsqueda de revistas de Primo
   buscador_revistas_resumen: "%mostrados% de %total% revistas. Marca las que quieres agregar."
   buscador_revistas_vacio: No se encontraron revistas con esos datos.

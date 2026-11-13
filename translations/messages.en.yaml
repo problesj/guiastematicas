@@ -727,8 +727,16 @@ bloque:
   revista_acceso: Access
   buscador_revistas_titulo: Search journals in the catalogue
   buscador_revistas_texto: Title words
-  buscador_revistas_categoria: Category or link to a Primo journal search
-  buscador_revistas_ayuda: "Enter title words, a category (e.g. Health_Biological_Sciences─Human_Anatomy_Physiology) or paste the link of a Primo journal search after choosing the category and filters; they can be combined."
+  buscador_revistas_categorias: Primo category (optional)
+  buscador_revistas_area: Area
+  buscador_revistas_area_todas: All areas
+  buscador_revistas_subarea: Sub-area
+  buscador_revistas_subarea_todas: The whole area
+  buscador_revistas_especialidad: Specialty
+  buscador_revistas_especialidad_todas: The whole sub-area
+  buscador_revistas_sin_categorias: The categories could not be loaded from Primo; you can paste the link of a Primo journal search.
+  buscador_revistas_enlace: Or paste the link of a Primo journal search
+  buscador_revistas_ayuda: "Choose a category (the same as Primo's \"Journals by category\"), enter title words, or both. You can also paste the link of a journal search made in Primo."
   buscador_revistas_abrir: Open Primo's journal search
   buscador_revistas_resumen: "%mostrados% of %total% journals. Select the ones you want to add."
   buscador_revistas_vacio: No journals were found with those details.

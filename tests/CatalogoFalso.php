@@ -71,6 +71,29 @@ final class CatalogoFalso
             return new MockResponse(json_encode(['info' => ['total' => \count($docs)], 'docs' => $docs]));
         }
 
+        // Servicios públicos de Primo VE: árbol de categorías de revistas y traducciones de la vista.
+        if (str_starts_with($url, 'https://primo.ejemplo.cl/primaws/rest/pub/restDlf/categories')) {
+            $hoja = fn (string $nivel, string $codigo, array $hijos = []) => ['name' => 'nui.journalsearch.category.'.$nivel.'.'.$codigo, 'dbcategories' => $hijos];
+
+            return new MockResponse(json_encode(['status' => 'ok', 'data' => ['dbcategory' => [
+                $hoja('lvl1', 'Health_Biological_Sciences', [['dbcategory' => [
+                    $hoja('lvl2', 'Human_Anatomy_Physiology'),
+                    $hoja('lvl2', 'Biology', [['dbcategory' => [$hoja('lvl3', 'Microbiology'), $hoja('lvl3', 'Botany')]]]),
+                ]]]),
+                $hoja('lvl1', 'Business_Economics'),
+            ]]]));
+        }
+        if (str_starts_with($url, 'https://primo.ejemplo.cl/primaws/rest/pub/translations/')) {
+            return new MockResponse(json_encode([
+                'nui.journalsearch.category.lvl1.Health_Biological_Sciences' => 'Ciencias de la salud y biológicas',
+                'nui.journalsearch.category.lvl1.Business_Economics' => 'Economía y empresa',
+                'nui.journalsearch.category.lvl2.Human_Anatomy_Physiology' => 'Anatomía humana y fisiología',
+                'nui.journalsearch.category.lvl2.Biology' => 'Biología',
+                'nui.journalsearch.category.lvl3.Botany' => 'Botánica',
+                'otra.clave' => 'Otra cosa',
+            ], \JSON_UNESCAPED_UNICODE));
+        }
+
         if (str_contains($url, '/almaws/v1/bibs')) {
             $bibs = [];
             foreach (explode(',', (string) ($query['mms_id'] ?? '')) as $mms) {
