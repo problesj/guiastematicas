@@ -32,6 +32,9 @@ final class CatalogoFalso
 
             // Búsqueda de revistas (pestaña jsearch_slot): por ISSN, por palabras del título y/o por categoría.
             if ('jsearch_slot' === ($query['tab'] ?? null)) {
+                if ('category,Categoria_Mala' === ($query['journals'] ?? null)) {
+                    return new MockResponse('{"errorsExist":true,"errorList":{"error":[{"errorCode":"INVALID_PARAMETER","errorMessage":"Invalid journals parameter"}]}}', ['http_code' => 400]);
+                }
                 $docs = self::revistas((string) ($query['q'] ?? ''), (string) ($query['journals'] ?? ''));
 
                 return new MockResponse(json_encode(['info' => ['total' => 'any,contains,*' === ($query['q'] ?? '') ? 925 : \count($docs)], 'docs' => $docs]));
@@ -139,8 +142,9 @@ final class CatalogoFalso
         $anatomia = $revista('99641303307937', 'Annals of anatomy', 'Jena : Elsevier', ['0940-9602']);
 
         return match (true) {
-            'issn,exact,0021-9290' === $q, 'issn,exact,1873-2380' === $q => [$biomecanica],
-            'title,contains,biomechanics' === $q => [$biomecanica],
+            // Por el e-ISSN, "issn,exact" no la encuentra pero "any,contains" sí.
+            'issn,exact,0021-9290' === $q, 'any,contains,1873-2380' === $q => [$biomecanica],
+            'any,contains,biomechanics' === $q => [$biomecanica],
             'any,contains,*' === $q && 'category,Health_Biological_Sciences─Human_Anatomy_Physiology' === $journals => [$anatomia, $biomecanica],
             default => [],
         };

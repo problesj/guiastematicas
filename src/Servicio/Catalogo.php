@@ -152,8 +152,17 @@ final class Catalogo
         return $resultado;
     }
 
+    /** Último error de la búsqueda de revistas (código HTTP y mensaje de Primo, sin la clave), para mostrarlo al editor. */
+    private ?string $errorRevistas = null;
+
+    public function errorRevistas(): ?string
+    {
+        return $this->errorRevistas;
+    }
+
     /**
-     * Revista del catálogo por ISSN (búsqueda de revistas de Primo VE), con caché de un día.
+     * Revista del catálogo por ISSN (búsqueda de revistas de Primo VE), con caché de un día. Primero con
+     * "issn,exact"; si Primo no la encuentra así, con "any,contains" y el ISSN, quedándose con la que lo tenga.
      *
      * @return array{titulo: string, issn: ?string, eissn: ?string, editorial: ?string, registro: string, mms: ?string}|null
      */
@@ -165,22 +174,18 @@ final class Catalogo
         }
         $revista = $this->cache->get('issn-'.$issn, function (ItemInterface $item) use ($issn): array {
             $item->expiresAfter(86400);
-            $respuesta = $this->consultar('/primo/v1/search', [
-                'vid' => $this->primoVid,
-                'tab' => 'jsearch_slot',
-                'scope' => 'MyInst_and_CI',
-                'q' => 'issn,exact,'.$issn,
-                'limit' => 5,
-                'apikey' => $this->primoClave,
-            ]);
-            if (!\is_array($respuesta['docs'] ?? null)) {
-                $item->expiresAfter(60);
+            foreach (['issn,exact,'.$issn, 'any,contains,'.$issn] as $q) {
+                $respuesta = $this->consultarRevistas(['q' => $q, 'offset' => 0, 'limit' => 10]);
+                if (null === $respuesta) {
+                    $item->expiresAfter(60);
 
-                return [];
-            }
-            foreach ($respuesta['docs'] as $doc) {
-                if (\is_array($doc) && [] !== $revista = self::datosDeRevista($doc)) {
-                    return $revista;
+                    return [];
+                }
+                foreach ($respuesta['docs'] as $doc) {
+                    $revista = \is_array($doc) ? self::datosDeRevista($doc) : [];
+                    if ([] !== $revista && \in_array($issn, [$revista['issn'], $revista['eissn']], true)) {
+                        return $revista;
+                    }
                 }
             }
 
@@ -191,39 +196,33 @@ final class Catalogo
     }
 
     /**
-     * Revistas del catálogo (búsqueda de revistas de Primo VE) por palabras del título y/o por categoría (las del sitio
-     * «Revistas» de Primo, p. ej. "Health_Biological_Sciences─Human_Anatomy_Physiology"), ordenadas por título.
+     * Revistas del catálogo (búsqueda de revistas de Primo VE, pestaña jsearch_slot) por palabras del título y/o por
+     * categoría (las del sitio «Revistas» de Primo, p. ej. "Health_Biological_Sciences─Human_Anatomy_Physiology"),
+     * ordenadas por título. La categoría va en el parámetro "journals=category,<categoría>", como en la búsqueda de
+     * revistas de Primo; sin palabras, la consulta es "any,contains,*".
      *
      * @return array{total: int, revistas: list<array{titulo: string, issn: ?string, eissn: ?string, editorial: ?string, registro: string, mms: ?string}>}|null null si no hay criterios o el catálogo no responde
      */
     public function buscarRevistas(?string $texto, ?string $categoria, int $desde = 0, int $cantidad = 20): ?array
     {
+        $this->errorRevistas = null;
         $texto = self::criterio($texto);
-        $categoria = trim((string) preg_replace('/^category,/', '', trim((string) $categoria)));
-        $categoria = 1 === preg_match('/^[\p{L}\p{N}_─&,.\- ]{1,150}$/u', $categoria) ? $categoria : null;
+        $categoria = self::categoriaRevistas($categoria);
         if (!$this->buscaPorIsbn() || (null === $texto && null === $categoria)) {
             return null;
         }
-        $desde = max(0, min($desde, 1980));
         $parametros = [
-            'vid' => $this->primoVid,
-            'tab' => 'jsearch_slot',
-            'scope' => 'MyInst_and_CI',
-            'q' => null !== $texto ? 'title,contains,'.$texto : 'any,contains,*',
-            'sort' => 'title',
-            'offset' => $desde,
+            'q' => null !== $texto ? 'any,contains,'.$texto : 'any,contains,*',
+            'offset' => max(0, min($desde, 1980)),
             'limit' => $cantidad,
-            'apikey' => $this->primoClave,
+            'journals' => null !== $categoria ? 'category,'.$categoria : null,
         ];
-        if (null !== $categoria) {
-            $parametros['journals'] = 'category,'.$categoria;
-        }
 
-        $resultado = $this->cache->get('revistas-'.md5(json_encode([$texto, $categoria, $desde, $cantidad])), function (ItemInterface $item) use ($parametros): array {
+        $resultado = $this->cache->get('revistas-'.md5(json_encode($parametros)), function (ItemInterface $item) use ($parametros): array {
             $item->expiresAfter(3600);
-            $respuesta = $this->consultar('/primo/v1/search', $parametros);
-            if (!\is_array($respuesta['docs'] ?? null)) {
-                $item->expiresAfter(60);
+            $respuesta = $this->consultarRevistas($parametros + ['sort' => 'title']) ?? $this->consultarRevistas($parametros);
+            if (null === $respuesta) {
+                $item->expiresAfter(0);
 
                 return [];
             }
@@ -235,10 +234,71 @@ final class Catalogo
                 }
             }
 
-            return ['total' => (int) ($respuesta['info']['total'] ?? \count($revistas)), 'revistas' => $revistas];
+            return ['total' => $respuesta['total'], 'revistas' => $revistas];
         });
 
         return [] === $resultado ? null : $resultado;
+    }
+
+    /**
+     * Categoría de revistas de Primo: el nombre tal cual ("Health_Biological_Sciences─Human_Anatomy_Physiology"), con
+     * o sin "category,". Se aceptan el guion largo "─" (U+2500) que separa la categoría de la subcategoría o, por si se
+     * escribe a mano, "--" o "—".
+     */
+    public static function categoriaRevistas(?string $categoria): ?string
+    {
+        $categoria = trim((string) preg_replace('/^category,/', '', trim((string) $categoria)));
+        $categoria = str_replace(['--', '—', '–'], '─', $categoria);
+
+        return 1 === preg_match('/^[\p{L}\p{N}_─&,.\- ]{1,150}$/u', $categoria) ? $categoria : null;
+    }
+
+    /**
+     * Consulta la búsqueda de revistas de Primo VE (GET /primo/v1/search con tab=jsearch_slot). La dirección se arma
+     * a mano para que las comas de "q" y "journals" vayan tal cual, como en la búsqueda de revistas de Primo.
+     *
+     * @param array<string, string|int|null> $parametros q, offset, limit, journals y sort
+     *
+     * @return array{total: int, docs: list<mixed>}|null null si Primo no responde o responde con error (queda en errorRevistas())
+     */
+    private function consultarRevistas(array $parametros): ?array
+    {
+        $consulta = array_filter([
+            'vid' => $this->primoVid,
+            'tab' => 'jsearch_slot',
+            'scope' => 'MyInst_and_CI',
+            'lang' => 'es',
+            ...$parametros,
+        ], fn ($v) => null !== $v && '' !== $v);
+        $url = rtrim($this->apiUrl, '/').'/primo/v1/search?'
+            .strtr(http_build_query($consulta, '', '&', \PHP_QUERY_RFC3986), ['%2C' => ',', '%3A' => ':', '%2A' => '*'])
+            .'&apikey='.rawurlencode($this->primoClave);
+        try {
+            $respuesta = $this->http->request('GET', $url, [
+                'headers' => ['Accept' => 'application/json'],
+                'timeout' => self::ESPERA,
+                'max_duration' => self::ESPERA * 2,
+            ]);
+            $codigo = $respuesta->getStatusCode();
+            $datos = json_decode($respuesta->getContent(false), true);
+        } catch (\Throwable $e) {
+            $this->errorRevistas = $e::class;
+            $this->logger->warning('La búsqueda de revistas de Primo no respondió: {error}', ['error' => $e::class]);
+
+            return null;
+        }
+        if (200 !== $codigo || !\is_array($datos) || !\is_array($datos['docs'] ?? null)) {
+            $mensaje = \is_array($datos) ? ($datos['errorList']['error'][0]['errorMessage'] ?? $datos['errorList']['error']['errorMessage'] ?? null) : null;
+            $this->errorRevistas = trim('HTTP '.$codigo.' '.(\is_string($mensaje) ? mb_substr($mensaje, 0, 200) : ''));
+            $this->logger->warning('La búsqueda de revistas de Primo respondió con error: {error} (consulta {consulta})', [
+                'error' => $this->errorRevistas,
+                'consulta' => json_encode(array_diff_key($consulta, ['apikey' => true]), \JSON_UNESCAPED_UNICODE),
+            ]);
+
+            return null;
+        }
+
+        return ['total' => (int) ($datos['info']['total'] ?? \count($datos['docs'])), 'docs' => $datos['docs']];
     }
 
     /**
