@@ -40,4 +40,21 @@
             <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
         </div>
     {{ form_end(formulario) }}
+
+    <section class="configuracion__grupo integracion" aria-labelledby="titulo-wordpress">
+        <h2 id="titulo-wordpress">{{ 'configuracion.wordpress.titulo'|trans }}</h2>
+        <p>{{ 'configuracion.wordpress.bajada'|trans }}</p>
+        <p><a class="boton boton--secundario" href="{{ path('admin_configuracion_wordpress') }}" download>{{ 'configuracion.wordpress.descargar'|trans }}</a></p>
+        <ol>
+            <li>{{ 'configuracion.wordpress.paso1'|trans }}</li>
+            <li>{{ 'configuracion.wordpress.paso2'|trans }}</li>
+            <li>{{ 'configuracion.wordpress.paso3'|trans }}</li>
+        </ol>
+        <ul class="integracion__codigos">
+            <li><code>[guias_ucn materia="medicina" vista="cuadricula"]</code> {{ 'configuracion.wordpress.codigo_lista'|trans }}</li>
+            <li><code>[guia_ucn slug="ingenieria"]</code> {{ 'configuracion.wordpress.codigo_guia'|trans }}</li>
+            <li><code>[guia_ucn_bloque id="12"]</code> {{ 'configuracion.wordpress.codigo_bloque'|trans }}</li>
+            <li><code>[recursos_ucn materia="medicina" limite="10"]</code> {{ 'configuracion.wordpress.codigo_recursos'|trans }}</li>
+        </ul>
+    </section>
 {% endblock %}

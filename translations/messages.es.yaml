@@ -838,6 +838,17 @@ incrustar:
   no_publicada: Publica la guía para poder incrustar sus bloques.
   no_restringida: Los bloques de una guía restringida no se pueden incrustar en otras webs.
 configuracion:
+  wordpress:
+    titulo: "Sitio web en WordPress"
+    bajada: "Con el plugin «Guías temáticas UCN», el sitio de Bibliotecas (WordPress) muestra guías, bloques y recursos de esta plataforma, siempre actualizados. Solo se muestran guías públicas."
+    descargar: "Descargar el plugin de WordPress (.zip)"
+    paso1: "En WordPress, entra a Plugins → Añadir nuevo → Subir plugin, elige el archivo descargado y actívalo."
+    paso2: "Revisa Ajustes → Guías temáticas UCN: el paquete ya trae la dirección de este servidor y debe decir «Conectado»."
+    paso3: "Agrega un bloque «Código corto» (Shortcode) en la página donde quieras mostrar el contenido, con uno de estos códigos:"
+    codigo_lista: "lista de guías (todas, por materia, en lista o cuadrícula)"
+    codigo_guia: "una guía con sus páginas"
+    codigo_bloque: "un bloque de una guía (el número está en «Incrustar» del editor)"
+    codigo_recursos: "recursos de la lista A-Z"
   titulo: Integraciones
   bajada: Datos de conexión con los servicios externos. Lo que dejes vacío usa lo definido en el archivo .env.local del servidor. Las claves se guardan cifradas y no se vuelven a mostrar.
   guardada: Los cambios se guardaron. Rigen desde la próxima página que se cargue.

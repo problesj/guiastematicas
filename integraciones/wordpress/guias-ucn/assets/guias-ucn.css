@@ -1,0 +1,17 @@
+/* Guías temáticas UCN: estilos mínimos; heredan la tipografía y los colores del tema de WordPress. */
+.guias-ucn { margin: 1em 0; padding: 0; list-style: none; display: grid; gap: 1em; }
+.guias-ucn__guia { display: flex; gap: 1em; align-items: flex-start; margin: 0; padding: 1em 1.25em; border: 1px solid #e2d3c3; border-left: 4px solid #9a602c; border-radius: 6px; background: #fff; }
+.guias-ucn__icono { flex: none; width: 64px; height: 64px; object-fit: cover; border-radius: 6px; }
+.guias-ucn__icono--vacio { display: inline-flex; align-items: center; justify-content: center; font-size: 1.75em; font-weight: 700; color: #fff; background: #9a602c; }
+.guias-ucn__texto { flex: 1; min-width: 0; }
+.guias-ucn__titulo { margin: 0; font-size: 1.15em; line-height: 1.3; }
+.guias-ucn__texto p { margin: 0.35em 0 0; }
+.guias-ucn__parte, .guias-ucn__materias { font-size: 0.9em; opacity: 0.85; }
+.guias-ucn--cuadricula { grid-template-columns: repeat(auto-fill, minmax(14em, 1fr)); }
+.guias-ucn--cuadricula .guias-ucn__guia { flex-direction: column; align-items: center; text-align: center; border-left-width: 1px; border-top: 4px solid #9a602c; }
+.guias-ucn--cuadricula .guias-ucn__icono { width: 96px; height: 96px; }
+.guias-ucn__pestanas ul { display: flex; flex-wrap: wrap; gap: 0.5em 1.25em; margin: 0.5em 0 1em; padding: 0; list-style: none; }
+.guias-ucn-recursos { margin: 1em 0; padding-left: 1.25em; }
+.guias-ucn-recursos li { margin: 0.35em 0; }
+.guias-ucn-recursos__descripcion { font-size: 0.9em; opacity: 0.85; }
+.guias-ucn-error { padding: 0.5em 0.75em; border-left: 4px solid #b32d2e; background: #fcf0f1; }
