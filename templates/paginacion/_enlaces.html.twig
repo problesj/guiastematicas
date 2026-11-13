@@ -1,6 +1,6 @@
-{# Enlaces a las páginas. Parámetros: pagina (App\Paginacion\Pagina), ruta. Conserva filtros y cantidad por página. #}
+{# Enlaces a las páginas. Parámetros: pagina (App\Paginacion\Pagina), ruta y, opcional, parametros de la ruta. Conserva filtros y cantidad por página. #}
 {% if pagina.paginas > 1 %}
-    {% set consulta = app.request.query.all|filter((v, k) => k != 'pagina' and v is not iterable) %}
+    {% set consulta = (parametros|default({}))|merge(app.request.query.all|filter((v, k) => k != 'pagina' and v is not iterable)) %}
     <nav class="paginacion" aria-label="{{ 'paginacion.etiqueta'|trans }}">
         <ul>
             <li>

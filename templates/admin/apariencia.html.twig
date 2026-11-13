@@ -40,6 +40,15 @@
             {{ form_row(formulario.VISTA_GUIAS) }}
         </fieldset>
         <fieldset class="configuracion__grupo">
+            <legend>{{ 'apariencia.grupo.accesos'|trans }}</legend>
+            <p class="campo__ayuda">{{ 'apariencia.accesos_ayuda'|trans }}</p>
+            <div class="formulario__columnas">
+                {{ form_row(formulario.VISTA_BASE_DATOS) }}
+                {{ form_row(formulario.VISTA_LIBROS) }}
+                {{ form_row(formulario.VISTA_REVISTAS) }}
+            </div>
+        </fieldset>
+        <fieldset class="configuracion__grupo">
             <legend>{{ 'apariencia.grupo.colores'|trans }}</legend>
             <p class="campo__ayuda">{{ 'apariencia.colores_ayuda'|trans }}</p>
             <div class="formulario__columnas">

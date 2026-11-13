@@ -59,6 +59,8 @@
                 <nav class="menu" aria-label="{{ 'menu.principal'|trans }}">
                     <a href="{{ path('guias') }}">{{ 'menu.guias'|trans }}</a>
                     <a href="{{ path('recursos') }}">{{ 'menu.bases_datos'|trans }}</a>
+                    {% for acceso in sitio_accesos_recursos() %}<a href="{{ path('recursos_vista', {vista: acceso.slug}) }}">{{ ('recursos_vista.' ~ acceso.tipo ~ '.menu')|trans }}</a>
+                    {% endfor %}
                     <a href="{{ path('personal') }}">{{ 'menu.personal'|trans }}</a>
                 </nav>
             </div>

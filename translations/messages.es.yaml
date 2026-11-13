@@ -215,6 +215,7 @@ tipo_acceso:
   abierto: Acceso abierto
   prueba: En prueba
 bases:
+  listado: Listado
   titulo: Recursos bibliográficos A-Z
   bajada: Bases de datos, revistas, libros electrónicos, normas y otros recursos suscritos por Bibliotecas UCN o de acceso abierto.
   indice: Índice alfabético
@@ -925,12 +926,18 @@ apariencia:
   portada_actual: Imagen actual de la portada
   quitar_imagen_portada: Quitar la imagen (usar un degradado con los colores del sitio)
   restablecer: Volver a los colores del tema base (fondos y textos)
+  accesos_ayuda: "Cada acceso aparece en el menú principal con la lista A-Z de ese tipo (sin el filtro de tipo). En cuadrícula, cada recurso se muestra con el icono de su tipo."
+  acceso:
+    deshabilitado: "Deshabilitado"
+    lista: "Lista"
+    cuadricula: "Cuadrícula"
   vista_guias:
     lista: "Lista: una guía por fila, con descripción"
     cuadricula: "Cuadrícula: tarjetas con el icono grande"
     carrusel: "Carrusel: una fila de tarjetas que se desplaza"
   colores_ayuda: Para que el sitio cumpla con WCAG 2.1 AA, cada texto debe tener un contraste de al menos 4,5:1 con su fondo; si no, no se guarda. Si cambias un fondo, revisa también el color del texto que va encima.
   grupo:
+    accesos: "Accesos a recursos"
     guias: Guías por materia
     nombre: Nombre del sitio
     logo: Logo
@@ -1007,3 +1014,16 @@ lti:
     tipo: "Tipo de solicitud no admitido."
     vinculo_vencido: "La elección de guía venció. Vuelve a agregar la actividad desde el curso."
     ver_guias: "Ver las guías temáticas"
+recursos_vista:
+  base_datos:
+    menu: "Bases de datos"
+    titulo: "Bases de datos A-Z"
+    bajada: "Bases de datos suscritas por Bibliotecas UCN o de acceso abierto, por orden alfabético."
+  libros:
+    menu: "Libros"
+    titulo: "Libros A-Z"
+    bajada: "Libros electrónicos y libros recomendados en las guías, por orden alfabético."
+  revistas:
+    menu: "Revistas"
+    titulo: "Revistas A-Z"
+    bajada: "Revistas electrónicas suscritas por Bibliotecas UCN o de acceso abierto, por orden alfabético."

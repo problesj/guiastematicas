@@ -56,6 +56,18 @@ final class Apariencia
     /** Presentaciones de la lista pública de guías por materia (la primera es la predeterminada). */
     public const array VISTAS_GUIAS = ['lista', 'cuadricula', 'carrusel'];
 
+    /**
+     * Accesos propios a la lista de recursos de un solo tipo (Administración → Apariencia): tipo → [ajuste, dirección].
+     * Cada uno puede estar deshabilitado (sin valor) o mostrarse como lista o cuadrícula.
+     */
+    public const array ACCESOS_RECURSOS = [
+        'base_datos' => ['VISTA_BASE_DATOS', 'bases-de-datos'],
+        'libros' => ['VISTA_LIBROS', 'libros'],
+        'revistas' => ['VISTA_REVISTAS', 'revistas'],
+    ];
+
+    public const array VISTAS_RECURSOS = ['lista', 'cuadricula'];
+
     public function __construct(
         private readonly Ajustes $ajustes,
         private readonly TranslatorInterface $traductor,
@@ -82,6 +94,33 @@ final class Apariencia
         $vista = $this->ajustes->valor('VISTA_GUIAS');
 
         return \in_array($vista, self::VISTAS_GUIAS, true) ? $vista : self::VISTAS_GUIAS[0];
+    }
+
+    /**
+     * Accesos habilitados, en el orden de ACCESOS_RECURSOS.
+     *
+     * @return list<array{tipo: string, slug: string, vista: string}>
+     */
+    #[AsTwigFunction('sitio_accesos_recursos')]
+    public function accesosRecursos(): array
+    {
+        $accesos = [];
+        foreach (self::ACCESOS_RECURSOS as $tipo => [$clave, $slug]) {
+            if (null !== $vista = $this->vistaRecursos($tipo)) {
+                $accesos[] = ['tipo' => $tipo, 'slug' => $slug, 'vista' => $vista];
+            }
+        }
+
+        return $accesos;
+    }
+
+    /** Presentación del acceso a un tipo de recurso (lista o cuadricula), o null si está deshabilitado. */
+    public function vistaRecursos(string $tipo): ?string
+    {
+        $clave = self::ACCESOS_RECURSOS[$tipo][0] ?? null;
+        $vista = null !== $clave ? $this->ajustes->valor($clave) : null;
+
+        return \in_array($vista, self::VISTAS_RECURSOS, true) ? $vista : null;
     }
 
     #[AsTwigFunction('sitio_institucion')]

@@ -1,25 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'bases.titulo'|trans }}{% endblock %}
+{% set titulo = tipo_fijo ? ('recursos_vista.' ~ tipo_fijo.value ~ '.titulo')|trans : 'bases.titulo'|trans %}
+{% block title %}{{ titulo }}{% endblock %}
 
 {% block body %}
     {% set idioma = app.request.locale %}
     <section class="contenedor pagina">
-        <h1>{{ 'bases.titulo'|trans }}</h1>
-        <p class="pagina__bajada">{{ 'bases.bajada'|trans }}</p>
+        <h1>{{ titulo }}</h1>
+        <p class="pagina__bajada">{{ (tipo_fijo ? 'recursos_vista.' ~ tipo_fijo.value ~ '.bajada' : 'bases.bajada')|trans }}</p>
 
         <nav class="indice-az" aria-label="{{ 'bases.indice'|trans }}">
-            <a href="{{ path('recursos') }}" {% if filtro.letra is null %}aria-current="page"{% endif %}>{{ 'bases.todas'|trans }}</a>
+            <a href="{{ path(ruta, ruta_parametros) }}" {% if filtro.letra is null %}aria-current="page"{% endif %}>{{ 'bases.todas'|trans }}</a>
             {% for letra in ['#']|merge(range('A', 'Z')) %}
                 {% if letra in letras %}
-                    <a href="{{ path('recursos', {letra: letra}) }}" {% if filtro.letra == letra %}aria-current="page"{% endif %}>{{ letra }}</a>
+                    <a href="{{ path(ruta, ruta_parametros|merge({letra: letra})) }}" {% if filtro.letra == letra %}aria-current="page"{% endif %}>{{ letra }}</a>
                 {% else %}
                     <span aria-hidden="true">{{ letra }}</span>
                 {% endif %}
             {% endfor %}
         </nav>
 
-        <form method="get" action="{{ path('recursos') }}" class="filtros" role="search">
+        <form method="get" action="{{ path(ruta, ruta_parametros) }}" class="filtros" role="search">
             <div class="campo filtros__texto">
                 <label for="q">{{ 'bases.buscar'|trans }}</label>
                 <input type="search" id="q" name="q" value="{{ filtro.q }}" placeholder="{{ 'bases.buscar_placeholder'|trans }}">
@@ -33,6 +34,7 @@
                     {% endfor %}
                 </select>
             </div>
+            {% if not tipo_fijo %}
             <div class="campo">
                 <label for="tipo">{{ 'bases.tipo'|trans }}</label>
                 <select id="tipo" name="tipo">
@@ -42,6 +44,7 @@
                     {% endfor %}
                 </select>
             </div>
+            {% endif %}
             <div class="campo">
                 <label for="acceso">{{ 'bases.acceso'|trans }}</label>
                 <select id="acceso" name="acceso">
@@ -54,7 +57,7 @@
             {% if filtro.letra %}<input type="hidden" name="letra" value="{{ filtro.letra }}">{% endif %}
             <div class="filtros__acciones">
                 <button type="submit" class="boton">{{ 'bases.filtrar'|trans }}</button>
-                {% if hay_filtros %}<a href="{{ path('recursos') }}">{{ 'bases.limpiar'|trans }}</a>{% endif %}
+                {% if hay_filtros %}<a href="{{ path(ruta, ruta_parametros) }}">{{ 'bases.limpiar'|trans }}</a>{% endif %}
             </div>
         </form>
 
@@ -62,12 +65,19 @@
         {% if pagina.total > 0 %}{% include 'paginacion/_cantidad.html.twig' %}{% endif %}
         <p id="aviso-ventana-nueva" class="solo-lectores">{{ 'bases.ventana_nueva'|trans }}</p>
 
+        {# En cuadrícula, una sola grilla en orden alfabético (el índice A-Z sigue filtrando por letra). #}
+        {% if presentacion == 'cuadricula' and grupos is not empty %}
+            {% set todos = [] %}
+            {% for recursos in grupos %}{% set todos = todos|merge(recursos) %}{% endfor %}
+            {% set grupos = {'': todos} %}
+        {% endif %}
         {% for letra, recursos in grupos %}
             <section class="grupo-az" aria-labelledby="letra-{{ loop.index }}">
-                <h2 id="letra-{{ loop.index }}" class="grupo-az__letra">{{ letra }}</h2>
-                <ul class="recursos">
+                <h2 id="letra-{{ loop.index }}" class="{{ letra is same as('') ? 'solo-lectores' : 'grupo-az__letra' }}">{{ letra is same as('') ? 'bases.listado'|trans : letra }}</h2>
+                <ul class="recursos recursos--{{ presentacion }}">
                     {% for recurso in recursos %}
                         <li class="recurso">
+                            {% if presentacion == 'cuadricula' %}{{ include('recursos/_icono_tipo.html.twig', {tipo: recurso.tipo.value}) }}{% endif %}
                             <h3 class="recurso__titulo">
                                 <a href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener" aria-describedby="aviso-ventana-nueva">{{ recurso.titulo }}</a>
                                 {% if recurso.esNuevo %}<span class="insignia insignia--nuevo">{{ 'bases.nuevo'|trans }}</span>{% endif %}
@@ -75,7 +85,7 @@
                                 {% if recurso.acceso.value == 'abierto' %}<span class="insignia insignia--abierto">{{ 'tipo_acceso.abierto'|trans }}</span>{% endif %}
                             </h3>
                             <p class="recurso__meta">
-                                {{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}
+                                {% if not tipo_fijo %}{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {% endif %}{% endif %}{% if recurso.proveedor %}{{ recurso.proveedor }}{% endif %}
                                 {% if recurso.requiereProxy %} · <span title="{{ 'bases.proxy_ayuda'|trans }}">{{ 'bases.proxy'|trans }}</span>{% endif %}
                             </p>
                             {% set datos = recurso.datosBibliograficos %}
@@ -98,7 +108,7 @@
                             {% if recurso.descripcionTraducida(idioma) %}<p class="recurso__descripcion">{{ recurso.descripcionTraducida(idioma) }}</p>{% endif %}
                             {% if recurso.materias is not empty %}
                                 <p class="recurso__materias">
-                                    {% for m in recurso.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path('recursos', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
+                                    {% for m in recurso.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path(ruta, ruta_parametros|merge({materia: m.slug})) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
                                 </p>
                             {% endif %}
                         </li>
@@ -108,6 +118,6 @@
         {% else %}
             <p>{{ (hay_filtros ? 'bases.sin_resultados' : 'bases.vacio')|trans }}</p>
         {% endfor %}
-        {% include 'paginacion/_enlaces.html.twig' with {ruta: 'recursos'} %}
+        {% include 'paginacion/_enlaces.html.twig' with {ruta: ruta, parametros: ruta_parametros} %}
     </section>
 {% endblock %}
