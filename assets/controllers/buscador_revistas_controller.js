@@ -59,7 +59,7 @@ export default class extends Controller {
         }
         if (datos.error) {
             this.limpiar();
-            this.avisar(datos.error === 'parametros' ? this.faltaValue : this.errorValue);
+            this.avisar(datos.error === 'parametros' ? this.faltaValue : [this.errorValue, datos.detalle ? `(Primo: ${datos.detalle})` : ''].join(' ').trim());
             return;
         }
 

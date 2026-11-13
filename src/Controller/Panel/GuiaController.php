@@ -380,9 +380,10 @@ final class GuiaController extends AbstractController
         $resultado = null === $texto && null === $categoria ? null
             : $this->catalogo->buscarRevistas($texto, $categoria, ($pagina - 1) * $porPagina, $porPagina);
         if (null === $resultado) {
-            $sinCriterios = null === $texto && null === $categoria;
+            $sinCriterios = null === $texto && null === Catalogo::categoriaRevistas($categoria);
 
-            return new JsonResponse(['error' => $sinCriterios ? 'parametros' : 'sin_respuesta'], $sinCriterios ? 400 : 502);
+            // El detalle (código HTTP y mensaje de Primo) ayuda a saber si falla la clave, la vista o la consulta.
+            return new JsonResponse($sinCriterios ? ['error' => 'parametros'] : ['error' => 'sin_respuesta', 'detalle' => $this->catalogo->errorRevistas()], $sinCriterios ? 400 : 502);
         }
         $idioma = $request->getLocale();
 

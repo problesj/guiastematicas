@@ -12,6 +12,7 @@ use App\Entity\Seccion;
 use App\Entity\Usuario;
 use App\Enum\Rol;
 use App\Enum\TipoRecurso;
+use App\Tests\CatalogoFalso;
 use App\Tests\CreaDatosTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -166,5 +167,18 @@ final class BloqueRevistasTest extends WebTestCase
         self::assertNull($datos['revistas'][0]['enlace']);
 
         self::assertSame('parametros', $this->json('/es/panel/guias/buscar-revistas/catalogo?categoria=', 400)['error']);
+
+        // Si Primo rechaza la consulta, el editor ve el código y el mensaje de Primo (sin la clave).
+        $datos = $this->json('/es/panel/guias/buscar-revistas/catalogo?categoria=Categoria_Mala', 502);
+        self::assertSame('HTTP 400 Invalid journals parameter', $datos['detalle']);
+        self::assertStringNotContainsString('clave-primo', (string) $this->cliente->getResponse()->getContent());
+
+        // La dirección que se envía a Primo lleva la categoría en "journals" con la coma tal cual.
+        $consultas = static::getContainer()->get(CatalogoFalso::class)->consultas;
+        $categoria = array_values(array_filter($consultas, fn (string $u) => str_contains($u, 'Human_Anatomy_Physiology')))[0];
+        self::assertStringContainsString('tab=jsearch_slot', $categoria);
+        self::assertStringContainsString('q=any,contains,*', $categoria);
+        self::assertStringContainsString('journals=category,Health_Biological_Sciences%E2%94%80Human_Anatomy_Physiology', $categoria);
+        self::assertStringContainsString('sort=title', $categoria);
     }
 }
