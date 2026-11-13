@@ -28,3 +28,4 @@ apariencia.contraste_bajo: "The contrast with %fondo% is %contraste%:1; it must 
 bloque.issn_no_valido: The ISSN is not valid; check the digits (8, the last one is a check digit).
 bloque.revista_no_encontrada: "Journal %issn% was not found in the catalogue: enter the title."
 bloque.revista_sin_titulo: Enter the title or an ISSN.
+guia.principal_ciclo: The parent guide cannot be the guide itself or one of its subguides.

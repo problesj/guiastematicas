@@ -18,6 +18,9 @@
     {% set url_portada = vista_previa ? path('panel_guia_vista_previa', {id: guia.id}) : path('guia', {slug: guia.slug}) %}
     {% set materias = guia.materias|filter(m => m.activa)|sort((a, b) => a.nombre <=> b.nombre) %}
     {% set materia = materias|first %}
+    {# Guías superiores y subguías: solo las publicadas que esta persona puede ver. #}
+    {% set superiores = guia.superiores|filter(g => g.publicada and is_granted('GUIA_VER', g)) %}
+    {% set subguias = guia.subguias|filter(g => g.publicada and is_granted('GUIA_VER', g)) %}
 
     <article class="contenedor pagina guia guia--{{ guia.disposicion.value }}" lang="{{ guia.idioma }}">
         {% if vista_previa %}
@@ -30,7 +33,8 @@
         <nav class="migas solo-pantalla" aria-label="{{ 'guia.migas'|trans }}">
             <a href="https://bibliotecas.ucn.cl/">{{ sitio_institucion() }}</a> ›
             <a href="{{ path('guias') }}">{{ 'guias.titulo'|trans }}</a> ›
-            {% if materia %}<a href="{{ path('guias', {materia: materia.slug}) }}">{{ materia.nombreTraducido(idioma) }}</a> ›{% endif %}
+            {% if materia and superiores is empty %}<a href="{{ path('guias', {materia: materia.slug}) }}">{{ materia.nombreTraducido(idioma) }}</a> ›{% endif %}
+            {% for s in superiores %}<a href="{{ path('guia', {slug: s.slug, _locale: s.idioma}) }}">{{ s.titulo }}</a> ›{% endfor %}
             {% if pestana and not es_portada %}
                 <a href="{{ url_portada }}">{{ guia.titulo }}</a> ›
                 <span aria-current="page">{{ pestana.titulo }}</span>
@@ -47,6 +51,7 @@
             {% if guia.descripcion %}<p class="pagina__bajada">{{ guia.descripcion }}</p>{% endif %}
             <p class="guia__meta">
                 {% for m in materias %}<a class="etiqueta" href="{{ path('guias', {materia: m.slug}) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
+                {% if superiores is not empty %}{% set directa = superiores|last %}<span>{{ 'guia.parte_de'|trans }}: <a href="{{ path('guia', {slug: directa.slug, _locale: directa.idioma}) }}">{{ directa.titulo }}</a></span>{% endif %}
                 {% if guia.responsable %}<span>{{ 'guia.responsable'|trans }}: <a href="{{ path('personal_perfil', {slug: guia.responsable.slug}) }}">{{ guia.responsable.nombreCompleto }}</a></span>{% endif %}
             </p>
         </header>
@@ -93,6 +98,23 @@
                             </div>
                         </section>
                     {% endfor %}
+
+                    {% if subguias is not empty and (es_portada or guia.pestanas|length <= 1) %}
+                        <section class="guia__subguias" aria-labelledby="titulo-subguias">
+                            <h3 id="titulo-subguias">{{ 'guia.subguias'|trans }}</h3>
+                            <ul class="lista-guias lista-guias--subguias">
+                                {% for sub in subguias %}
+                                    <li class="lista-guias__guia" lang="{{ sub.idioma }}">
+                                        {% if sub.icono %}<img class="lista-guias__icono" src="{{ asset('uploads/guias/' ~ sub.icono) }}" alt="" width="56" height="56" loading="lazy">{% else %}<span class="lista-guias__icono lista-guias__icono--vacio" aria-hidden="true">{{ sub.titulo|first|upper }}</span>{% endif %}
+                                        <div class="lista-guias__texto">
+                                            <h4><a href="{{ path('guia', {slug: sub.slug, _locale: sub.idioma}) }}">{{ sub.titulo }}</a>{% if sub.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}</h4>
+                                            {% if sub.descripcion %}<p>{{ sub.descripcion }}</p>{% endif %}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </section>
+                    {% endif %}
 
                     {% set vecinas = guia.vecinas(pestana) %}
                     {% if vecinas.anterior or vecinas.siguiente %}

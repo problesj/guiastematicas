@@ -735,3 +735,8 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .lista-paginada__paginas[hidden] { display: none; }
 .lista-paginada__estado { color: var(--color-texto-secundario); font-size: 0.875rem; }
 .bloque__libros--lista > .libro[hidden] { display: none; }
+
+/* Subguías en la página de la guía principal */
+.guia__subguias { margin-top: 2rem; }
+.lista-guias--subguias .lista-guias__guia h4 { margin: 0; font-size: 1.125rem; }
+.lista-guias__parte { font-size: 0.9375rem; }

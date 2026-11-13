@@ -95,6 +95,16 @@ class Guia
     #[ORM\OrderBy(['nombre' => 'ASC'])]
     private Collection $materias;
 
+    /** Guía principal de la que esta es subguía (null: guía de primer nivel). */
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subguias')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Guia $principal = null;
+
+    /** @var Collection<int, Guia> subguías de esta guía */
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'principal')]
+    #[ORM\OrderBy(['titulo' => 'ASC'])]
+    private Collection $subguias;
+
     /** @var Collection<int, Pestana> */
     #[ORM\OneToMany(targetEntity: Pestana::class, mappedBy: 'guia', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['posicion' => 'ASC'])]
@@ -118,6 +128,7 @@ class Guia
         $this->lectores = new ArrayCollection();
         $this->materias = new ArrayCollection();
         $this->pestanas = new ArrayCollection();
+        $this->subguias = new ArrayCollection();
         $this->creadaEn = new \DateTimeImmutable();
         $this->actualizadaEn = $this->creadaEn;
     }
@@ -180,6 +191,52 @@ class Guia
         $this->idioma = $idioma;
 
         return $this;
+    }
+
+    public function getPrincipal(): ?Guia
+    {
+        return $this->principal;
+    }
+
+    public function setPrincipal(?Guia $principal): static
+    {
+        $this->principal?->subguias->removeElement($this);
+        $this->principal = $principal;
+        if (null !== $principal && !$principal->subguias->contains($this)) {
+            $principal->subguias->add($this);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, Guia> */
+    public function getSubguias(): Collection
+    {
+        return $this->subguias;
+    }
+
+    /** @return list<Guia> guías superiores, de la de primer nivel a la principal directa (sin repetir si hubiera un ciclo) */
+    public function getSuperiores(): array
+    {
+        $superiores = [];
+        for ($guia = $this->principal; null !== $guia && $guia !== $this && !\in_array($guia, $superiores, true); $guia = $guia->principal) {
+            array_unshift($superiores, $guia);
+        }
+
+        return $superiores;
+    }
+
+    /** La guía principal no puede ser la misma guía ni una de sus subguías (directas o de más abajo). */
+    #[Assert\Callback]
+    public function validarPrincipal(\Symfony\Component\Validator\Context\ExecutionContextInterface $contexto): void
+    {
+        for ($guia = $this->principal, $pasos = 0; null !== $guia && $pasos < 50; $guia = $guia->principal, ++$pasos) {
+            if ($guia === $this || (null !== $this->id && $guia->id === $this->id)) {
+                $contexto->buildViolation('guia.principal_ciclo')->atPath('principal')->addViolation();
+
+                return;
+            }
+        }
     }
 
     public function getTraduccion(): ?Guia

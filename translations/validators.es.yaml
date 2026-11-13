@@ -28,3 +28,4 @@ apariencia.contraste_bajo: "El contraste con %fondo% es de %contraste%:1; debe s
 bloque.issn_no_valido: El ISSN no es válido; revisa los dígitos (8, el último es de control).
 bloque.revista_no_encontrada: "No encontramos la revista %issn% en el catálogo: escribe el título."
 bloque.revista_sin_titulo: Escribe el título o un ISSN.
+guia.principal_ciclo: La guía principal no puede ser la misma guía ni una de sus subguías.

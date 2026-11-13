@@ -528,6 +528,11 @@ guia:
   traduccion: Version in the other language
   traduccion_ayuda: If the guide exists in the other language, link it so the ES/EN switch goes from one to the other.
   sin_traduccion: (none)
+  principal: Parent guide
+  principal_ayuda: If this guide is part of a broader one, choose it here. The parent will list this guide among its subguides and this one will show the way back.
+  sin_principal: (none, top-level guide)
+  subguias: Subguides
+  parte_de: Part of
   disposicion: Tab layout
   materias: Subjects
   coeditores: Co-editors

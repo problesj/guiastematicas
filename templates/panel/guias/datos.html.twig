@@ -15,6 +15,7 @@
                 {{ form_row(formulario.idioma) }}
                 {{ form_row(formulario.traduccion) }}
             </div>
+            {{ form_row(formulario.principal) }}
             {{ form_row(formulario.disposicion) }}
             {% if formulario.responsable is defined %}{{ form_row(formulario.responsable) }}{% endif %}
         </fieldset>
