@@ -61,7 +61,7 @@ final class Ajustes implements ResetInterface
     ];
 
     /** Ajustes de apariencia (sin variable de entorno equivalente), ver App\Configuracion\Apariencia. */
-    public const APARIENCIA = ['SITIO_TITULO', 'SITIO_TITULO_EN', 'SITIO_INSTITUCION', 'COLOR_PRINCIPAL', 'COLOR_BARRA', 'COLOR_PIE', 'TEXTO_GENERAL', 'TEXTO_TITULOS', 'TEXTO_CABECERA', 'TEXTO_BARRA', 'TEXTO_BOTON', 'TEXTO_PIE', 'LOGO', 'IMAGEN_PORTADA', 'VISTA_GUIAS'];
+    public const APARIENCIA = ['SITIO_TITULO', 'SITIO_TITULO_EN', 'SITIO_INSTITUCION', 'COLOR_PRINCIPAL', 'COLOR_BARRA', 'COLOR_PIE', 'TEXTO_GENERAL', 'TEXTO_TITULOS', 'TEXTO_CABECERA', 'TEXTO_BARRA', 'TEXTO_BOTON', 'TEXTO_PIE', 'LOGO', 'IMAGEN_PORTADA', 'VISTA_GUIAS', 'VISTA_BASE_DATOS', 'VISTA_LIBROS', 'VISTA_REVISTAS'];
 
     /** @var array<string, string|false>|null valores guardados (false: secreto que no se pudo descifrar) */
     private ?array $valores = null;

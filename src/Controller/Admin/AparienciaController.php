@@ -62,6 +62,18 @@ final class AparienciaController extends AbstractController
                 'data' => $this->apariencia->vistaGuias(),
                 'constraints' => [new Assert\Choice(choices: Apariencia::VISTAS_GUIAS)],
             ])
+            ;
+        foreach (Apariencia::ACCESOS_RECURSOS as $tipo => [$clave]) {
+            $constructor->add($clave, ChoiceType::class, [
+                'label' => 'recursos_vista.'.$tipo.'.menu',
+                'choices' => ['apariencia.acceso.deshabilitado' => '', 'apariencia.acceso.lista' => 'lista', 'apariencia.acceso.cuadricula' => 'cuadricula'],
+                'expanded' => true,
+                'data' => $this->apariencia->vistaRecursos($tipo) ?? '',
+                'empty_data' => '',
+                'constraints' => [new Assert\Choice(choices: ['', ...Apariencia::VISTAS_RECURSOS])],
+            ]);
+        }
+        $constructor
             ->add('logo', FileType::class, [
                 'label' => 'apariencia.ajuste.LOGO',
                 'help' => 'apariencia.ayuda.LOGO',
@@ -91,6 +103,9 @@ final class AparienciaController extends AbstractController
             }
             $vista = (string) $formulario->get('VISTA_GUIAS')->getData();
             $this->ajustes->guardar('VISTA_GUIAS', Apariencia::VISTAS_GUIAS[0] === $vista ? null : $vista);
+            foreach (Apariencia::ACCESOS_RECURSOS as [$clave]) {
+                $this->ajustes->guardar($clave, (string) $formulario->get($clave)->getData() ?: null);
+            }
             $logo = $formulario->get('logo')->getData();
             if ($logo instanceof UploadedFile) {
                 $this->apariencia->guardarLogo($logo);

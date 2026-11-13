@@ -799,3 +799,10 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .lti__guia-texto { display: flex; flex-direction: column; gap: 0.125rem; }
 .lti__guia-descripcion { font-size: 0.9375rem; color: var(--color-texto-secundario); }
 .lti__elegir input[type="search"] { width: 100%; max-width: 24rem; padding: 0.5rem 0.75rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); }
+
+/* Accesos propios a bases de datos, libros y revistas en cuadrícula (Administración → Apariencia) */
+.recursos--cuadricula { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; padding-top: 0.5rem; }
+.recursos--cuadricula > .recurso { display: flex; flex-direction: column; padding: 1rem 1.125rem; border: 1px solid var(--color-principal-suave); border-top: 4px solid var(--color-principal); border-radius: var(--radio); }
+.recursos--cuadricula .recurso__titulo { font-size: 1.0625rem; }
+.recursos--cuadricula .recurso__descripcion { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.recurso__icono { display: inline-flex; align-items: center; justify-content: center; width: 4rem; height: 4rem; margin-bottom: 0.75rem; color: var(--color-texto-boton); background: var(--color-principal); border-radius: var(--radio); }

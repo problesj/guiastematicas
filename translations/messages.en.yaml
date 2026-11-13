@@ -215,6 +215,7 @@ tipo_acceso:
   abierto: Open access
   prueba: On trial
 bases:
+  listado: List
   titulo: A-Z library resources
   bajada: Databases, journals, e-books, standards and other resources subscribed by UCN Libraries or open access.
   indice: Alphabetical index
@@ -925,12 +926,18 @@ apariencia:
   portada_actual: Current home page image
   quitar_imagen_portada: Remove the image (use a gradient with the site colours)
   restablecer: Go back to the base theme colours (backgrounds and text)
+  accesos_ayuda: "Each shortcut appears in the main menu with the A-Z list of that type (without the type filter). In grid view, each resource shows its type icon."
+  acceso:
+    deshabilitado: "Disabled"
+    lista: "List"
+    cuadricula: "Grid"
   vista_guias:
     lista: "List: one guide per row, with description"
     cuadricula: "Grid: cards with a large icon"
     carrusel: "Carousel: a scrolling row of cards"
   colores_ayuda: To meet WCAG 2.1 AA, each text colour needs a contrast of at least 4.5:1 with its background; otherwise it is not saved. If you change a background, check the text colour on top of it too.
   grupo:
+    accesos: "Resource shortcuts"
     guias: Guides by subject
     nombre: Site name
     logo: Logo
@@ -1007,3 +1014,16 @@ lti:
     tipo: "Unsupported request type."
     vinculo_vencido: "The guide selection expired. Add the activity again from the course."
     ver_guias: "See the library guides"
+recursos_vista:
+  base_datos:
+    menu: "Databases"
+    titulo: "Databases A-Z"
+    bajada: "Databases subscribed by Bibliotecas UCN or open access, in alphabetical order."
+  libros:
+    menu: "Books"
+    titulo: "Books A-Z"
+    bajada: "E-books and books recommended in the guides, in alphabetical order."
+  revistas:
+    menu: "Journals"
+    titulo: "Journals A-Z"
+    bajada: "E-journals subscribed by Bibliotecas UCN or open access, in alphabetical order."

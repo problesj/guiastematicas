@@ -85,12 +85,14 @@ class RecursoRepository extends ServiceEntityRepository
      *
      * @return list<string>
      */
-    public function letrasConRecursos(): array
+    public function letrasConRecursos(?TipoRecurso $tipo = null): array
     {
-        return array_column(
-            $this->disponibles()->select('DISTINCT r.letra')->orderBy('r.letra')->getQuery()->getScalarResult(),
-            'letra',
-        );
+        $consulta = $this->disponibles()->select('DISTINCT r.letra')->orderBy('r.letra');
+        if (null !== $tipo) {
+            $consulta->andWhere('r.tipo = :tipo')->setParameter('tipo', $tipo);
+        }
+
+        return array_column($consulta->getQuery()->getScalarResult(), 'letra');
     }
 
     /** @return Pagina<Recurso> */
