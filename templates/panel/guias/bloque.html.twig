@@ -79,15 +79,39 @@
             </div>
         {% endif %}
         {% if formulario.items is defined %}
-            <div class="campo coleccion" data-controller="coleccion" data-coleccion-indice-value="{{ formulario.items|length }}">
+            {% set libros = bloque.tipo.value == 'libros' %}
+            <div class="campo coleccion" data-controller="coleccion{{ libros ? ' paginar-libros' }}" data-coleccion-indice-value="{{ formulario.items|length }}"
+                 {% if libros %}data-paginar-libros-nuevo-value="{{ 'bloque.libro_nuevo'|trans }}"
+                 data-paginar-libros-rango-value="{{ 'bloque.libros_rango'|trans }}"
+                 data-paginar-libros-pagina-value="{{ 'bloque.libros_pagina'|trans }}"
+                 data-paginar-libros-vacio-value="{{ 'bloque.libros_vacio'|trans }}"
+                 data-paginar-libros-catalogo-value="{{ hay_buscador_primo() ? path('catalogo', {_locale: guia.idioma}) : '' }}"
+                 data-action="input->paginar-libros#refrescar libro-datos:completado->paginar-libros#refrescar"{% endif %}>
                 <p class="campo__etiqueta" id="titulo-items">{{ ('bloque.items_' ~ bloque.tipo.value)|trans }}</p>
-                {% if bloque.tipo.value == 'libros' %}<p class="campo__ayuda">{{ 'bloque.libros_ayuda'|trans }}</p>{% endif %}
+                {% if libros %}<p class="campo__ayuda">{{ 'bloque.libros_ayuda'|trans }}</p>{% endif %}
                 {{ form_errors(formulario.items) }}
-                <ol class="coleccion__lista" data-coleccion-target="lista" aria-labelledby="titulo-items">
+                {% if libros %}
+                    <div class="paginar-libros__cabecera" data-paginar-libros-target="controles" hidden>
+                        <label class="paginar-libros__tamano">{{ 'bloque.libros_por_pagina'|trans }}
+                            <select data-paginar-libros-target="tamano" data-action="paginar-libros#cambiarTamano">
+                                {% for n in [5, 10, 15, 20] %}<option value="{{ n }}"{% if n == 10 %} selected{% endif %}>{{ n }}</option>{% endfor %}
+                            </select>
+                        </label>
+                        <p class="paginar-libros__estado" role="status" data-paginar-libros-target="estado"></p>
+                    </div>
+                {% endif %}
+                <ol class="coleccion__lista{{ libros ? ' coleccion__lista--libros' }}" data-coleccion-target="lista" {% if libros %}data-paginar-libros-target="lista" {% endif %}aria-labelledby="titulo-items">
                     {% for item in formulario.items %}{{ include('panel/guias/_item_coleccion.html.twig') }}{% endfor %}
                 </ol>
                 <template data-coleccion-target="plantilla">{{ include('panel/guias/_item_coleccion.html.twig', {item: formulario.items.vars.prototype}) }}</template>
-                <button type="button" class="boton boton--secundario" data-action="coleccion#agregar">{{ ('bloque.agregar_' ~ bloque.tipo.value)|trans }}</button>
+                {% if libros %}
+                    <nav class="paginar-libros__paginas" aria-label="{{ 'bloque.libros_paginas'|trans }}" data-paginar-libros-target="paginas" hidden>
+                        <button type="button" class="boton boton--secundario boton--pequeno" data-paginar-libros-target="anterior" data-action="paginar-libros#anterior">{{ 'paginacion.anterior'|trans }}</button>
+                        <span data-paginar-libros-target="numero"></span>
+                        <button type="button" class="boton boton--secundario boton--pequeno" data-paginar-libros-target="siguiente" data-action="paginar-libros#siguiente">{{ 'paginacion.siguiente'|trans }}</button>
+                    </nav>
+                {% endif %}
+                <button type="button" class="boton boton--secundario" data-action="coleccion#agregar{{ libros ? ' paginar-libros#nuevo' }}">{{ ('bloque.agregar_' ~ bloque.tipo.value)|trans }}</button>
                 {% if buscador_libros and (buscador_libros.catalogo or buscador_libros.biblioges) %}
                     {{ include('panel/guias/_buscador_libros.html.twig') }}
                 {% endif %}
