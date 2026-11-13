@@ -727,3 +727,6 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 @media (max-width: 48rem) {
     .buscador-libros__ancho { grid-column: auto; }
 }
+.buscador-revistas__categorias { margin: 0 0 0.5rem; padding: 0; border: 0; }
+.buscador-revistas__categorias legend { padding: 0; margin-bottom: 0.25rem; font-weight: 600; }
+.buscador-libros__campos .campo[hidden] { display: none; }
