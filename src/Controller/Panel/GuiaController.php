@@ -686,6 +686,7 @@ final class GuiaController extends AbstractController
                 'items' => $this->librosConMaterias($bloque->dato('items', [])),
                 'presentacion' => $bloque->dato('presentacion', 'cuadricula'),
                 'columnas' => (int) $bloque->dato('columnas', 0),
+                'por_pagina' => (int) $bloque->dato('por_pagina', 10),
                 'orden' => 'titulo' === $bloque->dato('orden') ? 'titulo' : 'manual',
             ],
             TipoBloque::Enlaces, TipoBloque::Diapositivas => ['items' => $bloque->dato('items', [])],
@@ -713,11 +714,11 @@ final class GuiaController extends AbstractController
     }
 
     /**
-     * Orden, presentación y columnas de los bloques Libros y Revistas.
+     * Orden, presentación, columnas y paginación de los bloques Libros y Revistas.
      *
      * @param array<string, mixed> $datos
      *
-     * @return array{orden: string, presentacion: string, columnas: int}
+     * @return array{orden: string, presentacion: string, columnas: int, por_pagina: int}
      */
     private static function presentacion(array $datos): array
     {
@@ -725,6 +726,8 @@ final class GuiaController extends AbstractController
             'orden' => 'titulo' === ($datos['orden'] ?? null) ? 'titulo' : 'manual',
             'presentacion' => \in_array($datos['presentacion'] ?? null, ['carrusel', 'lista'], true) ? $datos['presentacion'] : 'cuadricula',
             'columnas' => \in_array((int) ($datos['columnas'] ?? 0), [2, 3, 4, 5, 6], true) ? (int) $datos['columnas'] : 0,
+            // Paginación de la lista breve en la guía (0: todos en una página).
+            'por_pagina' => \in_array((int) ($datos['por_pagina'] ?? 10), [0, 5, 10, 15, 20], true) ? (int) ($datos['por_pagina'] ?? 10) : 10,
         ];
     }
 

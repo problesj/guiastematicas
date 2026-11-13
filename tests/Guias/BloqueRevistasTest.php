@@ -123,6 +123,41 @@ final class BloqueRevistasTest extends WebTestCase
         self::assertSame('https://revistas.ejemplo.cl/anatomia', $crawler->filter('.libro--revista')->eq(1)->filter('.libro__titulo a')->attr('href'));
     }
 
+    public function testLaListaBreveSePaginaEnLaGuia(): void
+    {
+        $guia = $this->crearGuia();
+        $seccion = $guia->getPestana()->getSecciones()->first();
+        $url = '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/revistas';
+        $crawler = $this->cliente->request('GET', $url);
+        self::assertSame(['5', '10', '15', '20', '0'], $crawler->filter('select[name="bloque[por_pagina]"] option')->each(fn ($o) => $o->attr('value')));
+        $token = $crawler->filter('input[name="bloque[_token]"]')->attr('value');
+        $items = array_map(fn (int $n) => ['titulo' => sprintf('Revista %02d', $n), 'enlace' => 'https://revistas.ejemplo.cl/'.$n], range(1, 12));
+        $this->cliente->request('POST', $url, ['bloque' => [
+            'titulo' => 'Revistas', 'presentacion' => 'lista', 'columnas' => '0', 'por_pagina' => '5', 'orden' => 'titulo',
+            'items' => $items, 'issns' => '', '_token' => $token,
+        ]]);
+        self::assertResponseRedirects();
+
+        self::em()->clear();
+        $guia = self::em()->find(Guia::class, $guia->getId());
+        $guia->publicar();
+        self::em()->flush();
+        $crawler = $this->cliente->request('GET', '/es/guias/medicina');
+        $lista = $crawler->filter('[data-controller="paginar-lista"]');
+        self::assertCount(1, $lista);
+        self::assertSame('5', $lista->attr('data-paginar-lista-tamano-value'));
+        self::assertCount(12, $lista->filter('.libro--revista')); // todos en la página: el navegador los pagina
+        self::assertCount(1, $lista->filter('nav[data-paginar-lista-target="paginas"] [data-action="paginar-lista#siguiente"]'));
+
+        // Con «Todos» (0), o si caben en una página, no se pagina.
+        $bloque = self::em()->getRepository(Bloque::class)->findOneBy(['seccion' => $seccion->getId()]);
+        $bloque->setContenido(['por_pagina' => 0] + $bloque->getContenido());
+        self::em()->flush();
+        $crawler = $this->cliente->request('GET', '/es/guias/medicina');
+        self::assertCount(0, $crawler->filter('[data-controller="paginar-lista"]'));
+        self::assertCount(12, $crawler->filter('.libro--revista'));
+    }
+
     public function testUnIssnQueNoEstaEnElCatalogoPideElTitulo(): void
     {
         $guia = $this->crearGuia();

@@ -76,6 +76,7 @@
             <div class="formulario__columnas">
                 {{ form_row(formulario.presentacion) }}
                 {{ form_row(formulario.columnas) }}
+                {% if formulario.por_pagina is defined %}{{ form_row(formulario.por_pagina) }}{% endif %}
                 {% if formulario.orden is defined %}{{ form_row(formulario.orden) }}{% endif %}
             </div>
         {% endif %}

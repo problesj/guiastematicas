@@ -730,3 +730,8 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .buscador-revistas__categorias { margin: 0 0 0.5rem; padding: 0; border: 0; }
 .buscador-revistas__categorias legend { padding: 0; margin-bottom: 0.25rem; font-weight: 600; }
 .buscador-libros__campos .campo[hidden] { display: none; }
+/* Lista breve de libros o revistas paginada en la guía */
+.lista-paginada__paginas { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-top: 0.75rem; }
+.lista-paginada__paginas[hidden] { display: none; }
+.lista-paginada__estado { color: var(--color-texto-secundario); font-size: 0.875rem; }
+.bloque__libros--lista > .libro[hidden] { display: none; }

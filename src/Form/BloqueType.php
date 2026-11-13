@@ -155,6 +155,13 @@ final class BloqueType extends AbstractType
                 'choice_translation_domain' => 'messages',
                 'constraints' => [new Assert\Choice(choices: [0, 2, 3, 4, 5, 6])],
             ])
+            ->add('por_pagina', ChoiceType::class, [
+                'label' => 'bloque.lista_por_pagina',
+                'help' => 'bloque.lista_por_pagina_ayuda',
+                'choices' => ['5' => 5, '10' => 10, '15' => 15, '20' => 20, 'bloque.lista_sin_paginar' => 0],
+                'choice_translation_domain' => 'messages',
+                'constraints' => [new Assert\Choice(choices: [0, 5, 10, 15, 20])],
+            ])
             ->add('orden', ChoiceType::class, [
                 'label' => $prefijo.'orden',
                 'help' => $prefijo.'orden_ayuda',
