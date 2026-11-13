@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Admin;
 
 use App\Configuracion\Apariencia;
+use App\Entity\Guia;
+use App\Entity\Pestana;
+use App\Entity\Seccion;
 use App\Enum\Rol;
 use App\Tests\CreaDatosTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -135,5 +138,32 @@ final class AparienciaTest extends WebTestCase
     {
         self::assertEqualsWithDelta(21.0, Apariencia::contraste('#000000', '#ffffff'), 0.01);
         self::assertEqualsWithDelta(1.0, Apariencia::contraste('#7e9bc0', '#7e9bc0'), 0.01);
+    }
+
+    public function testPresentacionDeLasGuiasPorMateria(): void
+    {
+        $guia = (new Guia())->setTitulo('Química')->setSlug('quimica');
+        $guia->agregarPestana((new Pestana('Inicio'))->agregarSeccion(new Seccion()));
+        $guia->publicar();
+        self::em()->persist($guia);
+        self::em()->flush();
+
+        // Por omisión, lista.
+        $this->cliente->request('GET', '/es/guias');
+        self::assertSelectorExists('ul.lista-guias--lista');
+
+        $this->guardar(['VISTA_GUIAS' => 'cuadricula']);
+        self::assertResponseRedirects('/es/admin/apariencia');
+        $crawler = $this->cliente->request('GET', '/es/guias');
+        self::assertSelectorExists('ul.lista-guias--cuadricula .lista-guias__icono--vacio');
+        self::assertSame('Q', $crawler->filter('.lista-guias__icono--vacio')->text());
+
+        $this->guardar(['VISTA_GUIAS' => 'carrusel']);
+        $this->cliente->request('GET', '/es/guias');
+        self::assertSelectorExists('.guias-carrusel[data-controller="carrusel"] ul.lista-guias--carrusel[data-carrusel-target="pista"]');
+        self::assertSelectorTextContains('.lista-guias--carrusel h2 a', 'Química');
+
+        $crawler = $this->cliente->request('GET', '/es/admin/apariencia');
+        self::assertSame('carrusel', $crawler->filter('input[name="form[VISTA_GUIAS]"]:checked')->attr('value'));
     }
 }

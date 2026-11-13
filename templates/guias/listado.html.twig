@@ -32,13 +32,18 @@
         {% if guias is empty %}
             <p>{{ ((filtro.q or filtro.materia) ? 'guias.sin_resultados' : 'guias.vacio')|trans }}</p>
         {% else %}
-            <ul class="lista-guias">
+            {# Presentación elegida en Administración → Apariencia: lista, cuadricula o carrusel. #}
+            {% set vista = sitio_vista_guias() %}
+            {% set tarjetas = vista != 'lista' %}
+            {% set lista %}
+            <ul class="lista-guias lista-guias--{{ vista }}"{% if vista == 'carrusel' %} data-carrusel-target="pista" data-action="scroll->carrusel#actualizar" tabindex="0" aria-label="{{ 'guias.titulo'|trans }}"{% endif %}>
                 {% for guia in guias %}
                     <li class="lista-guias__guia" lang="{{ guia.idioma }}">
-                        {% if guia.icono %}<img class="lista-guias__icono" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="56" height="56" loading="lazy">{% else %}<span class="lista-guias__icono lista-guias__icono--vacio" aria-hidden="true">{{ guia.titulo|first|upper }}</span>{% endif %}
+                        {% set ancho = tarjetas ? 96 : 56 %}
+                        {% if guia.icono %}<img class="lista-guias__icono" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="{{ ancho }}" height="{{ ancho }}" loading="lazy">{% else %}<span class="lista-guias__icono lista-guias__icono--vacio" aria-hidden="true">{{ guia.titulo|first|upper }}</span>{% endif %}
                         <div class="lista-guias__texto">
                         <h2><a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}">{{ guia.titulo }}</a>{% if guia.idioma != idioma %} <span class="insignia">{{ guia.idioma|upper }}</span>{% endif %}{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}</h2>
-                        {% if guia.descripcion %}<p>{{ guia.descripcion }}</p>{% endif %}
+                        {% if guia.descripcion %}<p class="lista-guias__descripcion">{{ guia.descripcion }}</p>{% endif %}
                         {% set madre = guia.principal %}
                         {% if madre and madre.publicada and is_granted('GUIA_VER', madre) %}<p class="lista-guias__parte">{{ 'guia.parte_de'|trans }}: <a href="{{ path('guia', {slug: madre.slug, _locale: madre.idioma}) }}">{{ madre.titulo }}</a></p>{% endif %}
                         <p class="lista-guias__meta">
@@ -49,6 +54,16 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% endset %}
+            {% if vista == 'carrusel' %}
+                <div class="guias-carrusel" data-controller="carrusel" role="region" aria-roledescription="{{ 'bloque.carrusel'|trans }}" aria-label="{{ 'guias.titulo'|trans }}">
+                    {{ lista }}
+                    <button type="button" class="libros-carrusel__boton guias-carrusel__boton libros-carrusel__boton--anterior" data-action="carrusel#anterior" data-carrusel-target="anterior" aria-label="{{ 'bloque.diapositiva_anterior'|trans }}">‹</button>
+                    <button type="button" class="libros-carrusel__boton guias-carrusel__boton libros-carrusel__boton--siguiente" data-action="carrusel#siguiente" data-carrusel-target="siguiente" aria-label="{{ 'bloque.diapositiva_siguiente'|trans }}">›</button>
+                </div>
+            {% else %}
+                {{ lista }}
+            {% endif %}
         {% endif %}
     </section>
 {% endblock %}

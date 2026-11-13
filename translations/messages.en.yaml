@@ -895,8 +895,13 @@ apariencia:
   portada_actual: Current home page image
   quitar_imagen_portada: Remove the image (use a gradient with the site colours)
   restablecer: Go back to the base theme colours (backgrounds and text)
+  vista_guias:
+    lista: "List: one guide per row, with description"
+    cuadricula: "Grid: cards with a large icon"
+    carrusel: "Carousel: a scrolling row of cards"
   colores_ayuda: To meet WCAG 2.1 AA, each text colour needs a contrast of at least 4.5:1 with its background; otherwise it is not saved. If you change a background, check the text colour on top of it too.
   grupo:
+    guias: Guides by subject
     nombre: Site name
     logo: Logo
     portada: Home page image
@@ -909,6 +914,7 @@ apariencia:
     COLOR_BARRA: the top bar
     COLOR_PIE: the footer
   ajuste:
+    VISTA_GUIAS: List layout
     SITIO_TITULO: Site title (Spanish)
     SITIO_TITULO_EN: Site title (English)
     SITIO_INSTITUCION: Institution
@@ -924,6 +930,7 @@ apariencia:
     LOGO: Logo file
     IMAGEN_PORTADA: Background image
   ayuda:
+    VISTA_GUIAS: How guides are shown on the «Guides by subject» page. Each guide is represented by its icon (or its initial if it has none).
     COLOR_PRINCIPAL: Links (on white), buttons and block titles.
     COLOR_BARRA: Strip with the UCN links and language.
     COLOR_PIE: Footer background.
