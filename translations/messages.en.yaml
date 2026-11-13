@@ -645,6 +645,10 @@ bloque:
   libros_columnas: Grid columns
   libros_columnas_ayuda: Grid only. “Automatic” fits as many as the box width allows; phones show two.
   libros_columnas_auto: Automatic
+  libros_orden: Book order
+  libros_orden_ayuda: By title, books are sorted alphabetically when you save (including those you add later).
+  libros_orden_manual: Manual (↑ ↓ arrows)
+  libros_orden_titulo: By title (A–Z)
   libro_acceso: Access
   libro_ver_catalogo: View in the catalogue
   libro_buscar_catalogo: Search the catalogue

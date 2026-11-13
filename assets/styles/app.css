@@ -719,3 +719,4 @@ h1 .insignia--restringida { font-size: 0.875rem; }
     .libro-fila { flex-wrap: wrap; }
     .libro-fila__acciones { flex-basis: 100%; justify-content: flex-start; }
 }
+.coleccion--por-titulo [data-action~="coleccion#subir"], .coleccion--por-titulo [data-action~="coleccion#bajar"] { display: none; }
