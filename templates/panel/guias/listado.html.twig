@@ -18,10 +18,10 @@
         <p>{{ (is_granted('ROLE_EDITOR') ? 'guia.vacio_editor' : 'guia.vacio_colaborador')|trans }}</p>
     {% else %}
         <div class="tabla-desplazable">
-            <table class="tabla">
+            <table class="tabla tabla--guias">
                 <thead>
                     <tr>
-                        <th scope="col">{{ 'guia.titulo'|trans }}</th>
+                        <th scope="col" class="tabla-guias__columna-titulo">{{ 'guia.titulo'|trans }}</th>
                         <th scope="col">{{ 'guia.estado'|trans }}</th>
                         <th scope="col">{{ 'guia.responsable'|trans }}</th>
                         <th scope="col">{{ 'guia.actualizada'|trans }}</th>
@@ -32,10 +32,18 @@
                 <tbody>
                     {% for guia in guias %}
                         <tr>
-                            <td>{% if guia.icono %}<img class="icono-tabla" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="28" height="28"> {% endif %}<a href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ guia.titulo }}</a> <small>{{ guia.idioma|upper }}</small>{% if guia.principal %}<br><small>{{ 'guia.parte_de'|trans }}: {{ guia.principal.titulo }}</small>{% endif %}</td>
-                            <td><span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span>{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}</td>
+                            <td>
+                                <div class="tabla-guias__guia">
+                                    {% if guia.icono %}<img class="tabla-guias__icono" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="44" height="44">{% else %}<span class="tabla-guias__icono tabla-guias__icono--vacio" aria-hidden="true">{{ guia.titulo|first|upper }}</span>{% endif %}
+                                    <div>
+                                        <a class="tabla-guias__titulo" href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ guia.titulo }}</a>
+                                        <small class="tabla-guias__meta"><abbr title="{{ ('idioma.' ~ guia.idioma)|trans }}">{{ guia.idioma|upper }}</abbr>{% if guia.principal %} · {{ 'guia.parte_de'|trans }}: {{ guia.principal.titulo }}{% endif %}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="tabla-guias__estado"><span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span>{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}</td>
                             <td>{{ guia.responsable ? guia.responsable.nombreCompleto : '—' }}</td>
-                            <td>{{ guia.actualizadaEn|date('d-m-Y H:i') }}</td>
+                            <td class="tabla-guias__fecha">{{ guia.actualizadaEn|date('d-m-Y') }}<br><small>{{ guia.actualizadaEn|date('H:i') }}</small></td>
                             <td>{{ guia.visitas }}</td>
                             <td class="tabla__acciones">
                                 <a href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ guia.titulo }}</span></a>

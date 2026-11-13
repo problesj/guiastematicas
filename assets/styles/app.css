@@ -740,3 +740,20 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .guia__subguias { margin-top: 2rem; }
 .lista-guias--subguias .lista-guias__guia h4 { margin: 0; font-size: 1.125rem; }
 .lista-guias__parte { font-size: 0.9375rem; }
+
+/* Panel: lista de guías con más espacio para el título y el icono */
+.tabla--guias td { vertical-align: middle; }
+.tabla-guias__columna-titulo { width: 45%; }
+.tabla-guias__guia { display: flex; align-items: center; gap: 0.75rem; min-width: 16rem; }
+.tabla-guias__icono { flex: none; width: 44px; height: 44px; object-fit: cover; border-radius: var(--radio); }
+.tabla-guias__icono--vacio { display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; color: var(--color-texto-boton); background: var(--color-principal); }
+.tabla-guias__titulo { display: block; font-size: 1.0625rem; font-weight: 600; line-height: 1.3; }
+.tabla-guias__meta { display: block; margin-top: 0.125rem; }
+.tabla-guias__meta abbr { text-decoration: none; }
+.tabla-guias__estado { width: 1%; }
+.tabla-guias__estado .etiqueta { white-space: nowrap; }
+.tabla-guias__estado .insignia { display: table; margin: 0.25rem 0 0; white-space: nowrap; }
+.tabla-guias__fecha { white-space: nowrap; }
+.tabla--guias .tabla__acciones { width: 1%; }
+.tabla--guias .tabla__acciones a { display: block; white-space: nowrap; }
+.tabla--guias .tabla__acciones a + a { margin: 0.25rem 0 0; }
