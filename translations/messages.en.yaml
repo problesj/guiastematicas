@@ -942,3 +942,15 @@ apariencia:
     TEXTO_PIE: Footer text and links.
     LOGO: PNG, JPG or WebP up to 1 MB, ideally landscape with a transparent background. Replaces the institution name in the header.
     IMAGEN_PORTADA: JPG, WebP or PNG up to 3 MB and at least 800 px wide, ideally landscape (e.g. 1920 × 800). It is darkened so white text stays readable.
+compartir:
+  titulo: "Share"
+  mas: "Share…"
+  facebook: "Facebook"
+  x: "X"
+  linkedin: "LinkedIn"
+  whatsapp: "WhatsApp"
+  correo: "Email"
+  copiar: "Copy link"
+  copiado: "Link copied."
+  copiar_error: "Could not copy; select and copy this link:"
+  ventana_nueva: "(opens in a new window)"

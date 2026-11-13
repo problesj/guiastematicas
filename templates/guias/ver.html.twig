@@ -18,6 +18,7 @@
     {% set url_portada = vista_previa ? path('panel_guia_vista_previa', {id: guia.id}) : path('guia', {slug: guia.slug}) %}
     {% set materias = guia.materias|filter(m => m.activa)|sort((a, b) => a.nombre <=> b.nombre) %}
     {% set materia = materias|first %}
+    {% set url_publica = url('guia', {slug: guia.slug, _locale: guia.idioma, pestana: pestana and not es_portada and not pestana.enlaceExterno ? pestana.slug : null}) %}
     {# Guías superiores y subguías: solo las publicadas que esta persona puede ver. #}
     {% set superiores = guia.superiores|filter(g => g.publicada and is_granted('GUIA_VER', g)) %}
     {% set subguias = guia.subguias|filter(g => g.publicada and is_granted('GUIA_VER', g)) %}
@@ -54,6 +55,7 @@
                 {% if superiores is not empty %}{% set directa = superiores|last %}<span>{{ 'guia.parte_de'|trans }}: <a href="{{ path('guia', {slug: directa.slug, _locale: directa.idioma}) }}">{{ directa.titulo }}</a></span>{% endif %}
                 {% if guia.responsable %}<span>{{ 'guia.responsable'|trans }}: <a href="{{ path('personal_perfil', {slug: guia.responsable.slug}) }}">{{ guia.responsable.nombreCompleto }}</a></span>{% endif %}
             </p>
+            {% if not vista_previa %}{{ include('guias/_compartir.html.twig', {url: url_publica, titulo: guia.titulo ~ (pestana and not es_portada ? ' · ' ~ pestana.titulo : '')}) }}{% endif %}
         </header>
 
         <div class="guia__cuerpo{{ guia.pestanas|length > 1 ? '' : ' guia__cuerpo--una-pagina' }}">
@@ -129,7 +131,6 @@
             </div>
         </div>
 
-        {% set url_publica = url('guia', {slug: guia.slug, _locale: guia.idioma, pestana: pestana and not es_portada and not pestana.enlaceExterno ? pestana.slug : null}) %}
         <footer class="guia__pie" data-controller="imprimir">
             <dl>
                 <div><dt>{{ 'guia.ultima_actualizacion'|trans }}:</dt> <dd><time datetime="{{ guia.actualizadaEn|date('Y-m-d') }}">{{ guia.actualizadaEn|date('d-m-Y') }}</time></dd></div>
