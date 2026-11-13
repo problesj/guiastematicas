@@ -37,6 +37,7 @@ export default class extends Controller {
             if (datos.isbn && !isbn) {
                 this.isbnTarget.value = datos.isbn;
             }
+            this.dispatch('completado');
             this.avisar(datos.origen.map((origen) => ('catalogo' === origen ? this.catalogoValue : this.doiValue)).join(' '));
         } catch {
             this.avisar(this.errorValue, true);

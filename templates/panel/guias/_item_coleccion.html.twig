@@ -1,12 +1,29 @@
 {# Un elemento de la lista de un bloque (enlace, libro o diapositiva); también sirve de plantilla para agregar. #}
-<li class="coleccion__item" data-coleccion-target="item">
-    <div class="coleccion__campos">
-        {% if item.imagen is defined and item.imagen.vars.value %}
-            <img class="coleccion__miniatura" src="{{ asset('uploads/guias/' ~ item.imagen.vars.value) }}" alt="" width="160" height="90">
-        {% endif %}
-        {{ form_errors(item) }}
-        {% if item.doi is defined %}
-            {# Libro: identificadores con el botón para traer los datos, y debajo los datos ordenados. #}
+{% if item.doi is defined %}
+    {# Libro: una fila con sus datos y acciones; el formulario completo se abre con «Editar» (controlador paginar-libros). #}
+    {% set libro = item.vars.value is iterable ? item.vars.value : {} %}
+    {% set ver = (libro.registro ?? null) ? enlace_registro_catalogo(libro.registro, guia.idioma) : null %}
+    <li class="coleccion__item coleccion__item--libro" data-coleccion-target="item" data-paginar-libros-target="item"
+        data-registro="{{ ver }}"{% if not item.vars.valid %} data-con-errores{% endif %}>
+        <div class="libro-fila">
+            <span class="libro-fila__portada" aria-hidden="true">
+                <img src="{{ (libro.isbn ?? null) ? 'https://covers.openlibrary.org/b/isbn/' ~ libro.isbn|url_encode ~ '-S.jpg?default=false' : '' }}" alt="" width="40" height="60" referrerpolicy="no-referrer"
+                     data-isbn="{{ (libro.isbn ?? '')|replace({'-': ''}) }}" data-controller="portada" data-action="load->portada#revisar error->portada#revisar"{% if not (libro.isbn ?? null) %} hidden{% endif %}>
+            </span>
+            <div class="libro-fila__texto">
+                <span class="libro-fila__titulo" data-fila="titulo">{{ (libro.titulo ?? null) ?: 'bloque.libro_nuevo'|trans }}</span>
+                <span class="libro-fila__detalle" data-fila="detalle">{{ [libro.autor ?? null, libro.anio ?? null, (libro.isbn ?? null) ? 'ISBN ' ~ libro.isbn : null]|filter(v => v)|join(' · ') }}</span>
+            </div>
+            <div class="libro-fila__acciones">
+                <a class="boton-texto" href="#" target="_blank" rel="noopener" data-fila="ver" hidden>{{ 'bloque.libro_ver'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+                <button type="button" class="boton-texto" data-action="paginar-libros#editar" aria-expanded="true" aria-controls="{{ item.vars.id }}_edicion">{{ 'bloque.libro_editar'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span></span></button>
+                <button type="button" class="boton-texto boton-texto--peligro" data-action="coleccion#quitar">{{ 'bloque.libro_borrar'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span></span></button>
+                <button type="button" class="boton-texto" data-action="coleccion#subir" title="{{ 'autor.subir'|trans }}"><span aria-hidden="true">↑</span><span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
+                <button type="button" class="boton-texto" data-action="coleccion#bajar" title="{{ 'autor.bajar'|trans }}"><span aria-hidden="true">↓</span><span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
+            </div>
+        </div>
+        <div class="libro-fila__edicion" id="{{ item.vars.id }}_edicion" data-fila="edicion">
+            {{ form_errors(item) }}
             <div class="libro-form" data-controller="libro-datos"
                  data-libro-datos-url-value="{{ path('panel_guias_datos_libro') }}"
                  data-libro-datos-buscando-value="{{ 'bloque.libro_buscando'|trans }}"
@@ -45,9 +62,16 @@
                     {% endif %}
                 </p>
             </div>
-        {% else %}
-            {% for campo in item %}{{ form_row(campo) }}{% endfor %}
+        </div>
+    </li>
+{% else %}
+<li class="coleccion__item" data-coleccion-target="item">
+    <div class="coleccion__campos">
+        {% if item.imagen is defined and item.imagen.vars.value %}
+            <img class="coleccion__miniatura" src="{{ asset('uploads/guias/' ~ item.imagen.vars.value) }}" alt="" width="160" height="90">
         {% endif %}
+        {{ form_errors(item) }}
+        {% for campo in item %}{{ form_row(campo) }}{% endfor %}
     </div>
     <div class="coleccion__acciones">
         <button type="button" class="boton-texto" data-action="coleccion#subir" title="{{ 'autor.subir'|trans }}"><span aria-hidden="true">↑</span><span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
@@ -55,3 +79,4 @@
         <button type="button" class="boton-texto boton-texto--peligro" data-action="coleccion#quitar">{{ 'autor.quitar'|trans }}</button>
     </div>
 </li>
+{% endif %}

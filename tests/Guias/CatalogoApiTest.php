@@ -68,6 +68,8 @@ final class CatalogoApiTest extends WebTestCase
         $this->enviarLibros($url, [['isbn' => '978-1-234-56789-7']]);
         self::assertResponseStatusCodeSame(422);
         self::assertSelectorTextContains('.coleccion__item', 'No encontramos datos para 9781234567897');
+        // En la lista de libros, el que tiene errores vuelve marcado para abrirse con su formulario.
+        self::assertSelectorExists('li.coleccion__item--libro[data-con-errores]');
         $this->enviarLibros($url, [['isbn' => '', 'titulo' => '']], '9781234567897');
         self::assertResponseStatusCodeSame(422);
 
@@ -94,6 +96,14 @@ final class CatalogoApiTest extends WebTestCase
         self::assertSame('Algoritmos (Cormen)', $libro['titulo']);
         self::assertSame('Cormen, Thomas H.', $libro['autor']);
         self::assertSame('alma'.CatalogoFalso::MMS_CORMEN, $libro['registro']);
+
+        // El editor muestra cada libro como una fila con sus datos; «Ver» lleva al registro del catálogo.
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/bloques/'.$bloque->getId().'/editar');
+        $fila = $crawler->filter('li.coleccion__item--libro')->first();
+        self::assertSame('Algoritmos (Cormen)', $fila->filter('.libro-fila__titulo')->text());
+        self::assertSame('Cormen, Thomas H. · 2009 · ISBN 9780262033848', $fila->filter('.libro-fila__detalle')->text());
+        self::assertStringContainsString(CatalogoFalso::MMS_CORMEN, (string) $fila->attr('data-registro'));
+        self::assertNull($fila->attr('data-con-errores'));
 
         $this->cliente->request('GET', '/es/guias/quimica');
         self::assertSelectorTextContains('.libro__edicion', 'MIT Press, 2009');

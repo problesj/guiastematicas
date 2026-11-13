@@ -46,7 +46,13 @@ final class BuscadorLibrosTest extends WebTestCase
 
         $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/libros');
         self::assertResponseIsSuccessful();
-        self::assertCount(1, $crawler->filter('[data-controller="coleccion"] [data-controller="buscador-libros"]'));
+        self::assertCount(1, $crawler->filter('[data-controller="coleccion paginar-libros"] [data-controller="buscador-libros"]'));
+        // Los libros se gestionan como lista paginada (5, 10, 15 o 20 por página) con Ver, Editar y Borrar en cada fila.
+        self::assertSame(['5', '10', '15', '20'], $crawler->filter('[data-paginar-libros-target="tamano"] option')->each(fn ($o) => $o->attr('value')));
+        $plantilla = $crawler->filter('template[data-coleccion-target="plantilla"]')->html();
+        foreach (['Ver', 'Editar', 'Borrar', 'paginar-libros#editar', 'data-fila="edicion"', 'Buscar datos'] as $texto) {
+            self::assertStringContainsString($texto, $plantilla);
+        }
         self::assertCount(2, $crawler->filter('input[name="buscador-libros-fuente"]'));
         self::assertSelectorTextContains('#titulo-buscador-libros', 'Buscar libros para agregar');
 

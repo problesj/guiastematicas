@@ -687,6 +687,15 @@ bloque:
   libro_materias_ayuda: The book's subjects in the resource list. If you choose none, a new book takes the guide's subjects.
   libro_en_recursos: This book is in the list of library resources.
   libro_editar_recurso: Edit the resource
+  libro_nuevo: New book (untitled)
+  libro_ver: View
+  libro_editar: Edit
+  libro_borrar: Delete
+  libros_por_pagina: Books per page
+  libros_rango: Books %desde%–%hasta% of %total%
+  libros_pagina: Page %pagina% of %paginas%
+  libros_paginas: Pages of the book list
+  libros_vacio: No books in this block yet.
   libro_se_incorporara: When you save, the book will be added to the list of library resources.
   isbn_no_valido: The ISBN is not valid.
   diapositiva_imagen: Image

@@ -687,6 +687,15 @@ bloque:
   libro_materias_ayuda: Las materias del libro en la lista de recursos. Si no eliges ninguna, un libro nuevo toma las materias de la guía.
   libro_en_recursos: Este libro está en la lista de recursos bibliográficos.
   libro_editar_recurso: Editar el recurso
+  libro_nuevo: Libro nuevo (sin título)
+  libro_ver: Ver
+  libro_editar: Editar
+  libro_borrar: Borrar
+  libros_por_pagina: Libros por página
+  libros_rango: Libros %desde%–%hasta% de %total%
+  libros_pagina: Página %pagina% de %paginas%
+  libros_paginas: Páginas de la lista de libros
+  libros_vacio: Aún no hay libros en el bloque.
   libro_se_incorporara: Al guardar, el libro se incorporará a la lista de recursos bibliográficos.
   isbn_no_valido: El ISBN no es válido.
   diapositiva_imagen: Imagen
