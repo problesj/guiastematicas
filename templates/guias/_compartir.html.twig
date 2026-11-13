@@ -1,0 +1,21 @@
+{# Compartir la guía: enlaces directos a cada red (sin scripts de terceros) y copiar el enlace. url y titulo vienen de ver.html.twig. #}
+{% set u = url|url_encode %}
+{% set t = titulo|url_encode %}
+{% set redes = {
+    facebook: 'https://www.facebook.com/sharer/sharer.php?u=' ~ u,
+    x: 'https://x.com/intent/post?url=' ~ u ~ '&text=' ~ t,
+    linkedin: 'https://www.linkedin.com/sharing/share-offsite/?url=' ~ u,
+    whatsapp: 'https://wa.me/?text=' ~ (titulo ~ ' ' ~ url)|url_encode,
+} %}
+<div class="compartir solo-pantalla" data-controller="compartir" data-compartir-url-value="{{ url }}" data-compartir-titulo-value="{{ titulo }}">
+    <p class="compartir__titulo" id="compartir-titulo">{{ 'compartir.titulo'|trans }}</p>
+    <ul class="compartir__lista" aria-labelledby="compartir-titulo">
+        <li data-compartir-target="nativo" hidden><button type="button" class="compartir__boton" data-action="compartir#nativo">{{ include('guias/_icono_compartir.html.twig', {red: 'nativo'}) }}{{ 'compartir.mas'|trans }}</button></li>
+        {% for red, enlace in redes %}
+            <li><a class="compartir__boton compartir__boton--{{ red }}" href="{{ enlace }}" target="_blank" rel="noopener noreferrer">{{ include('guias/_icono_compartir.html.twig', {red: red}) }}{{ ('compartir.' ~ red)|trans }}<span class="solo-lectores"> {{ 'compartir.ventana_nueva'|trans }}</span></a></li>
+        {% endfor %}
+        <li><a class="compartir__boton compartir__boton--correo" href="mailto:?subject={{ t }}&amp;body={{ (titulo ~ "\n" ~ url)|url_encode }}">{{ include('guias/_icono_compartir.html.twig', {red: 'correo'}) }}{{ 'compartir.correo'|trans }}</a></li>
+        <li><button type="button" class="compartir__boton" data-action="compartir#copiar">{{ include('guias/_icono_compartir.html.twig', {red: 'copiar'}) }}{{ 'compartir.copiar'|trans }}</button></li>
+    </ul>
+    <p class="compartir__estado" role="status" data-compartir-target="estado" data-copiado="{{ 'compartir.copiado'|trans }}" data-error="{{ 'compartir.copiar_error'|trans }}"></p>
+</div>

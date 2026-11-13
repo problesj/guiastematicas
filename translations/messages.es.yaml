@@ -942,3 +942,15 @@ apariencia:
     TEXTO_PIE: Texto y enlaces del pie de página.
     LOGO: PNG, JPG o WebP de hasta 1 MB, idealmente horizontal y con fondo transparente. Reemplaza al nombre de la institución en la cabecera.
     IMAGEN_PORTADA: JPG, WebP o PNG de hasta 3 MB y al menos 800 px de ancho, idealmente apaisada (por ejemplo 1920 × 800). Se oscurece para que el texto blanco se lea bien.
+compartir:
+  titulo: "Compartir"
+  mas: "Compartir…"
+  facebook: "Facebook"
+  x: "X"
+  linkedin: "LinkedIn"
+  whatsapp: "WhatsApp"
+  correo: "Correo"
+  copiar: "Copiar enlace"
+  copiado: "Enlace copiado."
+  copiar_error: "No se pudo copiar; selecciona y copia este enlace:"
+  ventana_nueva: "(se abre en una ventana nueva)"
