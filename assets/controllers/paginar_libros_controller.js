@@ -22,17 +22,47 @@ export default class extends Controller {
         // Libros agregados, quitados o movidos (también los del buscador): se muestra la página del último agregado.
         this.observador = new MutationObserver((cambios) => {
             const agregados = cambios.flatMap((c) => [...c.addedNodes]).filter((n) => n.nodeType === Node.ELEMENT_NODE);
-            if (agregados.length > 0) {
+            if (this.reordenando) {
+                this.reordenando = false;
+                this.actual = 0;
+            } else if (agregados.length > 0) {
                 this.actual = Math.floor(this.items().indexOf(agregados.at(-1)) / this.tamano());
             }
             // Espera a que el buscador termine de completar los campos del libro recién agregado.
             setTimeout(() => this.refrescar());
         });
         this.observador.observe(this.listaTarget, { childList: true });
+
+        // Orden del bloque: «Por título» ordena la lista enseguida (el servidor la vuelve a ordenar al guardar) y
+        // oculta las flechas del orden manual.
+        this.formulario = this.element.closest('form');
+        this.cambioOrden = (evento) => {
+            if (evento.target.name?.endsWith('[orden]')) {
+                this.aplicarOrden(true);
+            }
+        };
+        this.formulario?.addEventListener('change', this.cambioOrden);
+        this.aplicarOrden(false);
+    }
+
+    porTitulo() {
+        return this.formulario?.querySelector('input[name$="[orden]"]:checked')?.value === 'titulo';
+    }
+
+    aplicarOrden(ordenar) {
+        const titulo = this.porTitulo();
+        this.element.classList.toggle('coleccion--por-titulo', titulo);
+        if (titulo && ordenar) {
+            const clave = (item) => item.querySelector('input[name$="[titulo]"]')?.value.trim() ?? '';
+            const ordenados = this.items().sort((a, b) => clave(a).localeCompare(clave(b), 'es', { sensitivity: 'base' }));
+            this.reordenando = true;
+            this.listaTarget.append(...ordenados);
+        }
     }
 
     disconnect() {
         this.observador?.disconnect();
+        this.formulario?.removeEventListener('change', this.cambioOrden);
     }
 
     items() {

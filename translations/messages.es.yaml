@@ -645,6 +645,10 @@ bloque:
   libros_columnas: Columnas de la cuadrícula
   libros_columnas_ayuda: Solo para la cuadrícula. «Automático» pone tantas como quepan en el ancho de la caja; en celulares se ven dos.
   libros_columnas_auto: Automático
+  libros_orden: Orden de los libros
+  libros_orden_ayuda: Por título, los libros se ordenan alfabéticamente al guardar (también los que agregues después).
+  libros_orden_manual: Manual (flechas ↑ ↓)
+  libros_orden_titulo: Por título (A–Z)
   libro_acceso: Acceder
   libro_ver_catalogo: Ver en el catálogo
   libro_buscar_catalogo: Buscar en el catálogo

@@ -258,6 +258,18 @@ final class CatalogoApiTest extends WebTestCase
         self::assertSame('MIT Press, 2009', $primero->filter('.libro__edicion')->text());
         self::assertStringStartsWith('Ver en el catálogo', $primero->filter('.libro__acceso a')->text());
         self::assertStringStartsWith('Acceder', $crawler->filter('.libro--lista')->eq(1)->filter('.libro__acceso a')->text());
+
+        // Orden por título: al guardar se ordenan alfabéticamente (sin importar mayúsculas ni tildes); el manual respeta el orden.
+        $desordenados = [['titulo' => 'Zoología general'], ['titulo' => 'álgebra lineal'], ['titulo' => 'Biología celular']];
+        $this->cliente->request('POST', $editar, ['bloque' => ['items' => $desordenados, 'presentacion' => 'cuadricula', 'columnas' => '0', 'orden' => 'titulo', '_token' => $token]]);
+        self::assertResponseRedirects();
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertSame(['álgebra lineal', 'Biología celular', 'Zoología general'], $crawler->filter('.bloque__libros .libro__titulo')->each(fn ($n) => $n->text()));
+        $crawler = $this->cliente->request('GET', $editar);
+        self::assertSame('titulo', $crawler->filter('input[name="bloque[orden]"]:checked')->attr('value'));
+        $this->cliente->request('POST', $editar, ['bloque' => ['items' => $desordenados, 'presentacion' => 'cuadricula', 'columnas' => '0', 'orden' => 'manual', '_token' => $token]]);
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertSame(['Zoología general', 'álgebra lineal', 'Biología celular'], $crawler->filter('.bloque__libros .libro__titulo')->each(fn ($n) => $n->text()));
     }
 
     public function testLaBusquedaEnElCatalogoUsaLasMateriasYElTipoDeMaterial(): void

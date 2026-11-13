@@ -153,6 +153,13 @@ final class BloqueType extends AbstractType
                 'choices' => ['bloque.libros_columnas_auto' => 0, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6],
                 'choice_translation_domain' => 'messages',
                 'constraints' => [new Assert\Choice(choices: [0, 2, 3, 4, 5, 6])],
+            ])
+            ->add('orden', ChoiceType::class, [
+                'label' => 'bloque.libros_orden',
+                'help' => 'bloque.libros_orden_ayuda',
+                'expanded' => true,
+                'choices' => ['bloque.libros_orden_manual' => 'manual', 'bloque.libros_orden_titulo' => 'titulo'],
+                'constraints' => [new Assert\Choice(choices: ['manual', 'titulo'])],
             ]);
         $builder->add('isbns', TextareaType::class, [
             'label' => 'bloque.libros_isbns',

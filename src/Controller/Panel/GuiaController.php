@@ -607,9 +607,30 @@ final class GuiaController extends AbstractController
                 'items' => $this->librosConMaterias($bloque->dato('items', [])),
                 'presentacion' => $bloque->dato('presentacion', 'cuadricula'),
                 'columnas' => (int) $bloque->dato('columnas', 0),
+                'orden' => 'titulo' === $bloque->dato('orden') ? 'titulo' : 'manual',
             ],
             TipoBloque::Enlaces, TipoBloque::Diapositivas => ['items' => $bloque->dato('items', [])],
         };
+    }
+
+    /**
+     * Con el orden «por título» los libros se guardan ordenados alfabéticamente (según el orden del español),
+     * así la guía y el editor los muestran igual; con el orden manual quedan como los dejó el editor.
+     *
+     * @param array<string, mixed> $contenido
+     *
+     * @return array<string, mixed>
+     */
+    private static function ordenarLibros(array $contenido): array
+    {
+        if ('titulo' === $contenido['orden']) {
+            $comparador = class_exists(\Collator::class) ? new \Collator('es') : null;
+            usort($contenido['items'], fn (array $a, array $b): int => null !== $comparador
+                ? $comparador->compare((string) $a['titulo'], (string) $b['titulo'])
+                : strnatcasecmp((string) $a['titulo'], (string) $b['titulo']));
+        }
+
+        return $contenido;
     }
 
     /**
@@ -639,7 +660,8 @@ final class GuiaController extends AbstractController
             TipoBloque::Enlaces => ['items' => array_map(fn (array $i) => [
                 'titulo' => $texto($i['titulo'] ?? null), 'url' => $texto($i['url'] ?? null), 'descripcion' => $texto($i['descripcion'] ?? null),
             ], $items)],
-            TipoBloque::Libros => [
+            TipoBloque::Libros => self::ordenarLibros([
+                'orden' => 'titulo' === ($datos['orden'] ?? null) ? 'titulo' : 'manual',
                 'presentacion' => \in_array($datos['presentacion'] ?? null, ['carrusel', 'lista'], true) ? $datos['presentacion'] : 'cuadricula',
                 'columnas' => \in_array((int) ($datos['columnas'] ?? 0), [2, 3, 4, 5, 6], true) ? (int) $datos['columnas'] : 0,
                 // Cada libro se incorpora a la lista de recursos y guarda el id del recurso con que quedó vinculado.
@@ -656,7 +678,7 @@ final class GuiaController extends AbstractController
                     'registro' => $texto($i['registro'] ?? null),
                     'mms' => $texto($i['mms'] ?? null),
                 ], $items), array_map(fn (array $i) => $i['materias'] ?? null, $items), $guia),
-            ],
+            ]),
             TipoBloque::Diapositivas => ['items' => array_values(array_filter(array_map(function (array $i) use ($texto, $guia) {
                 $imagen = (string) ($i['imagen'] ?? '');
                 if (($i['archivo'] ?? null) instanceof UploadedFile) {
