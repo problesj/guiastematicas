@@ -1,0 +1,10 @@
+{% extends 'lti/_base.html.twig' %}
+
+{% block body %}
+    <h1>{{ 'lti.enviar.titulo'|trans({'%guia%': guia.titulo}, 'messages', idioma) }}</h1>
+    <form method="post" action="{{ retorno }}" id="lti-respuesta">
+        <input type="hidden" name="JWT" value="{{ jwt }}">
+        <button type="submit" class="boton">{{ 'lti.enviar.continuar'|trans({}, 'messages', idioma) }}</button>
+    </form>
+    <script>document.getElementById('lti-respuesta').submit();</script>
+{% endblock %}

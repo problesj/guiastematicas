@@ -41,6 +41,21 @@
         </div>
     {{ form_end(formulario) }}
 
+    <section class="configuracion__grupo integracion" aria-labelledby="titulo-moodle">
+        <h2 id="titulo-moodle">{{ 'configuracion.moodle.titulo'|trans }}</h2>
+        <p>{{ 'configuracion.moodle.bajada'|trans }}</p>
+        <dl class="integracion__datos">
+            <div><dt>{{ 'configuracion.moodle.url_herramienta'|trans }}</dt><dd><code>{{ url('lti_lanzar') }}</code></dd></div>
+            <div><dt>{{ 'configuracion.moodle.url_login'|trans }}</dt><dd><code>{{ url('lti_login') }}</code></dd></div>
+            <div><dt>{{ 'configuracion.moodle.url_redireccion'|trans }}</dt><dd><code>{{ url('lti_lanzar') }}</code></dd></div>
+            <div><dt>{{ 'configuracion.moodle.tipo_llave'|trans }}</dt><dd>{{ 'configuracion.moodle.tipo_llave_valor'|trans }}</dd></div>
+            <div><dt>{{ 'configuracion.moodle.url_llaves'|trans }}</dt><dd><code>{{ url('lti_jwks') }}</code></dd></div>
+            <div><dt>{{ 'configuracion.moodle.url_contenido'|trans }}</dt><dd><code>{{ url('lti_lanzar') }}</code></dd></div>
+        </dl>
+        <p>{{ 'configuracion.moodle.opciones'|trans }}</p>
+        <p>{{ 'configuracion.moodle.despues'|trans }}</p>
+    </section>
+
     <section class="configuracion__grupo integracion" aria-labelledby="titulo-wordpress">
         <h2 id="titulo-wordpress">{{ 'configuracion.wordpress.titulo'|trans }}</h2>
         <p>{{ 'configuracion.wordpress.bajada'|trans }}</p>

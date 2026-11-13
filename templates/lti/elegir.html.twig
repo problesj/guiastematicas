@@ -1,0 +1,41 @@
+{% extends 'lti/_base.html.twig' %}
+
+{% block title %}{{ 'lti.elegir.titulo'|trans({}, 'messages', idioma) }}{% endblock %}
+
+{% block body %}
+    <h1>{{ 'lti.elegir.titulo'|trans({}, 'messages', idioma) }}</h1>
+    <p class="pagina__bajada">{{ curso ? 'lti.elegir.bajada_curso'|trans({'%curso%': curso}, 'messages', idioma) : 'lti.elegir.bajada'|trans({}, 'messages', idioma) }}</p>
+    {% if guias is empty %}
+        <p>{{ 'guias.vacio'|trans({}, 'messages', idioma) }}</p>
+    {% else %}
+        <form method="post" action="{{ path('lti_vincular') }}" class="formulario lti__elegir" data-controller="filtro-lti">
+            <input type="hidden" name="vinculo" value="{{ vinculo }}">
+            <div class="campo">
+                <label for="lti-filtro">{{ 'lti.elegir.filtrar'|trans({}, 'messages', idioma) }}</label>
+                <input type="search" id="lti-filtro" data-action="filtro-lti#filtrar" data-filtro-lti-target="texto" autocomplete="off">
+            </div>
+            <fieldset{% if falta_guia|default(false) %} aria-describedby="lti-falta"{% endif %}>
+                <legend>{{ 'lti.elegir.guias'|trans({}, 'messages', idioma) }}</legend>
+                {% if falta_guia|default(false) %}<p class="campo__error" id="lti-falta">{{ 'lti.elegir.falta'|trans({}, 'messages', idioma) }}</p>{% endif %}
+                <ul class="lti__guias">
+                    {% for guia in guias %}
+                        <li data-filtro-lti-target="guia" data-texto="{{ (guia.titulo ~ ' ' ~ guia.descripcion ~ ' ' ~ guia.materias|map(m => m.nombre)|join(' '))|lower }}">
+                            <label class="lti__guia">
+                                <input type="radio" name="guia" value="{{ guia.slug }}" required>
+                                {% if guia.icono %}<img class="lista-guias__icono" src="{{ asset('uploads/guias/' ~ guia.icono) }}" alt="" width="48" height="48">{% else %}<span class="lista-guias__icono lista-guias__icono--vacio" aria-hidden="true">{{ guia.titulo|first|upper }}</span>{% endif %}
+                                <span class="lti__guia-texto">
+                                    <strong>{{ guia.titulo }}</strong>{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans({}, 'messages', idioma) }}</span>{% endif %}
+                                    {% if guia.descripcion %}<span class="lti__guia-descripcion">{{ guia.descripcion }}</span>{% endif %}
+                                </span>
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <p class="lti__sin-resultados" data-filtro-lti-target="vacio" hidden>{{ 'guias.sin_resultados'|trans({}, 'messages', idioma) }}</p>
+            </fieldset>
+            <div class="formulario__acciones">
+                <button type="submit" class="boton">{{ 'lti.elegir.agregar'|trans({}, 'messages', idioma) }}</button>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}

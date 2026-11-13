@@ -20,9 +20,15 @@ final class CatalogoFalso
     /** @var list<string> direcciones consultadas */
     public array $consultas = [];
 
+    /** Conjunto de llaves públicas del Moodle de prueba (lo define cada prueba LTI). */
+    public static ?array $jwksLti = null;
+
     public function __invoke(string $metodo, string $url): MockResponse
     {
         $this->consultas[] = $url;
+        if ('https://moodle.prueba/mod/lti/certs.php' === $url) {
+            return null !== self::$jwksLti ? new MockResponse((string) json_encode(self::$jwksLti)) : new MockResponse('', ['http_code' => 404]);
+        }
         parse_str((string) parse_url($url, \PHP_URL_QUERY), $query);
 
         if (str_contains($url, '/primo/v1/search')) {
