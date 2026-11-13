@@ -13,6 +13,7 @@ enum TipoBloque: string
     case Busqueda = 'busqueda';
     case Enlaces = 'enlaces';
     case Libros = 'libros';
+    case Revistas = 'revistas';
     case Diapositivas = 'diapositivas';
 
     public function etiqueta(): string

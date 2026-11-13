@@ -1,0 +1,37 @@
+{# Bloque Revistas: buscar en la búsqueda de revistas del catálogo (Primo VE) por título y/o categoría, marcar y agregar. #}
+<section class="buscador-libros" data-controller="buscador-revistas"
+         data-buscador-revistas-url-value="{{ path('panel_guias_buscar_revistas_catalogo') }}"
+         data-buscador-revistas-buscando-value="{{ 'bloque.buscador_buscando'|trans }}"
+         data-buscador-revistas-resumen-value="{{ 'bloque.buscador_revistas_resumen'|trans }}"
+         data-buscador-revistas-vacio-value="{{ 'bloque.buscador_revistas_vacio'|trans }}"
+         data-buscador-revistas-falta-value="{{ 'bloque.buscador_revistas_falta'|trans }}"
+         data-buscador-revistas-error-value="{{ 'bloque.buscador_error'|trans }}"
+         data-buscador-revistas-ya-value="{{ 'bloque.catalogo_ya_agregado'|trans }}"
+         data-buscador-revistas-agregados-value="{{ 'bloque.buscador_revistas_agregadas'|trans }}"
+         aria-labelledby="titulo-buscador-revistas">
+    <h2 id="titulo-buscador-revistas" class="catalogo-recursos__titulo">{{ 'bloque.buscador_revistas_titulo'|trans }}</h2>
+    <div class="buscador-libros__campos">
+        <div class="campo">
+            <label for="buscador-revistas-texto">{{ 'bloque.buscador_revistas_texto'|trans }}</label>
+            <input type="search" id="buscador-revistas-texto" autocomplete="off" maxlength="200" data-buscador-revistas-target="texto" data-action="keydown.enter->buscador-revistas#buscar:prevent">
+        </div>
+        <div class="campo buscador-libros__ancho">
+            <label for="buscador-revistas-categoria">{{ 'bloque.buscador_revistas_categoria'|trans }}</label>
+            <input type="search" id="buscador-revistas-categoria" autocomplete="off" maxlength="1000" spellcheck="false"
+                   aria-describedby="buscador-revistas-ayuda" data-buscador-revistas-target="categoria" data-action="keydown.enter->buscador-revistas#buscar:prevent">
+        </div>
+    </div>
+    {% set url_revistas = catalogo_url_revistas(app.request.locale) %}
+    <p class="campo__ayuda" id="buscador-revistas-ayuda">{{ 'bloque.buscador_revistas_ayuda'|trans }}
+        {% if url_revistas %}<a href="{{ url_revistas }}" target="_blank" rel="noopener">{{ 'bloque.buscador_revistas_abrir'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>{% endif %}</p>
+    <div class="buscador-libros__buscar">
+        <button type="button" class="boton boton--secundario" data-buscador-revistas-target="boton" data-action="buscador-revistas#buscar">{{ 'bloque.buscador_buscar'|trans }}</button>
+    </div>
+    <p class="catalogo-recursos__estado" role="status" data-buscador-revistas-target="estado"></p>
+    <div class="catalogo-recursos__acciones" data-buscador-revistas-target="acciones" hidden>
+        <label class="casillas__opcion"><input type="checkbox" data-buscador-revistas-target="todos" data-action="buscador-revistas#marcarTodos"> {{ 'bloque.catalogo_marcar_todos'|trans }}</label>
+        <button type="button" class="boton" data-buscador-revistas-target="agregar" data-action="buscador-revistas#agregar" disabled>{{ 'bloque.buscador_revistas_agregar'|trans }}</button>
+    </div>
+    <ul class="catalogo-recursos__lista buscador-libros__resultados" data-buscador-revistas-target="lista" aria-label="{{ 'bloque.catalogo_resultados'|trans }}" hidden></ul>
+    <button type="button" class="boton boton--secundario" data-buscador-revistas-target="mas" data-action="buscador-revistas#verMas" hidden>{{ 'bloque.catalogo_ver_mas'|trans }}</button>
+</section>

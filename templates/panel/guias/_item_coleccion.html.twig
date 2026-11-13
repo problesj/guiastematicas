@@ -1,4 +1,4 @@
-{# Un elemento de la lista de un bloque (enlace, libro o diapositiva); también sirve de plantilla para agregar. #}
+{# Un elemento de la lista de un bloque (enlace, libro, revista o diapositiva); también sirve de plantilla para agregar. #}
 {% if item.doi is defined %}
     {# Libro: una fila con sus datos y acciones; el formulario completo se abre con «Editar» (controlador paginar-libros). #}
     {% set libro = item.vars.value is iterable ? item.vars.value : {} %}
@@ -59,6 +59,64 @@
                         {{ 'bloque.libro_en_recursos'|trans }} <a href="{{ path('panel_recurso_editar', {id: item.recurso.vars.value}) }}" target="_blank" rel="noopener">{{ 'bloque.libro_editar_recurso'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>
                     {% else %}
                         {{ 'bloque.libro_se_incorporara'|trans }}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </li>
+{% elseif item.eissn is defined %}
+    {# Revista: la misma fila que un libro (controlador paginar-libros), con editorial e ISSN y sin portada. #}
+    {% set revista = item.vars.value is iterable ? item.vars.value : {} %}
+    {% set ver = (revista.registro ?? null) ? enlace_registro_catalogo(revista.registro, guia.idioma) : null %}
+    <li class="coleccion__item coleccion__item--libro coleccion__item--revista" data-coleccion-target="item" data-paginar-libros-target="item"
+        data-registro="{{ ver }}"{% if not item.vars.valid %} data-con-errores{% endif %}>
+        <div class="libro-fila">
+            <span class="libro-fila__portada libro-fila__portada--revista" aria-hidden="true"></span>
+            <div class="libro-fila__texto">
+                <span class="libro-fila__titulo" data-fila="titulo">{{ (revista.titulo ?? null) ?: 'bloque.revista_nueva'|trans }}</span>
+                <span class="libro-fila__detalle" data-fila="detalle">{{ [revista.editorial ?? null, (revista.issn ?? null) ? 'ISSN ' ~ revista.issn : null]|filter(v => v)|join(' · ') }}</span>
+            </div>
+            <div class="libro-fila__acciones">
+                <a class="boton-texto" href="#" target="_blank" rel="noopener" data-fila="ver" hidden>{{ 'bloque.libro_ver'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+                <button type="button" class="boton-texto" data-action="paginar-libros#editar" aria-expanded="true" aria-controls="{{ item.vars.id }}_edicion">{{ 'bloque.libro_editar'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span></span></button>
+                <button type="button" class="boton-texto boton-texto--peligro" data-action="coleccion#quitar">{{ 'bloque.libro_borrar'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span></span></button>
+                <button type="button" class="boton-texto" data-action="coleccion#subir" title="{{ 'autor.subir'|trans }}"><span aria-hidden="true">↑</span><span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
+                <button type="button" class="boton-texto" data-action="coleccion#bajar" title="{{ 'autor.bajar'|trans }}"><span aria-hidden="true">↓</span><span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
+            </div>
+        </div>
+        <div class="libro-fila__edicion" id="{{ item.vars.id }}_edicion" data-fila="edicion">
+            {{ form_errors(item) }}
+            <div class="libro-form" data-controller="revista-datos"
+                 data-revista-datos-url-value="{{ path('panel_guias_datos_revista') }}"
+                 data-revista-datos-buscando-value="{{ 'bloque.libro_buscando'|trans }}"
+                 data-revista-datos-falta-value="{{ 'bloque.revista_falta_issn'|trans }}"
+                 data-revista-datos-vacio-value="{{ 'bloque.revista_sin_datos'|trans }}"
+                 data-revista-datos-error-value="{{ 'bloque.catalogo_error'|trans }}"
+                 data-revista-datos-listo-value="{{ 'bloque.libro_datos_catalogo'|trans }}">
+                <div class="libro-form__identificadores">
+                    {{ form_row(item.issn) }}
+                    {{ form_row(item.eissn) }}
+                    <div class="libro-form__buscar">
+                        <button type="button" class="boton boton--secundario" data-action="revista-datos#buscar" data-revista-datos-target="boton">{{ 'bloque.libro_buscar'|trans }}</button>
+                    </div>
+                    <p class="libro-form__estado" role="status" data-revista-datos-target="estado"></p>
+                </div>
+                <div class="libro-form__datos">
+                    {{ form_row(item.titulo, {row_attr: {class: 'libro-form__titulo'}}) }}
+                    {{ form_row(item.editorial) }}
+                    {{ form_row(item.enlace, {row_attr: {class: 'libro-form__enlace'}}) }}
+                </div>
+                <details class="libro-form__materias"{% if item.materias.vars.value is not empty %} open{% endif %}>
+                    <summary>{{ 'bloque.libro_materias'|trans }}{% if item.materias.vars.value is not empty %} ({{ item.materias.vars.value|length }}){% endif %}</summary>
+                    {{ form_widget(item.materias) }}
+                    {{ form_help(item.materias) }}
+                </details>
+                {{ form_widget(item.recurso) }}
+                <p class="libro-form__recurso">
+                    {% if item.recurso.vars.value %}
+                        {{ 'bloque.revista_en_recursos'|trans }} <a href="{{ path('panel_recurso_editar', {id: item.recurso.vars.value}) }}" target="_blank" rel="noopener">{{ 'bloque.libro_editar_recurso'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+                    {% else %}
+                        {{ 'bloque.revista_se_incorporara'|trans }}
                     {% endif %}
                 </p>
             </div>

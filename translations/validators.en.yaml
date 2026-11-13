@@ -25,3 +25,6 @@ bloque.doi_no_valido: "The DOI is not valid. It must start with 10. (for example
 bloque.anio_no_valido: Enter the year with 4 digits.
 configuracion.direccion_no_valida: "Enter a full address (https://… or ldap://…)."
 apariencia.contraste_bajo: "The contrast with %fondo% is %contraste%:1; it must be at least 4.5:1. Choose a darker or lighter shade."
+bloque.issn_no_valido: The ISSN is not valid; check the digits (8, the last one is a check digit).
+bloque.revista_no_encontrada: "Journal %issn% was not found in the catalogue: enter the title."
+bloque.revista_sin_titulo: Enter the title or an ISSN.

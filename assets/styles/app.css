@@ -720,3 +720,10 @@ h1 .insignia--restringida { font-size: 0.875rem; }
     .libro-fila__acciones { flex-basis: 100%; justify-content: flex-start; }
 }
 .coleccion--por-titulo [data-action~="coleccion#subir"], .coleccion--por-titulo [data-action~="coleccion#bajar"] { display: none; }
+
+/* Bloque Revistas (editor y guía): sin portada, el color del sitio con el título encima. */
+.libro-fila__portada--revista { background: linear-gradient(160deg, var(--color-principal), var(--color-principal-suave)); }
+.buscador-libros__ancho { grid-column: span 2; }
+@media (max-width: 48rem) {
+    .buscador-libros__ancho { grid-column: auto; }
+}

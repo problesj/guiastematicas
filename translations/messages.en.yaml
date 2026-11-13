@@ -479,6 +479,8 @@ tipo_bloque:
   enlaces_ayuda: Links to external websites, with an optional description.
   libros: Books
   libros_ayuda: Books with their cover (found by ISBN) and a link to the catalogue or the online version.
+  revistas: Journals
+  revistas_ayuda: Journals with their publisher and ISSN and a link to the catalogue or the online journal. Add them by hand, by ISSN or from Primo's journal search (by title or category).
   diapositivas: Slides
   diapositivas_ayuda: Rotating images, each with optional text and link (tips, news).
   texto: Text
@@ -616,9 +618,11 @@ guia:
 bloque:
   items_enlaces: Links
   items_libros: Books
+  items_revistas: Journals
   items_diapositivas: Slides
   agregar_enlaces: Add link
   agregar_libros: Add book
+  agregar_revistas: Add journal
   agregar_diapositivas: Add slide
   lista_vacia: Add at least one item.
   enlace_titulo: Link text
@@ -702,6 +706,35 @@ bloque:
   libros_vacio: No books in this block yet.
   libro_se_incorporara: When you save, the book will be added to the list of library resources.
   isbn_no_valido: The ISBN is not valid.
+  revistas_ayuda: Enter each journal's ISSN and press "Find details" to fill in the title and publisher (they are also filled in on saving), or search the catalogue below. Each journal is also added to the list of library resources (type Journals), with the subjects you choose.
+  revistas_issns: Add several by ISSN
+  revistas_issns_ayuda: Paste one or more ISSNs (one per line or separated by commas); on saving they are added to the list with the catalogue details.
+  revistas_orden: Journal order
+  revistas_orden_ayuda: By title, journals are sorted alphabetically on saving (including those you add later).
+  revistas_por_pagina: Journals per page
+  revistas_rango: Journals %desde%–%hasta% of %total%
+  revistas_pagina: Page %pagina% of %paginas%
+  revistas_paginas: Pages of the journal list
+  revistas_vacio: There are no journals in the block yet.
+  revista_nueva: New journal (untitled)
+  revista_eissn: e-ISSN (electronic ISSN)
+  revista_enlace_ayuda: Only if the journal should open another page (e.g. the journal's website); otherwise it links to its catalogue record.
+  revista_materias_ayuda: The journal's subjects in the resource list. If you choose none, a new journal takes the guide's subjects.
+  revista_en_recursos: This journal is in the list of library resources.
+  revista_se_incorporara: On saving, the journal will be added to the list of library resources.
+  revista_falta_issn: Enter an ISSN to search.
+  revista_sin_datos: No journal with that ISSN was found in the catalogue. Check the digits or enter the details by hand.
+  revista_acceso: Access
+  buscador_revistas_titulo: Search journals in the catalogue
+  buscador_revistas_texto: Title words
+  buscador_revistas_categoria: Category or link to a Primo journal search
+  buscador_revistas_ayuda: "Enter title words, a category (e.g. Health_Biological_Sciences─Human_Anatomy_Physiology) or paste the link of a Primo journal search after choosing the category and filters; they can be combined."
+  buscador_revistas_abrir: Open Primo's journal search
+  buscador_revistas_resumen: "%mostrados% of %total% journals. Select the ones you want to add."
+  buscador_revistas_vacio: No journals were found with those details.
+  buscador_revistas_falta: Enter title words or a category to search.
+  buscador_revistas_agregar: Add the selected ones
+  buscador_revistas_agregadas: "%count% journal(s) added to the list. Check their details and save the block."
   diapositiva_imagen: Image
   diapositiva_imagen_ayuda: JPG, PNG or WebP up to 4 MB, landscape (1200 × 675 px recommended). If it already has an image, upload another only to replace it.
   diapositiva_titulo: Text (optional; also describes the image)
@@ -709,6 +742,7 @@ bloque:
   diapositiva_sin_imagen: Upload an image for this slide.
   resumen_enlaces: "1 link|%count% links"
   resumen_libros: "1 book|%count% books"
+  resumen_revistas: "1 journal|%count% journals"
   resumen_diapositivas: "1 slide|%count% slides"
   carrusel: carousel
   diapositiva: slide

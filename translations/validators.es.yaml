@@ -25,3 +25,6 @@ bloque.doi_no_valido: "El DOI no es válido. Debe empezar con 10. (por ejemplo 1
 bloque.anio_no_valido: Escribe el año con 4 dígitos.
 configuracion.direccion_no_valida: "Escribe una dirección completa (https://… o ldap://…)."
 apariencia.contraste_bajo: "El contraste con %fondo% es de %contraste%:1; debe ser al menos 4,5:1. Elige un tono más oscuro o más claro."
+bloque.issn_no_valido: El ISSN no es válido; revisa los dígitos (8, el último es de control).
+bloque.revista_no_encontrada: "No encontramos la revista %issn% en el catálogo: escribe el título."
+bloque.revista_sin_titulo: Escribe el título o un ISSN.

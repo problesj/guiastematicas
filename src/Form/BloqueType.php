@@ -117,6 +117,7 @@ final class BloqueType extends AbstractType
                 ]),
             TipoBloque::Enlaces => $this->lista($builder, EnlaceBloqueType::class),
             TipoBloque::Libros => $this->libros($this->lista($builder, LibroBloqueType::class)),
+            TipoBloque::Revistas => $this->revistas($this->lista($builder, RevistaBloqueType::class, 300)),
             TipoBloque::Diapositivas => $this->lista($builder, DiapositivaBloqueType::class, 20),
         };
     }
@@ -137,10 +138,10 @@ final class BloqueType extends AbstractType
         ]);
     }
 
-    /** Campo para agregar varios libros de una vez, pegando ISBN (uno por línea): cada uno se suma a la lista. */
-    private function libros(FormBuilderInterface $builder): FormBuilderInterface
+    /** Presentación (cuadrícula, carrusel o lista), columnas y orden: comunes a los bloques Libros y Revistas. */
+    private function presentacion(FormBuilderInterface $builder, string $prefijo = 'bloque.libros_'): FormBuilderInterface
     {
-        $builder
+        return $builder
             ->add('presentacion', ChoiceType::class, [
                 'label' => 'bloque.libros_presentacion',
                 'expanded' => true,
@@ -155,31 +156,55 @@ final class BloqueType extends AbstractType
                 'constraints' => [new Assert\Choice(choices: [0, 2, 3, 4, 5, 6])],
             ])
             ->add('orden', ChoiceType::class, [
-                'label' => 'bloque.libros_orden',
-                'help' => 'bloque.libros_orden_ayuda',
+                'label' => $prefijo.'orden',
+                'help' => $prefijo.'orden_ayuda',
                 'expanded' => true,
                 'choices' => ['bloque.libros_orden_manual' => 'manual', 'bloque.libros_orden_titulo' => 'titulo'],
                 'constraints' => [new Assert\Choice(choices: ['manual', 'titulo'])],
             ]);
-        $builder->add('isbns', TextareaType::class, [
-            'label' => 'bloque.libros_isbns',
-            'help' => 'bloque.libros_isbns_ayuda',
+    }
+
+    /** Campo para agregar varios libros de una vez, pegando ISBN (uno por línea): cada uno se suma a la lista. */
+    private function libros(FormBuilderInterface $builder): FormBuilderInterface
+    {
+        return $this->pegarIdentificadores($this->presentacion($builder), 'isbns', 'bloque.libros_isbns', '/^(\d{9}[\dX]|\d{13})$/',
+            fn (string $isbn) => ['isbn' => $isbn, 'titulo' => '', 'autor' => '', 'enlace' => ''], 50);
+    }
+
+    /** Lo mismo para las revistas, pegando ISSN. */
+    private function revistas(FormBuilderInterface $builder): FormBuilderInterface
+    {
+        return $this->pegarIdentificadores($this->presentacion($builder, 'bloque.revistas_'), 'issns', 'bloque.revistas_issns', '/^\d{7}[\dX]$/',
+            fn (string $issn) => ['issn' => substr($issn, 0, 4).'-'.substr($issn, 4), 'titulo' => '', 'enlace' => ''], 100);
+    }
+
+    /**
+     * Área de texto para pegar varios identificadores (uno por línea o separados por comas): al enviar, cada uno válido
+     * se suma a la lista como un elemento nuevo, que se completa con el catálogo.
+     *
+     * @param callable(string): array<string, string> $elemento
+     */
+    private function pegarIdentificadores(FormBuilderInterface $builder, string $campo, string $etiqueta, string $patron, callable $elemento, int $maximo): FormBuilderInterface
+    {
+        $builder->add($campo, TextareaType::class, [
+            'label' => $etiqueta,
+            'help' => $etiqueta.'_ayuda',
             'mapped' => false,
             'required' => false,
             'attr' => ['rows' => 4, 'spellcheck' => 'false'],
         ]);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $evento): void {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $evento) use ($campo, $patron, $elemento, $maximo): void {
             $datos = $evento->getData();
             if (!\is_array($datos)) {
                 return;
             }
             $items = array_values(array_filter((array) ($datos['items'] ?? []), 'is_array'));
-            $isbns = array_map(fn (string $t) => strtoupper(str_replace('-', '', $t)), preg_split('/[\s,;]+/', (string) ($datos['isbns'] ?? '')) ?: []);
-            foreach (\array_slice(array_filter($isbns, fn (string $t) => 1 === preg_match('/^(\d{9}[\dX]|\d{13})$/', $t)), 0, 50) as $isbn) {
-                $items[] = ['isbn' => $isbn, 'titulo' => '', 'autor' => '', 'enlace' => ''];
+            $valores = array_map(fn (string $t) => strtoupper(str_replace('-', '', $t)), preg_split('/[\s,;]+/', (string) ($datos[$campo] ?? '')) ?: []);
+            foreach (\array_slice(array_filter($valores, fn (string $t) => 1 === preg_match($patron, $t)), 0, $maximo) as $valor) {
+                $items[] = $elemento($valor);
             }
             $datos['items'] = $items;
-            $datos['isbns'] = '';
+            $datos[$campo] = '';
             $evento->setData($datos);
         });
 
