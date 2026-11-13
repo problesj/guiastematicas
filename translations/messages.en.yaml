@@ -648,6 +648,9 @@ bloque:
   libros_lista: Short list (thumbnail and details)
   libros_columnas: Grid columns
   libros_columnas_ayuda: Grid only. “Automatic” fits as many as the box width allows; phones show two.
+  lista_por_pagina: Items per page in the short list
+  lista_por_pagina_ayuda: Only for the short list; in the guide readers move between pages with Previous and Next.
+  lista_sin_paginar: All (no pages)
   libros_columnas_auto: Automatic
   libros_orden: Book order
   libros_orden_ayuda: By title, books are sorted alphabetically when you save (including those you add later).

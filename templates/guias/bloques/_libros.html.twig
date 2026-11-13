@@ -22,9 +22,23 @@
             {% endif %}
         </div>
     {% elseif presentacion == 'lista' %}
-        <ul class="bloque__libros bloque__libros--lista"{{ atributos_disponibilidad|raw }}>
-            {% for libro in items %}{{ include(plantilla, {lista: true}) }}{% endfor %}
-        </ul>
+        {# Lista breve paginada en el navegador (controlador paginar-lista); sin JavaScript se ven todos. #}
+        {% set por_pagina = bloque.dato('por_pagina', 10) %}
+        {% set paginar = por_pagina > 0 and items|length > por_pagina %}
+        {% set prefijo = revistas ? 'bloque.revistas_' : 'bloque.libros_' %}
+        <div class="lista-paginada"{% if paginar %} data-controller="paginar-lista" data-paginar-lista-tamano-value="{{ por_pagina }}"
+             data-paginar-lista-rango-value="{{ (prefijo ~ 'rango')|trans }}" data-paginar-lista-pagina-value="{{ (prefijo ~ 'pagina')|trans }}"{% endif %}>
+            <ul class="bloque__libros bloque__libros--lista" {% if paginar %}data-paginar-lista-target="lista" {% endif %}{{ atributos_disponibilidad|raw }}>
+                {% for libro in items %}{{ include(plantilla, {lista: true}) }}{% endfor %}
+            </ul>
+            {% if paginar %}
+                <nav class="lista-paginada__paginas" aria-label="{{ (prefijo ~ 'paginas')|trans }}{{ bloque.titulo ? ': ' ~ bloque.titulo }}" data-paginar-lista-target="paginas" hidden>
+                    <button type="button" class="boton boton--secundario boton--pequeno" data-paginar-lista-target="anterior" data-action="paginar-lista#anterior">{{ 'paginacion.anterior'|trans }}</button>
+                    <span class="lista-paginada__estado" role="status" data-paginar-lista-target="estado"></span>
+                    <button type="button" class="boton boton--secundario boton--pequeno" data-paginar-lista-target="siguiente" data-action="paginar-lista#siguiente">{{ 'paginacion.siguiente'|trans }}</button>
+                </nav>
+            {% endif %}
+        </div>
     {% else %}
         <ul class="bloque__libros{% if columnas %} bloque__libros--columnas{% endif %}"{% if columnas %} style="--columnas-libros: {{ columnas }}"{% endif %}{{ atributos_disponibilidad|raw }}>
             {% for libro in items %}{{ include(plantilla) }}{% endfor %}

@@ -648,6 +648,9 @@ bloque:
   libros_lista: Lista breve (miniatura y datos)
   libros_columnas: Columnas de la cuadrícula
   libros_columnas_ayuda: Solo para la cuadrícula. «Automático» pone tantas como quepan en el ancho de la caja; en celulares se ven dos.
+  lista_por_pagina: Elementos por página en la lista breve
+  lista_por_pagina_ayuda: Solo para la lista breve; en la guía se pasa de página con Anterior y Siguiente.
+  lista_sin_paginar: Todos (sin paginar)
   libros_columnas_auto: Automático
   libros_orden: Orden de los libros
   libros_orden_ayuda: Por título, los libros se ordenan alfabéticamente al guardar (también los que agregues después).
