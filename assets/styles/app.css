@@ -418,6 +418,14 @@ a:hover { color: var(--color-principal-oscuro); }
 .bloque__texto td, .bloque__texto th { padding: 0.4rem 0.6rem; border: 1px solid #e4dccf; }
 .bloque__recursos { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.5rem; }
 .bloque__recursos a[target="_blank"]::after { content: "\2197"; content: "\2197" / ""; margin-left: 0.25em; font-size: 0.8em; }
+.filtro-tipos { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0 0 0.85rem; }
+.filtro-tipos__etiqueta { font-weight: 600; margin-right: 0.25rem; }
+.filtro-tipos__opcion { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem; font: inherit; font-size: 0.875rem; color: var(--color-texto); background: #fff; border: 1px solid var(--color-gris); border-radius: 999px; cursor: pointer; }
+.filtro-tipos__opcion:hover { border-color: var(--color-principal); }
+.filtro-tipos__opcion[aria-pressed="true"] { color: var(--color-texto-boton); background: var(--color-principal-oscuro); border-color: var(--color-principal-oscuro); }
+.filtro-tipos__cuenta { font-size: 0.75rem; font-weight: 600; padding: 0 0.4rem; border-radius: 999px; background: rgb(0 0 0 / 0.08); }
+.filtro-tipos__opcion[aria-pressed="true"] .filtro-tipos__cuenta { background: rgb(0 0 0 / 0.25); }
+.bloque__recursos > li[hidden] { display: none; }
 .bloque__descripcion { margin: 0.4rem 0 0; color: var(--color-texto-secundario); }
 .bloque--perfil .persona { max-width: 32rem; }
 .buscador--bloque { display: block; max-width: 40rem; padding: 1rem 1.25rem; background: var(--color-fondo-suave); border-radius: var(--radio); }
@@ -597,6 +605,16 @@ a.libro__enlace:hover .libro__titulo { color: var(--color-principal-oscuro); tex
 .libro__portada { position: relative; display: block; aspect-ratio: 2 / 3; overflow: hidden; border-radius: 4px; background: var(--color-fondo-suave); box-shadow: 0 2px 6px rgb(0 0 0 / 0.15); }
 .libro__portada img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .libro__sin-portada { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0.5rem; font-size: 0.8125rem; font-weight: 600; text-align: center; color: var(--color-texto-boton); background: linear-gradient(160deg, var(--color-principal), var(--color-principal-oscuro)); overflow: hidden; }
+/* Portada genérica (sin imagen): icono del tipo y, en la cuadrícula, el título debajo. */
+.libro__sin-portada { flex-direction: column; gap: 0.4rem; }
+.libro__icono { display: flex; flex: 0 0 auto; color: currentColor; opacity: 0.9; }
+.libro__icono svg { width: clamp(1.5rem, 45%, 3.25rem); height: auto; }
+.libro__sin-portada .libro__icono { width: 100%; justify-content: center; }
+.libro__sin-portada-titulo { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.libro-fila__portada { position: relative; display: flex; align-items: center; justify-content: center; color: var(--color-texto-boton); }
+.libro-fila__portada .libro__icono svg { width: 1.5rem; }
+.libro-fila__portada img { position: absolute; inset: 0; }
+.libro-fila__portada img[hidden] { display: none; }
 .libro__titulo { font-weight: 600; }
 .libro__autor { color: var(--color-texto-secundario); font-size: 0.875rem; }
 .libro__edicion { color: var(--color-texto-secundario); font-size: 0.8125rem; }

@@ -68,7 +68,7 @@
                         <li class="libro reciente">
                             <a class="libro__enlace" href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener">
                                 <span class="libro__portada" aria-hidden="true">
-                                    <span class="libro__sin-portada reciente__tipo">{{ recurso.tipo.etiqueta|trans }}</span>
+                                    <span class="libro__sin-portada reciente__tipo">{{ include('recursos/_icono_tipo.html.twig', {tipo: recurso.tipo.value, clase: 'libro__icono'}) }}<span class="libro__sin-portada-titulo">{{ recurso.tipo.etiqueta|trans }}</span></span>
                                     {% if isbn %}<img src="https://covers.openlibrary.org/b/isbn/{{ isbn|replace({'-': ''})|url_encode }}-M.jpg?default=false" alt="" data-controller="portada" data-action="load->portada#revisar error->portada#revisar" width="120" height="180" loading="lazy" referrerpolicy="no-referrer">{% endif %}
                                 </span>
                                 <span class="libro__titulo">{{ recurso.titulo }}</span>
