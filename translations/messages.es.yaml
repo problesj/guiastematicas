@@ -752,6 +752,14 @@ bloque:
   libro_borrar: Borrar
   libros_por_pagina: Libros por página
   libros_rango: Libros %desde%–%hasta% de %total%
+  libros_buscar: "Buscar en esta lista"
+  libros_buscar_ejemplo: "Título, autor, editorial, año o ISBN"
+  libros_resultados: "%visibles% de %total% libros"
+  libros_sin_coincidencias: "Ningún libro coincide con la búsqueda."
+  revistas_buscar: "Buscar en esta lista"
+  revistas_buscar_ejemplo: "Título, editorial o ISSN"
+  revistas_resultados: "%visibles% de %total% revistas"
+  revistas_sin_coincidencias: "Ninguna revista coincide con la búsqueda."
   libros_pagina: Página %pagina% de %paginas%
   libros_paginas: Páginas de la lista de libros
   libros_vacio: Aún no hay libros en el bloque.

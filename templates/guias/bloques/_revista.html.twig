@@ -6,7 +6,7 @@
 {% if not destino and hay_buscador_primo() %}{% set destino = path('catalogo', {_locale: guia.idioma, q: (libro.issn ?? null) ?: libro.titulo}) %}{% endif %}
 {% set formato = (libro.formato ?? null) ?: 'electronico' %}{# guardadas antes de indicar el formato #}
 {% set issns = [(libro.issn ?? null) ? 'ISSN ' ~ libro.issn : null, (libro.eissn ?? null) ? 'e-ISSN ' ~ libro.eissn : null]|filter(v => v)|join(' · ') %}
-<li class="libro libro--revista{{ lista ? ' libro--lista' }}">
+<li class="libro libro--revista{{ lista ? ' libro--lista' }}" data-busqueda="{{ [libro.titulo ?? null, libro.editorial ?? null, libro.issn ?? null, libro.eissn ?? null]|filter(v => v)|join(' ') }}">
     {% if destino %}<a class="libro__enlace" href="{{ destino }}" target="_blank" rel="noopener"{% if lista %} tabindex="-1" aria-hidden="true"{% endif %}>{% else %}<span class="libro__enlace">{% endif %}
         <span class="libro__portada" aria-hidden="true">
             <span class="libro__sin-portada">{{ include('recursos/_icono_tipo.html.twig', {tipo: 'revistas', clase: 'libro__icono'}) }}{% if not lista %}<span class="libro__sin-portada-titulo">{{ libro.titulo }}</span>{% endif %}</span>

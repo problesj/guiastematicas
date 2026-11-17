@@ -14,8 +14,14 @@ export default class extends Controller {
         this.mostrar();
     }
 
+    // Los descartados por el buscador (buscar-libros) no cuentan ni se muestran.
     items() {
-        return [...this.listaTarget.children];
+        return [...this.listaTarget.children].filter((item) => !item.hasAttribute('data-descartado'));
+    }
+
+    reiniciar() {
+        this.actual = 0;
+        this.mostrar();
     }
 
     anterior() {
@@ -36,6 +42,7 @@ export default class extends Controller {
         const desde = this.actual * tamano;
         const hasta = Math.min(desde + tamano, items.length);
         items.forEach((item, i) => { item.hidden = i < desde || i >= hasta; });
+        this.paginasTarget.hidden = items.length <= tamano;
 
         const rango = this.rangoValue.replace('%desde%', String(desde + 1)).replace('%hasta%', String(hasta)).replace('%total%', String(items.length));
         const pagina = this.paginaValue.replace('%pagina%', String(this.actual + 1)).replace('%paginas%', String(paginas));
