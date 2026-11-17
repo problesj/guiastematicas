@@ -801,6 +801,7 @@ final class GuiaController extends AbstractController
                     $this->bloques->recursos($bloque, false),
                 ), \JSON_UNESCAPED_UNICODE),
                 'descripcion' => (bool) $bloque->dato('descripcion', true),
+                'orden' => 'titulo' === $bloque->dato('orden') ? 'titulo' : 'manual',
             ],
             TipoBloque::Perfil => ['usuario' => $this->bloques->perfil($bloque)],
             TipoBloque::Video => ['url' => $bloque->dato('url'), 'descripcion' => $bloque->dato('descripcion')],
@@ -872,8 +873,9 @@ final class GuiaController extends AbstractController
         return match ($tipo) {
             TipoBloque::Texto => ['html' => $this->saneador->sanitize((string) ($datos['html'] ?? ''))],
             TipoBloque::Recursos => [
-                'ids' => $this->idsRecursos((string) ($datos['recursos'] ?? '')),
+                'ids' => $this->bloques->ordenarIds($this->idsRecursos((string) ($datos['recursos'] ?? '')), 'titulo' === ($datos['orden'] ?? null)),
                 'descripcion' => (bool) ($datos['descripcion'] ?? false),
+                'orden' => 'titulo' === ($datos['orden'] ?? null) ? 'titulo' : 'manual',
             ],
             TipoBloque::Perfil => ['usuario' => $datos['usuario'] instanceof Usuario ? $datos['usuario']->getId() : null],
             TipoBloque::Video => ['url' => $datos['url'] ?? null, 'descripcion' => trim((string) ($datos['descripcion'] ?? '')) ?: null],

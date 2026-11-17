@@ -31,6 +31,7 @@
                  data-selector-lista-vacio-value="{{ 'bloque.sin_recursos'|trans }}">
                 <p class="campo__etiqueta" id="titulo-recursos-bloque">{{ 'bloque.recursos_elegidos'|trans }}</p>
                 {{ form_widget(formulario.recursos, {attr: {'data-selector-lista-target': 'campo'}}) }}
+                {{ form_row(formulario.orden) }}
                 <ol class="selector-autores__lista" data-selector-lista-target="lista" aria-labelledby="titulo-recursos-bloque"></ol>
                 <p class="campo__ayuda">{{ 'bloque.recursos_ayuda'|trans }}</p>
                 <section class="catalogo-recursos" data-controller="catalogo-recursos"

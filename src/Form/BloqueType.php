@@ -55,7 +55,16 @@ final class BloqueType extends AbstractType
             // Lista JSON que arma el selector: [{"id": 4, "nombre": "Scopus"}, ...]
             TipoBloque::Recursos => $builder
                 ->add('recursos', HiddenType::class, ['required' => false])
-                ->add('descripcion', CheckboxType::class, ['label' => 'bloque.mostrar_descripcion', 'required' => false]),
+                ->add('descripcion', CheckboxType::class, ['label' => 'bloque.mostrar_descripcion', 'required' => false])
+                ->add('orden', ChoiceType::class, [
+                    'label' => 'bloque.recursos_orden',
+                    'help' => 'bloque.recursos_orden_ayuda',
+                    'expanded' => true,
+                    'choices' => ['bloque.recursos_orden_manual' => 'manual', 'bloque.recursos_orden_titulo' => 'titulo'],
+                    // El selector de la lista ordena en vivo y oculta las flechas con «A–Z».
+                    'choice_attr' => fn () => ['data-action' => 'selector-lista#cambiarOrden'],
+                    'constraints' => [new Assert\Choice(choices: ['manual', 'titulo'])],
+                ]),
             TipoBloque::Perfil => $builder->add('usuario', EntityType::class, [
                 'label' => 'bloque.perfil',
                 'class' => Usuario::class,

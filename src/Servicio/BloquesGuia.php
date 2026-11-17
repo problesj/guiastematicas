@@ -55,8 +55,39 @@ final class BloquesGuia
                 $lista[] = $recurso;
             }
         }
+        // Con orden A–Z se ordena al mostrar: así sigue alfabético aunque se corrija el título de un recurso.
+        if ('titulo' === $bloque->dato('orden')) {
+            self::ordenarPorTitulo($lista);
+        }
 
         return $lista;
+    }
+
+    /**
+     * Ids de recursos en orden alfabético por título (si $alfabetico) o tal cual vienen.
+     *
+     * @param list<int> $ids
+     *
+     * @return list<int>
+     */
+    public function ordenarIds(array $ids, bool $alfabetico): array
+    {
+        if (!$alfabetico || [] === $ids) {
+            return $ids;
+        }
+        $recursos = $this->recursos->findBy(['id' => $ids]);
+        self::ordenarPorTitulo($recursos);
+
+        return array_map(fn (Recurso $r) => $r->getId(), $recursos);
+    }
+
+    /** @param list<Recurso> $recursos */
+    private static function ordenarPorTitulo(array &$recursos): void
+    {
+        $comparador = class_exists(\Collator::class) ? new \Collator('es') : null;
+        usort($recursos, fn (Recurso $a, Recurso $b): int => null !== $comparador
+            ? $comparador->compare($a->getTitulo(), $b->getTitulo())
+            : strnatcasecmp($a->getTitulo(), $b->getTitulo()));
     }
 
     #[AsTwigFunction('perfil_del_bloque')]

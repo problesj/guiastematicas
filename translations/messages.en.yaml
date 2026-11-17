@@ -654,6 +654,10 @@ guia:
   reportar: Report a problem
   reportar_asunto: "Problem in the guide “%guia%”"
 bloque:
+  recursos_orden: Order of the resources
+  recursos_orden_ayuda: With “Alphabetical” the list is sorted by title, including resources you add later.
+  recursos_orden_manual: Manual (↑ ↓ arrows)
+  recursos_orden_titulo: Alphabetical (A–Z)
   compartible: "Allow reuse in other guides"
   compartible_ayuda: "Other guides will be able to link this block (always showing its current version) or copy it."
   items_enlaces: Links
@@ -822,7 +826,7 @@ bloque:
   texto: Text
   recursos: Resources
   recursos_elegidos: Selected resources
-  recursos_ayuda: Use the arrows to order the block resources and × to remove them. Below you can filter the A-Z list and add several at once.
+  recursos_ayuda: With manual order, use the arrows to order the resources; × removes them. Below you can filter the A-Z list and add several at once.
   buscar_recurso: Search resource by title
   sin_recursos: No resources.
   recursos_vacio: This block has no available resources.
