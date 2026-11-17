@@ -1040,6 +1040,9 @@ compartir:
   copiado: "Link copied."
   copiar_error: "Could not copy; select and copy this link:"
   ventana_nueva: "(opens in a new window)"
+  recurso: "Share %titulo%"
+  en: "Share on %red%"
+  por_correo: "Send by email"
 lti:
   elegir:
     titulo: "Choose a library guide"
