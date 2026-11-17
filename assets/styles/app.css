@@ -801,6 +801,11 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .compartir__icono { flex: none; }
 .compartir__estado { flex-basis: 100%; margin: 0; font-size: 0.875rem; color: var(--color-texto-secundario); overflow-wrap: anywhere; }
 .compartir__estado:empty { display: none; }
+.compartir--recurso { margin-top: 0.5rem; }
+.compartir--recurso .compartir__lista { gap: 0.35rem; }
+.compartir--recurso .accion { color: var(--color-texto-secundario); }
+.compartir--recurso .accion:hover, .compartir--recurso .accion:focus-visible { color: var(--color-texto-boton); }
+.recursos--cuadricula .compartir--recurso { margin-top: auto; padding-top: 0.75rem; }
 
 /* Herramienta LTI dentro de Moodle */
 .lti { margin: 0; background: #fff; }

@@ -124,6 +124,7 @@
                                     {% for m in recurso.materias|filter(m => m.activa) %}<a class="etiqueta" href="{{ path(ruta, ruta_parametros|merge({materia: m.slug})) }}">{{ m.nombreTraducido(idioma) }}</a> {% endfor %}
                                 </p>
                             {% endif %}
+                            {{ include('recursos/_compartir.html.twig') }}
                         </li>
                     {% endfor %}
                 </ul>

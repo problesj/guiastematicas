@@ -1,0 +1,24 @@
+{# Compartir un recurso de la lista A-Z: iconos con leyenda emergente. El enlace compartido es el de salida del recurso
+   (cuenta el clic y pasa por el proxy cuando corresponde). Parámetro: recurso. #}
+{% set url = url('recursos_ir', {id: recurso.id}) %}
+{% set titulo = recurso.titulo %}
+{% set u = url|url_encode %}
+{% set redes = {
+    facebook: 'https://www.facebook.com/sharer/sharer.php?u=' ~ u,
+    x: 'https://x.com/intent/post?url=' ~ u ~ '&text=' ~ titulo|url_encode,
+    linkedin: 'https://www.linkedin.com/sharing/share-offsite/?url=' ~ u,
+    whatsapp: 'https://wa.me/?text=' ~ (titulo ~ ' ' ~ url)|url_encode,
+} %}
+<div class="compartir compartir--recurso" data-controller="compartir" data-compartir-url-value="{{ url }}" data-compartir-titulo-value="{{ titulo }}">
+    <ul class="compartir__lista" aria-label="{{ 'compartir.recurso'|trans({'%titulo%': titulo}) }}">
+        <li data-compartir-target="nativo" hidden><button type="button" class="accion" data-tooltip="{{ 'compartir.mas'|trans }}" data-action="compartir#nativo">{{ include('guias/_icono_compartir.html.twig', {red: 'nativo'}) }}<span class="solo-lectores">{{ 'compartir.mas'|trans }}</span></button></li>
+        {% for red, enlace in redes %}
+            {% set leyenda = 'compartir.en'|trans({'%red%': ('compartir.' ~ red)|trans}) %}
+            <li><a class="accion" data-tooltip="{{ leyenda }}" href="{{ enlace }}" target="_blank" rel="noopener noreferrer">{{ include('guias/_icono_compartir.html.twig', {red: red}) }}<span class="solo-lectores">{{ leyenda }} {{ 'compartir.ventana_nueva'|trans }}</span></a></li>
+        {% endfor %}
+        {% set leyenda = 'compartir.por_correo'|trans %}
+        <li><a class="accion" data-tooltip="{{ leyenda }}" href="mailto:?subject={{ titulo|url_encode }}&amp;body={{ (titulo ~ "\n" ~ url)|url_encode }}">{{ include('guias/_icono_compartir.html.twig', {red: 'correo'}) }}<span class="solo-lectores">{{ leyenda }}</span></a></li>
+        <li><button type="button" class="accion" data-tooltip="{{ 'compartir.copiar'|trans }}" data-action="compartir#copiar">{{ include('guias/_icono_compartir.html.twig', {red: 'copiar'}) }}<span class="solo-lectores">{{ 'compartir.copiar'|trans }}</span></button></li>
+    </ul>
+    <p class="compartir__estado" role="status" data-compartir-target="estado" data-copiado="{{ 'compartir.copiado'|trans }}" data-error="{{ 'compartir.copiar_error'|trans }}"></p>
+</div>

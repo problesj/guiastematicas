@@ -1040,6 +1040,9 @@ compartir:
   copiado: "Enlace copiado."
   copiar_error: "No se pudo copiar; selecciona y copia este enlace:"
   ventana_nueva: "(se abre en una ventana nueva)"
+  recurso: "Compartir %titulo%"
+  en: "Compartir en %red%"
+  por_correo: "Enviar por correo"
 lti:
   elegir:
     titulo: "Elegir una guía temática"

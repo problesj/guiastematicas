@@ -85,6 +85,20 @@ final class RecursosPublicosTest extends WebTestCase
         self::assertSame(1, self::em()->find(Recurso::class, $scopus->getId())->getClics());
     }
 
+    public function testCadaRecursoSePuedeCompartir(): void
+    {
+        $scopus = self::recurso('Scopus', 'https://www.scopus.com');
+        $crawler = $this->cliente->request('GET', '/es/recursos-bibliograficos');
+
+        $compartir = $crawler->filter('.recurso .compartir--recurso');
+        self::assertCount(1, $compartir);
+        $enlace = 'http://localhost/recursos/'.$scopus->getId().'/ir';
+        self::assertSame($enlace, $compartir->attr('data-compartir-url-value'));
+        self::assertSame(['Compartir en Facebook', 'Compartir en X', 'Compartir en LinkedIn', 'Compartir en WhatsApp', 'Enviar por correo', 'Copiar enlace'],
+            $compartir->filter('.accion:not([data-action="compartir#nativo"])')->each(fn ($a) => $a->attr('data-tooltip')));
+        self::assertStringContainsString(rawurlencode($enlace), $compartir->filter('a[href^="https://wa.me/"]')->attr('href'));
+    }
+
     public function testElEnlaceDeUnRecursoOcultoNoFunciona(): void
     {
         $oculto = self::recurso('Oculto', 'https://oculto.org', ['setVisible' => false]);
