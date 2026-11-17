@@ -7,7 +7,7 @@ import { Controller } from '@hotwired/stimulus';
  * Nada se guarda hasta «Guardar»; las revistas que ya están en la lista aparecen marcadas y deshabilitadas.
  */
 export default class extends Controller {
-    static targets = ['texto', 'categoria', 'categorias', 'campoNivel', 'nivel', 'avisoCategorias', 'boton', 'estado', 'acciones', 'todos', 'agregar', 'lista', 'mas'];
+    static targets = ['texto', 'categoria', 'categorias', 'campoNivel', 'nivel', 'avisoCategorias', 'boton', 'estado', 'acciones', 'todos', 'agregar', 'lista', 'mas', 'materia', 'cuentaMaterias'];
 
     static values = {
         url: String, categoriasUrl: String, sinCategorias: String, buscando: String, resumen: String, vacio: String, falta: String, error: String, ya: String, agregados: String,
@@ -237,11 +237,38 @@ export default class extends Controller {
                     campo.value = revista[nombre];
                 }
             });
+            this.aplicarMaterias(item);
         });
         this.todosTarget.checked = false;
         this.marcarYaAgregadas();
         this.avisar(this.agregadosValue.replace('%count%', String(marcados.length)));
         this.agregarTarget.focus();
+    }
+
+    // Materias marcadas en «Asignar materias a los que agregues»: se marcan en cada elemento agregado.
+    materiasElegidas() {
+        return this.materiaTargets.filter((c) => c.checked).map((c) => c.value);
+    }
+
+    aplicarMaterias(item) {
+        const elegidas = this.materiasElegidas();
+        if (elegidas.length === 0) {
+            return;
+        }
+        item.querySelectorAll('input[type="checkbox"][name$="[materias][]"]').forEach((casilla) => {
+            if (elegidas.includes(casilla.value)) {
+                casilla.checked = true;
+            }
+        });
+        const resumen = item.querySelector('.libro-form__materias');
+        if (resumen) {
+            resumen.open = true;
+        }
+    }
+
+    contarMaterias() {
+        const cuantas = this.materiasElegidas().length;
+        this.cuentaMateriasTargets.forEach((t) => { t.textContent = cuantas ? `(${cuantas})` : ''; });
     }
 
     coleccion() {

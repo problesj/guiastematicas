@@ -752,6 +752,8 @@ bloque:
   libro_borrar: Delete
   libros_por_pagina: Books per page
   libros_rango: Books %desde%–%hasta% of %total%
+  materias_masivas: "Assign subjects to the ones you add"
+  materias_masivas_ayuda: "They are ticked on every book or journal you add from the search and saved in the resources list. If you tick none, new ones get the guide’s subjects. You can adjust them one by one afterwards."
   libros_buscar: "Search this list"
   libros_buscar_ejemplo: "Title, author, publisher, year or ISBN"
   libros_resultados: "%visibles% of %total% books"

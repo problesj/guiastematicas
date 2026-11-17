@@ -55,6 +55,11 @@ final class BuscadorLibrosTest extends WebTestCase
         }
         self::assertCount(2, $crawler->filter('input[name="buscador-libros-fuente"]'));
         self::assertSelectorTextContains('#titulo-buscador-libros', 'Buscar libros para agregar');
+        // Materias para asignar de una vez a todos los libros que se agreguen desde el buscador.
+        self::crearMateria('Derecho', 'derecho');
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/libros');
+        self::assertSelectorTextContains('[data-controller="buscador-libros"] .materias-masivas summary', 'Asignar materias a los que agregues');
+        self::assertContains('Derecho', $crawler->filter('[data-buscador-libros-target="materia"]')->each(fn ($c) => trim($c->ancestors()->first()->text())));
 
         // El buscador no se ofrece en otros bloques.
         $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/enlaces');

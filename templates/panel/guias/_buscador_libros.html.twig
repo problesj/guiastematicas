@@ -90,6 +90,7 @@
         <button type="button" class="boton boton--secundario" data-buscador-libros-target="boton" data-action="buscador-libros#buscar">{{ 'bloque.buscador_buscar'|trans }}</button>
     </div>
     <p class="catalogo-recursos__estado" role="status" data-buscador-libros-target="estado"></p>
+    {{ include('panel/guias/_materias_masivas.html.twig', {controlador: 'buscador-libros'}) }}
     <div class="catalogo-recursos__acciones" data-buscador-libros-target="acciones" hidden>
         <label class="casillas__opcion"><input type="checkbox" data-buscador-libros-target="todos" data-action="buscador-libros#marcarTodos"> {{ 'bloque.catalogo_marcar_todos'|trans }}</label>
         <button type="button" class="boton" data-buscador-libros-target="agregar" data-action="buscador-libros#agregar" disabled>{{ 'bloque.buscador_agregar'|trans }}</button>

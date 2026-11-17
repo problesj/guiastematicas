@@ -8,7 +8,7 @@ import { Controller } from '@hotwired/stimulus';
  */
 export default class extends Controller {
     static targets = ['panel', 'titulo', 'autor', 'editorial', 'modo', 'codigo', 'etiquetaCodigo', 'carreras', 'tipo', 'origen',
-        'ultima', 'opcionUltima', 'boton', 'estado', 'acciones', 'todos', 'agregar', 'lista', 'mas'];
+        'ultima', 'opcionUltima', 'boton', 'estado', 'acciones', 'todos', 'agregar', 'lista', 'mas', 'materia', 'cuentaMaterias'];
 
     static values = {
         catalogoUrl: String, bibliogesUrl: String, carrerasUrl: String, buscando: String, resumen: String, vacio: String,
@@ -249,11 +249,38 @@ export default class extends Controller {
                     campo.value = libro[nombre];
                 }
             });
+            this.aplicarMaterias(item);
         });
         this.todosTarget.checked = false;
         this.marcarYaAgregados();
         this.avisar(this.agregadosValue.replace('%count%', String(marcados.length)));
         this.agregarTarget.focus();
+    }
+
+    // Materias marcadas en «Asignar materias a los que agregues»: se marcan en cada elemento agregado.
+    materiasElegidas() {
+        return this.materiaTargets.filter((c) => c.checked).map((c) => c.value);
+    }
+
+    aplicarMaterias(item) {
+        const elegidas = this.materiasElegidas();
+        if (elegidas.length === 0) {
+            return;
+        }
+        item.querySelectorAll('input[type="checkbox"][name$="[materias][]"]').forEach((casilla) => {
+            if (elegidas.includes(casilla.value)) {
+                casilla.checked = true;
+            }
+        });
+        const resumen = item.querySelector('.libro-form__materias');
+        if (resumen) {
+            resumen.open = true;
+        }
+    }
+
+    contarMaterias() {
+        const cuantas = this.materiasElegidas().length;
+        this.cuentaMateriasTargets.forEach((t) => { t.textContent = cuantas ? `(${cuantas})` : ''; });
     }
 
     coleccion() {
