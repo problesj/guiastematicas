@@ -1067,8 +1067,8 @@ sugerencia:
   recibida: "¡Gracias! Recibimos tu sugerencia y la revisará el personal de Bibliotecas."
   captcha_fallido: "No se pudo verificar que no eres un robot. Espera a que diga «Verificación lista» y vuelve a enviar."
   demasiadas: "Enviaste varias sugerencias seguidas. Inténtalo de nuevo en una hora."
-  bandeja_ayuda: Sugerencias del sitio público para las materias de las guías que editas.
-  bandeja_admin: Sugerencias del sitio público. Como administrador ves todas, también las de materias sin guía.
+  bandeja_ayuda: Sugerencias del sitio público para las materias de tu perfil y de las guías que editas.
+  bandeja_admin: Sugerencias del sitio público. Como administrador ves todas, también las de materias sin responsable.
   filtrar_estado: Filtrar por estado
   estados:
     pendiente: Pendientes
