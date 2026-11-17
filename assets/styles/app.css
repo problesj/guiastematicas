@@ -775,6 +775,9 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .buscar-libros__estado { color: var(--color-texto-secundario); font-size: 0.875rem; }
 .buscar-libros__vacio { color: var(--color-texto-secundario); font-style: italic; }
 .bloque__libros > li[hidden] { display: none; }
+.materias-masivas { margin: 0.5rem 0 0.75rem; padding: 0.5rem 0.75rem; background: var(--color-fondo-suave); border-radius: var(--radio); }
+.materias-masivas summary { font-weight: 600; cursor: pointer; }
+.materias-masivas__lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.25rem 1rem; margin-top: 0.5rem; }
 .lista-paginada__paginas { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-top: 0.75rem; }
 .lista-paginada__paginas[hidden] { display: none; }
 .lista-paginada__estado { color: var(--color-texto-secundario); font-size: 0.875rem; }

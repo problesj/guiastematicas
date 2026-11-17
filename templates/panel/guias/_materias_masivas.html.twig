@@ -1,0 +1,13 @@
+{# Materias que se asignan de una vez a todos los libros o revistas que se agregan desde el buscador (ver
+   buscador-libros / buscador-revistas). Sin marcar ninguna, cada uno nuevo queda con las materias de la guía. #}
+{% if materias is not empty %}
+    <details class="materias-masivas">
+        <summary>{{ 'bloque.materias_masivas'|trans }} <span data-{{ controlador }}-target="cuentaMaterias"></span></summary>
+        <p class="campo__ayuda">{{ 'bloque.materias_masivas_ayuda'|trans }}</p>
+        <div class="casillas materias-masivas__lista">
+            {% for materia in materias %}
+                <label class="casillas__opcion"><input type="checkbox" value="{{ materia.id }}" data-{{ controlador }}-target="materia" data-action="{{ controlador }}#contarMaterias"> {{ materia.nombreTraducido(app.request.locale) }}</label>
+            {% endfor %}
+        </div>
+    </details>
+{% endif %}

@@ -752,6 +752,8 @@ bloque:
   libro_borrar: Borrar
   libros_por_pagina: Libros por página
   libros_rango: Libros %desde%–%hasta% de %total%
+  materias_masivas: "Asignar materias a los que agregues"
+  materias_masivas_ayuda: "Se marcan en cada libro o revista que agregues desde el buscador y se guardan en la lista de recursos. Si no marcas ninguna, los nuevos quedan con las materias de la guía. Después puedes ajustarlas una por una."
   libros_buscar: "Buscar en esta lista"
   libros_buscar_ejemplo: "Título, autor, editorial, año o ISBN"
   libros_resultados: "%visibles% de %total% libros"
