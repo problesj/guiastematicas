@@ -8,6 +8,7 @@
     <section class="contenedor pagina">
         <h1>{{ titulo }}</h1>
         <p class="pagina__bajada">{{ (tipo_fijo ? 'recursos_vista.' ~ tipo_fijo.value ~ '.bajada' : 'bases.bajada')|trans }}</p>
+        <p class="pagina__sugerir">{{ 'bases.sugerir_texto'|trans }} <a href="{{ path('recursos_sugerir', tipo_fijo ? {tipo: tipo_fijo.value} : {}) }}">{{ 'bases.sugerir'|trans }}</a></p>
 
         <nav class="indice-az" aria-label="{{ 'bases.indice'|trans }}">
             <a href="{{ path(ruta, ruta_parametros) }}" {% if filtro.letra is null %}aria-current="page"{% endif %}>{{ 'bases.todas'|trans }}</a>

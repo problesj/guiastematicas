@@ -66,6 +66,7 @@ sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
 panel:
+  sugerencias: Suggestions
   contenido: Content
   recursos: Library resources
   recursos_texto: A-Z list, Excel import and AccesUM proxy.
@@ -175,6 +176,7 @@ materia:
   inactiva: Inactive
   especialistas: Specialists
 formulario:
+  ver: View
   si: "Yes"
   no: "No"
   guardar: Save
@@ -215,6 +217,8 @@ tipo_acceso:
   abierto: Open access
   prueba: On trial
 bases:
+  sugerir: Suggest a resource
+  sugerir_texto: Missing a resource you find useful?
   listado: List
   titulo: A-Z library resources
   bajada: Databases, journals, e-books, standards and other resources subscribed by UCN Libraries or open access.
@@ -1027,3 +1031,76 @@ recursos_vista:
     menu: "Journals"
     titulo: "Journals A-Z"
     bajada: "E-journals subscribed by Bibliotecas UCN or open access, in alphabetical order."
+estado_sugerencia:
+  pendiente: Pending
+  aprobada: Approved
+  rechazada: Rejected
+captcha:
+  pendiente: "Anti-robot check: it runs automatically while you fill in the form."
+  calculando: "Checking that you are not a robot…"
+  listo: "Check complete."
+  error: "The check could not be completed. Reload the page and try again."
+  sin_javascript: "You need JavaScript enabled to send this form (it is used for the anti-robot check)."
+sugerencia:
+  titulo_pagina: Suggest a resource
+  bajada: "Propose a database, book, journal or other resource. The editors of the subject guide will review it and, if approved, it will be added to Library resources."
+  grupo_recurso: The resource
+  grupo_persona: About you
+  tipo: Resource type
+  titulo: Title
+  autores: Author(s)
+  autores_ayuda: Optional. For example, for a book.
+  identificador: ISBN or ISSN
+  identificador_ayuda: Optional. Helps us find it in the catalogue.
+  url: Link
+  url_ayuda: Optional, if you know the web address.
+  descripcion: Description
+  materias: Subjects
+  materias_ayuda: Choose at least one; it decides who reviews your suggestion.
+  motivo: Why do you suggest it?
+  motivo_ayuda: Optional. For example, the course or research you would use it for.
+  nombre: Name
+  correo: Email
+  correo_ayuda: Only library staff can see it, in case they need to contact you.
+  privacidad: "Your details are only used to review this suggestion."
+  enviar: Send suggestion
+  recibida: "Thank you! We received your suggestion and library staff will review it."
+  captcha_fallido: "We could not verify that you are not a robot. Wait until it says “Check complete” and send again."
+  demasiadas: "You sent several suggestions in a row. Please try again in an hour."
+  bandeja_ayuda: Suggestions from the public site for the subjects of the guides you edit.
+  bandeja_admin: Suggestions from the public site. As an administrator you see all of them, including subjects without a guide.
+  filtrar_estado: Filter by status
+  estados:
+    pendiente: Pending
+    aprobada: Approved
+    rechazada: Rejected
+  vacio:
+    pendiente: There are no pending suggestions.
+    aprobada: No approved suggestions yet.
+    rechazada: There are no rejected suggestions.
+  sugerida_por: Suggested by
+  fecha: Received
+  revisada: Reviewed
+  revisar: Review
+  revisar_titulo: Review suggestion
+  pendientes_menu: pending
+  recibida_titulo: What was suggested
+  duplicados: "Possible duplicate: the list already has resources with the same title, link or ISBN/ISSN."
+  aprobar_titulo: Approve
+  aprobar_ayuda: "Check and complete the details (link, access, proxy…). When approved, the resource is added to the A-Z list with these subjects."
+  aprobar: Approve and add to the list
+  rechazar_titulo: Reject
+  motivo_rechazo: Reason for rejection
+  motivo_rechazo_ayuda: Optional. It is kept for the rest of the team.
+  rechazar: Reject suggestion
+  aprobada: The suggestion was approved and the resource is now in the A-Z list.
+  rechazada: The suggestion was rejected.
+  eliminada: The suggestion was deleted.
+  ya_revisada: Someone else already reviewed this suggestion.
+  decision: Review
+  decision_aprobada: "Approved by %quien% on %fecha%."
+  decision_rechazada: "Rejected by %quien% on %fecha%."
+  cuenta_eliminada: (deleted account)
+  ver_en_lista: View in Library resources
+  editar_recurso: Edit the resource
+  eliminar_ayuda: Delete it only if it is spam or an uninteresting duplicate.

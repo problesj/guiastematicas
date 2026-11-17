@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'sugerencia.titulo_pagina'|trans }}{% endblock %}
+
+{% block body %}
+    <section class="contenedor pagina">
+        <nav class="migas" aria-label="{{ 'guia.migas'|trans }}">
+            <a href="{{ path('recursos') }}">{{ 'bases.titulo'|trans }}</a>
+        </nav>
+        <h1>{{ 'sugerencia.titulo_pagina'|trans }}</h1>
+        <p class="pagina__bajada">{{ 'sugerencia.bajada'|trans }}</p>
+
+        {% set textos_captcha = {
+            pendiente: 'captcha.pendiente'|trans,
+            calculando: 'captcha.calculando'|trans,
+            listo: 'captcha.listo'|trans,
+            error: 'captcha.error'|trans,
+        } %}
+        {{ form_start(formulario, {attr: {
+            class: 'formulario sugerencia-form',
+            novalidate: 'novalidate',
+            'data-controller': 'captcha',
+            'data-action': 'submit->captcha#enviar focusin->captcha#iniciar',
+            'data-captcha-desafio-value': desafio|json_encode,
+            'data-captcha-textos-value': textos_captcha|json_encode,
+        }}) }}
+            {% if formulario.vars.errors|length > 0 %}
+                <div class="aviso aviso--error">{{ form_errors(formulario) }}</div>
+            {% endif %}
+            <fieldset>
+                <legend>{{ 'sugerencia.grupo_recurso'|trans }}</legend>
+                <div class="formulario__columnas">
+                    {{ form_row(formulario.tipo) }}
+                    {{ form_row(formulario.identificador) }}
+                </div>
+                {{ form_row(formulario.titulo) }}
+                {{ form_row(formulario.autores) }}
+                {{ form_row(formulario.url) }}
+                {{ form_row(formulario.descripcion) }}
+            </fieldset>
+            <fieldset class="sugerencia-form__materias">
+                <legend>{{ 'sugerencia.materias'|trans }}</legend>
+                {{ form_row(formulario.materias, {label: false}) }}
+            </fieldset>
+            <fieldset>
+                <legend>{{ 'sugerencia.grupo_persona'|trans }}</legend>
+                {{ form_row(formulario.motivo) }}
+                <div class="formulario__columnas">
+                    {{ form_row(formulario.nombre) }}
+                    {{ form_row(formulario.correo) }}
+                </div>
+            </fieldset>
+
+            {{ form_widget(formulario.captcha, {attr: {'data-captcha-target': 'respuesta'}}) }}
+            <div class="captcha" data-captcha-target="caja">
+                <span class="captcha__icono" aria-hidden="true"></span>
+                <p class="captcha__estado" data-captcha-target="estado" role="status">{{ 'captcha.pendiente'|trans }}</p>
+                <noscript><p class="captcha__sin-js">{{ 'captcha.sin_javascript'|trans }}</p></noscript>
+            </div>
+            <p class="campo__ayuda">{{ 'sugerencia.privacidad'|trans }}</p>
+
+            <div class="formulario__acciones">
+                <button type="submit" class="boton">{{ 'sugerencia.enviar'|trans }}</button>
+                <a href="{{ path('recursos') }}">{{ 'formulario.cancelar'|trans }}</a>
+            </div>
+        {{ form_end(formulario) }}
+    </section>
+{% endblock %}

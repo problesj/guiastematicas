@@ -1,0 +1,58 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.sugerencias'|trans }}{% endblock %}
+
+{% block contenido %}
+    {% set idioma = app.request.locale %}
+    <h1>{{ 'panel.sugerencias'|trans }}</h1>
+    <p class="pagina__bajada">{{ (is_granted('ROLE_ADMINISTRADOR') ? 'sugerencia.bandeja_admin' : 'sugerencia.bandeja_ayuda')|trans }}</p>
+
+    <nav class="filtro-estados" aria-label="{{ 'sugerencia.filtrar_estado'|trans }}">
+        <ul>
+            {% for e in estados %}
+                <li><a href="{{ path('panel_sugerencias', {estado: e.value}) }}" {% if e == estado %}aria-current="page"{% endif %}>{{ ('sugerencia.estados.' ~ e.value)|trans }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+    {% if pagina.total == 0 %}
+        <p>{{ ('sugerencia.vacio.' ~ estado.value)|trans }}</p>
+    {% else %}
+        {% include 'paginacion/_cantidad.html.twig' %}
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'sugerencia.titulo'|trans }}</th>
+                        <th scope="col">{{ 'sugerencia.tipo'|trans }}</th>
+                        <th scope="col">{{ 'sugerencia.materias'|trans }}</th>
+                        <th scope="col">{{ 'sugerencia.sugerida_por'|trans }}</th>
+                        <th scope="col">{{ (estado.value == 'pendiente' ? 'sugerencia.fecha' : 'sugerencia.revisada')|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in pagina.elementos %}
+                        <tr>
+                            <td>{{ s.titulo }}{% if s.url %}<br><small class="tabla__url">{{ s.url }}</small>{% endif %}</td>
+                            <td>{{ s.tipo.etiqueta|trans }}</td>
+                            <td>{% for m in s.materias %}<span class="etiqueta">{{ m.nombreTraducido(idioma) }}</span>{% endfor %}</td>
+                            <td>{{ s.nombre }}</td>
+                            <td>
+                                {% if s.pendiente %}
+                                    {{ s.creadaEn|date('d-m-Y H:i') }}
+                                {% else %}
+                                    {{ s.decididaEn|date('d-m-Y') }}{% if s.decididaPor %}<br><small>{{ s.decididaPor.nombreCompleto }}</small>{% endif %}
+                                {% endif %}
+                            </td>
+                            <td class="tabla__acciones">
+                                <a href="{{ path('panel_sugerencia_revisar', {id: s.id}) }}">{{ (s.pendiente ? 'sugerencia.revisar' : 'formulario.ver')|trans }}<span class="solo-lectores"> {{ s.titulo }}</span></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'paginacion/_enlaces.html.twig' with {ruta: 'panel_sugerencias', parametros: {estado: estado.value}} %}
+    {% endif %}
+{% endblock %}
