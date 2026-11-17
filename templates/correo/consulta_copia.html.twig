@@ -1,0 +1,18 @@
+{% extends 'correo/_base.html.twig' %}
+{% block asunto %}{{ 'correo.copia.asunto'|trans({'%asunto%': consulta.asunto}, 'messages', idioma) }}{% endblock %}
+{% block cuerpo %}
+    <h1 style="margin:0 0 12px;font-size:20px">{{ 'correo.copia.titulo'|trans({'%nombre%': consulta.nombre}, 'messages', idioma) }}</h1>
+    <p>{{ 'correo.copia.texto'|trans({'%bibliotecario%': consulta.bibliotecario.nombreCompleto}, 'messages', idioma) }}</p>
+    <p><strong>{{ consulta.asunto }}</strong></p>
+    {% include 'correo/_mensaje.html.twig' with {boton: 'correo.copia.boton'|trans({}, 'messages', idioma)} %}
+{% endblock %}
+{% block texto %}{% autoescape false %}
+{{ 'correo.copia.titulo'|trans({'%nombre%': consulta.nombre}, 'messages', idioma) }}
+
+{{ 'correo.copia.texto'|trans({'%bibliotecario%': consulta.bibliotecario.nombreCompleto}, 'messages', idioma) }}
+{{ consulta.asunto }}
+
+{{ mensaje.texto }}
+
+{{ 'correo.copia.boton'|trans({}, 'messages', idioma) }}: {{ enlace }}
+{% endautoescape %}{% endblock %}

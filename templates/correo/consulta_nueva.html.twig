@@ -1,0 +1,18 @@
+{% extends 'correo/_base.html.twig' %}
+{% block asunto %}{{ 'correo.nueva.asunto'|trans({'%asunto%': consulta.asunto}, 'messages', idioma) }}{% endblock %}
+{% block cuerpo %}
+    <h1 style="margin:0 0 12px;font-size:20px">{{ 'correo.nueva.titulo'|trans({}, 'messages', idioma) }}</h1>
+    <p>{{ 'correo.nueva.de'|trans({'%nombre%': consulta.nombre, '%correo%': consulta.correo}, 'messages', idioma) }}</p>
+    <p><strong>{{ consulta.asunto }}</strong></p>
+    {% include 'correo/_mensaje.html.twig' with {boton: 'correo.nueva.boton'|trans({}, 'messages', idioma)} %}
+{% endblock %}
+{% block texto %}{% autoescape false %}
+{{ 'correo.nueva.titulo'|trans({}, 'messages', idioma) }}
+
+{{ 'correo.nueva.de'|trans({'%nombre%': consulta.nombre, '%correo%': consulta.correo}, 'messages', idioma) }}
+{{ consulta.asunto }}
+
+{{ mensaje.texto }}
+
+{{ 'correo.nueva.boton'|trans({}, 'messages', idioma) }}: {{ enlace }}
+{% endautoescape %}{% endblock %}

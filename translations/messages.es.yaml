@@ -66,6 +66,7 @@ sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
 panel:
+  consultas: Consultas
   sugerencias: Sugerencias
   contenido: Contenido
   recursos: Recursos bibliográficos
@@ -843,6 +844,15 @@ incrustar:
   no_publicada: Publica la guía para poder incrustar sus bloques.
   no_restringida: Los bloques de una guía restringida no se pueden incrustar en otras webs.
 configuracion:
+  correo:
+    titulo: "Probar el correo"
+    bajada: "Guarda primero los datos del grupo «Correo (SMTP)» y envía un mensaje de prueba a %correo%."
+    probar: "Enviar correo de prueba"
+    sin_configurar: "Falta configurar el servidor SMTP y el correo del remitente."
+    asunto_prueba: "Prueba de correo de Guías temáticas"
+    texto_prueba: "Si recibes este mensaje, el envío de correos de la plataforma funciona."
+    enviado: "Se envió un correo de prueba a %correo%. Revisa también la carpeta de spam."
+    fallo: "El servidor de correo rechazó el envío. Revisa los datos (servidor, puerto, cifrado, usuario y contraseña); el detalle quedó en el registro del servidor."
   moodle:
     titulo: "Registrar la herramienta en Moodle"
     bajada: "Datos para el administrador de Moodle (Administración del sitio → Plugins → Herramienta externa → Gestionar herramientas → «configurar una herramienta manualmente», versión LTI 1.3):"
@@ -878,6 +888,7 @@ configuracion:
     ldap: Inicio de sesión con LDAP
     google: Inicio de sesión con Google
     moodle: "Moodle (LTI 1.3)"
+    correo: Correo (SMTP)
   grupo_ayuda:
     proxy: Prefijo o plantilla con {url} para los recursos suscritos, p. ej. https://itmsp.museknowledge.com/UCN?qurl={url}. Vacío en el panel y en el servidor = enlaces directos.
     catalogo: Primo VE para el buscador y los enlaces a los registros; la API de Ex Libris para los datos de libros por ISBN y la disponibilidad en Alma.
@@ -885,6 +896,7 @@ configuracion:
     ldap: Con una dirección LDAP, el personal puede entrar con su cuenta institucional. Usa el patrón del DN o la búsqueda con cuenta de servicio.
     google: Credenciales OAuth del proyecto de Google Cloud. El dominio limita el acceso a cuentas de ese dominio (p. ej. ucn.cl).
     moodle: "Datos que entrega el administrador de Moodle al registrar la herramienta (Administración del sitio → Plugins → Herramienta externa → Gestionar herramientas → «Detalles de configuración»)."
+    correo: "Servidor de correo para avisar de las consultas a bibliotecarios. Pídelo al administrador de sistemas (servidor SMTP de la UCN o una cuenta de servicio). El remitente debe estar autorizado en ese servidor."
   ajuste:
     PROXY_URL: Dirección del proxy
     PRIMO_URL: Dirección de Primo VE
@@ -909,7 +921,18 @@ configuracion:
     LTI_DEPLOYMENT_ID: "ID de despliegue (uno o varios, separados por comas)"
     LTI_AUTH_URL: "URL de solicitud de autenticación"
     LTI_JWKS_URL: "URL del conjunto de claves públicas"
+    CORREO_SMTP_HOST: Servidor SMTP
+    CORREO_SMTP_PUERTO: "Puerto (normalmente 587 con STARTTLS o 465 con SSL)"
+    CORREO_SMTP_CIFRADO: Cifrado
+    CORREO_SMTP_USUARIO: Usuario
+    CORREO_SMTP_CLAVE: Contraseña
+    CORREO_REMITENTE: Correo del remitente
+    CORREO_REMITENTE_NOMBRE: Nombre del remitente
   opcion:
+    CORREO_SMTP_CIFRADO:
+      tls: STARTTLS
+      ssl: SSL/TLS
+      none: Sin cifrado
     LDAP_CIFRADO:
       none: Sin cifrado
       ssl: SSL (ldaps)
@@ -1104,3 +1127,81 @@ sugerencia:
   ver_en_lista: Ver en Recursos bibliográficos
   editar_recurso: Editar el recurso
   eliminar_ayuda: Elimínala solo si es spam o un duplicado sin interés.
+consulta:
+  nombre: Nombre
+  correo: Correo electrónico
+  correo_ayuda: Aquí te llegará la respuesta y una copia de tu mensaje.
+  asunto: Asunto
+  mensaje: Mensaje
+  enviar: Enviar mensaje
+  escribir_a: "Escribir a %nombre%"
+  escribir_ayuda: "Tu mensaje queda registrado en la plataforma y te responderán a tu correo."
+  enviada: "Tu mensaje fue enviado. Te enviamos una copia a %correo% con un enlace para seguir la conversación."
+  demasiados: "Enviaste varios mensajes seguidos. Inténtalo de nuevo en una hora."
+  sesion_vencida: "La página estuvo abierta mucho tiempo. Vuelve a escribir tu mensaje."
+  texto_obligatorio: "Escribe un mensaje (hasta 5000 caracteres)."
+  respuesta_enviada: "Tu mensaje fue enviado."
+  personal: Bibliotecas UCN
+  correo_no_enviado: Correo no enviado
+  aviso_no_enviado: Aviso por correo no enviado
+  conversacion_con: "Conversación con %nombre%."
+  cerrada_persona: "Esta consulta fue cerrada. Si necesitas algo más, escribe una nueva desde la ficha del bibliotecario."
+  tu_respuesta: Tu mensaje
+  enviar_respuesta: Enviar
+  enlace_privado: "Este enlace es privado: no lo compartas."
+  bandeja_ayuda: "Mensajes que te enviaron desde tu ficha en el directorio de bibliotecarios. Tus respuestas le llegan a la persona por correo."
+  filtro:
+    pendientes: Por responder
+    respondidas: Respondidas
+    cerradas: Cerradas
+  ver_mias: Ver solo las mías
+  ver_todas: Ver las de todos los bibliotecarios
+  vacio:
+    pendientes: No tienes consultas por responder.
+    respondidas: No hay consultas respondidas abiertas.
+    cerradas: No hay consultas cerradas.
+  de: De
+  bibliotecario: Bibliotecario
+  mensajes: Mensajes
+  ultima_actividad: Última actividad
+  responder: Responder
+  estado:
+    pendiente: Por responder
+    respondida: Respondida
+    cerrada: Cerrada
+  idioma: Idioma
+  idiomas:
+    es: Español
+    en: Inglés
+  respuesta_ayuda: "Se enviará a %correo% con un enlace a la conversación."
+  responder_y_cerrar: Cerrar la consulta al enviar
+  reabrir: Reabrir la consulta
+  cerrar: Cerrar la consulta
+  reabrir_ayuda: La persona podrá volver a escribir desde su enlace.
+  cerrar_ayuda: La persona ya no podrá escribir desde su enlace.
+  respondida: Tu respuesta fue enviada por correo.
+  respondida_sin_correo: "Tu respuesta quedó registrada, pero no se pudo enviar el correo (revisa Admin → Integraciones → Correo)."
+  cerrada: La consulta fue cerrada.
+  reabierta: La consulta fue reabierta.
+  pendientes_menu: por responder
+correo:
+  no_responder: "Este correo se envió automáticamente; no lo respondas. Usa el enlace para responder."
+  enlace_texto: "Si el botón no funciona, copia esta dirección:"
+  nueva:
+    asunto: "Nueva consulta: %asunto%"
+    titulo: Recibiste una consulta desde tu ficha de bibliotecario
+    de: "De %nombre% (%correo%):"
+    boton: Ver y responder en la plataforma
+  copia:
+    asunto: "Copia de tu mensaje: %asunto%"
+    titulo: "Hola, %nombre%"
+    texto: "Recibimos tu mensaje para %bibliotecario%. Te responderá a este correo; también puedes seguir la conversación desde el enlace."
+    boton: Ver la conversación
+  respuesta:
+    asunto: "Respuesta a tu consulta: %asunto%"
+    titulo: "Hola, %nombre%"
+    texto: "%bibliotecario% respondió tu consulta «%asunto%»:"
+    boton: Ver la conversación y responder
+  respuesta_persona:
+    asunto: "Nuevo mensaje en la consulta: %asunto%"
+    titulo: "%nombre% escribió en la consulta"

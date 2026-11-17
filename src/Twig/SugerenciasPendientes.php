@@ -5,17 +5,30 @@ declare(strict_types=1);
 namespace App\Twig;
 
 use App\Entity\Usuario;
+use App\Repository\ConsultaRepository;
 use App\Repository\SugerenciaRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Attribute\AsTwigFunction;
 
-/** Cantidad de sugerencias pendientes que puede revisar quien está conectado (para el menú del panel). */
+/** Contadores del menú del panel: sugerencias que puede revisar y consultas que esperan su respuesta. */
 final class SugerenciasPendientes
 {
     private ?int $cantidad = null;
 
-    public function __construct(private readonly SugerenciaRepository $sugerencias, private readonly Security $security)
+    public function __construct(
+        private readonly SugerenciaRepository $sugerencias,
+        private readonly ConsultaRepository $consultas,
+        private readonly Security $security,
+    ) {
+    }
+
+    /** Consultas de la ficha pública que esperan respuesta de quien está conectado. */
+    #[AsTwigFunction('consultas_pendientes')]
+    public function consultas(): int
     {
+        $usuario = $this->security->getUser();
+
+        return $usuario instanceof Usuario && $this->security->isGranted('ROLE_COLABORADOR') ? $this->consultas->contarPendientes($usuario) : 0;
     }
 
     #[AsTwigFunction('sugerencias_pendientes')]

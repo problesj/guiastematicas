@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Configuracion\Ajustes;
+use App\Correo\Cartero;
+use App\Entity\Usuario;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -18,10 +20,12 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Integraciones administrables desde el panel: proxy AccesUM, catálogo (Primo VE y Alma), Biblioges, LDAP y Google.
+ * Integraciones administrables desde el panel: proxy AccesUM, catálogo (Primo VE y Alma), Biblioges, LDAP, Google, correo y Moodle.
  * Lo que queda vacío usa lo definido en el .env.local del servidor. Las claves se guardan cifradas y nunca se muestran.
  */
 #[Route('/{_locale}/admin/configuracion', requirements: ['_locale' => 'es|en'])]
@@ -37,6 +41,8 @@ final class ConfiguracionController extends AbstractController
         'LTI_ISSUER' => '#^https?://#i',
         'LTI_AUTH_URL' => '#^https?://#i',
         'LTI_JWKS_URL' => '#^https?://#i',
+        'CORREO_REMITENTE' => '/^[^@\s]+@[^@\s]+\.[^@\s]+$/',
+        'CORREO_SMTP_PUERTO' => '/^\d{1,5}$/',
     ];
 
     public function __construct(private readonly Ajustes $ajustes)
@@ -71,6 +77,26 @@ final class ConfiguracionController extends AbstractController
         $respuesta->deleteFileAfterSend();
 
         return $respuesta;
+    }
+
+    /** Envía un correo de prueba a quien está conectado con la configuración vigente del grupo Correo. */
+    #[Route('/probar-correo', name: 'admin_configuracion_probar_correo', methods: ['POST'])]
+    public function probarCorreo(Request $request, Cartero $cartero, TranslatorInterface $traductor): Response
+    {
+        if (!$this->isCsrfTokenValid('probar-correo', $request->getPayload()->getString('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+        $usuario = $this->getUser();
+        \assert($usuario instanceof Usuario);
+        if (!$cartero->configurado()) {
+            $this->addFlash('error', 'configuracion.correo.sin_configurar');
+        } elseif ($cartero->enviar((new Email())->to($usuario->getEmail())->subject($traductor->trans('configuracion.correo.asunto_prueba'))->text($traductor->trans('configuracion.correo.texto_prueba')))) {
+            $this->addFlash('exito', $traductor->trans('configuracion.correo.enviado', ['%correo%' => $usuario->getEmail()]));
+        } else {
+            $this->addFlash('error', 'configuracion.correo.fallo');
+        }
+
+        return $this->redirectToRoute('admin_configuracion');
     }
 
     #[Route('', name: 'admin_configuracion', methods: ['GET', 'POST'])]

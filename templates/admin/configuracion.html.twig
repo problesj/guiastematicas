@@ -41,6 +41,15 @@
         </div>
     {{ form_end(formulario) }}
 
+    <section class="configuracion__grupo integracion" aria-labelledby="titulo-correo">
+        <h2 id="titulo-correo">{{ 'configuracion.correo.titulo'|trans }}</h2>
+        <p>{{ 'configuracion.correo.bajada'|trans({'%correo%': app.user.email}) }}</p>
+        <form method="post" action="{{ path('admin_configuracion_probar_correo') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('probar-correo') }}">
+            <button type="submit" class="boton boton--secundario">{{ 'configuracion.correo.probar'|trans }}</button>
+        </form>
+    </section>
+
     <section class="configuracion__grupo integracion" aria-labelledby="titulo-moodle">
         <h2 id="titulo-moodle">{{ 'configuracion.moodle.titulo'|trans }}</h2>
         <p>{{ 'configuracion.moodle.bajada'|trans }}</p>

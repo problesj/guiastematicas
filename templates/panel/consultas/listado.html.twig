@@ -1,0 +1,58 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'panel.consultas'|trans }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ 'panel.consultas'|trans }}</h1>
+    <p class="pagina__bajada">{{ 'consulta.bandeja_ayuda'|trans }}</p>
+
+    <nav class="filtro-estados" aria-label="{{ 'sugerencia.filtrar_estado'|trans }}">
+        <ul>
+            {% for f in filtros %}
+                <li><a href="{{ path('panel_consultas', {filtro: f}|merge(todas ? {todas: 1} : {})) }}" {% if f == filtro %}aria-current="page"{% endif %}>{{ ('consulta.filtro.' ~ f)|trans }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+    {% if is_granted('ROLE_ADMINISTRADOR') %}
+        <p>
+            {% if todas %}
+                <a href="{{ path('panel_consultas', {filtro: filtro}) }}">{{ 'consulta.ver_mias'|trans }}</a>
+            {% else %}
+                <a href="{{ path('panel_consultas', {filtro: filtro, todas: 1}) }}">{{ 'consulta.ver_todas'|trans }}</a>
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if pagina.total == 0 %}
+        <p>{{ ('consulta.vacio.' ~ filtro)|trans }}</p>
+    {% else %}
+        {% include 'paginacion/_cantidad.html.twig' %}
+        <div class="tabla-desplazable">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'consulta.asunto'|trans }}</th>
+                        <th scope="col">{{ 'consulta.de'|trans }}</th>
+                        {% if todas %}<th scope="col">{{ 'consulta.bibliotecario'|trans }}</th>{% endif %}
+                        <th scope="col">{{ 'consulta.mensajes'|trans }}</th>
+                        <th scope="col">{{ 'consulta.ultima_actividad'|trans }}</th>
+                        <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in pagina.elementos %}
+                        <tr>
+                            <td>{{ c.asunto }}</td>
+                            <td>{{ c.nombre }}<br><small class="tabla__url">{{ c.correo }}</small></td>
+                            {% if todas %}<td>{{ c.bibliotecario.nombreCompleto }}</td>{% endif %}
+                            <td>{{ c.mensajes|length }}</td>
+                            <td>{{ c.actualizadaEn|date('d-m-Y H:i') }}</td>
+                            <td class="tabla__acciones"><a href="{{ path('panel_consulta', {id: c.id}) }}">{{ (c.pendiente and not c.cerrada ? 'consulta.responder' : 'formulario.ver')|trans }}<span class="solo-lectores"> {{ c.asunto }}</span></a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'paginacion/_enlaces.html.twig' with {ruta: 'panel_consultas', parametros: {filtro: filtro}} %}
+    {% endif %}
+{% endblock %}

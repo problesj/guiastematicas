@@ -6,6 +6,12 @@ framework:
             limit: 5
             interval: '1 hour'
             cache_pool: cache.limitador
+        # Mensajes a bibliotecarios (consultas nuevas y respuestas desde el enlace privado): por dirección IP.
+        contacto:
+            policy: sliding_window
+            limit: 10
+            interval: '1 hour'
+            cache_pool: cache.limitador
 
     cache:
         pools:

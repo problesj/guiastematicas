@@ -1,0 +1,15 @@
+{# Mensajes de una consulta. Parámetros: consulta, vista ('persona' o 'personal'). #}
+<ol class="conversacion">
+    {% for m in consulta.mensajes %}
+        <li class="conversacion__mensaje conversacion__mensaje--{{ m.dePersonal ? 'personal' : 'persona' }}">
+            <p class="conversacion__autor">
+                <strong>{{ m.dePersonal ? (m.autor ? m.autor.nombreCompleto : 'consulta.personal'|trans) : consulta.nombre }}</strong>
+                <time datetime="{{ m.enviadoEn|date('c') }}">{{ m.enviadoEn|date('d-m-Y H:i') }}</time>
+                {% if vista == 'personal' and not m.correoEnviado %}
+                    <span class="etiqueta">{{ (m.dePersonal ? 'consulta.correo_no_enviado' : 'consulta.aviso_no_enviado')|trans }}</span>
+                {% endif %}
+            </p>
+            <div class="conversacion__texto">{{ m.texto|nl2br }}</div>
+        </li>
+    {% endfor %}
+</ol>
