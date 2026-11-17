@@ -191,6 +191,10 @@ formulario:
   ambas_sedes: Ambas sedes
   sin_pais: (sin país)
 personal:
+  guias: Guías temáticas
+  rol_guia:
+    editor: "{1}Editor de la guía:|]1,Inf[Editor de las guías:"
+    colaborador: "{1}Colaborador en la guía:|]1,Inf[Colaborador en las guías:"
   agenda_cita: Agenda una cita
   titulo: Bibliotecarios
   bajada: Conoce al equipo de Bibliotecas UCN y encuentra al especialista de tu área.

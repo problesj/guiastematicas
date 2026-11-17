@@ -191,6 +191,10 @@ formulario:
   ambas_sedes: Both campuses
   sin_pais: (no country)
 personal:
+  guias: Subject guides
+  rol_guia:
+    editor: "{1}Editor of the guide:|]1,Inf[Editor of the guides:"
+    colaborador: "{1}Contributor to the guide:|]1,Inf[Contributor to the guides:"
   agenda_cita: Book an appointment
   titulo: Librarians
   bajada: Meet the UCN Libraries team and find the specialist for your field.
