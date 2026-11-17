@@ -21,7 +21,7 @@
 
         <dl class="datos">
             <dt>{{ 'usuario.email'|trans }}</dt>
-            <dd><a href="mailto:{{ persona.email }}">{{ persona.email }}</a></dd>
+            <dd><a href="#escribir">{{ persona.email }}<span class="solo-lectores"> ({{ 'consulta.escribir_a'|trans({'%nombre%': persona.nombre}) }})</span></a></dd>
             {% if persona.telefono %}
                 <dt>{{ 'usuario.telefono'|trans }}</dt>
                 <dd><a href="tel:{{ persona.telefono|replace({' ': ''}) }}">{{ persona.telefono }}</a></dd>
@@ -45,6 +45,12 @@
         {% if persona.biografiaTraducida(idioma) %}
             <h2>{{ 'personal.acerca'|trans }}</h2>
             <div class="perfil__biografia">{{ persona.biografiaTraducida(idioma)|nl2br }}</div>
+        {% endif %}
+
+        {% set participacion = guias_de_persona(persona) %}
+        {% if participacion.editor is not empty or participacion.colaborador is not empty %}
+            <h2>{{ 'personal.guias'|trans }}</h2>
+            {% include 'personal/_guias.html.twig' with {clase: 'perfil__guias'} %}
         {% endif %}
 
         {% set materias = persona.materias|filter(m => m.activa) %}

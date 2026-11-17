@@ -842,3 +842,5 @@ h1 .etiqueta { font-size: 0.875rem; vertical-align: middle; }
 .conversacion__texto { overflow-wrap: anywhere; }
 .consulta-respuesta { max-width: 48rem; }
 .consulta-estado { margin-top: 2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.persona__guias, .perfil__guias { margin: 0.25rem 0; font-size: 0.9375rem; }
+.persona__rol { font-weight: 600; }

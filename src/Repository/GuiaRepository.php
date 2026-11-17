@@ -55,6 +55,33 @@ class GuiaRepository extends ServiceEntityRepository
         return $consulta->getQuery()->getResult();
     }
 
+    /**
+     * Guías publicadas y públicas en que participa cada persona, para el directorio de bibliotecarios.
+     *
+     * @return array<int, array{editor: list<Guia>, colaborador: list<Guia>}> por id de usuario
+     */
+    public function publicasPorParticipante(): array
+    {
+        $guias = $this->createQueryBuilder('g')
+            ->leftJoin('g.coeditores', 'c')->addSelect('c')
+            ->where('g.estado = :publicada')->setParameter('publicada', EstadoGuia::Publicada)
+            ->andWhere('g.visibilidad = :publica')->setParameter('publica', VisibilidadGuia::Publica)
+            ->orderBy('g.titulo', 'ASC')
+            ->getQuery()->getResult();
+
+        $mapa = [];
+        foreach ($guias as $guia) {
+            if (null !== $guia->getResponsable()?->getId()) {
+                $mapa[$guia->getResponsable()->getId()]['editor'][] = $guia;
+            }
+            foreach ($guia->getCoeditores() as $coeditor) {
+                $mapa[$coeditor->getId()]['colaborador'][] = $guia;
+            }
+        }
+
+        return array_map(fn (array $g) => $g + ['editor' => [], 'colaborador' => []], $mapa);
+    }
+
     public function publicadaPorSlug(string $slug): ?Guia
     {
         return $this->findOneBy(['slug' => $slug, 'estado' => EstadoGuia::Publicada]);

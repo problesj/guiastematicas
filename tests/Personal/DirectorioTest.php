@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Personal;
 
+use App\Entity\Guia;
+use App\Enum\EstadoGuia;
+use App\Enum\Rol;
+use App\Enum\VisibilidadGuia;
 use App\Tests\CreaDatosTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -65,5 +69,38 @@ final class DirectorioTest extends WebTestCase
         $cliente->request('GET', '/es/personal/'.$oculto->getSlug());
 
         self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testCorreoLlevaAlFormularioYMuestraSusGuias(): void
+    {
+        $cliente = static::createClient();
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor, nombre: 'Ana', apellidos: 'Pérez');
+        $otra = self::crearUsuario('otra@ucn.cl', Rol::Editor, nombre: 'Otra', apellidos: 'Editora');
+        foreach ([
+            ['Química', $ana, null, EstadoGuia::Publicada, VisibilidadGuia::Publica],
+            ['Física', $otra, $ana, EstadoGuia::Publicada, VisibilidadGuia::Publica],
+            ['Borrador', $ana, null, EstadoGuia::Borrador, VisibilidadGuia::Publica],
+            ['Interna', $ana, null, EstadoGuia::Publicada, VisibilidadGuia::Restringida],
+        ] as [$titulo, $responsable, $coeditor, $estado, $visibilidad]) {
+            $guia = (new Guia())->setTitulo($titulo)->setSlug(strtolower(strtr($titulo, ['í' => 'i'])))->setResponsable($responsable)->setVisibilidad($visibilidad);
+            if (EstadoGuia::Publicada === $estado) {
+                $guia->publicar();
+            }
+            if (null !== $coeditor) {
+                $guia->addCoeditor($coeditor);
+            }
+            self::em()->persist($guia);
+        }
+        self::em()->flush();
+
+        $crawler = $cliente->request('GET', '/es/personal');
+        $tarjeta = $crawler->filter('.persona')->reduce(fn ($t) => str_contains($t->text(), 'Ana Pérez'));
+        self::assertSame('/es/personal/'.$ana->getSlug().'#escribir', $tarjeta->filter('.persona__contacto a')->attr('href'));
+        $guias = $tarjeta->filter('.persona__guias')->each(fn ($p) => preg_replace('/\s+/', ' ', trim($p->text())));
+        self::assertSame(['Editor de la guía: Química', 'Colaborador en la guía: Física'], $guias);
+
+        $cliente->request('GET', '/es/personal/'.$ana->getSlug());
+        self::assertSelectorExists('.datos a[href="#escribir"]');
+        self::assertSelectorTextContains('.perfil__guias', 'Química');
     }
 }

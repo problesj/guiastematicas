@@ -1,0 +1,10 @@
+{# Guías públicas en que participa la persona. Parámetros: persona, clase. #}
+{% set participacion = guias_de_persona(persona) %}
+{% for rol in ['editor', 'colaborador'] %}
+    {% if participacion[rol] is not empty %}
+        <p class="{{ clase }}">
+            <span class="persona__rol">{{ ('personal.rol_guia.' ~ rol)|trans({'%count%': participacion[rol]|length}) }}</span>
+            {% for guia in participacion[rol] %}<a href="{{ path('guia', {slug: guia.slug}) }}">{{ guia.titulo }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
+        </p>
+    {% endif %}
+{% endfor %}
