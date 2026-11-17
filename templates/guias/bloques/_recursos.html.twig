@@ -2,9 +2,23 @@
 {% if recursos is empty %}
     {% if vista_previa %}<p class="campo__ayuda">{{ 'bloque.recursos_vacio'|trans }}</p>{% endif %}
 {% else %}
-    <ul class="bloque__recursos">
+    {# Con más de 20 recursos de distintos tipos, filtros por tipo (controlador filtro-recursos; sin JavaScript se ven todos). #}
+    {% set tipos = {} %}
+    {% for recurso in recursos %}{% set tipos = tipos|merge({(recurso.tipo.value): (tipos[recurso.tipo.value] ?? 0) + 1}) %}{% endfor %}
+    {% set filtrar = recursos|length > 20 and tipos|length > 1 %}
+    {% if filtrar %}<div data-controller="filtro-recursos" data-filtro-recursos-estado-value="{{ 'bloque.filtro_estado'|trans }}">
+        <div class="filtro-tipos" role="group" aria-label="{{ 'bloque.filtro_tipo'|trans }}" data-filtro-recursos-target="barra" hidden>
+            <span class="filtro-tipos__etiqueta" aria-hidden="true">{{ 'bloque.filtro_tipo'|trans }}:</span>
+            <button type="button" class="filtro-tipos__opcion" aria-pressed="true" data-tipo="" data-action="filtro-recursos#elegir">{{ 'bloque.filtro_todos'|trans }} <span class="filtro-tipos__cuenta">{{ recursos|length }}</span></button>
+            {% for tipo, cuenta in tipos %}
+                <button type="button" class="filtro-tipos__opcion" aria-pressed="false" data-tipo="{{ tipo }}" data-action="filtro-recursos#elegir">{{ ('tipo_recurso.' ~ tipo)|trans }} <span class="filtro-tipos__cuenta">{{ cuenta }}</span></button>
+            {% endfor %}
+        </div>
+        <p class="solo-lectores" role="status" data-filtro-recursos-target="estado"></p>
+    {% endif %}
+    <ul class="bloque__recursos"{% if filtrar %} data-filtro-recursos-target="lista"{% endif %}>
         {% for recurso in recursos %}
-            <li>
+            <li data-tipo="{{ recurso.tipo.value }}">
                 <a href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener">{{ recurso.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>
                 <small>{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}</small>
                 {% if recurso.formato %}{{ include('recursos/_formato.html.twig', {formato: recurso.formato.value}) }}{% endif %}
@@ -13,4 +27,5 @@
             </li>
         {% endfor %}
     </ul>
+    {% if filtrar %}</div>{% endif %}
 {% endif %}

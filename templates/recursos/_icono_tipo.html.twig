@@ -1,5 +1,6 @@
-{# Icono representativo del tipo de recurso, para la vista en cuadrícula (decorativo: el tipo ya se nombra en la página). #}
-<span class="recurso__icono recurso__icono--{{ tipo }}" aria-hidden="true">
+{# Icono representativo del tipo de recurso (decorativo: el tipo ya se nombra en la página). En la cuadrícula de recursos
+   y, con clase "libro__icono", en las portadas genéricas de libros y revistas sin imagen. #}
+<span class="{{ clase ?? 'recurso__icono' }} recurso__icono--{{ tipo }}" aria-hidden="true">
     <svg viewBox="0 0 48 48" width="40" height="40" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         {%- if tipo == 'base_datos' -%}
             <ellipse cx="24" cy="11" rx="14" ry="5"/><path d="M10 11v26c0 2.8 6.3 5 14 5s14-2.2 14-5V11"/><path d="M10 20c0 2.8 6.3 5 14 5s14-2.2 14-5M10 29c0 2.8 6.3 5 14 5s14-2.2 14-5"/>

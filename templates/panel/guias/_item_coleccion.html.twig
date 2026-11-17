@@ -7,6 +7,7 @@
         data-registro="{{ ver }}"{% if not item.vars.valid %} data-con-errores{% endif %}>
         <div class="libro-fila">
             <span class="libro-fila__portada" aria-hidden="true">
+                {{ include('recursos/_icono_tipo.html.twig', {tipo: 'libros', clase: 'libro__icono'}) }}
                 <img src="{{ (libro.isbn ?? null) ? 'https://covers.openlibrary.org/b/isbn/' ~ libro.isbn|url_encode ~ '-S.jpg?default=false' : '' }}" alt="" width="40" height="60" referrerpolicy="no-referrer"
                      data-isbn="{{ (libro.isbn ?? '')|replace({'-': ''}) }}" data-controller="portada" data-action="load->portada#revisar error->portada#revisar"{% if not (libro.isbn ?? null) %} hidden{% endif %}>
             </span>
@@ -72,7 +73,7 @@
     <li class="coleccion__item coleccion__item--libro coleccion__item--revista" data-coleccion-target="item" data-paginar-libros-target="item"
         data-registro="{{ ver }}"{% if not item.vars.valid %} data-con-errores{% endif %}>
         <div class="libro-fila">
-            <span class="libro-fila__portada libro-fila__portada--revista" aria-hidden="true"></span>
+            <span class="libro-fila__portada libro-fila__portada--revista" aria-hidden="true">{{ include('recursos/_icono_tipo.html.twig', {tipo: 'revistas', clase: 'libro__icono'}) }}</span>
             <div class="libro-fila__texto">
                 <span class="libro-fila__titulo" data-fila="titulo">{{ (revista.titulo ?? null) ?: 'bloque.revista_nueva'|trans }}</span>
                 <span class="libro-fila__detalle" data-fila="detalle">{{ [revista.editorial ?? null, (revista.issn ?? null) ? 'ISSN ' ~ revista.issn : null]|filter(v => v)|join(' · ') }}</span>

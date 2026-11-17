@@ -10,7 +10,7 @@
 <li class="libro{{ lista ? ' libro--lista' }}">
     {% if destino %}<a class="libro__enlace" href="{{ destino }}" target="_blank" rel="noopener"{% if lista %} tabindex="-1" aria-hidden="true"{% endif %}>{% else %}<span class="libro__enlace">{% endif %}
         <span class="libro__portada" aria-hidden="true">
-            <span class="libro__sin-portada">{{ lista ? '' : libro.titulo }}</span>
+            <span class="libro__sin-portada">{{ include('recursos/_icono_tipo.html.twig', {tipo: 'libros', clase: 'libro__icono'}) }}{% if not lista %}<span class="libro__sin-portada-titulo">{{ libro.titulo }}</span>{% endif %}</span>
             {% if libro.isbn %}<img src="https://covers.openlibrary.org/b/isbn/{{ libro.isbn|url_encode }}-M.jpg?default=false" alt="" data-controller="portada" data-action="load->portada#revisar error->portada#revisar" width="120" height="180" loading="lazy" referrerpolicy="no-referrer">{% endif %}
         </span>
         {% if not lista %}

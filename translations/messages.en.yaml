@@ -834,6 +834,9 @@ bloque:
   buscar_recurso: Search resource by title
   sin_recursos: No resources.
   recursos_vacio: This block has no available resources.
+  filtro_tipo: "Filter by type"
+  filtro_todos: "All"
+  filtro_estado: "Showing %visibles% of %total% resources."
   mostrar_descripcion: Show each resource's description
   resumen_recursos: "{0}No resources|{1}1 resource|]1,Inf[%count% resources"
   perfil: Person
