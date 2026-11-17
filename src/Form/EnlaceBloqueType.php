@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,6 +31,13 @@ final class EnlaceBloqueType extends AbstractType
                 'label' => 'bloque.enlace_descripcion',
                 'required' => false,
                 'constraints' => [new Assert\Length(max: 300)],
-            ]);
+            ])
+            // Si se marca, al guardar el sitio se incorpora a la lista de recursos bibliográficos (ver SitiosEnRecursos).
+            ->add('en_recursos', CheckboxType::class, [
+                'label' => 'bloque.enlace_en_recursos',
+                'help' => 'bloque.enlace_en_recursos_ayuda',
+                'required' => false,
+            ])
+            ->add('recurso', HiddenType::class, ['required' => false]);
     }
 }
