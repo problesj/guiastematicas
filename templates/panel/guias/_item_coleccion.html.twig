@@ -15,11 +15,11 @@
                 <span class="libro-fila__detalle" data-fila="detalle">{{ [libro.autor ?? null, libro.anio ?? null, (libro.isbn ?? null) ? 'ISBN ' ~ libro.isbn : null]|filter(v => v)|join(' · ') }}</span>
             </div>
             <div class="libro-fila__acciones">
-                <a class="boton-texto" href="#" target="_blank" rel="noopener" data-fila="ver" hidden>{{ 'bloque.libro_ver'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span> ({{ 'bases.ventana_nueva'|trans }})</span></a>
-                <button type="button" class="boton-texto" data-action="paginar-libros#editar" aria-expanded="true" aria-controls="{{ item.vars.id }}_edicion">{{ 'bloque.libro_editar'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span></span></button>
-                <button type="button" class="boton-texto boton-texto--peligro" data-action="coleccion#quitar">{{ 'bloque.libro_borrar'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span></span></button>
-                <button type="button" class="boton-texto" data-action="coleccion#subir" title="{{ 'autor.subir'|trans }}"><span aria-hidden="true">↑</span><span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
-                <button type="button" class="boton-texto" data-action="coleccion#bajar" title="{{ 'autor.bajar'|trans }}"><span aria-hidden="true">↓</span><span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
+                <a class="accion" data-tooltip="{{ 'bloque.libro_ver'|trans }}" href="#" target="_blank" rel="noopener" data-fila="ver" hidden>{{ icono('ver') }}<span class="solo-lectores">{{ 'bloque.libro_ver'|trans }} <span data-fila="nombre"></span> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+                <button type="button" class="accion" data-tooltip="{{ 'bloque.libro_editar'|trans }}" data-action="paginar-libros#editar" aria-expanded="true" aria-controls="{{ item.vars.id }}_edicion">{{ icono('editar') }}<span class="solo-lectores">{{ 'bloque.libro_editar'|trans }} <span data-fila="nombre"></span></span></button>
+                <button type="button" class="accion accion--peligro" data-tooltip="{{ 'bloque.libro_borrar'|trans }}" data-action="coleccion#quitar">{{ icono('eliminar') }}<span class="solo-lectores">{{ 'bloque.libro_borrar'|trans }} <span data-fila="nombre"></span></span></button>
+                <button type="button" class="accion" data-tooltip="{{ 'autor.subir'|trans }}" data-action="coleccion#subir">{{ icono('subir') }}<span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
+                <button type="button" class="accion" data-tooltip="{{ 'autor.bajar'|trans }}" data-action="coleccion#bajar">{{ icono('bajar') }}<span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
             </div>
         </div>
         <div class="libro-fila__edicion" id="{{ item.vars.id }}_edicion" data-fila="edicion">
@@ -78,11 +78,11 @@
                 <span class="libro-fila__detalle" data-fila="detalle">{{ [revista.editorial ?? null, (revista.issn ?? null) ? 'ISSN ' ~ revista.issn : null]|filter(v => v)|join(' · ') }}</span>
             </div>
             <div class="libro-fila__acciones">
-                <a class="boton-texto" href="#" target="_blank" rel="noopener" data-fila="ver" hidden>{{ 'bloque.libro_ver'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span> ({{ 'bases.ventana_nueva'|trans }})</span></a>
-                <button type="button" class="boton-texto" data-action="paginar-libros#editar" aria-expanded="true" aria-controls="{{ item.vars.id }}_edicion">{{ 'bloque.libro_editar'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span></span></button>
-                <button type="button" class="boton-texto boton-texto--peligro" data-action="coleccion#quitar">{{ 'bloque.libro_borrar'|trans }}<span class="solo-lectores"> <span data-fila="nombre"></span></span></button>
-                <button type="button" class="boton-texto" data-action="coleccion#subir" title="{{ 'autor.subir'|trans }}"><span aria-hidden="true">↑</span><span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
-                <button type="button" class="boton-texto" data-action="coleccion#bajar" title="{{ 'autor.bajar'|trans }}"><span aria-hidden="true">↓</span><span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
+                <a class="accion" data-tooltip="{{ 'bloque.libro_ver'|trans }}" href="#" target="_blank" rel="noopener" data-fila="ver" hidden>{{ icono('ver') }}<span class="solo-lectores">{{ 'bloque.libro_ver'|trans }} <span data-fila="nombre"></span> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+                <button type="button" class="accion" data-tooltip="{{ 'bloque.libro_editar'|trans }}" data-action="paginar-libros#editar" aria-expanded="true" aria-controls="{{ item.vars.id }}_edicion">{{ icono('editar') }}<span class="solo-lectores">{{ 'bloque.libro_editar'|trans }} <span data-fila="nombre"></span></span></button>
+                <button type="button" class="accion accion--peligro" data-tooltip="{{ 'bloque.libro_borrar'|trans }}" data-action="coleccion#quitar">{{ icono('eliminar') }}<span class="solo-lectores">{{ 'bloque.libro_borrar'|trans }} <span data-fila="nombre"></span></span></button>
+                <button type="button" class="accion" data-tooltip="{{ 'autor.subir'|trans }}" data-action="coleccion#subir">{{ icono('subir') }}<span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
+                <button type="button" class="accion" data-tooltip="{{ 'autor.bajar'|trans }}" data-action="coleccion#bajar">{{ icono('bajar') }}<span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
             </div>
         </div>
         <div class="libro-fila__edicion" id="{{ item.vars.id }}_edicion" data-fila="edicion">
@@ -134,9 +134,9 @@
         {% for campo in item %}{{ form_row(campo) }}{% endfor %}
     </div>
     <div class="coleccion__acciones">
-        <button type="button" class="boton-texto" data-action="coleccion#subir" title="{{ 'autor.subir'|trans }}"><span aria-hidden="true">↑</span><span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
-        <button type="button" class="boton-texto" data-action="coleccion#bajar" title="{{ 'autor.bajar'|trans }}"><span aria-hidden="true">↓</span><span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
-        <button type="button" class="boton-texto boton-texto--peligro" data-action="coleccion#quitar">{{ 'autor.quitar'|trans }}</button>
+        <button type="button" class="accion" data-tooltip="{{ 'autor.subir'|trans }}" data-action="coleccion#subir">{{ icono('subir') }}<span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>
+        <button type="button" class="accion" data-tooltip="{{ 'autor.bajar'|trans }}" data-action="coleccion#bajar">{{ icono('bajar') }}<span class="solo-lectores">{{ 'autor.bajar'|trans }}</span></button>
+        <button type="button" class="accion accion--peligro" data-tooltip="{{ 'autor.quitar'|trans }}" data-action="coleccion#quitar">{{ icono('eliminar') }}<span class="solo-lectores">{{ 'autor.quitar'|trans }}</span></button>
     </div>
 </li>
 {% endif %}

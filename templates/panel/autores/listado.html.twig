@@ -41,7 +41,7 @@
                             <td>{{ autor.pais ? autor.pais.nombreTraducido(app.request.locale) : '—' }}</td>
                             <td>{{ autor.cantidadRecursos }}</td>
                             <td class="tabla__acciones">
-                                <a href="{{ path('panel_autor_editar', {id: autor.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ autor.nombreCompleto }}</span></a>
+                                <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('panel_autor_editar', {id: autor.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ autor.nombreCompleto }}</span></a>
                                 {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_autor_eliminar', id: autor.id, token: 'eliminar-autor-' ~ autor.id, nombre: autor.nombreCompleto} %}
                             </td>
                         </tr>

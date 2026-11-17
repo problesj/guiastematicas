@@ -35,7 +35,7 @@
                             <td>{{ editorial.pais ? editorial.pais.nombreTraducido(app.request.locale) : '—' }}</td>
                             <td>{{ fila.recursos }}</td>
                             <td class="tabla__acciones">
-                                <a href="{{ path('panel_editorial_editar', {id: editorial.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ editorial.nombre }}</span></a>
+                                <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('panel_editorial_editar', {id: editorial.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ editorial.nombre }}</span></a>
                                 {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_editorial_eliminar', id: editorial.id, token: 'eliminar-editorial-' ~ editorial.id, nombre: editorial.nombre} %}
                             </td>
                         </tr>

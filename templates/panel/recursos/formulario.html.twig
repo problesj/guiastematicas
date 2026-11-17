@@ -8,7 +8,7 @@
         {% include 'panel/recursos/_campos.html.twig' %}
         <div class="formulario__acciones">
             <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
-            <a href="{{ path('panel_recursos') }}">{{ 'formulario.cancelar'|trans }}</a>
+            <a class="boton boton--secundario" href="{{ path('panel_recursos') }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
         </div>
     {{ form_end(formulario) }}
 {% endblock %}

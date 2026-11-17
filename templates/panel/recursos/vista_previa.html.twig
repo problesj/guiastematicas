@@ -34,7 +34,7 @@
         {% if importables > 0 %}
             <div class="formulario__acciones">
                 <button type="submit" class="boton" data-vista-previa-target="boton">{{ 'importacion.confirmar'|trans({'%count%': importables}) }}</button>
-                <a href="{{ path('panel_recursos_importar') }}">{{ 'formulario.cancelar'|trans }}</a>
+                <a class="boton boton--secundario" href="{{ path('panel_recursos_importar') }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
             </div>
         {% endif %}
 

@@ -182,6 +182,7 @@ formulario:
   no: "No"
   guardar: Guardar
   cancelar: Cancelar
+  cancelar_ayuda: Volver sin guardar los cambios
   editar: Editar
   eliminar: Eliminar
   acciones: Acciones
@@ -604,6 +605,7 @@ guia:
   bloque_movido: Bloque movido.
   bloque_movido_guia: Bloque movido a la otra guía. Estás viendo la guía de destino.
   mover: Mover
+  guardar_seccion: Guardar título y columnas de la sección
   mover_titulo: Mover bloque
   mover_ubicacion: 'Ahora en: %pestana% › %seccion%'
   mover_destino: Mover a

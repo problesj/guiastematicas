@@ -46,7 +46,7 @@
                                 {% endif %}
                             </td>
                             <td class="tabla__acciones">
-                                <a href="{{ path('panel_sugerencia_revisar', {id: s.id}) }}">{{ (s.pendiente ? 'sugerencia.revisar' : 'formulario.ver')|trans }}<span class="solo-lectores"> {{ s.titulo }}</span></a>
+                                {% set leyenda = (s.pendiente ? 'sugerencia.revisar' : 'formulario.ver')|trans %}<a class="accion" data-tooltip="{{ leyenda }}" href="{{ path('panel_sugerencia_revisar', {id: s.id}) }}">{{ icono(s.pendiente ? 'revisar' : 'ver') }}<span class="solo-lectores">{{ leyenda }} {{ s.titulo }}</span></a>
                             </td>
                         </tr>
                     {% endfor %}

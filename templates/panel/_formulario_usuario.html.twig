@@ -44,6 +44,6 @@
 
     <div class="formulario__acciones">
         <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
-        {% if volver is defined %}<a href="{{ path(volver) }}">{{ 'formulario.cancelar'|trans }}</a>{% endif %}
+        {% if volver is defined %}<a class="boton boton--secundario" href="{{ path(volver) }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>{% endif %}
     </div>
 {{ form_end(formulario) }}

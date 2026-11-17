@@ -49,7 +49,7 @@
         </fieldset>
         <div class="formulario__acciones">
             <button type="submit" class="boton">{{ (guia ? 'formulario.guardar' : 'guia.crear')|trans }}</button>
-            <a href="{{ guia ? path('panel_guia_editar', {id: guia.id}) : path('panel_guias') }}">{{ 'formulario.cancelar'|trans }}</a>
+            <a class="boton boton--secundario" href="{{ guia ? path('panel_guia_editar', {id: guia.id}) : path('panel_guias') }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
         </div>
     {{ form_end(formulario) }}
 

@@ -62,7 +62,7 @@
 
             <div class="formulario__acciones">
                 <button type="submit" class="boton">{{ 'sugerencia.enviar'|trans }}</button>
-                <a href="{{ path('recursos') }}">{{ 'formulario.cancelar'|trans }}</a>
+                <a class="boton boton--secundario" href="{{ path('recursos') }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
             </div>
         {{ form_end(formulario) }}
     </section>

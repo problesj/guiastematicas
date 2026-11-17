@@ -182,6 +182,7 @@ formulario:
   no: "No"
   guardar: Save
   cancelar: Cancel
+  cancelar_ayuda: Go back without saving changes
   editar: Edit
   eliminar: Delete
   acciones: Actions
@@ -604,6 +605,7 @@ guia:
   bloque_movido: Block moved.
   bloque_movido_guia: Block moved to the other guide. You are now viewing the destination guide.
   mover: Move
+  guardar_seccion: Save section title and columns
   mover_titulo: Move block
   mover_ubicacion: 'Currently in: %pestana% › %seccion%'
   mover_destino: Move to

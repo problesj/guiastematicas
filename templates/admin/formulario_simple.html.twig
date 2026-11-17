@@ -8,7 +8,7 @@
         {{ form_rest(formulario) }}
         <div class="formulario__acciones">
             <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
-            <a href="{{ path(volver) }}">{{ 'formulario.cancelar'|trans }}</a>
+            <a class="boton boton--secundario" href="{{ path(volver) }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
         </div>
     {{ form_end(formulario) }}
 {% endblock %}

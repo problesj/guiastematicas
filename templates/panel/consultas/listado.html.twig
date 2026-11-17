@@ -47,7 +47,7 @@
                             {% if todas %}<td>{{ c.bibliotecario.nombreCompleto }}</td>{% endif %}
                             <td>{{ c.mensajes|length }}</td>
                             <td>{{ c.actualizadaEn|date('d-m-Y H:i') }}</td>
-                            <td class="tabla__acciones"><a href="{{ path('panel_consulta', {id: c.id}) }}">{{ (c.pendiente and not c.cerrada ? 'consulta.responder' : 'formulario.ver')|trans }}<span class="solo-lectores"> {{ c.asunto }}</span></a></td>
+                            <td class="tabla__acciones">{% set leyenda = (c.pendiente and not c.cerrada ? 'consulta.responder' : 'formulario.ver')|trans %}<a class="accion" data-tooltip="{{ leyenda }}" href="{{ path('panel_consulta', {id: c.id}) }}">{{ icono(c.pendiente and not c.cerrada ? 'responder' : 'ver') }}<span class="solo-lectores">{{ leyenda }} {{ c.asunto }}</span></a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

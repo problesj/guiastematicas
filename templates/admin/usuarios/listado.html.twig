@@ -36,7 +36,7 @@
                             {% if usuario.googleId %}<span class="etiqueta">Google</span>{% endif %}
                         </td>
                         <td>{{ usuario.ultimoAcceso ? usuario.ultimoAcceso|date('d-m-Y H:i') : '—' }}</td>
-                        <td><a href="{{ path('admin_usuario_editar', {id: usuario.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ usuario.nombreCompleto }}</span></a></td>
+                        <td><a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('admin_usuario_editar', {id: usuario.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ usuario.nombreCompleto }}</span></a></td>
                     </tr>
                 {% endfor %}
             </tbody>

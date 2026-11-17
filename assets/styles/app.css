@@ -198,6 +198,19 @@ a:hover { color: var(--color-principal-oscuro); }
 .boton--ancho { width: 100%; }
 .boton-texto { padding: 0; font: inherit; color: var(--color-principal); background: none; border: 0; text-decoration: underline; cursor: pointer; }
 .boton-texto--peligro { color: #b3261e; }
+/* Acciones con icono y leyenda emergente (macros/acciones.html.twig) */
+.accion { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; min-width: 2.125rem; height: 2.125rem; padding: 0 0.45rem; font: inherit; color: var(--color-principal-oscuro); text-decoration: none; vertical-align: middle; background: #fff; border: 1px solid #dccab3; border-radius: var(--radio); cursor: pointer; }
+.accion:hover, .accion:focus-visible { color: var(--color-texto-boton); background: var(--color-principal-oscuro); border-color: var(--color-principal-oscuro); }
+.accion--peligro { color: #b3261e; border-color: #e6b9b5; }
+.accion--peligro:hover, .accion--peligro:focus-visible { color: #fff; background: #b3261e; border-color: #b3261e; }
+.accion:disabled { opacity: 0.4; cursor: not-allowed; }
+.accion:disabled:hover { color: var(--color-principal-oscuro); background: #fff; border-color: #dccab3; }
+.accion__icono { flex: none; }
+.accion[hidden] { display: none; }
+[data-tooltip] { position: relative; }
+[data-tooltip]::after { content: attr(data-tooltip); position: absolute; z-index: 30; bottom: calc(100% + 6px); left: 50%; padding: 0.2rem 0.5rem; font-size: 0.8125rem; font-weight: 600; line-height: 1.4; white-space: nowrap; color: #fff; background: #1d1d1b; border-radius: 4px; transform: translateX(-50%); opacity: 0; pointer-events: none; transition: opacity 0.12s; }
+[data-tooltip]:hover::after, [data-tooltip]:focus-visible::after { opacity: 1; }
+.acciones { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
 .en-linea { display: inline; }
 .separador { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: var(--color-texto-secundario); }
 .separador::before, .separador::after { content: ""; flex: 1; border-top: 1px solid var(--color-principal-suave); }
@@ -232,7 +245,7 @@ a:hover { color: var(--color-principal-oscuro); }
 .tabla small { color: var(--color-texto-secundario); }
 .tabla__inactivo td { color: var(--color-texto-secundario); }
 .tabla__acciones { white-space: nowrap; }
-.tabla__acciones > * + * { margin-left: 0.75rem; }
+.tabla__acciones > * + * { margin-left: 0.35rem; }
 .etiqueta { display: inline-block; margin: 0.1rem 0.25rem 0.1rem 0; padding: 0.05rem 0.5rem; font-size: 0.8125rem; color: var(--color-texto); background: var(--color-fondo-suave); border: 1px solid var(--color-principal-suave); border-radius: 999px; text-decoration: none; }
 
 /* Directorio y perfiles */
@@ -348,8 +361,6 @@ a:hover { color: var(--color-principal-oscuro); }
 .selector-autores__autor { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; background: var(--color-fondo-suave); border: 1px solid var(--color-gris); border-radius: 4px; }
 .selector-autores__autor > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .selector-autores__vacio { color: var(--color-texto-secundario); font-style: italic; }
-.selector-autores__boton { min-width: 2rem; padding: 0.1rem 0.4rem; font: inherit; line-height: 1.4; color: var(--color-texto); background: #fff; border: 1px solid var(--color-gris); border-radius: 4px; cursor: pointer; }
-.selector-autores__boton:disabled { opacity: 0.4; cursor: default; }
 .selector-autores__busqueda { position: relative; }
 .selector-autores__busqueda input { width: 100%; }
 .selector-autores__sugerencias { position: absolute; z-index: 10; left: 0; right: 0; max-height: 16rem; overflow-y: auto; margin: 0.125rem 0 0; padding: 0; list-style: none; background: #fff; border: 1px solid var(--color-gris); border-radius: 4px; box-shadow: 0 4px 12px rgb(0 0 0 / 0.12); }
@@ -446,7 +457,7 @@ a:hover { color: var(--color-principal-oscuro); }
 .editor-seccion__bloques { display: grid; gap: 0.5rem; min-height: 2.5rem; margin: 0 0 0.75rem; padding: 0.375rem; list-style: none; border: 1px dashed #e4dccf; border-radius: var(--radio); }
 .editor-bloque { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; background: var(--color-fondo-suave); border: 1px solid #e4dccf; border-radius: var(--radio); }
 .editor-bloque { flex-wrap: wrap; min-width: 0; }
-.editor-bloque .tabla__acciones { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; white-space: normal; }
+.editor-bloque .tabla__acciones { display: flex; flex-wrap: wrap; gap: 0.35rem; white-space: normal; }
 .editor-bloque .tabla__acciones > * + * { margin-left: 0; }
 .editor-bloque__resumen { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; }
 .editor-bloque__resumen small { flex-basis: 100%; color: var(--color-texto-secundario); overflow-wrap: anywhere; }
@@ -711,8 +722,7 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .libro-fila__texto { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .libro-fila__titulo { font-weight: 600; overflow-wrap: anywhere; }
 .libro-fila__detalle { font-size: 0.875rem; color: var(--color-texto-secundario); }
-.libro-fila__acciones { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0.25rem 0.75rem; }
-.libro-fila__acciones a.boton-texto { text-decoration: underline; }
+.libro-fila__acciones { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0.35rem; }
 .libro-fila__edicion { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e4dccf; }
 .coleccion__item--abierto { background: #fff; border-color: var(--color-principal-suave); }
 .paginar-libros__cabecera { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin: 0.5rem 0; }
@@ -762,8 +772,6 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .tabla-guias__estado .insignia { display: table; margin: 0.25rem 0 0; white-space: nowrap; }
 .tabla-guias__fecha { white-space: nowrap; }
 .tabla--guias .tabla__acciones { width: 1%; }
-.tabla--guias .tabla__acciones a { display: block; white-space: nowrap; }
-.tabla--guias .tabla__acciones a + a { margin: 0.25rem 0 0; }
 
 /* Guías por materia en cuadrícula o carrusel (Administración → Apariencia): tarjetas con el icono grande */
 .lista-guias--cuadricula { grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
