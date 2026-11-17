@@ -1083,7 +1083,7 @@ asistente:
   coeditores_ayuda: Aparecerán en la presentación junto a ti y podrán editar la guía.
   usar_ia: Usar inteligencia artificial (Gemini)
   usar_ia_ayuda: "Redacta la presentación y las introducciones, elige los recursos más pertinentes y sugiere sitios web adicionales (se comprueba que respondan y quedan marcados para revisar). Puede tardar hasta un minuto."
-  sin_clave: "No disponible: falta la clave de Gemini en Admin → Configuración. La guía se arma con todos los recursos de las materias."
+  sin_clave: "No disponible: falta la clave de Gemini en Administración → Integraciones. La guía se arma con todos los recursos de las materias."
   crear: Crear la guía
   armando: Armando la guía…
   creada: La guía se creó en borrador con los recursos de las materias elegidas. Revísala antes de publicarla.

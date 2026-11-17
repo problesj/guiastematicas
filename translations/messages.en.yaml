@@ -1083,7 +1083,7 @@ asistente:
   coeditores_ayuda: They will appear in the introduction next to you and will be able to edit the guide.
   usar_ia: Use artificial intelligence (Gemini)
   usar_ia_ayuda: "Writes the introduction and tab texts, picks the most relevant resources and suggests extra websites (checked to respond and marked for review). It can take up to a minute."
-  sin_clave: "Not available: the Gemini key is missing in Admin → Configuration. The guide is built with all the subject resources."
+  sin_clave: "Not available: the Gemini key is missing in Administration → Integrations. The guide is built with all the subject resources."
   crear: Create the guide
   armando: Building the guide…
   creada: The guide was created as a draft with the resources of the chosen subjects. Review it before publishing.

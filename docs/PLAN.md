@@ -22,24 +22,32 @@ Este archivo resume las decisiones tomadas el 8 de noviembre de 2026.
 
 ## Fases
 
-| Fase | Contenido | Duración |
-| --- | --- | --- |
-| 0 | Arranque y diseño: maquetas, modelo de datos | 2 semanas |
-| 1 | Base técnica: Symfony, entorno Docker, CI, scripts de servidor | 2 semanas |
-| 2 | Usuarios y personal: tres métodos de inicio de sesión, roles, departamentos, materias | 3 semanas |
-| 3 | Recursos y lista A-Z: importación del Excel, proxy AccesUM, filtros | 3 semanas |
-| 4 | Editor de guías: pestañas, secciones, bloques, arrastrar y soltar, borrador y publicado | 5 semanas |
-| 5 | Listas de libros (Alma, Primo VE) y API de solo lectura | 2 semanas |
-| 6 | Estilo final, panel de logo y colores, accesibilidad WCAG 2.1 AA | 2 semanas |
-| 7 | LTI 1.3 con Moodle | 1 a 2 semanas |
-| 8 | Manual de operación, 5 guías iniciales, capacitación y paso a producción | 2 semanas |
+| Fase | Contenido | Duración | Estado (17-11-2026) |
+| --- | --- | --- | --- |
+| 0 | Arranque y diseño: maquetas, modelo de datos | 2 semanas | Hecha |
+| 1 | Base técnica: Symfony, entorno Docker, CI, scripts de servidor | 2 semanas | Hecha |
+| 2 | Usuarios y personal: tres métodos de inicio de sesión, roles, departamentos, materias | 3 semanas | Hecha |
+| 3 | Recursos y lista A-Z: importación del Excel, proxy AccesUM, filtros | 3 semanas | Hecha |
+| 4 | Editor de guías: pestañas, secciones, bloques, arrastrar y soltar, borrador y publicado | 5 semanas | Hecha |
+| 5 | Listas de libros (Alma, Primo VE) y API de solo lectura | 2 semanas | Hecha |
+| 6 | Estilo final, panel de logo y colores, accesibilidad WCAG 2.1 AA | 2 semanas | Hecha |
+| 7 | LTI 1.3 con Moodle, integración con WordPress y botones para compartir | 1 a 2 semanas | Implementada (LTI, plugin de WordPress, compartir); prueba real pendiente en producción |
+| 8 | Manual de operación, 5 guías iniciales, capacitación y paso a producción | 2 semanas | Pendiente |
+
+Además de las fases, se agregaron (PR #33 a #63): portada con buscador y carrusel, colores por zona, accesos
+configurables a bases de datos, libros y revistas, bloque Revistas, guías principales y subguías, formato impreso o
+electrónico, sugerencias de recursos, consultas a bibliotecarios, contenido compartido entre guías, asistente con IA
+(Gemini), sitios de enlaces en la lista A-Z, filtros y búsqueda en bloques largos, y asignación masiva de materias.
+El detalle está en el [README](../README.md).
 
 ## Insumos pendientes
 
 - [ ] Archivos originales del logo de Bibliotecas UCN
 - [ ] Datos del LDAP de la UCN y proyecto OAuth en Google Cloud
 - [ ] Registro de la herramienta LTI 1.3 por el administrador de Moodle
-- [ ] URL de Primo VE (vista e institución) y clave de la API de Alma
+- [x] URL de Primo VE (vista e institución) y clave de la API de Alma
 - [ ] Copia del Excel de bases de datos y formato del prefijo del proxy AccesUM
 - [ ] Dominio público para producción
 - [ ] Confirmar si alguna guía necesita versión en español e inglés
+- [ ] Datos del servidor SMTP de la UCN (correos de las consultas)
+- [ ] Clave de la API de Gemini (asistente de guías con IA)
