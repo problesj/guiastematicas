@@ -132,6 +132,9 @@
         {% endif %}
         {{ form_errors(item) }}
         {% for campo in item %}{{ form_row(campo) }}{% endfor %}
+        {% if item.recurso is defined and item.recurso.vars.value %}
+            <p class="libro-form__recurso">{{ 'bloque.enlace_vinculado'|trans }} <a href="{{ path('panel_recurso_editar', {id: item.recurso.vars.value}) }}" target="_blank" rel="noopener">{{ 'bloque.libro_editar_recurso'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a></p>
+        {% endif %}
     </div>
     <div class="coleccion__acciones">
         <button type="button" class="accion" data-tooltip="{{ 'autor.subir'|trans }}" data-action="coleccion#subir">{{ icono('subir') }}<span class="solo-lectores">{{ 'autor.subir'|trans }}</span></button>

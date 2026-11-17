@@ -175,7 +175,7 @@ final class ApiController extends AbstractController
                 'materias' => array_map(fn (Materia $m) => $m->getSlug(), $this->bloques->materiasBusqueda($bloque)),
                 'buscar' => $this->generateUrl('catalogo', ['_locale' => $idioma], UrlGeneratorInterface::ABSOLUTE_URL),
             ],
-            TipoBloque::Enlaces => ['enlaces' => $items],
+            TipoBloque::Enlaces => ['enlaces' => array_map(fn (array $e) => ['titulo' => $e['titulo'] ?? null, 'url' => $e['url'] ?? null, 'descripcion' => $e['descripcion'] ?? null], $items)],
             TipoBloque::Libros => ['libros' => array_map(fn (array $l) => [
                 'titulo' => $l['titulo'] ?? null,
                 'autor' => $l['autor'] ?? null,

@@ -63,6 +63,55 @@ final class BloquesListaTest extends WebTestCase
         return self::em()->getRepository(Bloque::class)->findBy(['seccion' => $seccion->getId()], ['posicion' => 'ASC']);
     }
 
+    public function testLosEnlacesMarcadosSeAgreganALosRecursosBibliograficos(): void
+    {
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $guia = self::crearGuia($ana);
+        $guia->addMateria(self::crearMateria('Química', 'quimica'));
+        $existente = (new Recurso())->setTitulo('PubChem (A-Z)')->setUrl('https://pubchem.ncbi.nlm.nih.gov/')->setTipo(TipoRecurso::BaseDatos)->setAcceso(TipoAcceso::Abierto);
+        self::em()->persist($existente);
+        self::em()->flush();
+        $seccion = $guia->getPestana()->getSecciones()->first();
+        $this->cliente->loginUser($ana);
+        $base = '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/';
+
+        $crawler = $this->cliente->request('GET', $base.'enlaces');
+        self::assertStringContainsString('Agregar a recursos bibliográficos', $crawler->filter('template[data-coleccion-target="plantilla"]')->html());
+        $this->enviar($base.'enlaces', [
+            ['titulo' => 'INN', 'url' => 'https://www.inn.cl', 'descripcion' => 'Normas chilenas', 'en_recursos' => '1'],
+            ['titulo' => 'PubChem', 'url' => 'https://pubchem.ncbi.nlm.nih.gov/', 'en_recursos' => '1'], // ya estaba: se vincula
+            ['titulo' => 'Blog', 'url' => 'https://blog.ejemplo.cl'], // sin marcar: no entra
+        ]);
+        self::assertResponseRedirects();
+
+        [$bloque] = self::bloques($seccion);
+        $items = $bloque->dato('items');
+        $inn = self::em()->getRepository(Recurso::class)->findOneBy(['url' => 'https://www.inn.cl']);
+        self::assertSame(TipoRecurso::SitioWeb, $inn->getTipo());
+        self::assertSame(TipoAcceso::Abierto, $inn->getAcceso());
+        self::assertFalse($inn->isRequiereProxy());
+        self::assertSame('Normas chilenas', $inn->getDescripcion());
+        self::assertSame(['Química'], $inn->getMaterias()->map(fn ($m) => $m->getNombre())->toArray());
+        self::assertSame([$inn->getId(), $existente->getId(), null], array_column($items, 'recurso'));
+        self::assertSame([true, true, false], array_column($items, 'en_recursos'));
+        self::assertNull(self::em()->getRepository(Recurso::class)->findOneBy(['url' => 'https://blog.ejemplo.cl']));
+        self::assertSame('PubChem (A-Z)', self::em()->find(Recurso::class, $existente->getId())->getTitulo());
+
+        // El formulario lo muestra marcado, con enlace al recurso; al desmarcarlo se desvincula pero el recurso queda.
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/bloques/'.$bloque->getId().'/editar');
+        self::assertResponseIsSuccessful();
+        self::assertSame('checked', $crawler->filter('input[name="bloque[items][0][en_recursos]"]')->attr('checked'));
+        self::assertCount(2, $crawler->filter('.libro-form__recurso a'));
+        $token = $crawler->filter('input[name="bloque[_token]"]')->attr('value');
+        $this->cliente->request('POST', '/es/panel/guias/'.$guia->getId().'/bloques/'.$bloque->getId().'/editar', ['bloque' => ['titulo' => 'Lista', '_token' => $token, 'items' => [
+            ['titulo' => 'INN', 'url' => 'https://www.inn.cl', 'recurso' => (string) $inn->getId()],
+        ]]]);
+        self::assertResponseRedirects();
+        [$bloque] = self::bloques($seccion);
+        self::assertNull($bloque->dato('items')[0]['recurso']);
+        self::assertNotNull(self::em()->find(Recurso::class, $inn->getId()));
+    }
+
     public function testEnlacesYLibrosSeValidanGuardanYMuestran(): void
     {
         $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
@@ -96,8 +145,8 @@ final class BloquesListaTest extends WebTestCase
 
         [$enlaces, $libros] = self::bloques($seccion);
         self::assertEquals([ // MySQL guarda el JSON con las claves en otro orden
-            ['titulo' => 'IEEE Xplore', 'url' => 'https://ieeexplore.ieee.org/', 'descripcion' => 'Normas'],
-            ['titulo' => 'INN', 'url' => 'https://www.inn.cl', 'descripcion' => null],
+            ['titulo' => 'IEEE Xplore', 'url' => 'https://ieeexplore.ieee.org/', 'descripcion' => 'Normas', 'en_recursos' => false, 'recurso' => null],
+            ['titulo' => 'INN', 'url' => 'https://www.inn.cl', 'descripcion' => null, 'en_recursos' => false, 'recurso' => null],
         ], $enlaces->dato('items'));
         self::assertSame('9780262033848', $libros->dato('items')[0]['isbn']);
 

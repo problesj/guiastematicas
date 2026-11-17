@@ -144,7 +144,7 @@ final class BloqueType extends AbstractType
             'entry_options' => ['label' => false],
             'allow_add' => true,
             'allow_delete' => true,
-            'delete_empty' => fn (?array $item) => null === $item || [] === array_filter($item, fn ($v) => null !== $v && '' !== $v),
+            'delete_empty' => fn (?array $item) => null === $item || [] === array_filter($item, fn ($v) => null !== $v && '' !== $v && false !== $v),
             'prototype' => true,
             'error_bubbling' => false,
             'constraints' => [new Assert\Count(min: 1, max: $maximo, minMessage: 'bloque.lista_vacia')],

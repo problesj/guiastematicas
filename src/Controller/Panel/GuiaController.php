@@ -29,6 +29,7 @@ use App\Servicio\DatosLibro;
 use App\Servicio\DatosRevista;
 use App\Servicio\LibrosEnRecursos;
 use App\Servicio\RevistasEnRecursos;
+use App\Servicio\SitiosEnRecursos;
 use App\Servicio\MetadatosDoi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -60,6 +61,7 @@ final class GuiaController extends AbstractController
         private readonly AlmacenImagenesGuia $imagenes,
         private readonly LibrosEnRecursos $librosEnRecursos,
         private readonly RevistasEnRecursos $revistasEnRecursos,
+        private readonly SitiosEnRecursos $sitiosEnRecursos,
         private readonly Catalogo $catalogo,
         private readonly Biblioges $biblioges,
         private readonly ContenidoCompartido $compartido,
@@ -885,9 +887,12 @@ final class GuiaController extends AbstractController
                 'materias' => array_values(array_map(fn (Materia $m) => $m->getId(), array_filter([...($datos['materias'] ?? [])], fn ($m) => $m instanceof Materia))),
                 'otras' => (bool) ($datos['otras'] ?? false),
             ],
-            TipoBloque::Enlaces => ['items' => array_map(fn (array $i) => [
+            // Los marcados con «Agregar a recursos bibliográficos» se incorporan a la lista A-Z como sitios web.
+            TipoBloque::Enlaces => ['items' => $this->sitiosEnRecursos->incorporar(array_map(fn (array $i) => [
                 'titulo' => $texto($i['titulo'] ?? null), 'url' => $texto($i['url'] ?? null), 'descripcion' => $texto($i['descripcion'] ?? null),
-            ], $items)],
+                'en_recursos' => (bool) ($i['en_recursos'] ?? false),
+                'recurso' => ctype_digit((string) ($i['recurso'] ?? '')) ? (int) $i['recurso'] : null,
+            ], $items), $guia)],
             TipoBloque::Libros => self::ordenarLibros([
                 ...self::presentacion($datos),
                 // Cada libro se incorpora a la lista de recursos y guarda el id del recurso con que quedó vinculado.
