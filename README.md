@@ -73,11 +73,37 @@ El VirtualHost de Apache está en [deploy/apache/guias.conf](deploy/apache/guias
 
 ## Integraciones desde el panel
 
-Un administrador puede definir en **Administración → Integraciones** el proxy AccesUM, Primo VE y la API de Ex Libris,
-Biblioges, LDAP y Google. Lo definido en el panel reemplaza a la variable de entorno del mismo nombre; lo que queda
+Un administrador puede definir en **Administración → Integraciones** (`/es/admin/configuracion`) estos grupos:
+
+| Grupo | Variables | Para qué |
+| --- | --- | --- |
+| Proxy | `PROXY_URL` | Enlaces de los recursos suscritos (AccesUM) |
+| Catálogo | `PRIMO_URL`, `PRIMO_VID`, `EXLIBRIS_API_URL`, `PRIMO_API_KEY`, `ALMA_API_KEY` | Búsqueda, datos de libros y revistas, disponibilidad |
+| Biblioges | `BIBLIOGES_API_URL`, `BIBLIOGES_API_KEY` | Bibliografías por carrera o asignatura |
+| LDAP | `LDAP_URL`, `LDAP_CIFRADO`, `LDAP_DN_USUARIO`, `LDAP_BASE_DN`, `LDAP_FILTRO`, `LDAP_BIND_DN`, `LDAP_BIND_PASSWORD` | Inicio de sesión institucional |
+| Google | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DOMINIO` | Inicio de sesión con Google |
+| Correo (SMTP) | `CORREO_SMTP_HOST`, `_PUERTO`, `_CIFRADO`, `_USUARIO`, `_CLAVE`, `CORREO_REMITENTE`, `CORREO_REMITENTE_NOMBRE` | Avisos de consultas a bibliotecarios; botón «Enviar correo de prueba». `CORREO_DSN` en `.env.local` reemplaza a todo el grupo |
+| Inteligencia artificial (Gemini) | `GEMINI_API_KEY`, `GEMINI_MODELO` (por omisión `gemini-2.5-flash`) | Asistente «Nueva guía con IA» |
+| Moodle (LTI 1.3) | `LTI_ISSUER`, `LTI_CLIENT_ID`, `LTI_DEPLOYMENT_ID`, `LTI_AUTH_URL`, `LTI_JWKS_URL` | Herramienta externa en Moodle (ver abajo) |
+
+En la misma página se descarga el **plugin de WordPress** ya configurado con la dirección del servidor. Lo definido en el panel reemplaza a la variable de entorno del mismo nombre; lo que queda
 vacío usa el `.env.local` del servidor. Las claves se guardan cifradas (sodium) con una llave derivada de `APP_SECRET`
 y nunca se vuelven a mostrar: si `APP_SECRET` cambia, hay que escribirlas de nuevo. Los servicios leen estos valores
 con `%env(ajuste:NOMBRE)%` (`App\Configuracion\AjusteEnvVarProcessor`).
+
+## Apariencia y portada
+
+En **Administración → Apariencia** se definen el nombre del sitio (español e inglés), la institución, el logo, la imagen
+de fondo de la portada y los colores: principal, barra y pie, y el color del texto por zona (general, títulos, cabecera,
+barra, botones y pie). Cada par de colores se valida con contraste AA antes de guardar. Ahí también se elige cómo se
+presentan **Guías por materia** (lista, cuadrícula o carrusel; ajuste `VISTA_GUIAS`) y los **accesos a recursos**
+Bases de datos, Libros y Revistas (deshabilitado, lista o cuadrícula; `VISTA_BASE_DATOS`, `VISTA_LIBROS`,
+`VISTA_REVISTAS`). Cada acceso habilitado aparece en el menú principal con su página
+`/es/recursos-bibliograficos/{bases-de-datos|libros|revistas}`; uno deshabilitado responde 404.
+
+La portada muestra la imagen de fondo con un buscador (catálogo o sitio, este último en `/es/buscar`), accesos rápidos,
+tarjetas de módulos y un carrusel con los 10 recursos agregados más recientes. Los libros y revistas sin portada se
+muestran con el icono de su tipo.
 
 ## Accesibilidad (WCAG 2.1 AA)
 
@@ -158,6 +184,30 @@ buscan sin distinguir mayúsculas ni tildes y se crean solo si no existen (`App\
 Además de Excel, la importación acepta archivos **BibTeX (.bib)** y **RIS (.ris)** exportados desde Zotero, Mendeley,
 EndNote, Google Académico, Scopus o Web of Science (`App\Servicio\Importacion\LectorBibliografia`).
 
+Cada libro y revista tiene un **formato**: impreso, electrónico o ambos (por omisión electrónico). Se muestra como
+insignia con icono en todas las vistas y se puede filtrar en la lista A-Z, en el panel de recursos y en el buscador del
+bloque Recursos (los filtros impreso y electrónico incluyen «ambos»). La importación acepta la columna Formato.
+
+Cada recurso de la lista A-Z tiene botones para compartirlo (Facebook, X, LinkedIn, WhatsApp, correo y copiar enlace);
+lo compartido es `/recursos/{id}/ir`.
+
+### Sugerencias de recursos
+
+Cualquier persona puede sugerir un recurso desde `/es/recursos-bibliograficos/sugerir`, sin cuenta, con su nombre y
+correo. El formulario usa un captcha propio de prueba de trabajo (sin servicios de Google) y acepta 5 sugerencias por
+hora por dirección IP. Las revisan en **Panel → Sugerencias** quienes tienen la materia en su perfil y los responsables
+y coeditores de guías con esa materia; el administrador ve todas. El panel muestra cuántas hay pendientes. Al aprobar,
+el recurso entra a la lista A-Z.
+
+## Directorio y consultas a bibliotecarios
+
+La ficha pública de cada bibliotecario tiene el formulario «Escribir a…» (captcha propio, 10 mensajes por hora por IP;
+el correo del directorio lleva a ese formulario). Cada consulta queda registrada: la persona recibe una copia con un
+enlace privado `/es/consulta/{token}` para seguir la conversación y responder, y el bibliotecario la ve y responde en
+**Panel → Consultas** (puede cerrarla y reabrirla; el administrador ve todas). Los correos salen solo si está
+configurado el grupo «Correo (SMTP)»; sin él, las consultas se registran igual. La tarjeta y la ficha muestran además
+de qué guías publicadas y públicas es editor o colaborador.
+
 ## Guías temáticas (editor)
 
 Las guías se crean en **Panel → Guías temáticas** y se ven en `/es/guias` (lista por materia) y `/es/guias/{slug}`.
@@ -176,13 +226,18 @@ problema (correo al responsable).
 | Bloque | Contenido |
 | --- | --- |
 | Texto | Editor CKEditor 5; el HTML se sanea en el servidor (`config/packages/html_sanitizer.yaml`) |
-| Recursos | Recursos bibliográficos elegidos de la lista A-Z, en el orden indicado, con o sin descripción |
+| Recursos | Recursos bibliográficos elegidos de la lista A-Z, en orden manual o alfabético (A–Z), con o sin descripción. En la guía, con más de 20 recursos de dos o más tipos se ofrecen botones para filtrar por tipo |
 | Perfil | Ficha de un bibliotecario del directorio |
 | Video | YouTube o Vimeo |
 | Búsqueda en el catálogo | Caja de búsqueda que abre Primo VE (`PRIMO_URL` y `PRIMO_VID` en `.env.local`) |
-| Lista de enlaces | Sitios web externos con descripción opcional |
-| Libros | Lista por ISBN o DOI: el botón «Buscar datos» (y el guardado) completa título, autor, editorial y año desde el catálogo (ver abajo) o desde doi.org; portada de Open Library y enlace al registro en Primo VE o al DOI |
+| Lista de enlaces | Sitios web externos con descripción opcional. Cada enlace puede marcarse «Agregar a recursos bibliográficos»: al guardar se crea (o se vincula, si la dirección ya existe) un recurso de tipo Sitio web, de acceso abierto, sin proxy y con las materias de la guía; desmarcarlo solo desvincula |
+| Libros | Lista por ISBN o DOI: el botón «Buscar datos» (y el guardado) completa título, autor, editorial y año desde el catálogo (ver abajo) o desde doi.org; portada de Open Library y enlace al registro en Primo VE o al DOI. En el editor es una lista paginada (5 a 20 por página) con Ver, Editar y Borrar, en orden manual o por título. En la guía se muestra en cuadrícula (con columnas a elección), carrusel o lista breve paginada |
+| Revistas | Igual que Libros, a mano, por ISSN o desde la búsqueda de revistas de Primo (por título o por categoría: área, subárea y especialidad del árbol de Primo; también acepta pegar un enlace de esa búsqueda). Se incorporan a la lista A-Z como tipo Revistas |
 | Diapositivas | Carrusel de imágenes subidas (`public/uploads/guias/d{id}-*`), cada una con texto y enlace opcionales; las que dejan de usarse se borran |
+
+En la guía, los bloques Libros y Revistas con más de 20 elementos traen el campo «Buscar en esta lista» (título, autor,
+editorial, año o ISBN; en revistas, título, editorial o ISSN; sin distinguir mayúsculas ni tildes). Funciona con la
+lista paginada, la cuadrícula y el carrusel.
 
 Los recursos de acceso abierto llevan la marca «Recurso libre», y el perfil muestra la ubicación (oficina) y, si se
 indicó en la ficha de la persona, un botón «Agenda una cita».
@@ -192,6 +247,42 @@ Cada guía puede llevar una imagen de cabecera (banner, 4:1) y un ícono cuadrad
 Permisos: un **Editor** crea guías y es su responsable (edita datos, publica y elimina); los **coeditores** que elija
 editan el contenido. El **Administrador** edita todas y puede cambiar el responsable. Una guía nace en borrador y solo se
 ve en la vista previa del panel hasta que se publica.
+
+**Guías principales y subguías**: en los datos de una guía se puede elegir su «Guía principal». La principal lista sus
+subguías en la portada, y la subguía muestra «Parte de» y la ruta completa en las migas (se impiden los ciclos).
+
+**Mover bloques**: el botón «Mover» de cada bloque lo lleva a otra sección, pestaña o guía.
+
+**Compartir la guía**: la guía publicada tiene botones para Facebook, X, LinkedIn, WhatsApp, correo y copiar enlace.
+
+### Contenido compartido entre guías
+
+Un bloque o una pestaña puede marcarse **compartible**. Desde «Bloque de otra guía» o «Pestaña de otra guía» se elige y
+se agrega como **vínculo** (muestra siempre el contenido actual del original y se edita solo en el original) o como
+**copia** independiente. Un vínculo puede convertirse después en copia propia («Convertir en copia propia»). Al
+eliminar un original con vínculos se avisa qué guías lo usan, y los vínculos se borran con él.
+
+El administrador puede marcar una guía como de **contenido común**: no se publica y todos sus bloques y pestañas son
+reutilizables (por ejemplo, bases multidisciplinarias o normas de citación).
+
+### Asistente «Nueva guía con IA»
+
+En **Panel → Guías temáticas**, junto a «Nueva guía (manual)», está **Nueva guía con IA**. Se indican título, materias
+(al menos una), coeditores y hasta 5 carreras de Biblioges, y el asistente arma una guía en borrador con estas pestañas:
+
+1. **Presentación**: bienvenida y fichas del responsable, coeditores y colaboradores.
+2. **Bases de datos**: introducción, recursos de las materias y un vínculo al bloque transversal de bases multidisciplinarias.
+3. **Revistas** y 4. **Sitios web**: recursos de las materias; en Sitios web, además, un bloque «Sugeridos por IA
+   (revisar)» con sitios que propone Gemini, solo los que responden por https (no entran a la lista A-Z).
+5. **Citación y gestores**: vínculo a la pestaña transversal.
+6. **Libros**: libros de las materias y la bibliografía básica disponible de las carreras en Biblioges (última edición),
+   que se incorporan a la lista A-Z.
+
+Con Gemini, la IA elige los recursos más pertinentes y escribe los textos (se guardan como texto, sin HTML). Sin clave,
+o si Gemini no responde, la guía se arma igual con todos los recursos de las materias en orden alfabético y se avisa. El
+bloque y la pestaña transversales los elige el administrador al final de la página del asistente (ajustes
+`IA_BLOQUE_MULTIDISCIPLINARIAS` e `IA_PESTANA_CITACION`). A Gemini solo se envían materias, carreras y títulos y
+descripciones de recursos.
 
 Idiomas: cada guía está en un idioma (español o inglés). La versión en el otro idioma es otra guía enlazada en
 **Datos de la guía → Traducción**; el selector ES/EN del sitio lleva de una a otra.
@@ -217,6 +308,10 @@ aparecen marcados).
   complementaria, otra o todas; declarada (la del programa) o disponible (las ediciones de la biblioteca, con su MMS o
   enlace de acceso). Necesita `BIBLIOGES_API_KEY` en `.env.local` (la genera un administrador de Biblioges en
   Administración → API Keys); `BIBLIOGES_API_URL` ya apunta a `https://biblioges.ucn.cl/biblioges/api/v1`.
+
+El desplegable **«Asignar materias a los que agregues»** (también en el buscador de revistas) marca las materias
+elegidas en cada libro o revista que se agregue, y al guardar se asignan a esos recursos en la lista A-Z. Sin marcar
+ninguna, los nuevos quedan con las materias de la guía.
 
 #### Libros en la lista de recursos
 
@@ -251,5 +346,20 @@ editor, **Incrustar** entrega el código. Con `/incrustar.js` el iframe ajusta s
 
 o un `<iframe src="https://<servidor>/es/incrustar/bloque/12">` para sitios que no aceptan scripts. Esas páginas se
 pueden enmarcar desde cualquier origen (`Content-Security-Policy: frame-ancestors *`).
+
+### Moodle (LTI 1.3)
+
+La plataforma es una herramienta externa LTI 1.3 con Deep Linking: el docente agrega «Guías temáticas» a su curso, elige
+la guía y los estudiantes la abren desde el curso. El administrador de Moodle registra la herramienta con estas
+direcciones: inicio de sesión `/lti/login`, lanzamiento `/lti/lanzar`, Deep Linking `/lti/vincular` y llaves públicas
+`/lti/jwks`. Los datos que entrega Moodle al registrarla van en el grupo «Moodle (LTI 1.3)» de Integraciones. Moodle y
+la plataforma deben poder alcanzarse mutuamente, así que la prueba real se hará en producción con dominio público.
+
+### WordPress
+
+El plugin `integraciones/wordpress/guias-ucn` (se descarga desde Integraciones con la dirección del servidor ya puesta)
+agrega estos códigos cortos al sitio de Bibliotecas: `[guias_ucn]` (lista de guías), `[guia_ucn slug="…"]` (una guía),
+`[guia_ucn_bloque id="…"]` (un bloque) y `[recursos_ucn]` (recursos A-Z). Usa la API pública, nunca muestra guías
+restringidas y guarda los datos en caché los minutos indicados en sus ajustes. Detalles en su `readme.txt`.
 
 CKEditor 5 (licencia GPL 2+) y SortableJS (MIT) están copiados en `assets/lib/`, sin depender de un CDN.
