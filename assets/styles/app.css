@@ -768,6 +768,13 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .buscador-revistas__categorias legend { padding: 0; margin-bottom: 0.25rem; font-weight: 600; }
 .buscador-libros__campos .campo[hidden] { display: none; }
 /* Lista breve de libros o revistas paginada en la guía */
+.buscar-libros__campo { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.75rem; margin: 0 0 1rem; }
+.buscar-libros__campo[hidden] { display: none; }
+.buscar-libros__campo label { font-weight: 600; }
+.buscar-libros__campo input { flex: 1 1 18rem; max-width: 32rem; padding: 0.5rem 0.75rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); }
+.buscar-libros__estado { color: var(--color-texto-secundario); font-size: 0.875rem; }
+.buscar-libros__vacio { color: var(--color-texto-secundario); font-style: italic; }
+.bloque__libros > li[hidden] { display: none; }
 .lista-paginada__paginas { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-top: 0.75rem; }
 .lista-paginada__paginas[hidden] { display: none; }
 .lista-paginada__estado { color: var(--color-texto-secundario); font-size: 0.875rem; }

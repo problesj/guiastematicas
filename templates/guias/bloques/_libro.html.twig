@@ -7,7 +7,7 @@
 {% set edicion = [libro.editorial ?? null, libro.anio ?? null]|filter(v => v)|join(', ') %}
 {# Libros guardados antes de indicar el formato: electrónico si tienen enlace propio o DOI; impreso si no. #}
 {% set formato = (libro.formato ?? null) ?: (((libro.enlace ?? null) or (libro.doi ?? null)) ? 'electronico' : 'impreso') %}
-<li class="libro{{ lista ? ' libro--lista' }}">
+<li class="libro{{ lista ? ' libro--lista' }}" data-busqueda="{{ [libro.titulo ?? null, libro.autor ?? null, libro.editorial ?? null, libro.anio ?? null, libro.isbn ?? null]|filter(v => v)|join(' ') }}">
     {% if destino %}<a class="libro__enlace" href="{{ destino }}" target="_blank" rel="noopener"{% if lista %} tabindex="-1" aria-hidden="true"{% endif %}>{% else %}<span class="libro__enlace">{% endif %}
         <span class="libro__portada" aria-hidden="true">
             <span class="libro__sin-portada">{{ include('recursos/_icono_tipo.html.twig', {tipo: 'libros', clase: 'libro__icono'}) }}{% if not lista %}<span class="libro__sin-portada-titulo">{{ libro.titulo }}</span>{% endif %}</span>

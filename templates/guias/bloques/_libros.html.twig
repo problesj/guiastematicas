@@ -6,6 +6,20 @@
 {% set plantilla = revistas ? 'guias/bloques/_revista.html.twig' : 'guias/bloques/_libro.html.twig' %}
 {% set items = bloque.dato('items', []) %}
 {% if items is not empty %}
+    {# Con más de 20 elementos, buscador por título, autor, editorial, año o ISBN/ISSN (controlador buscar-libros). #}
+    {% set buscar = items|length > 20 %}
+    {% set prefijo = revistas ? 'bloque.revistas_' : 'bloque.libros_' %}
+    {% if buscar %}
+        <div class="buscar-libros" data-controller="buscar-libros" data-buscar-libros-resultados-value="{{ (prefijo ~ 'resultados')|trans }}">
+        <div class="buscar-libros__campo" data-buscar-libros-target="buscador" hidden>
+            <label for="buscar-bloque-{{ bloque.id }}">{{ (prefijo ~ 'buscar')|trans }}</label>
+            <input type="search" id="buscar-bloque-{{ bloque.id }}" autocomplete="off" data-buscar-libros-target="campo"
+                   data-action="input->buscar-libros#filtrar keydown->buscar-libros#limpiar" placeholder="{{ (prefijo ~ 'buscar_ejemplo')|trans }}">
+            <span class="buscar-libros__estado" role="status" data-buscar-libros-target="estado"></span>
+        </div>
+        <p class="buscar-libros__vacio" data-buscar-libros-target="vacio" hidden>{{ (prefijo ~ 'sin_coincidencias')|trans }}</p>
+    {% endif %}
+    {% set lista_buscar = buscar ? ' data-buscar-libros-target="lista"' : '' %}
     {% set presentacion = bloque.dato('presentacion', 'cuadricula') %}
     {% set columnas = bloque.dato('columnas', 0) %}
     {% set disponibilidad = not revistas and catalogo_informa_disponibilidad() and items|filter(l => l.mms ?? false) is not empty %}
@@ -13,7 +27,7 @@
 
     {% if presentacion == 'carrusel' %}
         <div class="libros-carrusel" data-controller="carrusel" role="region" aria-roledescription="{{ 'bloque.carrusel'|trans }}" aria-label="{{ bloque.titulo ?? ('tipo_bloque.' ~ bloque.tipo.value)|trans }}">
-            <ul class="bloque__libros bloque__libros--carrusel" data-carrusel-target="pista" data-action="scroll->carrusel#actualizar" tabindex="0"{{ atributos_disponibilidad|raw }}>
+            <ul class="bloque__libros bloque__libros--carrusel"{{ lista_buscar|raw }} data-carrusel-target="pista" data-action="scroll->carrusel#actualizar" tabindex="0"{{ atributos_disponibilidad|raw }}>
                 {% for libro in items %}{{ include(plantilla) }}{% endfor %}
             </ul>
             {% if items|length > 1 %}
@@ -25,10 +39,9 @@
         {# Lista breve paginada en el navegador (controlador paginar-lista); sin JavaScript se ven todos. #}
         {% set por_pagina = bloque.dato('por_pagina', 10) %}
         {% set paginar = por_pagina > 0 and items|length > por_pagina %}
-        {% set prefijo = revistas ? 'bloque.revistas_' : 'bloque.libros_' %}
-        <div class="lista-paginada"{% if paginar %} data-controller="paginar-lista" data-paginar-lista-tamano-value="{{ por_pagina }}"
+        <div class="lista-paginada"{% if paginar %} data-controller="paginar-lista"{% if buscar %} data-action="buscar-libros:filtrado->paginar-lista#reiniciar"{% endif %} data-paginar-lista-tamano-value="{{ por_pagina }}"
              data-paginar-lista-rango-value="{{ (prefijo ~ 'rango')|trans }}" data-paginar-lista-pagina-value="{{ (prefijo ~ 'pagina')|trans }}"{% endif %}>
-            <ul class="bloque__libros bloque__libros--lista" {% if paginar %}data-paginar-lista-target="lista" {% endif %}{{ atributos_disponibilidad|raw }}>
+            <ul class="bloque__libros bloque__libros--lista"{{ lista_buscar|raw }} {% if paginar %}data-paginar-lista-target="lista" {% endif %}{{ atributos_disponibilidad|raw }}>
                 {% for libro in items %}{{ include(plantilla, {lista: true}) }}{% endfor %}
             </ul>
             {% if paginar %}
@@ -40,8 +53,9 @@
             {% endif %}
         </div>
     {% else %}
-        <ul class="bloque__libros{% if columnas %} bloque__libros--columnas{% endif %}"{% if columnas %} style="--columnas-libros: {{ columnas }}"{% endif %}{{ atributos_disponibilidad|raw }}>
+        <ul class="bloque__libros{% if columnas %} bloque__libros--columnas{% endif %}"{{ lista_buscar|raw }}{% if columnas %} style="--columnas-libros: {{ columnas }}"{% endif %}{{ atributos_disponibilidad|raw }}>
             {% for libro in items %}{{ include(plantilla) }}{% endfor %}
         </ul>
     {% endif %}
+    {% if buscar %}</div>{% endif %}
 {% endif %}

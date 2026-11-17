@@ -56,6 +56,23 @@ final class FiltroRecursosTest extends WebTestCase
         self::assertCount(1, $crawler->filter('.libro--revista .libro__sin-portada .recurso__icono--revistas'));
     }
 
+    public function testLosBloquesLibrosConMasDe20TienenBuscador(): void
+    {
+        $cliente = static::createClient();
+        $this->guia(1, 1);
+        $libro = fn (int $i) => ['titulo' => 'Libro '.$i, 'autor' => 'Pérez', 'isbn' => '978000000000'.($i % 10), 'doi' => null, 'editorial' => 'Jurídica', 'anio' => '2020', 'enlace' => null];
+        $bloque = self::em()->getRepository(Bloque::class)->findOneBy(['tipo' => TipoBloque::Libros]);
+        $bloque->setContenido(['presentacion' => 'lista', 'por_pagina' => 10, 'items' => array_map($libro, range(1, 21))]);
+        self::em()->flush();
+
+        $crawler = $cliente->request('GET', '/es/guias/quimica');
+        self::assertCount(1, $crawler->filter('.bloque--libros [data-controller="buscar-libros"] input[type="search"]'));
+        self::assertSame('Libro 1 Pérez Jurídica 2020 9780000000001', $crawler->filter('.bloque--libros li.libro')->first()->attr('data-busqueda'));
+        self::assertSame('buscar-libros:filtrado->paginar-lista#reiniciar', $crawler->filter('.bloque--libros .lista-paginada')->attr('data-action'));
+        // El bloque Revistas, con una sola revista, no lo lleva.
+        self::assertCount(0, $crawler->filter('.bloque--revistas [data-controller="buscar-libros"]'));
+    }
+
     public function testCon20RecursosOMenosNoHayFiltros(): void
     {
         $cliente = static::createClient();

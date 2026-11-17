@@ -752,6 +752,14 @@ bloque:
   libro_borrar: Delete
   libros_por_pagina: Books per page
   libros_rango: Books %desde%–%hasta% of %total%
+  libros_buscar: "Search this list"
+  libros_buscar_ejemplo: "Title, author, publisher, year or ISBN"
+  libros_resultados: "%visibles% of %total% books"
+  libros_sin_coincidencias: "No books match your search."
+  revistas_buscar: "Search this list"
+  revistas_buscar_ejemplo: "Title, publisher or ISSN"
+  revistas_resultados: "%visibles% of %total% journals"
+  revistas_sin_coincidencias: "No journals match your search."
   libros_pagina: Page %pagina% of %paginas%
   libros_paginas: Pages of the book list
   libros_vacio: No books in this block yet.
