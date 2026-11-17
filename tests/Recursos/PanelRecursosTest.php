@@ -51,6 +51,15 @@ final class PanelRecursosTest extends WebTestCase
         $jstor = self::em()->getRepository(Recurso::class)->findOneBy(['titulo' => 'JSTOR']);
         self::assertSame('J', $jstor->getLetra());
         self::assertTrue($jstor->isRequiereProxy());
+
+        // Las acciones son iconos con leyenda emergente y texto para lectores de pantalla.
+        $crawler = $this->cliente->request('GET', '/es/panel/recursos');
+        $editar = $crawler->filter('.tabla__acciones a.accion[data-tooltip="Editar"]');
+        self::assertCount(1, $editar->filter('svg'));
+        self::assertSame('Editar JSTOR', trim($editar->filter('.solo-lectores')->text()));
+        self::assertCount(1, $crawler->filter('.tabla__acciones button.accion--peligro[data-tooltip="Eliminar"]'));
+        $crawler = $this->cliente->request('GET', '/es/panel/recursos/nuevo');
+        self::assertSelectorExists('a.boton[data-tooltip] svg');
     }
 
     public function testElListadoDelPanelSePagina(): void

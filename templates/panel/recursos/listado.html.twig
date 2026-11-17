@@ -57,7 +57,7 @@
                             <td>{{ (recurso.requiereProxy ? 'formulario.si' : 'formulario.no')|trans }}</td>
                             <td>{{ recurso.clics }}</td>
                             <td class="tabla__acciones">
-                                <a href="{{ path('panel_recurso_editar', {id: recurso.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ recurso.titulo }}</span></a>
+                                <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('panel_recurso_editar', {id: recurso.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ recurso.titulo }}</span></a>
                                 {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_recurso_eliminar', id: recurso.id, token: 'eliminar-recurso-' ~ recurso.id, nombre: recurso.titulo} %}
                             </td>
                         </tr>

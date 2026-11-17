@@ -5,6 +5,13 @@ import { Controller } from '@hotwired/stimulus';
  * Busca en url?q=... (JSON [{id, nombre, detalle}]) y, si "nuevos" está activo, permite agregar uno nuevo escrito como
  * "Apellidos, Nombres". La lista, en orden, se guarda como JSON en un campo oculto: [{id, nombre}] o [{apellidos, nombres}].
  */
+// Los mismos trazos que App\Twig\IconosAccion.
+const ICONOS = {
+    subir: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+    bajar: '<path d="M12 5v14M6 13l6 6 6-6"/>',
+    eliminar: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
+};
+
 export default class extends Controller {
     static targets = ['campo', 'lista', 'busqueda', 'sugerencias'];
     // La búsqueda con sugerencias es opcional (el bloque de recursos usa el catálogo con filtros).
@@ -197,9 +204,9 @@ export default class extends Controller {
                 item.append(marca);
             }
             item.append(
-                this.boton('↑', this.subirValue, nombre.textContent, () => this.mover(i, i - 1), i === 0),
-                this.boton('↓', this.bajarValue, nombre.textContent, () => this.mover(i, i + 1), i === this.elegidos.length - 1),
-                this.boton('×', this.quitarValue, nombre.textContent, () => {
+                this.boton('subir', this.subirValue, nombre.textContent, () => this.mover(i, i - 1), i === 0),
+                this.boton('bajar', this.bajarValue, nombre.textContent, () => this.mover(i, i + 1), i === this.elegidos.length - 1),
+                this.boton('eliminar', this.quitarValue, nombre.textContent, () => {
                     this.elegidos.splice(i, 1);
                     this.dibujar();
                 }),
@@ -208,12 +215,12 @@ export default class extends Controller {
         });
     }
 
-    boton(simbolo, accion, nombre, alHacerClic, deshabilitado = false) {
+    boton(icono, accion, nombre, alHacerClic, deshabilitado = false) {
         const boton = document.createElement('button');
         boton.type = 'button';
-        boton.className = 'selector-autores__boton';
-        boton.textContent = simbolo;
-        boton.title = `${accion}: ${nombre}`;
+        boton.className = `accion selector-autores__boton${icono === 'eliminar' ? ' accion--peligro' : ''}`;
+        boton.innerHTML = `<svg class="accion__icono" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONOS[icono]}</svg>`;
+        boton.dataset.tooltip = accion;
         boton.setAttribute('aria-label', `${accion}: ${nombre}`);
         boton.disabled = deshabilitado;
         boton.addEventListener('click', alHacerClic);

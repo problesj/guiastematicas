@@ -34,7 +34,7 @@
                             <td>{{ materia.codigo ?? '—' }}</td>
                             <td>{{ materia.especialistas|map(e => e.nombreCompleto)|join(', ') ?: '—' }}</td>
                             <td class="tabla__acciones">
-                                <a href="{{ path('admin_materia_editar', {id: materia.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ materia.nombre }}</span></a>
+                                <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('admin_materia_editar', {id: materia.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ materia.nombre }}</span></a>
                                 {% include 'admin/_eliminar.html.twig' with {ruta: 'admin_materia_eliminar', id: materia.id, token: 'eliminar-materia-' ~ materia.id, nombre: materia.nombre} %}
                             </td>
                         </tr>

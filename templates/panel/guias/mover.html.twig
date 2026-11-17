@@ -49,7 +49,7 @@
         </fieldset>
         <div class="formulario__acciones">
             <button type="submit" class="boton">{{ 'guia.mover_boton'|trans }}</button>
-            <a href="{{ volver }}" class="boton boton--secundario">{{ 'formulario.cancelar'|trans }}</a>
+            <a class="boton boton--secundario" href="{{ volver }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
         </div>
     </form>
 {% endblock %}

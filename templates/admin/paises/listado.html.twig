@@ -35,7 +35,7 @@
                             <td>{{ pais.nombre }}</td>
                             <td lang="en">{{ pais.nombreEn }}</td>
                             <td class="tabla__acciones">
-                                <a href="{{ path('admin_pais_editar', {id: pais.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ pais.nombre }}</span></a>
+                                <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('admin_pais_editar', {id: pais.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ pais.nombre }}</span></a>
                                 {% include 'admin/_eliminar.html.twig' with {ruta: 'admin_pais_eliminar', id: pais.id, token: 'eliminar-pais-' ~ pais.id, nombre: pais.nombre} %}
                             </td>
                         </tr>

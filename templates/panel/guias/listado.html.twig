@@ -46,8 +46,8 @@
                             <td class="tabla-guias__fecha">{{ guia.actualizadaEn|date('d-m-Y') }}<br><small>{{ guia.actualizadaEn|date('H:i') }}</small></td>
                             <td>{{ guia.visitas }}</td>
                             <td class="tabla__acciones">
-                                <a href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ 'formulario.editar'|trans }}<span class="solo-lectores"> {{ guia.titulo }}</span></a>
-                                {% if guia.publicada %}<a href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}" target="_blank" rel="noopener">{{ 'guia.ver_publicada'|trans }}</a>{% endif %}
+                                <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('panel_guia_editar', {id: guia.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ guia.titulo }}</span></a>
+                                {% if guia.publicada %}<a class="accion" data-tooltip="{{ 'guia.ver_publicada'|trans }}" href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}" target="_blank" rel="noopener">{{ icono('ver') }}<span class="solo-lectores">{{ 'guia.ver_publicada'|trans }} {{ guia.titulo }} ({{ 'bases.ventana_nueva'|trans }})</span></a>{% endif %}
                             </td>
                         </tr>
                     {% endfor %}

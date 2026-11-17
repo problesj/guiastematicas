@@ -133,7 +133,7 @@
         {{ form_rest(formulario) }}
         <div class="formulario__acciones">
             <button type="submit" class="boton">{{ 'formulario.guardar'|trans }}</button>
-            <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: seccion.pestana.id}) }}">{{ 'formulario.cancelar'|trans }}</a>
+            <a class="boton boton--secundario" href="{{ path('panel_guia_editar', {id: guia.id, pestana: seccion.pestana.id}) }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
         </div>
     {{ form_end(formulario) }}
 {% endblock %}
