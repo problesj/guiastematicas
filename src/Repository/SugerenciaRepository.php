@@ -15,8 +15,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Quién revisa cada sugerencia: los administradores ven todas; el resto, las que comparten
- * alguna materia con una guía de la que es responsable o coeditor.
+ * Quién revisa cada sugerencia: los administradores ven todas; el resto, las que comparten alguna
+ * materia con su perfil (materias en que es especialista) o con una guía de la que es responsable o coeditor.
  *
  * @extends ServiceEntityRepository<Sugerencia>
  */
@@ -96,7 +96,16 @@ class SugerenciaRepository extends ServiceEntityRepository
                 ->leftJoin('g.coeditores', 'gc')
                 ->where('gm MEMBER OF s.materias')
                 ->andWhere('g.responsable = :revisor OR gc = :revisor');
-            $consulta->andWhere($consulta->expr()->exists($guias->getDQL()))->setParameter('revisor', $revisor);
+            $perfil = $this->getEntityManager()->createQueryBuilder()
+                ->select('1')
+                ->from(Usuario::class, 'u')
+                ->join('u.materias', 'um')
+                ->where('u = :revisor')
+                ->andWhere('um MEMBER OF s.materias');
+            $consulta->andWhere($consulta->expr()->orX(
+                $consulta->expr()->exists($guias->getDQL()),
+                $consulta->expr()->exists($perfil->getDQL()),
+            ))->setParameter('revisor', $revisor);
         }
 
         return $consulta;

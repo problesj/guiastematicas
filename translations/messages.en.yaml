@@ -1067,8 +1067,8 @@ sugerencia:
   recibida: "Thank you! We received your suggestion and library staff will review it."
   captcha_fallido: "We could not verify that you are not a robot. Wait until it says “Check complete” and send again."
   demasiadas: "You sent several suggestions in a row. Please try again in an hour."
-  bandeja_ayuda: Suggestions from the public site for the subjects of the guides you edit.
-  bandeja_admin: Suggestions from the public site. As an administrator you see all of them, including subjects without a guide.
+  bandeja_ayuda: Suggestions from the public site for the subjects in your profile and in the guides you edit.
+  bandeja_admin: Suggestions from the public site. As an administrator you see all of them, including subjects nobody covers.
   filtrar_estado: Filter by status
   estados:
     pendiente: Pending

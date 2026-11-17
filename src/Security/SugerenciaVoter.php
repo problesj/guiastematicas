@@ -13,8 +13,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * SUGERENCIA_REVISAR: administradores, y responsables o coeditores de una guía que comparte
- * alguna materia con la sugerencia (si ninguna guía la comparte, solo administradores).
+ * SUGERENCIA_REVISAR: administradores, y quienes comparten alguna materia con la sugerencia, ya sea
+ * en su perfil o en una guía de la que son responsables o coeditores.
  *
  * @extends Voter<string, Sugerencia>
  */

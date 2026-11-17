@@ -164,6 +164,22 @@ final class SugerenciasTest extends WebTestCase
         self::assertSame(['Manual de química', 'Física de Serway', 'Historia del arte'], $this->titulos());
     }
 
+    public function testTambienLasVeQuienTieneLaMateriaEnSuPerfil(): void
+    {
+        [$medicina, $arte] = [self::crearMateria('Medicina', 'medicina'), self::crearMateria('Arte', 'arte')];
+        $especialista = self::crearUsuario('especialista@ucn.cl', Rol::Colaborador);
+        $especialista->addMateria($medicina);
+        self::em()->flush();
+        $deMedicina = self::crearSugerencia('UpToDate', $medicina);
+        self::crearSugerencia('Historia del arte', $arte);
+
+        $this->cliente->loginUser($especialista);
+        $this->cliente->request('GET', '/es/panel/sugerencias');
+        self::assertSame(['UpToDate'], $this->titulos());
+        $this->cliente->request('GET', '/es/panel/sugerencias/'.$deMedicina->getId());
+        self::assertResponseIsSuccessful();
+    }
+
     /** @return list<string> */
     private function titulos(): array
     {
