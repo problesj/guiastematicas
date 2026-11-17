@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Materia;
 use App\Entity\Recurso;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Paginacion\Pagina;
@@ -36,6 +37,7 @@ class RecursoRepository extends ServiceEntityRepository
         ?Materia $materia = null,
         ?TipoRecurso $tipo = null,
         ?TipoAcceso $acceso = null,
+        ?FormatoRecurso $formato = null,
     ): Pagina {
         $consulta = $this->disponibles();
 
@@ -54,6 +56,7 @@ class RecursoRepository extends ServiceEntityRepository
         if (null !== $acceso) {
             $consulta->andWhere('r.acceso = :acceso')->setParameter('acceso', $acceso);
         }
+        self::filtrarFormato($consulta, $formato);
 
         $consulta->leftJoin('r.materias', 'm')->addSelect('m')
             ->leftJoin('r.autorias', 'ra')->addSelect('ra')
@@ -96,7 +99,7 @@ class RecursoRepository extends ServiceEntityRepository
     }
 
     /** @return Pagina<Recurso> */
-    public function listadoAdministracion(int $pagina, int $porPagina, ?string $texto = null, ?TipoRecurso $tipo = null, ?Materia $materia = null): Pagina
+    public function listadoAdministracion(int $pagina, int $porPagina, ?string $texto = null, ?TipoRecurso $tipo = null, ?Materia $materia = null, ?FormatoRecurso $formato = null): Pagina
     {
         $consulta = $this->createQueryBuilder('r')->orderBy('r.titulo', 'ASC')->addOrderBy('r.id', 'ASC');
         if (null !== $texto && '' !== trim($texto)) {
@@ -108,6 +111,7 @@ class RecursoRepository extends ServiceEntityRepository
         if (null !== $materia) {
             $consulta->andWhere(':materia MEMBER OF r.materias')->setParameter('materia', $materia);
         }
+        self::filtrarFormato($consulta, $formato);
 
         return Pagina::desdeConsulta($consulta, $pagina, $porPagina);
     }
@@ -137,6 +141,15 @@ class RecursoRepository extends ServiceEntityRepository
             ->andWhere('r.acceso <> :prueba OR r.pruebaHasta IS NULL OR r.pruebaHasta >= :hoy')
             ->setParameter('prueba', TipoAcceso::Prueba)
             ->setParameter('hoy', new \DateTimeImmutable('today'), 'date_immutable');
+    }
+
+    /** Solo libros y revistas tienen formato; «impreso» y «electrónico» incluyen los que están en ambos. */
+    private static function filtrarFormato(QueryBuilder $consulta, ?FormatoRecurso $formato): void
+    {
+        if (null !== $formato) {
+            $consulta->andWhere('r.formato IN (:formatos)')
+                ->setParameter('formatos', array_map(fn (FormatoRecurso $f) => $f->value, $formato->coincidentes()));
+        }
     }
 
     private static function filtrarTexto(QueryBuilder $consulta, string $texto): void

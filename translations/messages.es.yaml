@@ -31,7 +31,7 @@ inicio:
   buscar: Buscar
   secciones: Secciones principales
   guias_texto: Guías con bases de datos, revistas, libros y consejos de búsqueda para cada carrera y asignatura.
-  bases_texto: Bases de datos, revistas, libros electrónicos y normas, con filtros por materia y tipo.
+  bases_texto: Bases de datos, revistas, libros y normas, con filtros por materia, tipo y formato.
   personal_texto: Bibliotecarios especialistas por materia y cómo contactarlos.
 buscar:
   titulo: Buscar en el sitio
@@ -209,14 +209,28 @@ personal:
   foto_de: Foto de %nombre%
 tipo_recurso:
   base_datos: Base de datos
-  revistas: Revistas electrónicas
-  libros: Libros electrónicos
+  revistas: Revistas
+  libros: Libros
   repositorio: Repositorio
   normas: Normas y patentes
   multimedia: Multimedia
   herramienta: Herramienta
   sitio_web: Sitio web
   articulo: Artículo científico
+formato_recurso:
+  electronico: Electrónico
+  impreso: Impreso
+  ambos: Impreso y electrónico
+  etiqueta: Formato
+  filtro: Formato
+  todos: Todos los formatos
+  filtro_electronico: Electrónico
+  filtro_impreso: Impreso
+  filtro_ambos: Impreso y electrónico
+  automatico: Detectar (catálogo o enlace)
+  no_se: No lo sé
+  ayuda: Solo libros y revistas. Si no se indica, se toma como electrónico.
+  ayuda_bloque: «Detectar» lo toma del catálogo de la biblioteca; si el catálogo no lo informa, es electrónico cuando tiene enlace o DOI e impreso cuando no.
 tipo_acceso:
   suscripcion: Suscripción UCN
   abierto: Acceso abierto
@@ -226,7 +240,7 @@ bases:
   sugerir_texto: ¿Falta un recurso que te sirve?
   listado: Listado
   titulo: Recursos bibliográficos A-Z
-  bajada: Bases de datos, revistas, libros electrónicos, normas y otros recursos suscritos por Bibliotecas UCN o de acceso abierto.
+  bajada: Bases de datos, revistas, libros, normas y otros recursos suscritos por Bibliotecas UCN o de acceso abierto.
   indice: Índice alfabético
   todas: Todas
   buscar: Buscar
@@ -315,8 +329,9 @@ importacion:
     descripcion: Descripción
     descripcion_en: Descripción en inglés
     proveedor: Proveedor (o Plataforma)
-    tipo: Tipo (o Formato)
+    tipo: Tipo
     acceso: Acceso
+    formato: Formato (o Soporte)
     materias: Materias (o Áreas, Disciplinas, Carreras)
     nombres_alternativos: Nombres alternativos (o Alias, Siglas)
     visible: Visible (o Activo)
@@ -345,6 +360,7 @@ importacion:
     proveedor: Texto libre.
     tipo: Base de datos, Revistas, Libros, Repositorio, Normas, Multimedia, Herramienta o Sitio web.
     acceso: Suscripción, Abierto o Prueba.
+    formato: "Libros y revistas: Impreso, Electrónico o Ambos. Si falta, Electrónico."
     materias: Varias separadas por punto y coma. Las que no existen se crean.
     nombres_alternativos: Separados por punto y coma.
     visible: Sí o No. Si falta, Sí.
@@ -1053,11 +1069,11 @@ recursos_vista:
   libros:
     menu: "Libros"
     titulo: "Libros A-Z"
-    bajada: "Libros electrónicos y libros recomendados en las guías, por orden alfabético."
+    bajada: "Libros impresos y electrónicos recomendados en las guías o suscritos por Bibliotecas UCN, por orden alfabético."
   revistas:
     menu: "Revistas"
     titulo: "Revistas A-Z"
-    bajada: "Revistas electrónicas suscritas por Bibliotecas UCN o de acceso abierto, por orden alfabético."
+    bajada: "Revistas impresas y electrónicas de Bibliotecas UCN o de acceso abierto, por orden alfabético."
 estado_sugerencia:
   pendiente: Pendiente
   aprobada: Aprobada

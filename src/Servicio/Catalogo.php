@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Servicio;
 
+use App\Enum\FormatoRecurso;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -327,6 +328,7 @@ final class Catalogo
             'editorial' => $datos['editorial'],
             'registro' => $datos['registro'],
             'mms' => $datos['mms'],
+            'formato' => $datos['formato'],
         ];
     }
 
@@ -555,7 +557,25 @@ final class Catalogo
             'anio' => $anio[0] ?? null,
             'registro' => $registro,
             'mms' => null !== $mms && preg_match('/^\d{6,25}$/', $mms) ? $mms : null,
+            'formato' => self::formatoDeRegistro($doc)?->value,
         ];
+    }
+
+    /**
+     * Impreso, electrónico o ambos según las categorías de entrega del registro ("Alma-P" físico; "Alma-E", "Alma-D" o
+     * recurso remoto electrónico). Null si Primo no las informa.
+     */
+    private static function formatoDeRegistro(array $doc): ?FormatoRecurso
+    {
+        $categorias = [];
+        foreach ([$doc['delivery']['deliveryCategory'] ?? [], $doc['pnx']['delivery']['delcategory'] ?? []] as $lista) {
+            foreach ((array) $lista as $categoria) {
+                // En el pnx viene con subcampos: "Alma-P$$V…".
+                $categorias[] = explode('$$', (string) (\is_scalar($categoria) ? $categoria : ''))[0];
+            }
+        }
+
+        return FormatoRecurso::desdeCategoriasPrimo($categorias);
     }
 
     /** Quita la puntuación de catalogación: "Título : subtítulo /" → "Título: subtítulo"; punto final (salvo iniciales). */

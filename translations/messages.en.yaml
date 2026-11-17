@@ -31,7 +31,7 @@ inicio:
   buscar: Search
   secciones: Main sections
   guias_texto: Guides with databases, journals, books and search tips for every program and course.
-  bases_texto: Databases, journals, e-books and standards, filterable by subject and type.
+  bases_texto: Databases, journals, books and standards, filterable by subject, type and format.
   personal_texto: Subject specialist librarians and how to contact them.
 buscar:
   titulo: Search the website
@@ -209,14 +209,28 @@ personal:
   foto_de: Photo of %nombre%
 tipo_recurso:
   base_datos: Database
-  revistas: E-journals
-  libros: E-books
+  revistas: Journals
+  libros: Books
   repositorio: Repository
   normas: Standards and patents
   multimedia: Multimedia
   herramienta: Tool
   sitio_web: Website
   articulo: Scholarly article
+formato_recurso:
+  electronico: Electronic
+  impreso: Print
+  ambos: Print and electronic
+  etiqueta: Format
+  filtro: Format
+  todos: All formats
+  filtro_electronico: Electronic
+  filtro_impreso: Print
+  filtro_ambos: Print and electronic
+  automatico: Detect (catalogue or link)
+  no_se: I don't know
+  ayuda: Books and journals only. If not set, it is taken as electronic.
+  ayuda_bloque: "«Detect» takes it from the library catalogue; if the catalogue does not say, it is electronic when it has a link or DOI and print when it does not."
 tipo_acceso:
   suscripcion: UCN subscription
   abierto: Open access
@@ -226,7 +240,7 @@ bases:
   sugerir_texto: Missing a resource you find useful?
   listado: List
   titulo: A-Z library resources
-  bajada: Databases, journals, e-books, standards and other resources subscribed by UCN Libraries or open access.
+  bajada: Databases, journals, books, standards and other resources subscribed by UCN Libraries or open access.
   indice: Alphabetical index
   todas: All
   buscar: Search
@@ -315,8 +329,9 @@ importacion:
     descripcion: Description
     descripcion_en: Description in English
     proveedor: Provider (or Platform)
-    tipo: Type (or Format)
+    tipo: Type
     acceso: Access
+    formato: Format
     materias: Subjects (or Areas, Disciplines)
     nombres_alternativos: Alternative names (or Alias, Acronyms)
     visible: Visible (or Active)
@@ -345,6 +360,7 @@ importacion:
     proveedor: Free text.
     tipo: Database, Journals, Books, Repository, Standards, Multimedia, Tool or Website.
     acceso: Subscription, Open or Trial.
+    formato: "Books and journals: Print, Electronic or Both. If missing, Electronic."
     materias: Several separated by semicolons. Missing ones are created.
     nombres_alternativos: Separated by semicolons.
     visible: Yes or No. If missing, Yes.
@@ -1053,11 +1069,11 @@ recursos_vista:
   libros:
     menu: "Books"
     titulo: "Books A-Z"
-    bajada: "E-books and books recommended in the guides, in alphabetical order."
+    bajada: "Print and electronic books recommended in the guides or subscribed by Bibliotecas UCN, in alphabetical order."
   revistas:
     menu: "Journals"
     titulo: "Journals A-Z"
-    bajada: "E-journals subscribed by Bibliotecas UCN or open access, in alphabetical order."
+    bajada: "Print and electronic journals from Bibliotecas UCN or open access, in alphabetical order."
 estado_sugerencia:
   pendiente: Pending
   aprobada: Approved

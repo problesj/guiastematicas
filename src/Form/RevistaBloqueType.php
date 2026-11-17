@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Materia;
+use App\Enum\FormatoRecurso;
 use App\Repository\MateriaRepository;
 use App\Servicio\DatosRevista;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -63,6 +65,18 @@ final class RevistaBloqueType extends AbstractType
                 'default_protocol' => 'https',
                 'help' => 'bloque.revista_enlace_ayuda',
                 'constraints' => [new Assert\Url(requireTld: true), new Assert\Length(max: 500)],
+            ])
+            // Vacío = detectar: lo informa el catálogo o se deduce del enlace al guardar (ver RevistasEnRecursos).
+            ->add('formato', ChoiceType::class, [
+                'label' => 'formato_recurso.etiqueta',
+                'choices' => array_combine(
+                    array_map(fn (FormatoRecurso $f) => $f->etiqueta(), FormatoRecurso::cases()),
+                    array_map(fn (FormatoRecurso $f) => $f->value, FormatoRecurso::cases()),
+                ),
+                'required' => false,
+                'placeholder' => 'formato_recurso.automatico',
+                'help' => 'formato_recurso.ayuda_bloque',
+                'attr' => ['data-revista-datos-target' => 'formato'],
             ])
             ->add('materias', EntityType::class, [
                 'label' => 'bloque.libro_materias',

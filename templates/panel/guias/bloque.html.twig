@@ -55,6 +55,13 @@
                             </select>
                         </div>
                         <div class="campo">
+                            <label for="catalogo-formato">{{ 'formato_recurso.filtro'|trans }}</label>
+                            <select id="catalogo-formato" data-catalogo-recursos-target="formato" data-action="catalogo-recursos#filtrarYa">
+                                <option value="">{{ 'formato_recurso.todos'|trans }}</option>
+                                {% for f in formatos_recurso %}<option value="{{ f.value }}">{{ f.filtro|trans }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="campo">
                             <label for="catalogo-materia">{{ 'bloque.catalogo_materia'|trans }}</label>
                             <select id="catalogo-materia" data-catalogo-recursos-target="materia" data-action="catalogo-recursos#filtrarYa">
                                 <option value="">{{ 'bloque.catalogo_todas_materias'|trans }}</option>

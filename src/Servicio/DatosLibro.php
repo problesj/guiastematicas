@@ -35,7 +35,7 @@ final class DatosLibro
             return null;
         }
 
-        $datos = ['isbn' => $isbn, 'registro' => $enCatalogo['registro'] ?? null, 'mms' => $enCatalogo['mms'] ?? null, 'origen' => []];
+        $datos = ['isbn' => $isbn, 'registro' => $enCatalogo['registro'] ?? null, 'mms' => $enCatalogo['mms'] ?? null, 'formato' => $enCatalogo['formato'] ?? null, 'origen' => []];
         foreach (self::CAMPOS as $campo) {
             $datos[$campo] = ($enCatalogo[$campo] ?? null) ?: ($porDoi[$campo] ?? null);
         }
@@ -67,7 +67,7 @@ final class DatosLibro
         if (null === $datos) {
             return $libro;
         }
-        foreach ([...self::CAMPOS, 'isbn'] as $campo) {
+        foreach ([...self::CAMPOS, 'isbn', 'formato'] as $campo) {
             if (null === ($libro[$campo] ?? null) || '' === $libro[$campo]) {
                 $libro[$campo] = $datos[$campo];
             }

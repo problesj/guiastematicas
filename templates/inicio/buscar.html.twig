@@ -33,7 +33,7 @@
             {% else %}
                 <ul class="buscar__lista">
                     {% for recurso in recursos.elementos %}
-                        <li><a href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener">{{ recurso.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a><br><span class="buscar__detalle">{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}</span></li>
+                        <li><a href="{{ path('recursos_ir', {id: recurso.id}) }}" target="_blank" rel="noopener">{{ recurso.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a><br><span class="buscar__detalle">{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {{ recurso.proveedor }}{% endif %}</span>{% if recurso.formato %} {{ include('recursos/_formato.html.twig', {formato: recurso.formato.value}) }}{% endif %}</li>
                     {% endfor %}
                 </ul>
                 {% if recursos.total > recursos.elementos|length %}

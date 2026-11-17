@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\EstadoSugerencia;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoRecurso;
 use App\Repository\SugerenciaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -28,6 +29,10 @@ class Sugerencia
 
     #[ORM\Column(length: 20, enumType: TipoRecurso::class)]
     private TipoRecurso $tipo = TipoRecurso::BaseDatos;
+
+    /** Impreso, electrónico o ambos, si es libro o revista y la persona lo sabe. */
+    #[ORM\Column(length: 20, nullable: true, enumType: FormatoRecurso::class)]
+    private ?FormatoRecurso $formato = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
@@ -155,6 +160,18 @@ class Sugerencia
     public function setAutores(?string $autores): static
     {
         $this->autores = self::textoONulo($autores);
+
+        return $this;
+    }
+
+    public function getFormato(): ?FormatoRecurso
+    {
+        return $this->tipo->tieneFormato() ? $this->formato : null;
+    }
+
+    public function setFormato(?FormatoRecurso $formato): static
+    {
+        $this->formato = $formato;
 
         return $this;
     }
@@ -313,7 +330,8 @@ class Sugerencia
             ->setTipo($this->tipo)
             ->setTitulo($this->titulo)
             ->setUrl($this->url ?? '')
-            ->setDescripcion($this->descripcion);
+            ->setDescripcion($this->descripcion)
+            ->setFormato($this->getFormato());
         foreach ($this->materias as $materia) {
             $recurso->addMateria($materia);
         }

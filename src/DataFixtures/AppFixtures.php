@@ -16,6 +16,7 @@ use App\Entity\Recurso;
 use App\Entity\Seccion;
 use App\Entity\Usuario;
 use App\Enum\DisposicionGuia;
+use App\Enum\FormatoRecurso;
 use App\Enum\Rol;
 use App\Enum\Sede;
 use App\Enum\Sexo;
@@ -130,7 +131,7 @@ final class AppFixtures extends Fixture
         ];
         $editorial = (new Editorial())->setNombre('Ediciones Universidad Católica del Norte')->setPais($paises['CL']);
         $libro = (new Recurso())->setTitulo('Introducción a la geología del norte de Chile')->setUrl('https://ebooks.ucn.cl/geologia')
-            ->setTipo(TipoRecurso::Libros)->setAcceso(TipoAcceso::Suscripcion)->setAnio(2021)->setIsbn('978-956-11-2345-8')
+            ->setTipo(TipoRecurso::Libros)->setFormato(FormatoRecurso::Ambos)->setAcceso(TipoAcceso::Suscripcion)->setAnio(2021)->setIsbn('978-956-11-2345-8')
             ->setEditorial($editorial)->setAutores($autores)->addMateria($materias[4]);
         $manager->persist($libro);
 

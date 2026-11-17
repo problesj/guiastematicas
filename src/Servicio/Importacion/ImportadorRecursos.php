@@ -6,6 +6,7 @@ namespace App\Servicio\Importacion;
 
 use App\Entity\Materia;
 use App\Entity\Recurso;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Repository\MateriaRepository;
@@ -39,8 +40,10 @@ final class ImportadorRecursos
         'descripcion' => ['descripcion', 'description', 'resumen', 'contenido', 'descripcionespanol'],
         'descripcion_en' => ['descripcionen', 'descripcioningles', 'descriptionen', 'englishdescription'],
         'proveedor' => ['proveedor', 'plataforma', 'vendor', 'proveedoroplataforma'],
-        'tipo' => ['tipo', 'formato', 'type', 'tipoderecurso'],
+        'tipo' => ['tipo', 'type', 'tipoderecurso'],
         'acceso' => ['acceso', 'tipodeacceso', 'access', 'licencia'],
+        // Impreso, electrónico o ambos (libros y revistas). En planillas antiguas «Formato» traía el tipo: se acepta.
+        'formato' => ['formato', 'format', 'soporte'],
         'materias' => ['materias', 'materia', 'areas', 'area', 'disciplinas', 'disciplina', 'subjects', 'carreras', 'carrera'],
         'nombres_alternativos' => ['nombresalternativos', 'alias', 'siglas', 'otrosnombres'],
         'visible' => ['visible', 'activo', 'activa', 'mostrar', 'publicado'],
@@ -330,6 +333,9 @@ final class ImportadorRecursos
             if (isset($d['acceso'])) {
                 $recurso->setAcceso($d['acceso']);
             }
+            if (isset($d['formato'])) {
+                $recurso->setFormato($d['formato']);
+            }
             if (\array_key_exists('visible', $d)) {
                 $recurso->setVisible($d['visible']);
             }
@@ -469,7 +475,12 @@ final class ImportadorRecursos
             $fila->datos['disponible_desde'] = $this->interpretarFecha($crudo('disponible_desde'), $fila);
         }
 
-        if (null !== $tipo = $valor('tipo')) {
+        // Planillas antiguas: sin columna «Tipo», la columna «Formato» traía el tipo («Base de datos», «Libros
+        // electrónicos»...). Se usa como tipo si lo nombra o si no es un formato.
+        $formato = $valor('formato');
+        $formatoEsTipo = null !== $formato && !$hay('tipo')
+            && (null !== self::interpretarTipo($formato) || null === self::interpretarFormato($formato));
+        if (null !== $tipo = $formatoEsTipo ? $formato : $valor('tipo')) {
             $fila->datos['tipo'] = self::interpretarTipo($tipo) ?? TipoRecurso::BaseDatos;
             if (null === self::interpretarTipo($tipo)) {
                 $fila->avisos[] = 'importacion.aviso_tipo|'.$tipo;
@@ -477,6 +488,9 @@ final class ImportadorRecursos
         }
         if (null !== $acceso = $valor('acceso')) {
             $fila->datos['acceso'] = self::interpretarAcceso($acceso);
+        }
+        if (null !== $formato && null !== $interpretado = self::interpretarFormato($formato)) {
+            $fila->datos['formato'] = $interpretado;
         }
         if ($hay('visible')) {
             $fila->datos['visible'] = self::interpretarBooleano($valor('visible')) ?? true;
@@ -629,6 +643,15 @@ final class ImportadorRecursos
             str_contains($v, 'base') || str_contains($v, 'database') || str_contains($v, 'bd') => TipoRecurso::BaseDatos,
             default => null,
         };
+    }
+
+    public static function interpretarFormato(string $valor): ?FormatoRecurso
+    {
+        $v = self::normalizar($valor);
+        $impreso = (bool) preg_match('/impres|print|papel|fisic/', $v);
+        $electronico = (bool) preg_match('/electr|digital|online|enlinea|ebook|ejournal/', $v);
+
+        return str_contains($v, 'ambos') || str_contains($v, 'both') ? FormatoRecurso::Ambos : FormatoRecurso::combinar($impreso, $electronico);
     }
 
     public static function interpretarAcceso(string $valor): TipoAcceso

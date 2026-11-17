@@ -4,6 +4,7 @@
 {% set destino = libro.enlace ?? null %}
 {% if not destino and (libro.registro ?? null) %}{% set destino = enlace_registro_catalogo(libro.registro, guia.idioma) %}{% endif %}
 {% if not destino and hay_buscador_primo() %}{% set destino = path('catalogo', {_locale: guia.idioma, q: (libro.issn ?? null) ?: libro.titulo}) %}{% endif %}
+{% set formato = (libro.formato ?? null) ?: 'electronico' %}{# guardadas antes de indicar el formato #}
 {% set issns = [(libro.issn ?? null) ? 'ISSN ' ~ libro.issn : null, (libro.eissn ?? null) ? 'e-ISSN ' ~ libro.eissn : null]|filter(v => v)|join(' · ') %}
 <li class="libro libro--revista{{ lista ? ' libro--lista' }}">
     {% if destino %}<a class="libro__enlace" href="{{ destino }}" target="_blank" rel="noopener"{% if lista %} tabindex="-1" aria-hidden="true"{% endif %}>{% else %}<span class="libro__enlace">{% endif %}
@@ -20,10 +21,12 @@
             <span class="libro__titulo">{% if destino %}<a href="{{ destino }}" target="_blank" rel="noopener">{{ libro.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>{% else %}{{ libro.titulo }}{% endif %}</span>
             {% if libro.editorial ?? null %}<span class="libro__autor">{{ libro.editorial }}</span>{% endif %}
             {% if issns %}<span class="libro__edicion">{{ issns }}</span>{% endif %}
+            {{ include('recursos/_formato.html.twig', {formato: formato}) }}
             {% if destino %}<span class="libro__acceso"><a href="{{ destino }}" target="_blank" rel="noopener">{{ (libro.enlace ?? null) ? 'bloque.revista_acceso'|trans : ((libro.registro ?? null) ? 'bloque.libro_ver_catalogo'|trans : 'bloque.libro_buscar_catalogo'|trans) }}<span class="solo-lectores"> {{ libro.titulo }} ({{ 'bases.ventana_nueva'|trans }})</span></a></span>{% endif %}
         </div>
     {% else %}
         {% if libro.editorial ?? null %}<span class="libro__autor">{{ libro.editorial }}</span>{% endif %}
         {% if issns %}<span class="libro__edicion">{{ issns }}</span>{% endif %}
+            {{ include('recursos/_formato.html.twig', {formato: formato}) }}
     {% endif %}
 </li>

@@ -6,7 +6,7 @@ import { Controller } from '@hotwired/stimulus';
  * Los recursos que ya están en el bloque aparecen marcados y deshabilitados.
  */
 export default class extends Controller {
-    static targets = ['texto', 'tipo', 'materia', 'estado', 'lista', 'todos', 'agregar', 'mas'];
+    static targets = ['texto', 'tipo', 'formato', 'materia', 'estado', 'lista', 'todos', 'agregar', 'mas'];
     static values = { url: String, resumen: String, vacio: String, ya: String, error: String };
 
     connect() {
@@ -42,7 +42,7 @@ export default class extends Controller {
     async cargar(agregarAlFinal) {
         this.controlador?.abort();
         this.controlador = new AbortController();
-        const parametros = new URLSearchParams({ q: this.textoTarget.value.trim(), tipo: this.tipoTarget.value, materia: this.materiaTarget.value, pagina: String(this.pagina) });
+        const parametros = new URLSearchParams({ q: this.textoTarget.value.trim(), tipo: this.tipoTarget.value, formato: this.hasFormatoTarget ? this.formatoTarget.value : '', materia: this.materiaTarget.value, pagina: String(this.pagina) });
         let datos;
         try {
             const respuesta = await fetch(`${this.urlValue}?${parametros}`, { headers: { Accept: 'application/json' }, signal: this.controlador.signal });

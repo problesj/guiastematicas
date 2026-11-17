@@ -46,6 +46,7 @@
                     {{ form_row(item.autor) }}
                     {{ form_row(item.editorial) }}
                     {{ form_row(item.enlace, {row_attr: {class: 'libro-form__enlace'}}) }}
+                    {{ form_row(item.formato, {row_attr: {class: 'libro-form__formato'}}) }}
                 </div>
                 {# Lista de recursos: el libro se incorpora al guardar; sus materias son las del recurso. #}
                 <details class="libro-form__materias"{% if item.materias.vars.value is not empty %} open{% endif %}>
@@ -105,6 +106,7 @@
                     {{ form_row(item.titulo, {row_attr: {class: 'libro-form__titulo'}}) }}
                     {{ form_row(item.editorial) }}
                     {{ form_row(item.enlace, {row_attr: {class: 'libro-form__enlace'}}) }}
+                    {{ form_row(item.formato, {row_attr: {class: 'libro-form__formato'}}) }}
                 </div>
                 <details class="libro-form__materias"{% if item.materias.vars.value is not empty %} open{% endif %}>
                     <summary>{{ 'bloque.libro_materias'|trans }}{% if item.materias.vars.value is not empty %} ({{ item.materias.vars.value|length }}){% endif %}</summary>

@@ -27,10 +27,11 @@
             {% if formulario.vars.errors|length > 0 %}
                 <div class="aviso aviso--error">{{ form_errors(formulario) }}</div>
             {% endif %}
-            <fieldset>
+            <fieldset data-controller="campos-tipo" data-campos-tipo-selector-value="#{{ formulario.tipo.vars.id }}">
                 <legend>{{ 'sugerencia.grupo_recurso'|trans }}</legend>
                 <div class="formulario__columnas">
                     {{ form_row(formulario.tipo) }}
+                    <div data-campos-tipo-target="campo" data-tipos="libros revistas">{{ form_row(formulario.formato) }}</div>
                     {{ form_row(formulario.identificador) }}
                 </div>
                 {{ form_row(formulario.titulo) }}

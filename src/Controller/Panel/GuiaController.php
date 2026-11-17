@@ -12,6 +12,7 @@ use App\Entity\Recurso;
 use App\Entity\Seccion;
 use App\Entity\Usuario;
 use App\Enum\TipoBloque;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoRecurso;
 use App\Form\BloqueType;
 use App\Form\GuiaType;
@@ -603,11 +604,12 @@ final class GuiaController extends AbstractController
         $consulta = $request->query;
         $texto = mb_substr(trim($consulta->getString('q')), 0, 100);
         $tipo = TipoRecurso::tryFrom($consulta->getString('tipo'));
+        $formato = FormatoRecurso::tryFrom($consulta->getString('formato'));
         // Los filtros vacíos llegan como "" (getInt los rechazaría con 400).
         $materiaId = $consulta->getString('materia');
         $materia = ctype_digit($materiaId) ? $materias->find((int) $materiaId) : null;
         $numero = $consulta->getString('pagina');
-        $pagina = $recursos->listadoAdministracion(ctype_digit($numero) ? max(1, (int) $numero) : 1, 50, $texto, $tipo, $materia);
+        $pagina = $recursos->listadoAdministracion(ctype_digit($numero) ? max(1, (int) $numero) : 1, 50, $texto, $tipo, $materia, $formato);
         $idioma = $request->getLocale();
 
         return $this->json([
@@ -619,6 +621,7 @@ final class GuiaController extends AbstractController
                 'nombre' => $r->getTitulo(),
                 'detalle' => implode(' · ', array_filter([
                     $this->traductor->trans($r->getTipo()->etiqueta(), [], null, $idioma),
+                    null !== $r->getFormato() ? $this->traductor->trans($r->getFormato()->etiqueta(), [], null, $idioma) : null,
                     $r->getProveedor() ?? $r->getEditorial()?->getNombre(),
                     $r->getAnio(),
                     $r->isVisible() ? null : $this->traductor->trans('recurso.oculto', [], null, $idioma),
@@ -651,6 +654,7 @@ final class GuiaController extends AbstractController
             'bloque' => $bloque,
             'seccion' => $seccion,
             'tipos_recurso' => TipoRecurso::cases(),
+            'formatos_recurso' => FormatoRecurso::cases(),
             'materias' => TipoBloque::Recursos === $tipo ? $this->em->getRepository(Materia::class)->findBy(['activa' => true], ['nombre' => 'ASC']) : [],
             'buscador_libros' => TipoBloque::Libros === $tipo ? [
                 'catalogo' => $this->catalogo->buscaPorIsbn(),
@@ -770,6 +774,7 @@ final class GuiaController extends AbstractController
                     'editorial' => $texto($i['editorial'] ?? null),
                     'anio' => $texto($i['anio'] ?? null),
                     'enlace' => $texto($i['enlace'] ?? null),
+                    'formato' => FormatoRecurso::tryFrom((string) ($i['formato'] ?? ''))?->value,
                     // Del catálogo (DatosLibro): registro en Primo VE y MMS id de Alma.
                     'registro' => $texto($i['registro'] ?? null),
                     'mms' => $texto($i['mms'] ?? null),
@@ -785,6 +790,7 @@ final class GuiaController extends AbstractController
                     'eissn' => Catalogo::issn($texto($i['eissn'] ?? null)),
                     'editorial' => $texto($i['editorial'] ?? null),
                     'enlace' => $texto($i['enlace'] ?? null),
+                    'formato' => FormatoRecurso::tryFrom((string) ($i['formato'] ?? ''))?->value,
                     // Del catálogo (DatosRevista): registro en Primo VE y MMS id de Alma.
                     'registro' => $texto($i['registro'] ?? null),
                     'mms' => $texto($i['mms'] ?? null),
@@ -821,6 +827,8 @@ final class GuiaController extends AbstractController
         return array_map(function (array $i) use ($recursos): array {
             $recurso = \is_int($i['recurso'] ?? null) ? ($recursos[$i['recurso']] ?? null) : null;
             $i['recurso'] = $recurso?->getId();
+            // El formato, como las materias, es el del recurso vinculado (puede haberse corregido en el panel de recursos).
+            $i['formato'] = $recurso?->getFormato()?->value ?? ($i['formato'] ?? null);
             $i['materias'] = null === $recurso ? [] : array_values(array_filter($recurso->getMaterias()->toArray(), fn (Materia $m) => $m->isActiva()));
 
             return $i;

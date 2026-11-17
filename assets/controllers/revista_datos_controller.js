@@ -5,7 +5,7 @@ import { Controller } from '@hotwired/stimulus';
  * revistas del catálogo y completa título, editorial y el otro ISSN (nada se guarda hasta «Guardar»).
  */
 export default class extends Controller {
-    static targets = ['issn', 'eissn', 'titulo', 'editorial', 'boton', 'estado'];
+    static targets = ['issn', 'eissn', 'titulo', 'editorial', 'formato', 'boton', 'estado'];
     static values = { url: String, buscando: String, falta: String, vacio: String, error: String, listo: String };
 
     async buscar() {
@@ -39,6 +39,9 @@ export default class extends Controller {
             const vacio = [this.issnTarget, this.eissnTarget].find((campo) => !campo.value.trim());
             if (vacio && otro) {
                 vacio.value = otro;
+            }
+            if (datos.formato && this.hasFormatoTarget && !this.formatoTarget.value) {
+                this.formatoTarget.value = datos.formato;
             }
             this.dispatch('completado');
             this.avisar(this.listoValue);

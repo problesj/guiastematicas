@@ -75,6 +75,7 @@
                                 <span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span>
                             </a>
                             <span class="libro__autor">{{ recurso.autoresTexto ?? recurso.proveedor ?? recurso.tipo.etiqueta|trans }}</span>
+                            {% if recurso.formato %}{{ include('recursos/_formato.html.twig', {formato: recurso.formato.value}) }}{% endif %}
                         </li>
                     {% endfor %}
                 </ul>

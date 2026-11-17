@@ -5,7 +5,7 @@ import { Controller } from '@hotwired/stimulus';
  * o de doi.org y completa título, autor, editorial y año (lo ya escrito se reemplaza; nada se guarda hasta «Guardar»).
  */
 export default class extends Controller {
-    static targets = ['isbn', 'doi', 'titulo', 'autor', 'editorial', 'anio', 'boton', 'estado'];
+    static targets = ['isbn', 'doi', 'titulo', 'autor', 'editorial', 'anio', 'formato', 'boton', 'estado'];
     static values = { url: String, buscando: String, falta: String, vacio: String, error: String, catalogo: String, doi: String };
 
     async buscar() {
@@ -33,6 +33,10 @@ export default class extends Controller {
                 if (datos[campo]) {
                     this[`${campo}Target`].value = datos[campo];
                 }
+            }
+            // El formato que informa el catálogo, si el editor dejó «Detectar».
+            if (datos.formato && this.hasFormatoTarget && !this.formatoTarget.value) {
+                this.formatoTarget.value = datos.formato;
             }
             if (datos.isbn && !isbn) {
                 this.isbnTarget.value = datos.isbn;

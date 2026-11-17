@@ -289,6 +289,13 @@ a:hover { color: var(--color-principal-oscuro); }
 .insignia--nuevo { color: var(--color-texto-boton); background: var(--color-principal-oscuro); }
 .insignia--prueba { color: #1d1d1b; background: #f3d9a4; }
 .insignia--abierto { color: #1d1d1b; background: #cfe3c8; }
+/* Formato de libros y revistas (impreso, electrónico o ambos) */
+.formato { display: inline-flex; align-items: center; gap: 0.25rem; margin: 0.15rem 0 0 0.35rem; padding: 0.05rem 0.5rem; font-size: 0.8125rem; font-weight: 600; line-height: 1.5; color: #1d1d1b; background: #e8eef6; border: 1px solid #c4d1e3; border-radius: 999px; vertical-align: middle; white-space: nowrap; }
+.formato svg { flex: none; }
+.formato--impreso { background: #f4ece2; border-color: #dccab3; }
+.formato--ambos { background: #eceae2; border-color: #cfcab8; }
+.libro .formato, td .formato { margin-left: 0; }
+.libro .formato { align-self: flex-start; }
 .encabezado-accion__botones { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 .filtro__texto { min-width: 16rem; padding: 0.6rem 0.75rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); }
 .tabla__url { overflow-wrap: anywhere; color: var(--color-texto-secundario); }

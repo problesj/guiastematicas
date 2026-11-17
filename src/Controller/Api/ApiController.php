@@ -184,6 +184,7 @@ final class ApiController extends AbstractController
                 'isbn' => $l['isbn'] ?? null,
                 'doi' => $l['doi'] ?? null,
                 'url' => $l['enlace'] ?? (isset($l['registro']) ? $this->catalogo->enlaceRegistro($l['registro'], $idioma) : null) ?? (isset($l['doi']) ? 'https://doi.org/'.$l['doi'] : null),
+                'formato' => $l['formato'] ?? null,
                 'portada' => isset($l['isbn']) ? 'https://covers.openlibrary.org/b/isbn/'.rawurlencode($l['isbn']).'-M.jpg?default=false' : null,
             ], $items)],
             TipoBloque::Revistas => ['revistas' => array_map(fn (array $r) => [
@@ -192,6 +193,7 @@ final class ApiController extends AbstractController
                 'issn' => $r['issn'] ?? null,
                 'eissn' => $r['eissn'] ?? null,
                 'url' => $r['enlace'] ?? (isset($r['registro']) ? $this->catalogo->enlaceRegistro($r['registro'], $idioma) : null),
+                'formato' => $r['formato'] ?? null,
             ], $items)],
             TipoBloque::Diapositivas => ['diapositivas' => array_map(fn (array $d) => [
                 'titulo' => $d['titulo'] ?? null,
@@ -216,6 +218,7 @@ final class ApiController extends AbstractController
             'titulo' => $recurso->getTitulo(),
             'tipo' => $recurso->getTipo()->value,
             'acceso' => $recurso->getAcceso()->value,
+            'formato' => $recurso->getFormato()?->value,
             'descripcion' => $recurso->getDescripcionTraducida($idioma),
             'proveedor' => $recurso->getProveedor(),
             // Pasa por el proxy AccesUM cuando el recurso lo requiere.
