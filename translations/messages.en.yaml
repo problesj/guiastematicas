@@ -529,6 +529,11 @@ guias:
   vacio: No guides have been published yet.
   sin_resultados: No published guides match those filters.
 guia:
+  comun: "Shared content guide"
+  comun_ayuda: "Not published: its tabs and blocks can be linked or copied into the other guides (tools, cross-cutting resources, opening hours…)."
+  comun_insignia: "Shared content"
+  comun_aviso: "This is a shared content guide: it is not published and all its tabs and blocks can be linked or copied into other guides. Changes made here show in every guide that links them."
+  comun_no_se_publica: "A shared content guide is not published. Its tabs and blocks show in the guides that link them."
   grupo_imagenes: Images
   banner: Header image (banner)
   banner_ayuda: JPG, PNG or WebP up to 4 MB. Shown at the top of the guide, cropped to 4:1 (1600 × 400 px recommended).
@@ -649,6 +654,8 @@ guia:
   reportar: Report a problem
   reportar_asunto: "Problem in the guide “%guia%”"
 bloque:
+  compartible: "Allow reuse in other guides"
+  compartible_ayuda: "Other guides will be able to link this block (always showing its current version) or copy it."
   items_enlaces: Links
   items_libros: Books
   items_revistas: Journals
@@ -1028,6 +1035,51 @@ apariencia:
     TEXTO_PIE: Footer text and links.
     LOGO: PNG, JPG or WebP up to 1 MB, ideally landscape with a transparent background. Replaces the institution name in the header.
     IMAGEN_PORTADA: JPG, WebP or PNG up to 3 MB and at least 800 px wide, ideally landscape (e.g. 1920 × 800). It is darkened so white text stays readable.
+compartido:
+  bloque_otra_guia: "Block from another guide"
+  bloque_otra_guia_ayuda: "Link or copy a reusable block from another guide or the shared content."
+  reutilizar_pestana: "Tab from another guide"
+  titulo_bloques: "Add a block from another guide"
+  titulo_pestanas: "Add a tab from another guide"
+  destino: "It will be added at the end of %pestana% › %seccion%."
+  vincular: "Link"
+  copiar: "Copy"
+  vincular_ayuda: "always shows the current content of the original block; it is edited only in its guide."
+  copiar_ayuda: "adds an independent block with today's content, which you can change here."
+  vincular_pestana_ayuda: "the tab always shows the current sections and blocks of the original; its title and menu position are yours."
+  copiar_pestana_ayuda: "adds an independent tab with copies of its sections and blocks."
+  buscar_placeholder: "Block, section or guide title"
+  tipo_bloque: "Block type"
+  todos_tipos: "All types"
+  guia: "Guide"
+  todas_guias: "All guides"
+  sin_bloques: "There are no reusable blocks yet. Tick “Allow reuse in other guides” when editing a block or create a shared content guide."
+  sin_resultados: "No reusable block matches the search."
+  sin_pestanas: "There are no reusable tabs yet. Tick “Allow reuse in other guides” in a tab's options or create a shared content guide."
+  resumen_pestana: "%secciones% sections, %bloques% blocks"
+  bloque_vinculado: "Block linked. It shows the original's content."
+  bloque_copiado: "Block copied. You can edit it in this guide."
+  pestana_vinculada: "Tab linked. It shows the original's content."
+  pestana_copiada: "Tab copied with its sections and blocks."
+  bloque_desvinculado: "The block is now this guide's own copy."
+  pestana_desvinculada: "The tab is now this guide's own copy."
+  bloque_ajeno: "This block is linked from a guide you cannot edit. To change it here, turn it into a copy."
+  vinculado_de: "Linked from %guia%"
+  reutilizable: "Reusable"
+  usado_en: "{1}Used in 1 guide|]1,Inf[Used in %count% guides"
+  editar_original: "Edit the original"
+  desvincular: "Turn into own copy"
+  confirmar_desvincular: "Turn this block into an own copy? It will no longer change when the original is edited."
+  desvincular_pestana: "Turn into own copy"
+  confirmar_desvincular_pestana: "Turn this tab into an own copy? It will no longer change when the original is edited."
+  pestana_vinculada_de: "Tab linked from %guia%"
+  aviso_pestana: "This tab shows the content of “%pestana%” from the guide “%guia%”. Its sections and blocks are edited there; here you can change its title and menu position."
+  pestana_reutilizable: "Other guides can link or copy this tab."
+  pestana_usada_en: "{1}Linked in 1 guide: %guias%|]1,Inf[Linked in %count% guides: %guias%"
+  pestana_compartible: "Allow reuse in other guides"
+  pestana_compartible_ayuda: "Other guides will be able to link this tab (always showing its current sections) or copy it."
+  aviso_eliminar: "It will also disappear from the guides that link it: %guias%."
+
 compartir:
   titulo: "Share"
   mas: "Share…"

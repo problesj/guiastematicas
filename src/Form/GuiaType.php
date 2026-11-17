@@ -161,6 +161,7 @@ final class GuiaType extends AbstractType
                 'required' => false,
                 'placeholder' => 'guia.sin_responsable',
             ]);
+            $builder->add('comun', CheckboxType::class, ['label' => 'guia.comun', 'help' => 'guia.comun_ayuda', 'required' => false]);
         }
     }
 

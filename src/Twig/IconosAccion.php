@@ -25,6 +25,9 @@ final class IconosAccion
         'responder' => '<path d="M10 8L4 13l6 5v-3c5 0 8 1 10 4-1-5-4-9-10-10z"/>',
         'subir' => '<path d="M12 19V5M6 11l6-6 6 6"/>',
         'bajar' => '<path d="M12 5v14M6 13l6 6 6-6"/>',
+        'vincular' => '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+        'desvincular' => '<path d="M10 14a4 4 0 0 0 5.7 0l1.3-1.3M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7M13 5.3l.4-.4a4 4 0 0 1 5.7 5.7l-.4.4"/><path d="M3 3l18 18"/>',
+        'copiar' => '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/>',
     ];
 
     #[AsTwigFunction('icono', isSafe: ['html'])]

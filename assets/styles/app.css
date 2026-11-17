@@ -864,3 +864,27 @@ h1 .etiqueta { font-size: 0.875rem; vertical-align: middle; }
 .consulta-estado { margin-top: 2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
 .persona__guias, .perfil__guias { margin: 0.25rem 0; font-size: 0.9375rem; }
 .persona__rol { font-weight: 600; }
+
+/* Contenido reutilizado entre guías (bloques y pestañas vinculados o copiados) */
+.insignia--compartido { color: #1d1d1b; background: #d6e6f2; text-transform: none; letter-spacing: 0; }
+.editor-bloque--vinculo { background: #f1f6fa; border-style: dashed; border-color: #8fb3cf; }
+.editor-bloque__resumen .insignia { margin-left: 0.25rem; }
+.editor-guia__vinculo { display: inline-flex; color: var(--color-texto-secundario); }
+.editor-guia__vinculo svg { width: 14px; height: 14px; }
+.editor-guia__reutilizar { display: inline-flex; align-items: center; gap: 0.35rem; padding-bottom: 0.5rem; font-weight: 600; }
+.editor-seccion__reutilizar a { border-style: dashed; }
+.editor-seccion__reutilizar strong { display: inline-flex; align-items: center; gap: 0.35rem; }
+.aviso--vinculo { border-left-color: #4f7fa6; background: #f1f6fa; }
+.aviso--vinculo p { margin: 0 0 0.5rem; }
+.aviso__acciones { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.editor-guia__secciones--vinculo .editor-seccion { opacity: 0.9; }
+.editor-seccion__solo-lectura { margin: 0 0 0.5rem; font-size: 1rem; }
+.compartido-ayuda { margin: 0.5rem 0 1rem; color: var(--color-texto-secundario); }
+.compartido-ayuda p { margin: 0.25rem 0; }
+.compartido-lista { display: grid; gap: 0.5rem; margin: 1rem 0; padding: 0; list-style: none; }
+.compartido-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1rem; background: var(--color-fondo-suave); border: 1px solid #e4dccf; border-radius: var(--radio); }
+.compartido-item__datos { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; flex: 1 1 20rem; }
+.compartido-item__datos .etiqueta { align-self: flex-start; }
+.compartido-item__datos small { color: var(--color-texto-secundario); overflow-wrap: anywhere; }
+.compartido-item__origen { font-weight: 600; }
+.compartido-item__acciones { display: flex; flex-wrap: wrap; gap: 0.5rem; }

@@ -24,6 +24,7 @@ use App\Servicio\AlmacenImagenesGuia;
 use App\Servicio\Biblioges;
 use App\Servicio\BloquesGuia;
 use App\Servicio\Catalogo;
+use App\Servicio\ContenidoCompartido;
 use App\Servicio\DatosLibro;
 use App\Servicio\DatosRevista;
 use App\Servicio\LibrosEnRecursos;
@@ -61,6 +62,7 @@ final class GuiaController extends AbstractController
         private readonly RevistasEnRecursos $revistasEnRecursos,
         private readonly Catalogo $catalogo,
         private readonly Biblioges $biblioges,
+        private readonly ContenidoCompartido $compartido,
     ) {
     }
 
@@ -152,6 +154,11 @@ final class GuiaController extends AbstractController
     {
         if ($this->tokenValido($request, 'publicar-guia-'.$guia->getId())) {
             $publicar = !$guia->isPublicada();
+            if ($publicar && $guia->isComun()) {
+                $this->addFlash('error', 'guia.comun_no_se_publica');
+
+                return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId()]);
+            }
             $publicar ? $guia->publicar() : $guia->despublicar();
             $this->em->flush();
             $this->addFlash('exito', $publicar ? 'guia.publicada' : 'guia.despublicada');
@@ -167,6 +174,7 @@ final class GuiaController extends AbstractController
         if ($this->tokenValido($request, 'eliminar-guia-'.$guia->getId())) {
             $guia->setTraduccion(null);
             $this->imagenes->eliminarDe($guia); // antes de borrar: después Doctrine deja la guía sin id
+            $this->compartido->quitarVinculosA($guia);
             $this->em->remove($guia);
             $this->em->flush();
             $this->addFlash('exito', 'guia.eliminada');
@@ -225,7 +233,8 @@ final class GuiaController extends AbstractController
             }
         }
 
-        $pestana->setTitulo($titulo)->setPadre($padre)->setEnlace($enlace)->setNueva($datos->getBoolean('nueva'));
+        $pestana->setTitulo($titulo)->setPadre($padre)->setEnlace($pestana->isVinculo() ? null : $enlace)->setNueva($datos->getBoolean('nueva'))
+            ->setCompartible($datos->getBoolean('compartible'));
         $this->guardar($guia);
 
         return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
@@ -240,6 +249,7 @@ final class GuiaController extends AbstractController
             foreach ($pestana->getSubpestanas() as $hija) { // las subpestañas pasan a ser principales
                 $hija->setPadre(null);
             }
+            $this->compartido->quitarVinculosA($pestana);
             $guia->removePestana($pestana);
             $this->renumerar($guia->getPestanas());
             $this->guardar($guia);
@@ -256,7 +266,7 @@ final class GuiaController extends AbstractController
     public function nuevaSeccion(Request $request, Guia $guia, #[MapEntity(id: 'pestana')] Pestana $pestana): Response
     {
         $this->comprobarPertenencia($guia, $pestana->getGuia());
-        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId()) && !$pestana->isVinculo()) {
             $pestana->agregarSeccion(new Seccion(mb_substr($request->getPayload()->getString('titulo'), 0, 150)));
             $this->guardar($guia);
         }
@@ -288,6 +298,7 @@ final class GuiaController extends AbstractController
         $this->comprobarPertenencia($guia, $seccion->getGuia());
         $pestana = $seccion->getPestana();
         if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+            $this->compartido->quitarVinculosA($seccion);
             $pestana->removeSeccion($seccion);
             $this->renumerar($pestana->getSecciones());
             $this->guardar($guia);
@@ -313,6 +324,15 @@ final class GuiaController extends AbstractController
     public function editarBloque(Request $request, Guia $guia, #[MapEntity(id: 'bloque')] Bloque $bloque): Response
     {
         $this->comprobarPertenencia($guia, $bloque->getGuia());
+        $original = $bloque->getOrigen();
+        if (null !== $original) { // un bloque vinculado se edita en la guía del original
+            if ($this->isGranted(GuiaVoter::EDITAR, $original->getGuia())) {
+                return $this->redirectToRoute('panel_guia_bloque_editar', ['id' => $original->getGuia()->getId(), 'bloque' => $original->getId()]);
+            }
+            $this->addFlash('error', 'compartido.bloque_ajeno');
+
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $bloque->getSeccion()->getPestana()?->getId(), '_fragment' => 'bloque-'.$bloque->getId()]);
+        }
 
         return $this->formularioBloque($request, $guia, $bloque, $bloque->getSeccion());
     }
@@ -531,6 +551,7 @@ final class GuiaController extends AbstractController
         $this->comprobarPertenencia($guia, $bloque->getGuia());
         $seccion = $bloque->getSeccion();
         if ($this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+            $this->compartido->quitarVinculosA($bloque);
             $seccion->removeBloque($bloque);
             $this->renumerar($seccion->getBloques());
             $this->guardar($guia);
@@ -538,6 +559,108 @@ final class GuiaController extends AbstractController
         }
 
         return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $seccion->getPestana()?->getId(), '_fragment' => 'seccion-'.$seccion->getId()]);
+    }
+
+    // ---- Contenido reutilizado de otras guías ----
+
+    /**
+     * Biblioteca de bloques reutilizables de otras guías (filtros: texto, tipo y guía). Al elegir uno se agrega al final
+     * de la sección como vínculo (muestra siempre el contenido actual del original) o como copia independiente.
+     */
+    #[Route('/{id<\d+>}/secciones/{seccion<\d+>}/reutilizar', name: 'panel_guia_bloque_reutilizar', methods: ['GET', 'POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function reutilizarBloque(Request $request, Guia $guia, #[MapEntity(id: 'seccion')] Seccion $seccion): Response
+    {
+        $this->comprobarPertenencia($guia, $seccion->getGuia());
+        if ($request->isMethod('POST')) {
+            if (!$this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+                throw $this->createAccessDeniedException();
+            }
+            $original = $this->em->find(Bloque::class, $request->getPayload()->getInt('bloque'));
+            if (null === $original || !$original->isReutilizable() || $original->getGuia() === $guia) {
+                throw $this->createNotFoundException();
+            }
+            $vincular = 'copiar' !== $request->getPayload()->getString('modo');
+            $nuevo = $this->compartido->reutilizarBloque($original, $seccion, $vincular);
+            $this->guardar($guia);
+            $this->addFlash('exito', $vincular ? 'compartido.bloque_vinculado' : 'compartido.bloque_copiado');
+
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $seccion->getPestana()?->getId(), '_fragment' => 'bloque-'.$nuevo->getId()]);
+        }
+
+        $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
+        $tipo = TipoBloque::tryFrom($request->query->getString('tipo'));
+        $idGuia = $request->query->getInt('guia') ?: null;
+        $guias = [];
+        foreach ($this->compartido->bloquesReutilizables($guia) as $b) {
+            $guias[$b->getGuia()->getId()] = $b->getGuia();
+        }
+
+        return $this->render('panel/guias/reutilizar_bloque.html.twig', [
+            'guia' => $guia,
+            'seccion' => $seccion,
+            'bloques' => $this->compartido->bloquesReutilizables($guia, $texto, $tipo, $idGuia),
+            'guias' => $guias,
+            'tipos_bloque' => TipoBloque::cases(),
+            'filtro' => ['q' => $texto, 'tipo' => $tipo?->value, 'guia' => $idGuia],
+        ]);
+    }
+
+    /** Pestañas reutilizables de otras guías: se agregan al final como pestaña vinculada o como copia. */
+    #[Route('/{id<\d+>}/pestanas/reutilizar', name: 'panel_guia_pestana_reutilizar', methods: ['GET', 'POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function reutilizarPestana(Request $request, Guia $guia): Response
+    {
+        if ($request->isMethod('POST')) {
+            if (!$this->tokenValido($request, 'editar-guia-'.$guia->getId())) {
+                throw $this->createAccessDeniedException();
+            }
+            $original = $this->em->find(Pestana::class, $request->getPayload()->getInt('pestana'));
+            if (null === $original || !$original->isReutilizable() || $original->getGuia() === $guia) {
+                throw $this->createNotFoundException();
+            }
+            $vincular = 'copiar' !== $request->getPayload()->getString('modo');
+            $nueva = $this->compartido->reutilizarPestana($original, $guia, $vincular);
+            $this->guardar($guia);
+            $this->addFlash('exito', $vincular ? 'compartido.pestana_vinculada' : 'compartido.pestana_copiada');
+
+            return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $nueva->getId()]);
+        }
+
+        return $this->render('panel/guias/reutilizar_pestana.html.twig', [
+            'guia' => $guia,
+            'pestanas' => $this->compartido->pestanasReutilizables($guia),
+        ]);
+    }
+
+    /** Convierte un bloque vinculado en una copia propia, que ya no cambia con el original. */
+    #[Route('/{id<\d+>}/bloques/{bloque<\d+>}/desvincular', name: 'panel_guia_bloque_desvincular', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function desvincularBloque(Request $request, Guia $guia, #[MapEntity(id: 'bloque')] Bloque $bloque): Response
+    {
+        $this->comprobarPertenencia($guia, $bloque->getGuia());
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId()) && $bloque->isVinculo()) {
+            $this->compartido->desvincularBloque($bloque);
+            $this->guardar($guia);
+            $this->addFlash('exito', 'compartido.bloque_desvinculado');
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $bloque->getSeccion()->getPestana()?->getId(), '_fragment' => 'bloque-'.$bloque->getId()]);
+    }
+
+    /** Convierte una pestaña vinculada en una propia con copias de las secciones y bloques del original. */
+    #[Route('/{id<\d+>}/pestanas/{pestana<\d+>}/desvincular', name: 'panel_guia_pestana_desvincular', methods: ['POST'])]
+    #[IsGranted(GuiaVoter::EDITAR, 'guia')]
+    public function desvincularPestana(Request $request, Guia $guia, #[MapEntity(id: 'pestana')] Pestana $pestana): Response
+    {
+        $this->comprobarPertenencia($guia, $pestana->getGuia());
+        if ($this->tokenValido($request, 'editar-guia-'.$guia->getId()) && $pestana->isVinculo()) {
+            $this->compartido->desvincularPestana($pestana);
+            $this->guardar($guia);
+            $this->addFlash('exito', 'compartido.pestana_desvinculada');
+        }
+
+        return $this->redirectToRoute('panel_guia_editar', ['id' => $guia->getId(), 'pestana' => $pestana->getId()]);
     }
 
     /**
@@ -559,7 +682,7 @@ final class GuiaController extends AbstractController
         }
 
         $pestanas = $guia->getPestanas()->toArray();
-        $secciones = array_merge([], ...array_map(fn (Pestana $p) => $p->getSecciones()->toArray(), $pestanas));
+        $secciones = array_merge([], ...array_map(fn (Pestana $p) => $p->getSeccionesPropias()->toArray(), $pestanas));
         $bloques = array_merge([], ...array_map(fn (Seccion $s) => $s->getBloques()->toArray(), $secciones));
         $porId = fn (array $lista) => array_combine(array_map(fn ($e) => $e->getId(), $lista), $lista);
 
@@ -572,7 +695,7 @@ final class GuiaController extends AbstractController
                 if (null === $pestana) {
                     return new JsonResponse(['error' => 'padre'], 400);
                 }
-                $this->aplicarOrden($porId($pestana->getSecciones()->toArray()), $ids);
+                $this->aplicarOrden($porId($pestana->getSeccionesPropias()->toArray()), $ids);
                 break;
             case 'bloques':
                 $seccion = $porId($secciones)[$padre] ?? null;
@@ -633,12 +756,13 @@ final class GuiaController extends AbstractController
     private function formularioBloque(Request $request, Guia $guia, Bloque $bloque, Seccion $seccion): Response
     {
         $tipo = $bloque->getTipo();
-        $formulario = $this->createForm(BloqueType::class, $this->datosFormulario($bloque, $guia), ['tipo' => $tipo]);
+        $formulario = $this->createForm(BloqueType::class, $this->datosFormulario($bloque, $guia) + ['compartible' => $bloque->isCompartible()], ['tipo' => $tipo, 'compartible' => !$guia->isComun()]);
         $formulario->handleRequest($request);
 
         if ($formulario->isSubmitted() && $formulario->isValid()) {
             $datos = $formulario->getData();
-            $bloque->setTitulo($datos['titulo'] ?? null)->setContenido($this->contenido($tipo, $datos, $guia));
+            $bloque->setTitulo($datos['titulo'] ?? null)->setContenido($this->contenido($tipo, $datos, $guia))
+                ->setCompartible(true === ($datos['compartible'] ?? false));
             if (null === $bloque->getId()) {
                 $seccion->agregarBloque($bloque);
             }
@@ -875,7 +999,7 @@ final class GuiaController extends AbstractController
         }
         $pestana = 's' === $m[1] ? $this->em->find(Seccion::class, (int) $m[2])?->getPestana() : $this->em->find(Pestana::class, (int) $m[2]);
         $guia = $pestana?->getGuia();
-        if (null === $guia || $pestana->isEnlaceExterno() || !$this->isGranted(GuiaVoter::EDITAR, $guia)) {
+        if (null === $guia || $pestana->isEnlaceExterno() || $pestana->isVinculo() || !$this->isGranted(GuiaVoter::EDITAR, $guia)) {
             return null;
         }
         if ('s' === $m[1]) {

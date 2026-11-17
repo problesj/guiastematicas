@@ -1,0 +1,42 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'compartido.titulo_pestanas'|trans }}{% endblock %}
+
+{% block contenido %}
+    {% set volver = path('panel_guia_editar', {id: guia.id}) %}
+    {% set token = csrf_token('editar-guia-' ~ guia.id) %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}">
+        <a href="{{ path('panel_guias') }}">{{ 'panel.guias'|trans }}</a> ›
+        <a href="{{ volver }}">{{ guia.titulo }}</a> ›
+        <span aria-current="page">{{ 'compartido.titulo_pestanas'|trans }}</span>
+    </nav>
+    <h1>{{ 'compartido.titulo_pestanas'|trans }}</h1>
+    <div class="compartido-ayuda">
+        <p><strong>{{ 'compartido.vincular'|trans }}:</strong> {{ 'compartido.vincular_pestana_ayuda'|trans }}</p>
+        <p><strong>{{ 'compartido.copiar'|trans }}:</strong> {{ 'compartido.copiar_pestana_ayuda'|trans }}</p>
+    </div>
+
+    {% if pestanas is empty %}
+        <p>{{ 'compartido.sin_pestanas'|trans }}</p>
+    {% else %}
+        <ul class="compartido-lista">
+            {% for p in pestanas %}
+                {% set bloques = p.secciones|reduce((n, s) => n + s.bloques|length, 0) %}
+                <li class="compartido-item">
+                    <div class="compartido-item__datos">
+                        <strong>{{ p.titulo }}</strong>
+                        <small class="compartido-item__origen">{{ p.guia.titulo }}{% if p.guia.comun %} <span class="insignia insignia--compartido">{{ 'guia.comun_insignia'|trans }}</span>{% endif %}</small>
+                        <small>{{ 'compartido.resumen_pestana'|trans({'%secciones%': p.secciones|length, '%bloques%': bloques}) }}{% set nombres = p.secciones|map(s => s.titulo)|filter(t => t)|join(', ') %}{{ nombres ? ': ' ~ nombres }}</small>
+                    </div>
+                    <form method="post" class="compartido-item__acciones">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <input type="hidden" name="pestana" value="{{ p.id }}">
+                        <button type="submit" name="modo" value="vincular" class="boton boton--pequeno">{{ icono('vincular') }}{{ 'compartido.vincular'|trans }}<span class="solo-lectores"> {{ p.titulo }}</span></button>
+                        <button type="submit" name="modo" value="copiar" class="boton boton--secundario boton--pequeno">{{ icono('copiar') }}{{ 'compartido.copiar'|trans }}<span class="solo-lectores"> {{ p.titulo }}</span></button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p><a class="boton boton--secundario" href="{{ volver }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a></p>
+{% endblock %}

@@ -11,7 +11,7 @@
         <div>
             <h1>{{ guia.titulo }}</h1>
             <p class="editor-guia__estado">
-                <span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span>{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}
+                <span class="etiqueta etiqueta--{{ guia.estado.value }}">{{ guia.estado.etiqueta|trans }}</span>{% if guia.restringida %} <span class="insignia insignia--restringida"><span aria-hidden="true">🔒</span> {{ 'guia.restringida'|trans }}</span>{% endif %}{% if guia.comun %} <span class="insignia insignia--compartido">{{ 'guia.comun_insignia'|trans }}</span>{% endif %}
                 {{ guia.idioma|upper }} · {{ 'guia.actualizada'|trans }} {{ guia.actualizadaEn|date('d-m-Y H:i') }}
                 {% if guia.publicada %} <a class="accion" data-tooltip="{{ 'guia.ver_publicada'|trans }}" href="{{ path('guia', {slug: guia.slug, _locale: guia.idioma}) }}" target="_blank" rel="noopener">{{ icono('ver') }}<span class="solo-lectores">{{ 'guia.ver_publicada'|trans }} ({{ 'bases.ventana_nueva'|trans }})</span></a>{% endif %}
             </p>
@@ -20,15 +20,16 @@
             <a class="boton boton--secundario" href="{{ path('panel_guia_vista_previa', {id: guia.id, pestana: pestana ? pestana.id : null}) }}" target="_blank" rel="noopener">{{ 'guia.vista_previa'|trans }}</a>
             {% if gestiona %}
                 <a class="boton boton--secundario" href="{{ path('panel_guia_datos', {id: guia.id}) }}">{{ 'guia.datos'|trans }}</a>
-                <form method="post" action="{{ path('panel_guia_publicar', {id: guia.id}) }}" class="en-linea">
+                {% if not guia.comun or guia.publicada %}<form method="post" action="{{ path('panel_guia_publicar', {id: guia.id}) }}" class="en-linea">
                     <input type="hidden" name="_token" value="{{ csrf_token('publicar-guia-' ~ guia.id) }}">
                     <button type="submit" class="boton">{{ (guia.publicada ? 'guia.despublicar' : 'guia.publicar')|trans }}</button>
-                </form>
+                </form>{% endif %}
             {% endif %}
         </div>
     </div>
 
     <div class="editor-guia" data-controller="ordenar" data-ordenar-url-value="{{ path('panel_guia_ordenar', {id: guia.id}) }}" data-ordenar-token-value="{{ token }}" data-ordenar-error-value="{{ 'guia.error_orden'|trans }}">
+        {% if guia.comun %}<p class="aviso">{{ 'guia.comun_aviso'|trans }}</p>{% endif %}
         <p class="campo__ayuda">{{ 'guia.ayuda_arrastrar'|trans }}</p>
 
         {# Pestañas #}
@@ -41,6 +42,7 @@
                             {% if not p.principal %}<span aria-hidden="true">↳</span>{% endif %}
                             <a href="{{ path('panel_guia_editar', {id: guia.id, pestana: p.id}) }}" {% if pestana and p.id == pestana.id %}aria-current="page"{% endif %}>{% if not p.principal %}<span class="solo-lectores">{{ 'guia.subpestana_de'|trans({'%pestana%': principal.titulo}) }}: </span>{% endif %}{{ p.titulo }}</a>
                             {% if p.enlaceExterno %}<span title="{{ 'guia.enlace_externo'|trans }}">↗</span>{% endif %}
+                            {% if p.vinculo %}<span class="editor-guia__vinculo" title="{{ 'compartido.pestana_vinculada_de'|trans({'%guia%': p.origen.guia.titulo}) }}">{{ icono('vincular') }}<span class="solo-lectores">{{ 'compartido.pestana_vinculada_de'|trans({'%guia%': p.origen.guia.titulo}) }}</span></span>{% endif %}
                             {% if p.nueva %}<span class="insignia insignia--nuevo">{{ 'guia.nuevo'|trans }}</span>{% endif %}
                         </li>
                     {% endfor %}
@@ -52,6 +54,7 @@
                 <input type="text" id="nueva-pestana" name="titulo" maxlength="100" required placeholder="{{ 'guia.nueva_pestana'|trans }}">
                 <button type="submit" class="boton boton--secundario">{{ 'guia.agregar'|trans }}</button>
             </form>
+            <a class="editor-guia__reutilizar" href="{{ path('panel_guia_pestana_reutilizar', {id: guia.id}) }}">{{ icono('vincular') }}{{ 'compartido.reutilizar_pestana'|trans }}</a>
         </div>
 
         {% if pestana %}
@@ -59,6 +62,22 @@
                 <div class="editor-guia__barra">
                     <h2 id="titulo-pestana">{{ pestana.titulo }}</h2>
                     {% if pestana.enlaceExterno %}<p class="aviso">{{ 'guia.aviso_enlace'|trans({'%enlace%': pestana.enlace}) }}</p>{% endif %}
+                    {% set origen_pestana = pestana.origen %}
+                    {% if origen_pestana %}
+                        <div class="aviso aviso--vinculo">
+                            <p>{{ 'compartido.aviso_pestana'|trans({'%pestana%': origen_pestana.titulo, '%guia%': origen_pestana.guia.titulo}) }}</p>
+                            <div class="aviso__acciones">
+                                {% if is_granted('GUIA_EDITAR', origen_pestana.guia) %}<a class="boton boton--secundario boton--pequeno" href="{{ path('panel_guia_editar', {id: origen_pestana.guia.id, pestana: origen_pestana.id}) }}">{{ icono('editar') }}{{ 'compartido.editar_original'|trans }}</a>{% endif %}
+                                <form method="post" action="{{ path('panel_guia_pestana_desvincular', {id: guia.id, pestana: pestana.id}) }}" class="en-linea" data-controller="confirmar" data-action="submit->confirmar#preguntar" data-confirmar-mensaje-value="{{ 'compartido.confirmar_desvincular_pestana'|trans }}">
+                                    <input type="hidden" name="_token" value="{{ token }}">
+                                    <button type="submit" class="boton boton--secundario boton--pequeno">{{ icono('desvincular') }}{{ 'compartido.desvincular_pestana'|trans }}</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% elseif pestana.reutilizable %}
+                        {% set usos_pestana = guias_que_vinculan(pestana) %}
+                        <p class="campo__ayuda">{{ icono('vincular') }} {{ usos_pestana ? 'compartido.pestana_usada_en'|trans({'%count%': usos_pestana|length, '%guias%': usos_pestana|map(g => g.titulo)|join(', ')}) : 'compartido.pestana_reutilizable'|trans }}</p>
+                    {% endif %}
                     <details class="editor-guia__opciones">
                         <summary>{{ 'guia.opciones_pestana'|trans }}</summary>
                         <form method="post" action="{{ path('panel_guia_pestana_renombrar', {id: guia.id, pestana: pestana.id}) }}" class="editor-guia__form-opciones">
@@ -81,21 +100,44 @@
                                     <p class="campo__ayuda" id="padre-pestana">{{ 'guia.tiene_subpestanas'|trans }}</p>
                                 {% endif %}
                             </div>
+                            {% if not pestana.vinculo %}
                             <div class="campo">
                                 <label for="enlace-pestana">{{ 'guia.enlace_pestana'|trans }}</label>
                                 <input type="url" id="enlace-pestana" name="enlace" value="{{ pestana.enlace }}" maxlength="500" placeholder="https://" aria-describedby="enlace-pestana-ayuda">
                                 <p class="campo__ayuda" id="enlace-pestana-ayuda">{{ 'guia.enlace_pestana_ayuda'|trans }}</p>
                             </div>
+                            {% endif %}
                             <div class="campo campo--casilla">
                                 <input type="checkbox" id="nueva-pestana-etiqueta" name="nueva" value="1" {% if pestana.nueva %}checked{% endif %}>
                                 <label for="nueva-pestana-etiqueta">{{ 'guia.marcar_nueva'|trans }}</label>
                             </div>
+                            {% if not pestana.vinculo and not guia.comun %}
+                            <div class="campo campo--casilla">
+                                <input type="checkbox" id="pestana-compartible" name="compartible" value="1" aria-describedby="pestana-compartible-ayuda" {% if pestana.compartible %}checked{% endif %}>
+                                <label for="pestana-compartible">{{ 'compartido.pestana_compartible'|trans }}</label>
+                                <p class="campo__ayuda" id="pestana-compartible-ayuda">{{ 'compartido.pestana_compartible_ayuda'|trans }}</p>
+                            </div>
+                            {% endif %}
                             <button type="submit" class="boton boton--secundario">{{ 'formulario.guardar'|trans }}</button>
                         </form>
-                        {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_pestana_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: pestana.titulo, extra_ruta: {pestana: pestana.id}} %}
+                        {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_pestana_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: pestana.titulo, extra_ruta: {pestana: pestana.id}, aviso: usos_pestana is defined and usos_pestana ? 'compartido.aviso_eliminar'|trans({'%guias%': usos_pestana|map(g => g.titulo)|join(', ')}) : null} %}
                     </details>
                 </div>
 
+                {% if origen_pestana %}
+                    <div class="editor-guia__secciones editor-guia__secciones--vinculo">
+                        {% for seccion in pestana.secciones %}
+                            <section class="editor-seccion">
+                                <h3 class="editor-seccion__solo-lectura">{{ seccion.titulo ?? 'guia.seccion_sin_titulo'|trans }}</h3>
+                                <ul class="editor-seccion__bloques">
+                                    {% for bloque in seccion.bloques %}
+                                        <li class="editor-bloque"><div class="editor-bloque__resumen"><span class="etiqueta">{{ bloque.tipo.etiqueta|trans }}</span> <strong>{{ bloque.titulo }}</strong> <small>{{ include('panel/guias/_resumen_bloque.html.twig') }}</small></div></li>
+                                    {% endfor %}
+                                </ul>
+                            </section>
+                        {% endfor %}
+                    </div>
+                {% else %}
                 <div class="editor-guia__secciones" data-ordenar-target="lista" data-tipo="secciones" data-padre="{{ pestana.id }}">
                     {% for seccion in pestana.secciones %}
                         <section class="editor-seccion" id="seccion-{{ seccion.id }}" data-id="{{ seccion.id }}">
@@ -116,18 +158,30 @@
 
                             <ul class="editor-seccion__bloques" data-ordenar-target="lista" data-tipo="bloques" data-padre="{{ seccion.id }}" data-grupo="bloques">
                                 {% for bloque in seccion.bloques %}
-                                    <li class="editor-bloque" id="bloque-{{ bloque.id }}" data-id="{{ bloque.id }}">
+                                    {% set origen = bloque.origen %}
+                                    {% set usos = not origen and bloque.reutilizable ? guias_que_vinculan(bloque) : [] %}
+                                    <li class="editor-bloque{{ origen ? ' editor-bloque--vinculo' }}" id="bloque-{{ bloque.id }}" data-id="{{ bloque.id }}">
                                         <span class="asa" aria-hidden="true" title="{{ 'guia.arrastrar'|trans }}">⠿</span>
                                         <div class="editor-bloque__resumen">
                                             <span class="etiqueta">{{ bloque.tipo.etiqueta|trans }}</span>
                                             <strong>{{ bloque.titulo }}</strong>
+                                            {% if origen %}<span class="insignia insignia--compartido">{{ 'compartido.vinculado_de'|trans({'%guia%': origen.guia.titulo}) }}</span>
+                                            {% elseif bloque.reutilizable %}<span class="insignia insignia--compartido" {% if usos %}title="{{ usos|map(g => g.titulo)|join(', ') }}"{% endif %}>{{ usos ? 'compartido.usado_en'|trans({'%count%': usos|length}) : 'compartido.reutilizable'|trans }}</span>{% endif %}
                                             <small>{{ include('panel/guias/_resumen_bloque.html.twig') }}</small>
                                         </div>
                                         <div class="tabla__acciones">
-                                            <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('panel_guia_bloque_editar', {id: guia.id, bloque: bloque.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></a>
+                                            {% if not origen %}
+                                                <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('panel_guia_bloque_editar', {id: guia.id, bloque: bloque.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></a>
+                                            {% else %}
+                                                {% if is_granted('GUIA_EDITAR', origen.guia) %}<a class="accion" data-tooltip="{{ 'compartido.editar_original'|trans }}" href="{{ path('panel_guia_bloque_editar', {id: origen.guia.id, bloque: origen.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'compartido.editar_original'|trans }}: {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></a>{% endif %}
+                                                <form method="post" action="{{ path('panel_guia_bloque_desvincular', {id: guia.id, bloque: bloque.id}) }}" class="en-linea" data-controller="confirmar" data-action="submit->confirmar#preguntar" data-confirmar-mensaje-value="{{ 'compartido.confirmar_desvincular'|trans }}">
+                                                    <input type="hidden" name="_token" value="{{ token }}">
+                                                    <button type="submit" class="accion" data-tooltip="{{ 'compartido.desvincular'|trans }}">{{ icono('desvincular') }}<span class="solo-lectores">{{ 'compartido.desvincular'|trans }}: {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></button>
+                                                </form>
+                                            {% endif %}
                                             <a class="accion" data-tooltip="{{ 'guia.mover'|trans }}" href="{{ path('panel_guia_bloque_mover', {id: guia.id, bloque: bloque.id}) }}">{{ icono('mover') }}<span class="solo-lectores">{{ 'guia.mover'|trans }} {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></a>
                                             <a class="accion" data-tooltip="{{ 'incrustar.enlace'|trans }}" href="{{ path('panel_guia_bloque_incrustar', {id: guia.id, bloque: bloque.id}) }}">{{ icono('incrustar') }}<span class="solo-lectores">{{ 'incrustar.enlace'|trans }} {{ bloque.tipo.etiqueta|trans }} {{ bloque.titulo }}</span></a>
-                                            {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_bloque_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: bloque.titulo ?? bloque.tipo.etiqueta|trans, extra_ruta: {bloque: bloque.id}} %}
+                                            {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_guia_bloque_eliminar', id: guia.id, token: 'editar-guia-' ~ guia.id, nombre: bloque.titulo ?? bloque.tipo.etiqueta|trans, extra_ruta: {bloque: bloque.id}, aviso: usos ? 'compartido.aviso_eliminar'|trans({'%guias%': usos|map(g => g.titulo)|join(', ')}) : null} %}
                                         </div>
                                     </li>
                                 {% endfor %}
@@ -138,6 +192,7 @@
                                     {% for tipo in tipos_bloque %}
                                         <li><a href="{{ path('panel_guia_bloque_nuevo', {id: guia.id, seccion: seccion.id, tipo: tipo.value}) }}"><strong>{{ tipo.etiqueta|trans }}</strong> <small>{{ tipo.ayuda|trans }}</small></a></li>
                                     {% endfor %}
+                                    <li class="editor-seccion__reutilizar"><a href="{{ path('panel_guia_bloque_reutilizar', {id: guia.id, seccion: seccion.id}) }}"><strong>{{ icono('vincular') }}{{ 'compartido.bloque_otra_guia'|trans }}</strong> <small>{{ 'compartido.bloque_otra_guia_ayuda'|trans }}</small></a></li>
                                 </ul>
                             </details>
                         </section>
@@ -150,6 +205,7 @@
                     <input type="text" id="nueva-seccion" name="titulo" maxlength="150" placeholder="{{ 'guia.nueva_seccion_placeholder'|trans }}">
                     <button type="submit" class="boton boton--secundario">{{ 'guia.agregar_seccion'|trans }}</button>
                 </form>
+                {% endif %}
             </section>
         {% else %}
             <p>{{ 'guia.sin_pestanas'|trans }}</p>

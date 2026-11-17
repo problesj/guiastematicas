@@ -120,6 +120,10 @@ final class BloqueType extends AbstractType
             TipoBloque::Revistas => $this->revistas($this->lista($builder, RevistaBloqueType::class, 300)),
             TipoBloque::Diapositivas => $this->lista($builder, DiapositivaBloqueType::class, 20),
         };
+
+        if ($options['compartible']) {
+            $builder->add('compartible', CheckboxType::class, ['label' => 'bloque.compartible', 'help' => 'bloque.compartible_ayuda', 'required' => false]);
+        }
     }
 
     /** Lista de elementos (enlaces, libros, diapositivas) que se agregan, quitan y ordenan con el controlador "coleccion". */
@@ -222,5 +226,7 @@ final class BloqueType extends AbstractType
     {
         $resolver->setRequired('tipo');
         $resolver->setAllowedTypes('tipo', TipoBloque::class);
+        $resolver->setDefault('compartible', false);
+        $resolver->setAllowedTypes('compartible', 'bool');
     }
 }

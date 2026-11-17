@@ -24,7 +24,7 @@
             <select id="destino" name="destino" required aria-describedby="destino-ayuda">
                 {% for g in destinos %}
                     <optgroup label="{{ g.id == guia.id ? 'guia.mover_esta_guia'|trans({'%guia%': g.titulo}) : g.titulo }}{{ g.idioma != guia.idioma ? ' (' ~ g.idioma|upper ~ ')' : '' }}">
-                        {% for p in g.paginas %}
+                        {% for p in g.paginas|filter(p => not p.vinculo and not p.enlaceExterno) %}
                             {% set nombre_pestana = (p.principal ? '' : p.padre.titulo ~ ' › ') ~ p.titulo %}
                             {% for s in p.secciones %}
                                 <option value="s{{ s.id }}" {% if s.id == origen.id %}selected{% endif %}>{{ nombre_pestana }} › {{ s.titulo ?? 'guia.seccion_sin_titulo'|trans }}{% if s.id == origen.id %} {{ 'guia.mover_actual'|trans }}{% endif %}</option>
