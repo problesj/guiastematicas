@@ -29,14 +29,16 @@ final class ContenidoCompartido
      *
      * @return list<Bloque>
      */
-    public function bloquesReutilizables(Guia $excepto, string $texto = '', ?TipoBloque $tipo = null, ?int $idGuia = null): array
+    public function bloquesReutilizables(?Guia $excepto, string $texto = '', ?TipoBloque $tipo = null, ?int $idGuia = null): array
     {
         $consulta = $this->em->createQueryBuilder()->select('b', 's', 'p', 'g')->from(Bloque::class, 'b')
             ->join('b.seccion', 's')->join('s.pestana', 'p')->join('p.guia', 'g')
             ->where('b.origen IS NULL')->andWhere('b.compartible = true OR g.comun = true')
-            ->andWhere('g <> :excepto')->setParameter('excepto', $excepto)
             ->orderBy('g.comun', 'DESC')->addOrderBy('g.titulo')->addOrderBy('p.posicion')->addOrderBy('s.posicion')->addOrderBy('b.posicion')
             ->setMaxResults(200);
+        if (null !== $excepto) {
+            $consulta->andWhere('g <> :excepto')->setParameter('excepto', $excepto);
+        }
         if ('' !== trim($texto)) {
             $consulta->andWhere('b.titulo LIKE :texto OR s.titulo LIKE :texto OR g.titulo LIKE :texto')
                 ->setParameter('texto', '%'.addcslashes(trim($texto), '%_\\').'%');
@@ -52,13 +54,16 @@ final class ContenidoCompartido
     }
 
     /** @return list<Pestana> pestañas reutilizables de las demás guías */
-    public function pestanasReutilizables(Guia $excepto): array
+    public function pestanasReutilizables(?Guia $excepto = null): array
     {
-        return $this->em->createQueryBuilder()->select('p', 'g')->from(Pestana::class, 'p')->join('p.guia', 'g')
+        $consulta = $this->em->createQueryBuilder()->select('p', 'g')->from(Pestana::class, 'p')->join('p.guia', 'g')
             ->where('p.origen IS NULL')->andWhere('p.enlace IS NULL')->andWhere('p.compartible = true OR g.comun = true')
-            ->andWhere('g <> :excepto')->setParameter('excepto', $excepto)
-            ->orderBy('g.comun', 'DESC')->addOrderBy('g.titulo')->addOrderBy('p.posicion')
-            ->getQuery()->getResult();
+            ->orderBy('g.comun', 'DESC')->addOrderBy('g.titulo')->addOrderBy('p.posicion');
+        if (null !== $excepto) {
+            $consulta->andWhere('g <> :excepto')->setParameter('excepto', $excepto);
+        }
+
+        return $consulta->getQuery()->getResult();
     }
 
     /** @return list<Guia> guías que muestran este bloque o pestaña mediante un vínculo (sin repetir) */

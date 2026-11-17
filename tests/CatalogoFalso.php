@@ -23,9 +23,18 @@ final class CatalogoFalso
     /** Conjunto de llaves públicas del Moodle de prueba (lo define cada prueba LTI). */
     public static ?array $jwksLti = null;
 
-    public function __invoke(string $metodo, string $url): MockResponse
+    /** Respuesta de Gemini para la próxima consulta (null = la que arma gemini()); 'error' = responde 500. */
+    public static mixed $gemini = null;
+
+    public function __invoke(string $metodo, string $url, array $opciones = []): MockResponse
     {
         $this->consultas[] = $url;
+        if (str_starts_with($url, 'https://generativelanguage.googleapis.com/')) {
+            return $this->gemini($url, $opciones);
+        }
+        if ('https://www.sitio-real.ejemplo.cl/' === $url) {
+            return new MockResponse('<html></html>');
+        }
         if ('https://moodle.prueba/mod/lti/certs.php' === $url) {
             return null !== self::$jwksLti ? new MockResponse((string) json_encode(self::$jwksLti)) : new MockResponse('', ['http_code' => 404]);
         }
@@ -140,6 +149,38 @@ final class CatalogoFalso
         }
 
         return new MockResponse('', ['http_code' => 404]);
+    }
+
+    /**
+     * Gemini: con la clave de prueba elige el primer candidato de cada categoría, redacta textos y sugiere un sitio que
+     * responde y otro inexistente.
+     */
+    private function gemini(string $url, array $opciones): MockResponse
+    {
+        $cabeceras = implode("\n", (array) ($opciones['headers'] ?? []));
+        if (!str_contains($url, ':generateContent') || !str_contains($cabeceras, 'x-goog-api-key: clave-gemini') || 'error' === self::$gemini) {
+            return new MockResponse('{"error":{"code":500}}', ['http_code' => 500]);
+        }
+        $peticion = json_decode((string) ($opciones['body'] ?? ''), true);
+        $texto = (string) ($peticion['contents'][0]['parts'][0]['text'] ?? '');
+        preg_match('/\{.*\}/s', explode("\n\n", $texto, 2)[0], $m);
+        $datos = json_decode($m[0] ?? '{}', true);
+        $seleccion = [];
+        foreach ((array) ($datos['candidatos'] ?? []) as $clave => $lista) {
+            $seleccion[$clave] = [] === $lista ? [] : [$lista[\count($lista) - 1]['id'], 999999];
+        }
+        $respuesta = self::$gemini ?? [
+            'presentacion' => "Bienvenida generada para {$datos['guia']}.\n\nSegundo párrafo <b>sin html</b>.",
+            'introducciones' => ['bases_datos' => 'Intro de bases.', 'revistas' => 'Intro de revistas.', 'sitios_web' => 'Intro de sitios.', 'libros' => 'Intro de libros.'],
+            'seleccion' => $seleccion,
+            'sitios_sugeridos' => [
+                ['titulo' => 'Sociedad Química', 'url' => 'https://www.sitio-real.ejemplo.cl/', 'descripcion' => 'Existe.'],
+                ['titulo' => 'Inventado', 'url' => 'https://inventado.ejemplo.cl/', 'descripcion' => 'No existe.'],
+                ['titulo' => 'Interno', 'url' => 'http://127.0.0.1/', 'descripcion' => 'No es https.'],
+            ],
+        ];
+
+        return new MockResponse(json_encode(['candidates' => [['content' => ['parts' => [['text' => '```json'."\n".json_encode($respuesta)."\n```"]]]]]]));
     }
 
     /** @return list<array<string, mixed>> dos ediciones: la de la biblioteca (con ISBN) y otra del índice central sin ISBN */

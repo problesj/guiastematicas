@@ -529,6 +529,7 @@ guias:
   vacio: Todavía no hay guías publicadas.
   sin_resultados: No hay guías publicadas con esos filtros.
 guia:
+  nueva_manual: Nueva guía (manual)
   comun: "Guía de contenido común"
   comun_ayuda: "No se publica: sus pestañas y bloques quedan disponibles para vincularlos o copiarlos en las demás guías (herramientas, recursos transversales, horarios…)."
   comun_insignia: "Contenido común"
@@ -922,6 +923,7 @@ configuracion:
     google: Inicio de sesión con Google
     moodle: "Moodle (LTI 1.3)"
     correo: Correo (SMTP)
+    ia: Inteligencia artificial (Gemini)
   grupo_ayuda:
     proxy: Prefijo o plantilla con {url} para los recursos suscritos, p. ej. https://itmsp.museknowledge.com/UCN?qurl={url}. Vacío en el panel y en el servidor = enlaces directos.
     catalogo: Primo VE para el buscador y los enlaces a los registros; la API de Ex Libris para los datos de libros por ISBN y la disponibilidad en Alma.
@@ -930,6 +932,7 @@ configuracion:
     google: Credenciales OAuth del proyecto de Google Cloud. El dominio limita el acceso a cuentas de ese dominio (p. ej. ucn.cl).
     moodle: "Datos que entrega el administrador de Moodle al registrar la herramienta (Administración del sitio → Plugins → Herramienta externa → Gestionar herramientas → «Detalles de configuración»)."
     correo: "Servidor de correo para avisar de las consultas a bibliotecarios. Pídelo al administrador de sistemas (servidor SMTP de la UCN o una cuenta de servicio). El remitente debe estar autorizado en ese servidor."
+    ia: "Clave de la API de Gemini (Google AI Studio → Get API key) para el asistente de guías. Se recomienda un plan pagado: en el gratuito Google puede usar lo enviado para mejorar sus productos. Solo se envían materias, carreras y títulos y descripciones de recursos."
   ajuste:
     PROXY_URL: Dirección del proxy
     PRIMO_URL: Dirección de Primo VE
@@ -961,6 +964,8 @@ configuracion:
     CORREO_SMTP_CLAVE: Contraseña
     CORREO_REMITENTE: Correo del remitente
     CORREO_REMITENTE_NOMBRE: Nombre del remitente
+    GEMINI_API_KEY: Clave de la API de Gemini
+    GEMINI_MODELO: "Modelo (vacío = gemini-2.5-flash)"
   opcion:
     CORREO_SMTP_CIFRADO:
       tls: STARTTLS
@@ -1039,6 +1044,71 @@ apariencia:
     TEXTO_PIE: Texto y enlaces del pie de página.
     LOGO: PNG, JPG o WebP de hasta 1 MB, idealmente horizontal y con fondo transparente. Reemplaza al nombre de la institución en la cabecera.
     IMAGEN_PORTADA: JPG, WebP o PNG de hasta 3 MB y al menos 800 px de ancho, idealmente apaisada (por ejemplo 1920 × 800). Se oscurece para que el texto blanco se lea bien.
+asistente:
+  boton: Nueva guía con IA
+  titulo: Nueva guía asistida
+  bajada: "Elige las materias y carreras: la guía se arma con los recursos de la lista A-Z de esas materias y la bibliografía básica de Biblioges, y queda en borrador para que la revises antes de publicarla."
+  estructura: Pestañas que se crearán
+  estructura_presentacion: Presentación, con tu perfil y el de los coeditores
+  estructura_bases: Bases de datos de las materias y bases multidisciplinarias
+  estructura_revistas: Revistas
+  estructura_sitios: Sitios web recomendados
+  estructura_citacion: Normas de citación y gestores bibliográficos
+  estructura_libros: Libros de las materias y bibliografía básica de las carreras (Biblioges)
+  sin_transversal: un administrador aún no elige el contenido transversal; se omitirá
+  descripcion_ayuda: Opcional. Ayuda a la IA a enfocar los textos y la selección de recursos.
+  materias: Materias
+  materias_ayuda: Se usan los recursos de la lista A-Z que tienen estas materias.
+  materias_obligatorias: Elige al menos una materia.
+  carreras: Carreras (Biblioges)
+  carreras_ayuda: "Opcional, hasta 5. Se agrega la bibliografía básica disponible en la biblioteca (última edición). Ctrl o ⌘ para elegir varias."
+  carreras_maximo: Elige como máximo 5 carreras.
+  sin_biblioges: Biblioges no está configurado o no responde; la pestaña Libros tendrá solo los libros de la lista A-Z.
+  coeditores_ayuda: Aparecerán en la presentación junto a ti y podrán editar la guía.
+  usar_ia: Usar inteligencia artificial (Gemini)
+  usar_ia_ayuda: "Redacta la presentación y las introducciones, elige los recursos más pertinentes y sugiere sitios web adicionales (se comprueba que respondan y quedan marcados para revisar). Puede tardar hasta un minuto."
+  sin_clave: "No disponible: falta la clave de Gemini en Admin → Configuración. La guía se arma con todos los recursos de las materias."
+  crear: Crear la guía
+  armando: Armando la guía…
+  creada: La guía se creó en borrador con los recursos de las materias elegidas. Revísala antes de publicarla.
+  creada_ia: La guía se creó en borrador con ayuda de la IA. Revisa los textos y los recursos antes de publicarla.
+  aviso_ia_fallo: "Gemini no respondió: la guía se armó sin textos de la IA, con todos los recursos de las materias."
+  aviso_sin_bases_datos: No hay bases de datos con esas materias en la lista A-Z.
+  aviso_sin_revistas: No hay revistas con esas materias en la lista A-Z.
+  aviso_sin_sitios_web: No hay sitios web con esas materias en la lista A-Z.
+  aviso_sin_libros: No hay libros con esas materias en la lista A-Z ni bibliografía de las carreras.
+  aviso_sin_multidisciplinarias: No se vinculó el bloque de bases multidisciplinarias (un administrador debe elegirlo en el asistente).
+  aviso_sin_citacion: No se vinculó la pestaña de normas de citación (un administrador debe elegirla en el asistente).
+  aviso_biblioges: No se pudo obtener la bibliografía de Biblioges para alguna carrera.
+  aviso_sugeridos: "La pestaña Sitios web incluye sitios sugeridos por la IA: revísalos antes de publicar (no se agregaron a la lista A-Z)."
+  transversal_titulo: Contenido transversal
+  transversal_ayuda: "Lo que se vincula en todas las guías del asistente (de preferencia, de la guía de contenido común). Se edita en su guía de origen y el cambio se ve en todas."
+  transversal_bloque: Bloque de bases de datos multidisciplinarias
+  transversal_pestana: Pestaña de normas de citación y gestores bibliográficos
+  transversal_ninguno: Ninguno
+  transversal_guardado: Se guardó el contenido transversal del asistente.
+  pestana_presentacion: Presentación
+  pestana_bases_datos: Bases de datos
+  pestana_revistas: Revistas
+  pestana_sitios_web: Sitios web
+  pestana_citacion: Citación y gestores
+  pestana_libros: Libros
+  seccion_bienvenida: Bienvenida
+  seccion_contacto: ¿Necesitas ayuda? Contáctanos
+  seccion_bases_datos: Bases de datos de %materias%
+  seccion_multidisciplinarias: Bases de datos multidisciplinarias
+  seccion_revistas: Revistas de %materias%
+  seccion_sitios_web: Sitios web recomendados
+  seccion_sugeridos: Otros sitios de interés
+  seccion_libros: Libros de %materias%
+  bloque_bases_datos: Bases de datos especializadas
+  bloque_revistas: Revistas
+  bloque_sitios_web: Sitios web
+  bloque_sugeridos: Sugeridos por IA (revisar)
+  bloque_libros: Libros
+  bloque_bibliografia: Bibliografía básica disponible
+  sin_recursos: Pronto agregaremos recursos en esta sección.
+  texto_presentacion: "Bienvenido/a a la guía %guia%. Aquí encontrarás bases de datos, revistas, sitios web y libros seleccionados por Bibliotecas UCN para %materias%.\n\nSi necesitas ayuda para buscar información, escríbenos: estamos para apoyarte."
 compartido:
   bloque_otra_guia: "Bloque de otra guía"
   bloque_otra_guia_ayuda: "Vincular o copiar un bloque reutilizable de otra guía o del contenido común."
