@@ -110,6 +110,13 @@ class Guia
     #[ORM\OrderBy(['posicion' => 'ASC'])]
     private Collection $pestanas;
 
+    /**
+     * Guía de contenido común: no se publica; sus pestañas y bloques quedan disponibles para vincularlos o copiarlos
+     * en las demás guías (la marcan los administradores).
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $comun = false;
+
     #[ORM\Column]
     private int $visitas = 0;
 
@@ -272,8 +279,27 @@ class Guia
         return EstadoGuia::Publicada === $this->estado;
     }
 
+    public function isComun(): bool
+    {
+        return $this->comun;
+    }
+
+    public function setComun(bool $comun): static
+    {
+        $this->comun = $comun;
+        if ($comun) {
+            $this->despublicar();
+        }
+
+        return $this;
+    }
+
+    /** Una guía de contenido común no se publica. */
     public function publicar(): static
     {
+        if ($this->comun) {
+            return $this;
+        }
         $this->estado = EstadoGuia::Publicada;
         $this->publicadaEn ??= new \DateTimeImmutable();
 

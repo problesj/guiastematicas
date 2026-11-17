@@ -34,7 +34,7 @@ final class IncorporarLibrosCommand
         foreach ($bloques as $bloque) {
             $guia = $bloque->getGuia();
             $items = array_values(array_filter($bloque->dato('items', []), 'is_array'));
-            if (null === $guia || [] === $items) {
+            if (null === $guia || [] === $items || $bloque->isVinculo()) { // los vínculos usan los libros del original
                 continue;
             }
             $items = $this->libros->incorporar($items, array_fill(0, \count($items), null), $guia);

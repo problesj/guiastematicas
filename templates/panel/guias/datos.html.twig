@@ -18,6 +18,7 @@
             {{ form_row(formulario.principal) }}
             {{ form_row(formulario.disposicion) }}
             {% if formulario.responsable is defined %}{{ form_row(formulario.responsable) }}{% endif %}
+            {% if formulario.comun is defined %}{{ form_row(formulario.comun) }}{% endif %}
         </fieldset>
         <fieldset>
             <legend>{{ 'guia.grupo_imagenes'|trans }}</legend>

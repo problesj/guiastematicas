@@ -86,6 +86,27 @@ final class AlmacenImagenesGuia
         return $renombres;
     }
 
+    /**
+     * Para una copia de un bloque de diapositivas en otra guía: duplica sus imágenes con el prefijo de la guía de
+     * destino, para que cada guía pueda borrar o podar las suyas sin dejar a la otra sin imágenes.
+     */
+    public function duplicarDiapositivas(Bloque $copia, Guia $destino): void
+    {
+        if (TipoBloque::Diapositivas !== $copia->getTipo() || $copia->isVinculo() || null === $destino->getId()) {
+            return;
+        }
+        $items = $copia->dato('items', []);
+        foreach ($items as $i => $item) {
+            $imagen = (string) ($item['imagen'] ?? '');
+            if (1 === preg_match('/^d\d+-[a-f0-9]{24}\.(jpg|jpeg|png|webp)$/', $imagen, $m) && is_file($this->directorio.'/'.$imagen)) {
+                $nuevo = 'd'.$destino->getId().'-'.bin2hex(random_bytes(12)).'.'.$m[1];
+                $this->filesystem->copy($this->directorio.'/'.$imagen, $this->directorio.'/'.$nuevo);
+                $items[$i]['imagen'] = $nuevo;
+            }
+        }
+        $copia->setContenido(['items' => $items] + $copia->getContenido());
+    }
+
     /** @param array<string, string> $renombres nombre actual => nombre nuevo (de prepararTraslado) */
     public function renombrar(array $renombres): void
     {

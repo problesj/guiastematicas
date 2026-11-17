@@ -13,6 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Pestaña (o página del menú lateral) de una guía. Puede ser subpestaña de otra (un solo nivel, como las subpáginas de
  * LibGuides) o un enlace externo que se abre en otra ventana en vez de tener contenido propio.
+ *
+ * Una pestaña vinculada (origen) muestra las secciones y bloques de una pestaña de otra guía; título, posición y
+ * subpestaña son propios. Solo se vinculan pestañas marcadas como reutilizables o las de una guía de contenido común.
  */
 #[ORM\Entity]
 class Pestana
@@ -52,6 +55,14 @@ class Pestana
     /** Muestra la etiqueta "Nuevo" junto al título. */
     #[ORM\Column(options: ['default' => false])]
     private bool $nueva = false;
+
+    /** Permite que otras guías la vinculen o copien. */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $compartible = false;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?Pestana $origen = null;
 
     /** @var Collection<int, Seccion> */
     #[ORM\OneToMany(targetEntity: Seccion::class, mappedBy: 'pestana', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -184,11 +195,65 @@ class Pestana
     /** @return Collection<int, Seccion> */
     public function getSecciones(): Collection
     {
+        return $this->origen?->getSecciones() ?? $this->secciones;
+    }
+
+    /** @return Collection<int, Seccion> las secciones de esta pestaña, aunque esté vinculada a otra */
+    public function getSeccionesPropias(): Collection
+    {
         return $this->secciones;
+    }
+
+    public function getOrigen(): ?Pestana
+    {
+        return $this->origen;
+    }
+
+    public function isVinculo(): bool
+    {
+        return null !== $this->origen;
+    }
+
+    /** Vincula esta pestaña (nueva, sin secciones) a otra; si la otra ya es un vínculo, a la pestaña de la que viene. */
+    public function vincularA(Pestana $otra): static
+    {
+        $this->origen = $otra->origen ?? $otra;
+        $this->compartible = false;
+
+        return $this;
+    }
+
+    /** Deja de estar vinculada; las secciones (copias del original) se agregan aparte. */
+    public function quitarVinculo(): static
+    {
+        $this->origen = null;
+
+        return $this;
+    }
+
+    public function isCompartible(): bool
+    {
+        return $this->compartible;
+    }
+
+    public function setCompartible(bool $compartible): static
+    {
+        $this->compartible = $compartible && null === $this->origen;
+
+        return $this;
+    }
+
+    /** Se puede vincular o copiar desde otras guías (no los vínculos ni los enlaces externos). */
+    public function isReutilizable(): bool
+    {
+        return null === $this->origen && null === $this->enlace && ($this->compartible || true === $this->guia?->isComun());
     }
 
     public function agregarSeccion(Seccion $seccion): static
     {
+        if (null !== $this->origen) {
+            throw new \LogicException('Una pestaña vinculada no tiene secciones propias.');
+        }
         $seccion->setPestana($this)->setPosicion($this->secciones->count());
         $this->secciones->add($seccion);
 

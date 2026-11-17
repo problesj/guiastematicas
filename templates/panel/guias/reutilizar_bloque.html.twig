@@ -1,0 +1,60 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'compartido.titulo_bloques'|trans }}{% endblock %}
+
+{% block contenido %}
+    {% set volver = path('panel_guia_editar', {id: guia.id, pestana: seccion.pestana.id, _fragment: 'seccion-' ~ seccion.id}) %}
+    {% set token = csrf_token('editar-guia-' ~ guia.id) %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}">
+        <a href="{{ path('panel_guias') }}">{{ 'panel.guias'|trans }}</a> ›
+        <a href="{{ volver }}">{{ guia.titulo }}</a> ›
+        <span aria-current="page">{{ 'compartido.titulo_bloques'|trans }}</span>
+    </nav>
+    <h1>{{ 'compartido.titulo_bloques'|trans }}</h1>
+    <p class="pagina__bajada">{{ 'compartido.destino'|trans({'%pestana%': seccion.pestana.titulo, '%seccion%': seccion.titulo ?? 'guia.seccion_sin_titulo'|trans}) }}</p>
+    <div class="compartido-ayuda">
+        <p><strong>{{ 'compartido.vincular'|trans }}:</strong> {{ 'compartido.vincular_ayuda'|trans }}</p>
+        <p><strong>{{ 'compartido.copiar'|trans }}:</strong> {{ 'compartido.copiar_ayuda'|trans }}</p>
+    </div>
+
+    <form method="get" class="filtro" role="search">
+        <label for="q" class="solo-lectores">{{ 'bases.buscar'|trans }}</label>
+        <input type="search" id="q" name="q" value="{{ filtro.q }}" placeholder="{{ 'compartido.buscar_placeholder'|trans }}" class="filtro__texto">
+        <label for="filtro-tipo" class="solo-lectores">{{ 'compartido.tipo_bloque'|trans }}</label>
+        <select id="filtro-tipo" name="tipo">
+            <option value="">{{ 'compartido.todos_tipos'|trans }}</option>
+            {% for t in tipos_bloque %}<option value="{{ t.value }}" {% if filtro.tipo == t.value %}selected{% endif %}>{{ t.etiqueta|trans }}</option>{% endfor %}
+        </select>
+        <label for="filtro-guia" class="solo-lectores">{{ 'compartido.guia'|trans }}</label>
+        <select id="filtro-guia" name="guia">
+            <option value="">{{ 'compartido.todas_guias'|trans }}</option>
+            {% for g in guias %}<option value="{{ g.id }}" {% if filtro.guia == g.id %}selected{% endif %}>{{ g.titulo }}{{ g.comun ? ' · ' ~ 'guia.comun_insignia'|trans }}</option>{% endfor %}
+        </select>
+        <button type="submit" class="boton boton--secundario">{{ 'bases.buscar'|trans }}</button>
+    </form>
+
+    {% if bloques is empty %}
+        <p>{{ (guias is empty ? 'compartido.sin_bloques' : 'compartido.sin_resultados')|trans }}</p>
+    {% else %}
+        <ul class="compartido-lista">
+            {% for bloque in bloques %}
+                {% set p = bloque.seccion.pestana %}
+                <li class="compartido-item">
+                    <div class="compartido-item__datos">
+                        <span class="etiqueta">{{ bloque.tipo.etiqueta|trans }}</span>
+                        <strong>{{ bloque.titulo ?? bloque.tipo.etiqueta|trans }}</strong>
+                        <small class="compartido-item__origen">{{ bloque.guia.titulo }}{% if bloque.guia.comun %} <span class="insignia insignia--compartido">{{ 'guia.comun_insignia'|trans }}</span>{% endif %} · {{ p.titulo }}{% if bloque.seccion.titulo %} › {{ bloque.seccion.titulo }}{% endif %}</small>
+                        <small>{{ include('panel/guias/_resumen_bloque.html.twig') }}</small>
+                    </div>
+                    <form method="post" class="compartido-item__acciones">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <input type="hidden" name="bloque" value="{{ bloque.id }}">
+                        <button type="submit" name="modo" value="vincular" class="boton boton--pequeno">{{ icono('vincular') }}{{ 'compartido.vincular'|trans }}<span class="solo-lectores"> {{ bloque.titulo ?? bloque.tipo.etiqueta|trans }}</span></button>
+                        <button type="submit" name="modo" value="copiar" class="boton boton--secundario boton--pequeno">{{ icono('copiar') }}{{ 'compartido.copiar'|trans }}<span class="solo-lectores"> {{ bloque.titulo ?? bloque.tipo.etiqueta|trans }}</span></button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p><a class="boton boton--secundario" href="{{ volver }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a></p>
+{% endblock %}

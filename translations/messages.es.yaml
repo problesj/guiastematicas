@@ -529,6 +529,11 @@ guias:
   vacio: Todavía no hay guías publicadas.
   sin_resultados: No hay guías publicadas con esos filtros.
 guia:
+  comun: "Guía de contenido común"
+  comun_ayuda: "No se publica: sus pestañas y bloques quedan disponibles para vincularlos o copiarlos en las demás guías (herramientas, recursos transversales, horarios…)."
+  comun_insignia: "Contenido común"
+  comun_aviso: "Esta es una guía de contenido común: no se publica y todas sus pestañas y bloques se pueden vincular o copiar en otras guías. Lo que cambies aquí se verá en todas las guías que los tengan vinculados."
+  comun_no_se_publica: "Una guía de contenido común no se publica. Sus pestañas y bloques se muestran en las guías que los vinculan."
   grupo_imagenes: Imágenes
   banner: Imagen de cabecera (banner)
   banner_ayuda: JPG, PNG o WebP de hasta 4 MB. Se muestra arriba de la guía, recortada a 4:1 (recomendado 1600 × 400 px).
@@ -649,6 +654,8 @@ guia:
   reportar: Reportar un problema
   reportar_asunto: "Problema en la guía «%guia%»"
 bloque:
+  compartible: "Permitir reutilizar en otras guías"
+  compartible_ayuda: "Otras guías podrán vincular este bloque (verán siempre su versión actual) o copiarlo."
   items_enlaces: Enlaces
   items_libros: Libros
   items_revistas: Revistas
@@ -1028,6 +1035,51 @@ apariencia:
     TEXTO_PIE: Texto y enlaces del pie de página.
     LOGO: PNG, JPG o WebP de hasta 1 MB, idealmente horizontal y con fondo transparente. Reemplaza al nombre de la institución en la cabecera.
     IMAGEN_PORTADA: JPG, WebP o PNG de hasta 3 MB y al menos 800 px de ancho, idealmente apaisada (por ejemplo 1920 × 800). Se oscurece para que el texto blanco se lea bien.
+compartido:
+  bloque_otra_guia: "Bloque de otra guía"
+  bloque_otra_guia_ayuda: "Vincular o copiar un bloque reutilizable de otra guía o del contenido común."
+  reutilizar_pestana: "Pestaña de otra guía"
+  titulo_bloques: "Agregar un bloque de otra guía"
+  titulo_pestanas: "Agregar una pestaña de otra guía"
+  destino: "Se agregará al final de %pestana% › %seccion%."
+  vincular: "Vincular"
+  copiar: "Copiar"
+  vincular_ayuda: "muestra siempre el contenido actual del bloque original; se edita solo en su guía."
+  copiar_ayuda: "agrega un bloque independiente con el contenido de hoy, que puedes modificar aquí."
+  vincular_pestana_ayuda: "la pestaña muestra siempre las secciones y bloques actuales de la original; el título y su lugar en el menú son tuyos."
+  copiar_pestana_ayuda: "agrega una pestaña independiente con copias de sus secciones y bloques."
+  buscar_placeholder: "Título del bloque, sección o guía"
+  tipo_bloque: "Tipo de bloque"
+  todos_tipos: "Todos los tipos"
+  guia: "Guía"
+  todas_guias: "Todas las guías"
+  sin_bloques: "Aún no hay bloques reutilizables. Marca «Permitir reutilizar en otras guías» al editar un bloque o crea una guía de contenido común."
+  sin_resultados: "Ningún bloque reutilizable coincide con la búsqueda."
+  sin_pestanas: "Aún no hay pestañas reutilizables. Marca «Permitir reutilizar en otras guías» en las opciones de una pestaña o crea una guía de contenido común."
+  resumen_pestana: "%secciones% secciones, %bloques% bloques"
+  bloque_vinculado: "Bloque vinculado. Muestra el contenido del original."
+  bloque_copiado: "Bloque copiado. Puedes editarlo en esta guía."
+  pestana_vinculada: "Pestaña vinculada. Muestra el contenido de la original."
+  pestana_copiada: "Pestaña copiada con sus secciones y bloques."
+  bloque_desvinculado: "El bloque ahora es una copia propia de esta guía."
+  pestana_desvinculada: "La pestaña ahora es una copia propia de esta guía."
+  bloque_ajeno: "Este bloque está vinculado a otra guía que no puedes editar. Para cambiarlo aquí, conviértelo en copia."
+  vinculado_de: "Vinculado de %guia%"
+  reutilizable: "Reutilizable"
+  usado_en: "{1}Usado en 1 guía|]1,Inf[Usado en %count% guías"
+  editar_original: "Editar el original"
+  desvincular: "Convertir en copia propia"
+  confirmar_desvincular: "¿Convertir este bloque en una copia propia? Dejará de cambiar cuando se edite el original."
+  desvincular_pestana: "Convertir en copia propia"
+  confirmar_desvincular_pestana: "¿Convertir esta pestaña en una copia propia? Dejará de cambiar cuando se edite la original."
+  pestana_vinculada_de: "Pestaña vinculada de %guia%"
+  aviso_pestana: "Esta pestaña muestra el contenido de «%pestana%» de la guía «%guia%». Sus secciones y bloques se editan allá; aquí puedes cambiar el título y su lugar en el menú."
+  pestana_reutilizable: "Otras guías pueden vincular o copiar esta pestaña."
+  pestana_usada_en: "{1}Vinculada en 1 guía: %guias%|]1,Inf[Vinculada en %count% guías: %guias%"
+  pestana_compartible: "Permitir reutilizar en otras guías"
+  pestana_compartible_ayuda: "Otras guías podrán vincular esta pestaña (verán siempre sus secciones actuales) o copiarla."
+  aviso_eliminar: "También desaparecerá de las guías que lo tienen vinculado: %guias%."
+
 compartir:
   titulo: "Compartir"
   mas: "Compartir…"

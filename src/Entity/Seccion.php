@@ -123,4 +123,16 @@ class Seccion
 
         return $this;
     }
+
+    /** Copia con copias de sus bloques (sin pestaña). */
+    public function copiar(): self
+    {
+        $copia = new self($this->titulo);
+        $copia->columnas = $this->columnas;
+        foreach ($this->bloques as $bloque) {
+            $copia->agregarBloque($bloque->copiar());
+        }
+
+        return $copia;
+    }
 }
