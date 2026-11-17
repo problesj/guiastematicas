@@ -221,6 +221,41 @@ final class EditorGuiasTest extends WebTestCase
         self::assertSame(1, $bloques[1]->getPosicion());
     }
 
+    public function testLosRecursosDelBloqueSeOrdenanAManoOAlfabeticamente(): void
+    {
+        $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);
+        $guia = self::crearGuia($ana, publicada: true);
+        $seccion = $guia->getPestana()->getSecciones()->last();
+        $ids = [];
+        foreach (['Web of Science', 'Ébsco', 'Scopus', 'arXiv'] as $titulo) {
+            $recurso = (new Recurso())->setTitulo($titulo)->setUrl('https://ejemplo.cl/'.rawurlencode($titulo))->setTipo(TipoRecurso::BaseDatos)->setAcceso(TipoAcceso::Suscripcion);
+            self::em()->persist($recurso);
+            self::em()->flush();
+            $ids[$titulo] = $recurso->getId();
+        }
+        $this->cliente->loginUser($ana);
+        $elegidos = json_encode(array_map(fn (int $id) => ['id' => $id], array_values($ids)));
+
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/recursos');
+        self::assertSame('manual', $crawler->filter('input[name="bloque[orden]"][checked]')->attr('value'));
+        $this->cliente->submit($crawler->selectButton('Guardar')->form(), ['bloque[recursos]' => $elegidos]);
+        $bloque = self::em()->getRepository(Bloque::class)->findOneBy(['seccion' => $seccion->getId()]);
+        self::assertSame(array_values($ids), $bloque->dato('ids'));
+        self::assertSame('manual', $bloque->dato('orden'));
+
+        $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/bloques/'.$bloque->getId().'/editar');
+        $this->cliente->submit($crawler->selectButton('Guardar')->form(), ['bloque[recursos]' => $elegidos, 'bloque[orden]' => 'titulo']);
+        self::em()->clear();
+        $bloque = self::em()->find(Bloque::class, $bloque->getId());
+        self::assertSame([$ids['arXiv'], $ids['Ébsco'], $ids['Scopus'], $ids['Web of Science']], $bloque->dato('ids'));
+
+        // Sigue alfabético en la guía aunque después se cambie el título de un recurso.
+        self::em()->find(Recurso::class, $ids['Web of Science'])->setTitulo('Academic Search');
+        self::em()->flush();
+        $crawler = $this->cliente->request('GET', '/es/guias/quimica');
+        self::assertSame(['Academic Search', 'arXiv', 'Ébsco', 'Scopus'], $crawler->filter('.bloque__recursos > li > a')->each(fn ($a) => trim($a->filter('span')->count() ? str_replace($a->filter('span')->text(), '', $a->text()) : $a->text())));
+    }
+
     public function testArrastrarReordenaPestanasYMueveBloquesEntreSecciones(): void
     {
         $ana = self::crearUsuario('ana@ucn.cl', Rol::Editor);

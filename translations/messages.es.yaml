@@ -654,6 +654,10 @@ guia:
   reportar: Reportar un problema
   reportar_asunto: "Problema en la guía «%guia%»"
 bloque:
+  recursos_orden: Orden de los recursos
+  recursos_orden_ayuda: Con «Alfabético» la lista se ordena por título, también los recursos que agregues después.
+  recursos_orden_manual: Manual (flechas ↑ ↓)
+  recursos_orden_titulo: Alfabético (A–Z)
   compartible: "Permitir reutilizar en otras guías"
   compartible_ayuda: "Otras guías podrán vincular este bloque (verán siempre su versión actual) o copiarlo."
   items_enlaces: Enlaces
@@ -822,7 +826,7 @@ bloque:
   texto: Texto
   recursos: Recursos
   recursos_elegidos: Recursos elegidos
-  recursos_ayuda: Usa las flechas para ordenar los recursos del bloque y × para quitarlos. Abajo puedes filtrar la lista A-Z y agregar varios a la vez.
+  recursos_ayuda: Con orden manual, usa las flechas para ordenar los recursos; × los quita. Abajo puedes filtrar la lista A-Z y agregar varios a la vez.
   buscar_recurso: Buscar recurso por título
   sin_recursos: Sin recursos.
   recursos_vacio: Este bloque no tiene recursos disponibles.

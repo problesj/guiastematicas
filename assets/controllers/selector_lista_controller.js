@@ -34,6 +34,13 @@ export default class extends Controller {
             }
         };
         document.addEventListener('click', this.cerrarFuera);
+        // Bloque de recursos con orden «A–Z»: la lista se mantiene alfabética y sin flechas.
+        this.alfabetico = this.element.querySelector('input[data-action~="selector-lista#cambiarOrden"]:checked')?.value === 'titulo';
+        this.dibujar();
+    }
+
+    cambiarOrden(evento) {
+        this.alfabetico = evento.target.value === 'titulo';
         this.dibujar();
     }
 
@@ -180,6 +187,9 @@ export default class extends Controller {
     }
 
     dibujar() {
+        if (this.alfabetico) {
+            this.elegidos.sort((a, b) => this.nombre(a).localeCompare(this.nombre(b), 'es', { sensitivity: 'base', numeric: true }));
+        }
         this.campoTarget.value = JSON.stringify(this.elegidos);
         this.campoTarget.dispatchEvent(new Event('change', { bubbles: true }));
         const lista = this.listaTarget;
@@ -203,9 +213,13 @@ export default class extends Controller {
                 marca.textContent = this.nuevoValue;
                 item.append(marca);
             }
+            if (!this.alfabetico) {
+                item.append(
+                    this.boton('subir', this.subirValue, nombre.textContent, () => this.mover(i, i - 1), i === 0),
+                    this.boton('bajar', this.bajarValue, nombre.textContent, () => this.mover(i, i + 1), i === this.elegidos.length - 1),
+                );
+            }
             item.append(
-                this.boton('subir', this.subirValue, nombre.textContent, () => this.mover(i, i - 1), i === 0),
-                this.boton('bajar', this.bajarValue, nombre.textContent, () => this.mover(i, i + 1), i === this.elegidos.length - 1),
                 this.boton('eliminar', this.quitarValue, nombre.textContent, () => {
                     this.elegidos.splice(i, 1);
                     this.dibujar();
