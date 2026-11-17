@@ -529,6 +529,7 @@ guias:
   vacio: No guides have been published yet.
   sin_resultados: No published guides match those filters.
 guia:
+  nueva_manual: New guide (manual)
   comun: "Shared content guide"
   comun_ayuda: "Not published: its tabs and blocks can be linked or copied into the other guides (tools, cross-cutting resources, opening hours…)."
   comun_insignia: "Shared content"
@@ -922,6 +923,7 @@ configuracion:
     google: Google sign-in
     moodle: "Moodle (LTI 1.3)"
     correo: Email (SMTP)
+    ia: Artificial intelligence (Gemini)
   grupo_ayuda:
     proxy: Prefix or template with {url} for subscribed resources, e.g. https://itmsp.museknowledge.com/UCN?qurl={url}. Empty in the panel and on the server = direct links.
     catalogo: Primo VE for the search box and record links; the Ex Libris API for book data by ISBN and Alma availability.
@@ -930,6 +932,7 @@ configuracion:
     google: OAuth credentials of the Google Cloud project. The domain restricts access to accounts in that domain (e.g. ucn.cl).
     moodle: "Details given by the Moodle administrator when registering the tool (Site administration → Plugins → External tool → Manage tools → «Tool configuration details»)."
     correo: "Mail server used to notify about messages to librarians. Ask the system administrator (UCN SMTP server or a service account). The sender must be allowed on that server."
+    ia: "Gemini API key (Google AI Studio → Get API key) for the guide assistant. A paid plan is recommended: on the free tier Google may use what is sent to improve its products. Only subjects, programmes and resource titles and descriptions are sent."
   ajuste:
     PROXY_URL: Proxy address
     PRIMO_URL: Primo VE address
@@ -961,6 +964,8 @@ configuracion:
     CORREO_SMTP_CLAVE: Password
     CORREO_REMITENTE: Sender address
     CORREO_REMITENTE_NOMBRE: Sender name
+    GEMINI_API_KEY: Gemini API key
+    GEMINI_MODELO: "Model (empty = gemini-2.5-flash)"
   opcion:
     CORREO_SMTP_CIFRADO:
       tls: STARTTLS
@@ -1039,6 +1044,71 @@ apariencia:
     TEXTO_PIE: Footer text and links.
     LOGO: PNG, JPG or WebP up to 1 MB, ideally landscape with a transparent background. Replaces the institution name in the header.
     IMAGEN_PORTADA: JPG, WebP or PNG up to 3 MB and at least 800 px wide, ideally landscape (e.g. 1920 × 800). It is darkened so white text stays readable.
+asistente:
+  boton: New guide with AI
+  titulo: New assisted guide
+  bajada: "Choose the subjects and programmes: the guide is built from the A-Z list resources for those subjects and the core reading list from Biblioges, and is saved as a draft for you to review before publishing."
+  estructura: Tabs that will be created
+  estructura_presentacion: Introduction, with your profile and the co-editors'
+  estructura_bases: Subject databases and multidisciplinary databases
+  estructura_revistas: Journals
+  estructura_sitios: Recommended websites
+  estructura_citacion: Citation styles and reference managers
+  estructura_libros: Subject books and core reading for the programmes (Biblioges)
+  sin_transversal: an administrator has not chosen the shared content yet; it will be skipped
+  descripcion_ayuda: Optional. Helps the AI focus the texts and the choice of resources.
+  materias: Subjects
+  materias_ayuda: The A-Z list resources with these subjects are used.
+  materias_obligatorias: Choose at least one subject.
+  carreras: Programmes (Biblioges)
+  carreras_ayuda: "Optional, up to 5. Adds the core reading available in the library (latest edition). Ctrl or ⌘ to choose several."
+  carreras_maximo: Choose at most 5 programmes.
+  sin_biblioges: Biblioges is not configured or not responding; the Books tab will only have books from the A-Z list.
+  coeditores_ayuda: They will appear in the introduction next to you and will be able to edit the guide.
+  usar_ia: Use artificial intelligence (Gemini)
+  usar_ia_ayuda: "Writes the introduction and tab texts, picks the most relevant resources and suggests extra websites (checked to respond and marked for review). It can take up to a minute."
+  sin_clave: "Not available: the Gemini key is missing in Admin → Configuration. The guide is built with all the subject resources."
+  crear: Create the guide
+  armando: Building the guide…
+  creada: The guide was created as a draft with the resources of the chosen subjects. Review it before publishing.
+  creada_ia: The guide was created as a draft with AI assistance. Review the texts and resources before publishing.
+  aviso_ia_fallo: "Gemini did not respond: the guide was built without AI texts, with all the subject resources."
+  aviso_sin_bases_datos: There are no databases with those subjects in the A-Z list.
+  aviso_sin_revistas: There are no journals with those subjects in the A-Z list.
+  aviso_sin_sitios_web: There are no websites with those subjects in the A-Z list.
+  aviso_sin_libros: There are no books with those subjects in the A-Z list nor reading lists for the programmes.
+  aviso_sin_multidisciplinarias: The multidisciplinary databases block was not linked (an administrator must choose it in the assistant).
+  aviso_sin_citacion: The citation styles tab was not linked (an administrator must choose it in the assistant).
+  aviso_biblioges: The Biblioges reading list could not be retrieved for some programme.
+  aviso_sugeridos: "The Websites tab includes sites suggested by the AI: review them before publishing (they were not added to the A-Z list)."
+  transversal_titulo: Shared content
+  transversal_ayuda: "What is linked in every guide built by the assistant (preferably from the shared content guide). It is edited in its source guide and the change shows everywhere."
+  transversal_bloque: Multidisciplinary databases block
+  transversal_pestana: Citation styles and reference managers tab
+  transversal_ninguno: None
+  transversal_guardado: The assistant's shared content was saved.
+  pestana_presentacion: Introduction
+  pestana_bases_datos: Databases
+  pestana_revistas: Journals
+  pestana_sitios_web: Websites
+  pestana_citacion: Citing and reference managers
+  pestana_libros: Books
+  seccion_bienvenida: Welcome
+  seccion_contacto: Need help? Contact us
+  seccion_bases_datos: Databases for %materias%
+  seccion_multidisciplinarias: Multidisciplinary databases
+  seccion_revistas: Journals for %materias%
+  seccion_sitios_web: Recommended websites
+  seccion_sugeridos: Other sites of interest
+  seccion_libros: Books for %materias%
+  bloque_bases_datos: Specialised databases
+  bloque_revistas: Journals
+  bloque_sitios_web: Websites
+  bloque_sugeridos: Suggested by AI (review)
+  bloque_libros: Books
+  bloque_bibliografia: Core reading available
+  sin_recursos: We will add resources to this section soon.
+  texto_presentacion: "Welcome to the %guia% guide. Here you will find databases, journals, websites and books selected by Bibliotecas UCN for %materias%.\n\nIf you need help finding information, write to us: we are here to support you."
 compartido:
   bloque_otra_guia: "Block from another guide"
   bloque_otra_guia_ayuda: "Link or copy a reusable block from another guide or the shared content."

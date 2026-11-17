@@ -5,7 +5,7 @@
 {% block contenido %}
     <div class="encabezado-accion">
         <h1>{{ 'panel.guias'|trans }}</h1>
-        {% if is_granted('ROLE_EDITOR') %}<a class="boton" href="{{ path('panel_guia_nueva') }}">{{ 'guia.nueva'|trans }}</a>{% endif %}
+        {% if is_granted('ROLE_EDITOR') %}<div class="encabezado-accion__botones"><a class="boton boton--secundario" href="{{ path('panel_guia_nueva') }}">{{ 'guia.nueva_manual'|trans }}</a><a class="boton" href="{{ path('panel_guia_asistente') }}">{{ 'asistente.boton'|trans }}</a></div>{% endif %}
     </div>
 
     <form method="get" class="filtro" role="search">

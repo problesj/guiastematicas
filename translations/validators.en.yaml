@@ -31,3 +31,6 @@ bloque.revista_sin_titulo: Enter the title or an ISSN.
 guia.principal_ciclo: The parent guide cannot be the guide itself or one of its subguides.
 sugerencia.materia_obligatoria: Choose at least one subject.
 sugerencia.identificador_no_valido: "Use only digits, hyphens and X."
+asistente:
+  materias_obligatorias: Choose at least one subject.
+  carreras_maximo: Choose at most 5 programmes.

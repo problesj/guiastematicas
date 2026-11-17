@@ -55,6 +55,10 @@ final class Ajustes implements ResetInterface
             'CORREO_REMITENTE' => [],
             'CORREO_REMITENTE_NOMBRE' => [],
         ],
+        'ia' => [
+            'GEMINI_API_KEY' => ['secreto' => true],
+            'GEMINI_MODELO' => [],
+        ],
         'moodle' => [
             'LTI_ISSUER' => [],
             'LTI_CLIENT_ID' => [],
@@ -67,6 +71,9 @@ final class Ajustes implements ResetInterface
     /** Ajustes internos que no aparecen en el panel (la llave privada LTI se genera sola y se guarda cifrada). */
     public const INTERNOS = [
         'LTI_LLAVE_PRIVADA' => ['secreto' => true],
+        // Contenido transversal que el asistente de guías vincula (ids de un bloque y una pestaña reutilizables).
+        'IA_BLOQUE_MULTIDISCIPLINARIAS' => [],
+        'IA_PESTANA_CITACION' => [],
     ];
 
     /** Ajustes de apariencia (sin variable de entorno equivalente), ver App\Configuracion\Apariencia. */

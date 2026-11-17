@@ -1,0 +1,73 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'asistente.titulo'|trans }}{% endblock %}
+
+{% block contenido %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}"><a href="{{ path('panel_guias') }}">{{ 'panel.guias'|trans }}</a> › <span aria-current="page">{{ 'asistente.titulo'|trans }}</span></nav>
+    <h1>{{ 'asistente.titulo'|trans }}</h1>
+    <p class="pagina__bajada">{{ 'asistente.bajada'|trans }}</p>
+    <ol class="asistente__pestanas" aria-label="{{ 'asistente.estructura'|trans }}">
+        <li>{{ 'asistente.estructura_presentacion'|trans }}</li>
+        <li>{{ 'asistente.estructura_bases'|trans }}{% if not multidisciplinarias %} <small>({{ 'asistente.sin_transversal'|trans }})</small>{% endif %}</li>
+        <li>{{ 'asistente.estructura_revistas'|trans }}</li>
+        <li>{{ 'asistente.estructura_sitios'|trans }}</li>
+        <li>{{ 'asistente.estructura_citacion'|trans }}{% if not citacion %} <small>({{ 'asistente.sin_transversal'|trans }})</small>{% endif %}</li>
+        <li>{{ 'asistente.estructura_libros'|trans }}</li>
+    </ol>
+
+    {{ form_start(formulario, {attr: {class: 'formulario', novalidate: 'novalidate'}}) }}
+        <fieldset>
+            <legend>{{ 'guia.grupo_datos'|trans }}</legend>
+            {{ form_row(formulario.titulo) }}
+            {{ form_row(formulario.descripcion) }}
+            {{ form_row(formulario.idioma) }}
+        </fieldset>
+        <fieldset>
+            <legend>{{ 'asistente.materias'|trans }}</legend>
+            {{ form_row(formulario.materias, {label: false}) }}
+        </fieldset>
+        <fieldset>
+            <legend>{{ 'asistente.carreras'|trans }}</legend>
+            {% if formulario.carreras is defined %}
+                {{ form_row(formulario.carreras, {label_attr: {class: 'solo-lectores'}}) }}
+            {% else %}
+                <p class="campo__ayuda">{{ 'asistente.sin_biblioges'|trans }}</p>
+            {% endif %}
+        </fieldset>
+        <fieldset>
+            <legend>{{ 'guia.coeditores'|trans }}</legend>
+            {{ form_row(formulario.coeditores, {label: false}) }}
+        </fieldset>
+        {{ form_row(formulario.usar_ia) }}
+        {{ form_rest(formulario) }}
+        <div class="formulario__acciones">
+            <button type="submit" class="boton" data-controller="enviando" data-enviando-texto-value="{{ 'asistente.armando'|trans }}">{{ 'asistente.crear'|trans }}</button>
+            <a class="boton boton--secundario" href="{{ path('panel_guias') }}" data-tooltip="{{ 'formulario.cancelar_ayuda'|trans }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
+        </div>
+    {{ form_end(formulario) }}
+
+    {% if is_granted('ROLE_ADMINISTRADOR') %}
+        <section class="configuracion__grupo" aria-labelledby="titulo-transversal">
+            <h2 id="titulo-transversal">{{ 'asistente.transversal_titulo'|trans }}</h2>
+            <p class="campo__ayuda">{{ 'asistente.transversal_ayuda'|trans }}</p>
+            <form method="post" action="{{ path('panel_guia_asistente_transversal') }}" class="formulario">
+                <input type="hidden" name="_token" value="{{ csrf_token('asistente-transversal') }}">
+                <div class="campo">
+                    <label for="transversal-bloque">{{ 'asistente.transversal_bloque'|trans }}</label>
+                    <select id="transversal-bloque" name="bloque">
+                        <option value="">{{ 'asistente.transversal_ninguno'|trans }}</option>
+                        {% for b in bloques_transversales %}<option value="{{ b.id }}" {% if multidisciplinarias and multidisciplinarias.id == b.id %}selected{% endif %}>{{ b.guia.titulo }} › {{ b.seccion.pestana.titulo }} › {{ b.titulo ?? b.seccion.titulo ?? b.tipo.etiqueta|trans }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="transversal-pestana">{{ 'asistente.transversal_pestana'|trans }}</label>
+                    <select id="transversal-pestana" name="pestana">
+                        <option value="">{{ 'asistente.transversal_ninguno'|trans }}</option>
+                        {% for p in pestanas_transversales %}<option value="{{ p.id }}" {% if citacion and citacion.id == p.id %}selected{% endif %}>{{ p.guia.titulo }} › {{ p.titulo }}</option>{% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="boton boton--secundario">{{ 'formulario.guardar'|trans }}</button>
+            </form>
+        </section>
+    {% endif %}
+{% endblock %}
