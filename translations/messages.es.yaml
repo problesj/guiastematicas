@@ -66,6 +66,7 @@ sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
 panel:
+  sugerencias: Sugerencias
   contenido: Contenido
   recursos: Recursos bibliográficos
   recursos_texto: Lista A-Z, importación desde Excel y proxy AccesUM.
@@ -175,6 +176,7 @@ materia:
   inactiva: Inactiva
   especialistas: Especialistas
 formulario:
+  ver: Ver
   si: Sí
   no: "No"
   guardar: Guardar
@@ -215,6 +217,8 @@ tipo_acceso:
   abierto: Acceso abierto
   prueba: En prueba
 bases:
+  sugerir: Sugerir un recurso
+  sugerir_texto: ¿Falta un recurso que te sirve?
   listado: Listado
   titulo: Recursos bibliográficos A-Z
   bajada: Bases de datos, revistas, libros electrónicos, normas y otros recursos suscritos por Bibliotecas UCN o de acceso abierto.
@@ -1027,3 +1031,76 @@ recursos_vista:
     menu: "Revistas"
     titulo: "Revistas A-Z"
     bajada: "Revistas electrónicas suscritas por Bibliotecas UCN o de acceso abierto, por orden alfabético."
+estado_sugerencia:
+  pendiente: Pendiente
+  aprobada: Aprobada
+  rechazada: Rechazada
+captcha:
+  pendiente: "Verificación anti-robots: se hará sola al completar el formulario."
+  calculando: "Verificando que no eres un robot…"
+  listo: "Verificación lista."
+  error: "No se pudo completar la verificación. Recarga la página e inténtalo de nuevo."
+  sin_javascript: "Para enviar el formulario necesitas activar JavaScript (se usa para la verificación anti-robots)."
+sugerencia:
+  titulo_pagina: Sugerir un recurso
+  bajada: "Propón una base de datos, libro, revista u otro recurso. Lo revisará quien edita la guía temática de la materia y, si se aprueba, se agregará a Recursos bibliográficos."
+  grupo_recurso: El recurso
+  grupo_persona: Tus datos
+  tipo: Tipo de recurso
+  titulo: Título
+  autores: Autor(es)
+  autores_ayuda: Opcional. Por ejemplo, para un libro.
+  identificador: ISBN o ISSN
+  identificador_ayuda: Opcional. Ayuda a encontrarlo en el catálogo.
+  url: Enlace
+  url_ayuda: Opcional, si conoces la dirección web.
+  descripcion: Descripción
+  materias: Materias
+  materias_ayuda: Elige al menos una; define quién revisa tu sugerencia.
+  motivo: ¿Por qué lo sugieres?
+  motivo_ayuda: Opcional. Por ejemplo, el curso o la investigación en que lo usarías.
+  nombre: Nombre
+  correo: Correo electrónico
+  correo_ayuda: Solo lo ve el personal de Bibliotecas, por si necesita consultarte.
+  privacidad: "Tus datos solo se usan para revisar esta sugerencia."
+  enviar: Enviar sugerencia
+  recibida: "¡Gracias! Recibimos tu sugerencia y la revisará el personal de Bibliotecas."
+  captcha_fallido: "No se pudo verificar que no eres un robot. Espera a que diga «Verificación lista» y vuelve a enviar."
+  demasiadas: "Enviaste varias sugerencias seguidas. Inténtalo de nuevo en una hora."
+  bandeja_ayuda: Sugerencias del sitio público para las materias de las guías que editas.
+  bandeja_admin: Sugerencias del sitio público. Como administrador ves todas, también las de materias sin guía.
+  filtrar_estado: Filtrar por estado
+  estados:
+    pendiente: Pendientes
+    aprobada: Aprobadas
+    rechazada: Rechazadas
+  vacio:
+    pendiente: No hay sugerencias pendientes.
+    aprobada: Aún no hay sugerencias aprobadas.
+    rechazada: No hay sugerencias rechazadas.
+  sugerida_por: Sugerida por
+  fecha: Recibida
+  revisada: Revisada
+  revisar: Revisar
+  revisar_titulo: Revisar sugerencia
+  pendientes_menu: pendientes
+  recibida_titulo: Lo que se sugirió
+  duplicados: "Posible duplicado: en la lista ya hay recursos con el mismo título, enlace o ISBN/ISSN."
+  aprobar_titulo: Aprobar
+  aprobar_ayuda: "Revisa y completa los datos (enlace, acceso, proxy…). Al aprobar, el recurso se agrega a la lista A-Z con estas materias."
+  aprobar: Aprobar y agregar a la lista
+  rechazar_titulo: Rechazar
+  motivo_rechazo: Motivo del rechazo
+  motivo_rechazo_ayuda: Opcional. Queda registrado para el resto del equipo.
+  rechazar: Rechazar sugerencia
+  aprobada: La sugerencia fue aprobada y el recurso ya está en la lista A-Z.
+  rechazada: La sugerencia fue rechazada.
+  eliminada: La sugerencia fue eliminada.
+  ya_revisada: Otra persona ya revisó esta sugerencia.
+  decision: Revisión
+  decision_aprobada: "Aprobada por %quien% el %fecha%."
+  decision_rechazada: "Rechazada por %quien% el %fecha%."
+  cuenta_eliminada: (cuenta eliminada)
+  ver_en_lista: Ver en Recursos bibliográficos
+  editar_recurso: Editar el recurso
+  eliminar_ayuda: Elimínala solo si es spam o un duplicado sin interés.

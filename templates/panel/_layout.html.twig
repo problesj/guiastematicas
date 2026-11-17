@@ -18,6 +18,8 @@
             <p class="panel__grupo">{{ 'panel.contenido'|trans }}</p>
             <ul>
                 <li><a href="{{ path('panel_guias') }}" {% if ruta starts with 'panel_guia' %}aria-current="page"{% endif %}>{{ 'panel.guias'|trans }}</a></li>
+                {% set pendientes = sugerencias_pendientes() %}
+                <li><a href="{{ path('panel_sugerencias') }}" {% if ruta starts with 'panel_sugerencia' %}aria-current="page"{% endif %}>{{ 'panel.sugerencias'|trans }}{% if pendientes > 0 %} <span class="contador">{{ pendientes }}<span class="solo-lectores"> {{ 'sugerencia.pendientes_menu'|trans }}</span></span>{% endif %}</a></li>
                 {% if is_granted('ROLE_EDITOR') %}
                     <li><a href="{{ path('panel_recursos') }}" {% if ruta starts with 'panel_recurso' %}aria-current="page"{% endif %}>{{ 'panel.recursos'|trans }}</a></li>
                     <li><a href="{{ path('panel_autores') }}" {% if ruta starts with 'panel_autor' %}aria-current="page"{% endif %}>{{ 'panel.autores'|trans }}</a></li>

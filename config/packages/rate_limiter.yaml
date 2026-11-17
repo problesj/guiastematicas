@@ -1,0 +1,14 @@
+framework:
+    rate_limiter:
+        # Sugerencias de recursos desde el sitio público: por dirección IP.
+        sugerencias:
+            policy: sliding_window
+            limit: 5
+            interval: '1 hour'
+            cache_pool: cache.limitador
+
+    cache:
+        pools:
+            cache.limitador:
+                adapter: cache.app
+

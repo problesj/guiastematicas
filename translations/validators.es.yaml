@@ -29,3 +29,5 @@ bloque.issn_no_valido: El ISSN no es válido; revisa los dígitos (8, el último
 bloque.revista_no_encontrada: "No encontramos la revista %issn% en el catálogo: escribe el título."
 bloque.revista_sin_titulo: Escribe el título o un ISSN.
 guia.principal_ciclo: La guía principal no puede ser la misma guía ni una de sus subguías.
+sugerencia.materia_obligatoria: Elige al menos una materia.
+sugerencia.identificador_no_valido: "Escribe solo números, guiones y X."

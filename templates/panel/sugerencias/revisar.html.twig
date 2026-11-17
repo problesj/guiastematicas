@@ -1,0 +1,86 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'sugerencia.revisar_titulo'|trans }}: {{ sugerencia.titulo }}{% endblock %}
+
+{% block contenido %}
+    {% set idioma = app.request.locale %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}">
+        <a href="{{ path('panel_sugerencias', {estado: sugerencia.estado.value}) }}">{{ 'panel.sugerencias'|trans }}</a>
+    </nav>
+    <h1>{{ sugerencia.titulo }} <span class="etiqueta etiqueta--{{ sugerencia.estado.value }}">{{ sugerencia.estado.etiqueta|trans }}</span></h1>
+
+    <section class="sugerencia-detalle" aria-labelledby="sugerencia-recibida">
+        <h2 id="sugerencia-recibida">{{ 'sugerencia.recibida_titulo'|trans }}</h2>
+        <dl class="datos">
+            <dt>{{ 'sugerencia.tipo'|trans }}</dt><dd>{{ sugerencia.tipo.etiqueta|trans }}</dd>
+            {% if sugerencia.autores %}<dt>{{ 'sugerencia.autores'|trans }}</dt><dd>{{ sugerencia.autores }}</dd>{% endif %}
+            {% if sugerencia.identificador %}<dt>{{ 'sugerencia.identificador'|trans }}</dt><dd>{{ sugerencia.identificador }}</dd>{% endif %}
+            {% if sugerencia.url %}<dt>{{ 'sugerencia.url'|trans }}</dt><dd><a href="{{ sugerencia.url }}" rel="noopener noreferrer nofollow" target="_blank">{{ sugerencia.url }}<span class="solo-lectores"> {{ 'bases.ventana_nueva'|trans }}</span></a></dd>{% endif %}
+            {% if sugerencia.descripcion %}<dt>{{ 'sugerencia.descripcion'|trans }}</dt><dd>{{ sugerencia.descripcion|nl2br }}</dd>{% endif %}
+            <dt>{{ 'sugerencia.materias'|trans }}</dt><dd>{% for m in sugerencia.materias %}<span class="etiqueta">{{ m.nombreTraducido(idioma) }}</span>{% endfor %}</dd>
+            {% if sugerencia.motivo %}<dt>{{ 'sugerencia.motivo'|trans }}</dt><dd>{{ sugerencia.motivo|nl2br }}</dd>{% endif %}
+            <dt>{{ 'sugerencia.sugerida_por'|trans }}</dt><dd>{{ sugerencia.nombre }} · <a href="mailto:{{ sugerencia.correo }}">{{ sugerencia.correo }}</a></dd>
+            <dt>{{ 'sugerencia.fecha'|trans }}</dt><dd>{{ sugerencia.creadaEn|date('d-m-Y H:i') }}</dd>
+        </dl>
+        {% if duplicados is not empty %}
+            <div class="aviso">
+                <p><strong>{{ 'sugerencia.duplicados'|trans }}</strong></p>
+                <ul>
+                    {% for r in duplicados %}
+                        <li>{% if is_granted('ROLE_EDITOR') %}<a href="{{ path('panel_recurso_editar', {id: r.id}) }}">{{ r.titulo }}</a>{% else %}{{ r.titulo }}{% endif %} ({{ r.tipo.etiqueta|trans }}) <small class="tabla__url">{{ r.url }}</small></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </section>
+
+    {% if sugerencia.pendiente %}
+        <section aria-labelledby="sugerencia-aprobar">
+            <h2 id="sugerencia-aprobar">{{ 'sugerencia.aprobar_titulo'|trans }}</h2>
+            <p class="campo__ayuda">{{ 'sugerencia.aprobar_ayuda'|trans }}</p>
+            {{ form_start(formulario, {attr: {class: 'formulario', novalidate: 'novalidate'}}) }}
+                {% include 'panel/recursos/_campos.html.twig' %}
+                <div class="formulario__acciones">
+                    <button type="submit" class="boton">{{ 'sugerencia.aprobar'|trans }}</button>
+                </div>
+            {{ form_end(formulario) }}
+        </section>
+
+        <section aria-labelledby="sugerencia-rechazar" class="sugerencia-rechazo">
+            <h2 id="sugerencia-rechazar">{{ 'sugerencia.rechazar_titulo'|trans }}</h2>
+            <form method="post" action="{{ path('panel_sugerencia_rechazar', {id: sugerencia.id}) }}" class="formulario">
+                <input type="hidden" name="_token" value="{{ csrf_token('rechazar-sugerencia-' ~ sugerencia.id) }}">
+                <div class="campo">
+                    <label for="motivo-rechazo">{{ 'sugerencia.motivo_rechazo'|trans }}</label>
+                    <textarea id="motivo-rechazo" name="motivo" rows="3" maxlength="2000" aria-describedby="motivo-rechazo-ayuda"></textarea>
+                    <p id="motivo-rechazo-ayuda" class="campo__ayuda">{{ 'sugerencia.motivo_rechazo_ayuda'|trans }}</p>
+                </div>
+                <div class="formulario__acciones">
+                    <button type="submit" class="boton boton--secundario">{{ 'sugerencia.rechazar'|trans }}</button>
+                </div>
+            </form>
+        </section>
+    {% else %}
+        <section aria-labelledby="sugerencia-decision">
+            <h2 id="sugerencia-decision">{{ 'sugerencia.decision'|trans }}</h2>
+            <p>
+                {{ ('sugerencia.decision_' ~ sugerencia.estado.value)|trans({
+                    '%quien%': sugerencia.decididaPor ? sugerencia.decididaPor.nombreCompleto : 'sugerencia.cuenta_eliminada'|trans,
+                    '%fecha%': sugerencia.decididaEn|date('d-m-Y H:i'),
+                }) }}
+            </p>
+            {% if sugerencia.motivoRechazo %}<p><strong>{{ 'sugerencia.motivo_rechazo'|trans }}:</strong> {{ sugerencia.motivoRechazo }}</p>{% endif %}
+            {% if sugerencia.recurso %}
+                <p>
+                    <a href="{{ path('recursos', {q: sugerencia.recurso.titulo}) }}">{{ 'sugerencia.ver_en_lista'|trans }}</a>
+                    {% if is_granted('ROLE_EDITOR') %} · <a href="{{ path('panel_recurso_editar', {id: sugerencia.recurso.id}) }}">{{ 'sugerencia.editar_recurso'|trans }}</a>{% endif %}
+                </p>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    <p class="sugerencia-eliminar">
+        {% include 'admin/_eliminar.html.twig' with {ruta: 'panel_sugerencia_eliminar', id: sugerencia.id, token: 'eliminar-sugerencia-' ~ sugerencia.id, nombre: sugerencia.titulo} %}
+        <span class="campo__ayuda">{{ 'sugerencia.eliminar_ayuda'|trans }}</span>
+    </p>
+{% endblock %}

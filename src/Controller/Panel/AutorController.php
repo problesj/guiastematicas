@@ -15,9 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/** Autores de los recursos bibliográficos: editores y administradores. */
+/**
+ * Autores de los recursos bibliográficos: editores y administradores. La búsqueda (selector de autores)
+ * también la usan colaboradores al aprobar sugerencias de recursos.
+ */
 #[Route('/{_locale}/panel/autores', requirements: ['_locale' => 'es|en'])]
-#[IsGranted('ROLE_EDITOR')]
+#[IsGranted('ROLE_COLABORADOR')]
 final class AutorController extends AbstractController
 {
     private const int LIMITE_LISTADO = 500;
@@ -27,6 +30,7 @@ final class AutorController extends AbstractController
     }
 
     #[Route('', name: 'panel_autores', methods: ['GET'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function listado(Request $request, AutorRepository $autores): Response
     {
         $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
@@ -55,18 +59,21 @@ final class AutorController extends AbstractController
     }
 
     #[Route('/nuevo', name: 'panel_autor_nuevo', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function nuevo(Request $request): Response
     {
         return $this->formulario($request, new Autor(), 'autor.nuevo');
     }
 
     #[Route('/{id<\d+>}/editar', name: 'panel_autor_editar', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function editar(Request $request, Autor $autor): Response
     {
         return $this->formulario($request, $autor, 'autor.editar');
     }
 
     #[Route('/{id<\d+>}/eliminar', name: 'panel_autor_eliminar', methods: ['POST'])]
+    #[IsGranted('ROLE_EDITOR')]
     public function eliminar(Request $request, Autor $autor): Response
     {
         if ($this->isCsrfTokenValid('eliminar-autor-'.$autor->getId(), $request->getPayload()->getString('_token'))) {
