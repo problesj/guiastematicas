@@ -46,6 +46,15 @@ final class Ajustes implements ResetInterface
             'GOOGLE_CLIENT_SECRET' => ['secreto' => true],
             'GOOGLE_DOMINIO' => [],
         ],
+        'correo' => [
+            'CORREO_SMTP_HOST' => [],
+            'CORREO_SMTP_PUERTO' => [],
+            'CORREO_SMTP_CIFRADO' => ['opciones' => ['tls', 'ssl', 'none']],
+            'CORREO_SMTP_USUARIO' => [],
+            'CORREO_SMTP_CLAVE' => ['secreto' => true],
+            'CORREO_REMITENTE' => [],
+            'CORREO_REMITENTE_NOMBRE' => [],
+        ],
         'moodle' => [
             'LTI_ISSUER' => [],
             'LTI_CLIENT_ID' => [],

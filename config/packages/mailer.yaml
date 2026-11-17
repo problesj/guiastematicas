@@ -1,0 +1,5 @@
+framework:
+    mailer:
+        # Los correos se envían con la configuración de Admin → Integraciones → Correo (App\Correo\Cartero),
+        # que arma el transporte en cada envío. Este transporte por defecto no se usa.
+        dsn: 'null://null'

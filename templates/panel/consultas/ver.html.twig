@@ -1,0 +1,46 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ consulta.asunto }}{% endblock %}
+
+{% block contenido %}
+    <nav class="migas" aria-label="{{ 'guia.migas'|trans }}">
+        <a href="{{ path('panel_consultas') }}">{{ 'panel.consultas'|trans }}</a>
+    </nav>
+    <h1>{{ consulta.asunto }}
+        {% if consulta.cerrada %}<span class="etiqueta etiqueta--rechazada">{{ 'consulta.estado.cerrada'|trans }}</span>
+        {% elseif consulta.pendiente %}<span class="etiqueta etiqueta--pendiente">{{ 'consulta.estado.pendiente'|trans }}</span>
+        {% else %}<span class="etiqueta etiqueta--aprobada">{{ 'consulta.estado.respondida'|trans }}</span>{% endif %}
+    </h1>
+    <dl class="datos">
+        <dt>{{ 'consulta.de'|trans }}</dt><dd>{{ consulta.nombre }} · <a href="mailto:{{ consulta.correo }}">{{ consulta.correo }}</a></dd>
+        <dt>{{ 'consulta.bibliotecario'|trans }}</dt><dd>{{ consulta.bibliotecario.nombreCompleto }}</dd>
+        <dt>{{ 'consulta.idioma'|trans }}</dt><dd>{{ ('consulta.idiomas.' ~ consulta.idioma)|trans }}</dd>
+    </dl>
+
+    <h2>{{ 'consulta.mensajes'|trans }}</h2>
+    {% include 'consultas/_conversacion.html.twig' with {vista: 'personal'} %}
+
+    <form method="post" class="formulario consulta-respuesta">
+        <h2>{{ 'consulta.responder'|trans }}</h2>
+        {% if error %}<div class="aviso aviso--error" role="alert">{{ error|trans }}</div>{% endif %}
+        <input type="hidden" name="_token" value="{{ csrf_token('responder-consulta-' ~ consulta.id) }}">
+        <div class="campo">
+            <label for="texto">{{ 'consulta.tu_respuesta'|trans }}</label>
+            <textarea id="texto" name="texto" rows="6" maxlength="5000" required aria-describedby="texto-ayuda"></textarea>
+            <p id="texto-ayuda" class="campo__ayuda">{{ 'consulta.respuesta_ayuda'|trans({'%correo%': consulta.correo}) }}</p>
+        </div>
+        <div class="campo campo--casilla">
+            <input type="checkbox" id="cerrar" name="cerrar" value="1">
+            <label for="cerrar">{{ 'consulta.responder_y_cerrar'|trans }}</label>
+        </div>
+        <div class="formulario__acciones">
+            <button type="submit" class="boton">{{ 'consulta.enviar_respuesta'|trans }}</button>
+        </div>
+    </form>
+
+    <form method="post" action="{{ path('panel_consulta_estado', {id: consulta.id}) }}" class="consulta-estado">
+        <input type="hidden" name="_token" value="{{ csrf_token('estado-consulta-' ~ consulta.id) }}">
+        <button type="submit" class="boton boton--secundario">{{ (consulta.cerrada ? 'consulta.reabrir' : 'consulta.cerrar')|trans }}</button>
+        <span class="campo__ayuda">{{ (consulta.cerrada ? 'consulta.reabrir_ayuda' : 'consulta.cerrar_ayuda')|trans }}</span>
+    </form>
+{% endblock %}

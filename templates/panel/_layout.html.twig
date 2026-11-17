@@ -11,6 +11,8 @@
             <ul>
                 <li><a href="{{ path('panel') }}" {% if ruta == 'panel' %}aria-current="page"{% endif %}>{{ 'panel.inicio'|trans }}</a></li>
                 <li><a href="{{ path('panel_perfil') }}" {% if ruta == 'panel_perfil' %}aria-current="page"{% endif %}>{{ 'panel.perfil'|trans }}</a></li>
+                {% set consultas = consultas_pendientes() %}
+                <li><a href="{{ path('panel_consultas') }}" {% if ruta starts with 'panel_consulta' %}aria-current="page"{% endif %}>{{ 'panel.consultas'|trans }}{% if consultas > 0 %} <span class="contador">{{ consultas }}<span class="solo-lectores"> {{ 'consulta.pendientes_menu'|trans }}</span></span>{% endif %}</a></li>
                 {% if app.user.tieneContrasenaPropia %}
                     <li><a href="{{ path('panel_contrasena') }}" {% if ruta == 'panel_contrasena' %}aria-current="page"{% endif %}>{{ 'panel.contrasena'|trans }}</a></li>
                 {% endif %}

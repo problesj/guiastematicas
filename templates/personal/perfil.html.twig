@@ -35,9 +35,12 @@
                 <dd>{{ persona.ubicacion }}</dd>
             {% endif %}
         </dl>
-        {% if persona.enlaceCita %}
-            <p><a class="boton" href="{{ persona.enlaceCita }}" target="_blank" rel="noopener">{{ 'personal.agenda_cita'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a></p>
-        {% endif %}
+        <p class="perfil__acciones">
+            {% if persona.enlaceCita %}
+                <a class="boton" href="{{ persona.enlaceCita }}" target="_blank" rel="noopener">{{ 'personal.agenda_cita'|trans }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>
+            {% endif %}
+            <a class="boton{% if persona.enlaceCita %} boton--secundario{% endif %}" href="#escribir">{{ 'consulta.escribir_a'|trans({'%nombre%': persona.nombre}) }}</a>
+        </p>
 
         {% if persona.biografiaTraducida(idioma) %}
             <h2>{{ 'personal.acerca'|trans }}</h2>
@@ -53,5 +56,43 @@
                 {% endfor %}
             </ul>
         {% endif %}
+
+        <section id="escribir" class="perfil__contacto" aria-labelledby="escribir-titulo">
+            <h2 id="escribir-titulo">{{ 'consulta.escribir_a'|trans({'%nombre%': persona.nombre}) }}</h2>
+            <p class="campo__ayuda">{{ 'consulta.escribir_ayuda'|trans }}</p>
+            {% set textos_captcha = {
+                pendiente: 'captcha.pendiente'|trans,
+                calculando: 'captcha.calculando'|trans,
+                listo: 'captcha.listo'|trans,
+                error: 'captcha.error'|trans,
+            } %}
+            {{ form_start(formulario, {attr: {
+                class: 'formulario consulta-form',
+                novalidate: 'novalidate',
+                'data-controller': 'captcha',
+                'data-action': 'submit->captcha#enviar focusin->captcha#iniciar',
+                'data-captcha-desafio-value': desafio|json_encode,
+                'data-captcha-textos-value': textos_captcha|json_encode,
+            }}) }}
+                {% if formulario.vars.errors|length > 0 %}
+                    <div class="aviso aviso--error">{{ form_errors(formulario) }}</div>
+                {% endif %}
+                <div class="formulario__columnas">
+                    {{ form_row(formulario.nombre) }}
+                    {{ form_row(formulario.correo) }}
+                </div>
+                {{ form_row(formulario.asunto) }}
+                {{ form_row(formulario.mensaje) }}
+                {{ form_widget(formulario.captcha, {attr: {'data-captcha-target': 'respuesta'}}) }}
+                <div class="captcha" data-captcha-target="caja">
+                    <span class="captcha__icono" aria-hidden="true"></span>
+                    <p class="captcha__estado" data-captcha-target="estado" role="status">{{ 'captcha.pendiente'|trans }}</p>
+                    <noscript><p class="captcha__sin-js">{{ 'captcha.sin_javascript'|trans }}</p></noscript>
+                </div>
+                <div class="formulario__acciones">
+                    <button type="submit" class="boton">{{ 'consulta.enviar'|trans }}</button>
+                </div>
+            {{ form_end(formulario) }}
+        </section>
     </section>
 {% endblock %}

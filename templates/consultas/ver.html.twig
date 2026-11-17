@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ consulta.asunto }}{% endblock %}
+{% block stylesheets %}<meta name="robots" content="noindex, nofollow"><meta name="referrer" content="no-referrer">{% endblock %}
+
+{% block body %}
+    <section class="contenedor pagina consulta">
+        <p class="miga"><a href="{{ path('personal_perfil', {slug: consulta.bibliotecario.slug}) }}">{{ consulta.bibliotecario.nombreCompleto }}</a></p>
+        <h1>{{ consulta.asunto }}</h1>
+        <p class="pagina__bajada">{{ 'consulta.conversacion_con'|trans({'%nombre%': consulta.bibliotecario.nombreCompleto}) }}</p>
+
+        {% include 'consultas/_conversacion.html.twig' with {vista: 'persona'} %}
+
+        {% if consulta.cerrada %}
+            <p class="aviso">{{ 'consulta.cerrada_persona'|trans }}</p>
+        {% else %}
+            <form method="post" class="formulario consulta-respuesta">
+                {% if error %}<div class="aviso aviso--error" role="alert">{{ error|trans }}</div>{% endif %}
+                <input type="hidden" name="_token" value="{{ csrf_token('consulta-' ~ consulta.id) }}">
+                <div class="campo">
+                    <label for="texto">{{ 'consulta.tu_respuesta'|trans }}</label>
+                    <textarea id="texto" name="texto" rows="5" maxlength="5000" required></textarea>
+                </div>
+                <div class="formulario__acciones">
+                    <button type="submit" class="boton">{{ 'consulta.enviar_respuesta'|trans }}</button>
+                </div>
+            </form>
+        {% endif %}
+        <p class="campo__ayuda">{{ 'consulta.enlace_privado'|trans }}</p>
+    </section>
+{% endblock %}

@@ -66,6 +66,7 @@ sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
 panel:
+  consultas: Messages
   sugerencias: Suggestions
   contenido: Content
   recursos: Library resources
@@ -843,6 +844,15 @@ incrustar:
   no_publicada: Publish the guide to embed its blocks.
   no_restringida: Blocks of a restricted guide cannot be embedded in other websites.
 configuracion:
+  correo:
+    titulo: "Test email"
+    bajada: "Save the «Email (SMTP)» settings first, then send a test message to %correo%."
+    probar: "Send test email"
+    sin_configurar: "The SMTP server and the sender address are not configured."
+    asunto_prueba: "Subject guides email test"
+    texto_prueba: "If you receive this message, the platform can send email."
+    enviado: "A test email was sent to %correo%. Check the spam folder too."
+    fallo: "The mail server rejected the message. Check the settings (server, port, encryption, username and password); details are in the server log."
   moodle:
     titulo: "Register the tool in Moodle"
     bajada: "Details for the Moodle administrator (Site administration → Plugins → External tool → Manage tools → «configure a tool manually», LTI 1.3):"
@@ -878,6 +888,7 @@ configuracion:
     ldap: LDAP sign-in
     google: Google sign-in
     moodle: "Moodle (LTI 1.3)"
+    correo: Email (SMTP)
   grupo_ayuda:
     proxy: Prefix or template with {url} for subscribed resources, e.g. https://itmsp.museknowledge.com/UCN?qurl={url}. Empty in the panel and on the server = direct links.
     catalogo: Primo VE for the search box and record links; the Ex Libris API for book data by ISBN and Alma availability.
@@ -885,6 +896,7 @@ configuracion:
     ldap: With an LDAP address, staff can sign in with their institutional account. Use the DN pattern or a search with a service account.
     google: OAuth credentials of the Google Cloud project. The domain restricts access to accounts in that domain (e.g. ucn.cl).
     moodle: "Details given by the Moodle administrator when registering the tool (Site administration → Plugins → External tool → Manage tools → «Tool configuration details»)."
+    correo: "Mail server used to notify about messages to librarians. Ask the system administrator (UCN SMTP server or a service account). The sender must be allowed on that server."
   ajuste:
     PROXY_URL: Proxy address
     PRIMO_URL: Primo VE address
@@ -909,7 +921,18 @@ configuracion:
     LTI_DEPLOYMENT_ID: "Deployment ID (one or more, comma separated)"
     LTI_AUTH_URL: "Authentication request URL"
     LTI_JWKS_URL: "Public keyset URL"
+    CORREO_SMTP_HOST: SMTP server
+    CORREO_SMTP_PUERTO: "Port (usually 587 with STARTTLS or 465 with SSL)"
+    CORREO_SMTP_CIFRADO: Encryption
+    CORREO_SMTP_USUARIO: Username
+    CORREO_SMTP_CLAVE: Password
+    CORREO_REMITENTE: Sender address
+    CORREO_REMITENTE_NOMBRE: Sender name
   opcion:
+    CORREO_SMTP_CIFRADO:
+      tls: STARTTLS
+      ssl: SSL/TLS
+      none: No encryption
     LDAP_CIFRADO:
       none: No encryption
       ssl: SSL (ldaps)
@@ -1104,3 +1127,81 @@ sugerencia:
   ver_en_lista: View in Library resources
   editar_recurso: Edit the resource
   eliminar_ayuda: Delete it only if it is spam or an uninteresting duplicate.
+consulta:
+  nombre: Name
+  correo: Email
+  correo_ayuda: You will get the reply and a copy of your message here.
+  asunto: Subject
+  mensaje: Message
+  enviar: Send message
+  escribir_a: "Write to %nombre%"
+  escribir_ayuda: "Your message is kept on the platform and the reply will be sent to your email."
+  enviada: "Your message was sent. We sent a copy to %correo% with a link to follow the conversation."
+  demasiados: "You sent several messages in a row. Please try again in an hour."
+  sesion_vencida: "The page was open for too long. Please write your message again."
+  texto_obligatorio: "Write a message (up to 5000 characters)."
+  respuesta_enviada: "Your message was sent."
+  personal: UCN Libraries
+  correo_no_enviado: Email not sent
+  aviso_no_enviado: Email notice not sent
+  conversacion_con: "Conversation with %nombre%."
+  cerrada_persona: "This conversation was closed. If you need anything else, write a new message from the librarian's page."
+  tu_respuesta: Your message
+  enviar_respuesta: Send
+  enlace_privado: "This link is private: do not share it."
+  bandeja_ayuda: "Messages sent to you from your page in the librarian directory. Your replies reach the person by email."
+  filtro:
+    pendientes: To answer
+    respondidas: Answered
+    cerradas: Closed
+  ver_mias: Show only mine
+  ver_todas: Show all librarians' messages
+  vacio:
+    pendientes: You have no messages to answer.
+    respondidas: There are no open answered messages.
+    cerradas: There are no closed messages.
+  de: From
+  bibliotecario: Librarian
+  mensajes: Messages
+  ultima_actividad: Last activity
+  responder: Reply
+  estado:
+    pendiente: To answer
+    respondida: Answered
+    cerrada: Closed
+  idioma: Language
+  idiomas:
+    es: Spanish
+    en: English
+  respuesta_ayuda: "It will be sent to %correo% with a link to the conversation."
+  responder_y_cerrar: Close the conversation when sending
+  reabrir: Reopen the conversation
+  cerrar: Close the conversation
+  reabrir_ayuda: The person will be able to write again from their link.
+  cerrar_ayuda: The person will no longer be able to write from their link.
+  respondida: Your reply was sent by email.
+  respondida_sin_correo: "Your reply was saved, but the email could not be sent (check Admin → Integrations → Email)."
+  cerrada: The conversation was closed.
+  reabierta: The conversation was reopened.
+  pendientes_menu: to answer
+correo:
+  no_responder: "This email was sent automatically; do not reply to it. Use the link to answer."
+  enlace_texto: "If the button does not work, copy this address:"
+  nueva:
+    asunto: "New message: %asunto%"
+    titulo: You received a message from your librarian page
+    de: "From %nombre% (%correo%):"
+    boton: View and reply on the platform
+  copia:
+    asunto: "Copy of your message: %asunto%"
+    titulo: "Hello, %nombre%"
+    texto: "We received your message for %bibliotecario%. They will reply to this email address; you can also follow the conversation from the link."
+    boton: View the conversation
+  respuesta:
+    asunto: "Reply to your message: %asunto%"
+    titulo: "Hello, %nombre%"
+    texto: "%bibliotecario% replied to «%asunto%»:"
+    boton: View the conversation and reply
+  respuesta_persona:
+    asunto: "New message in: %asunto%"
+    titulo: "%nombre% wrote in the conversation"
