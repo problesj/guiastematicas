@@ -13,7 +13,7 @@ export default class extends Controller {
         url: String, categoriasUrl: String, sinCategorias: String, buscando: String, resumen: String, vacio: String, falta: String, error: String, ya: String, agregados: String,
     };
 
-    static CAMPOS = ['issn', 'eissn', 'titulo', 'editorial', 'enlace'];
+    static CAMPOS = ['issn', 'eissn', 'titulo', 'editorial', 'enlace', 'formato'];
 
     connect() {
         this.revistas = [];

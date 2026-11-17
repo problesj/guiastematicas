@@ -14,6 +14,16 @@
     <form method="get" class="filtro" role="search">
         <label for="q" class="solo-lectores">{{ 'bases.buscar'|trans }}</label>
         <input type="search" id="q" name="q" value="{{ q }}" placeholder="{{ 'bases.buscar_placeholder'|trans }}" class="filtro__texto">
+        <label for="filtro-tipo" class="solo-lectores">{{ 'bases.tipo'|trans }}</label>
+        <select id="filtro-tipo" name="tipo">
+            <option value="">{{ 'bases.todos_tipos'|trans }}</option>
+            {% for t in tipos %}<option value="{{ t.value }}" {% if tipo == t %}selected{% endif %}>{{ t.etiqueta|trans }}</option>{% endfor %}
+        </select>
+        <label for="filtro-formato" class="solo-lectores">{{ 'formato_recurso.filtro'|trans }}</label>
+        <select id="filtro-formato" name="formato">
+            <option value="">{{ 'formato_recurso.todos'|trans }}</option>
+            {% for f in formatos %}<option value="{{ f.value }}" {% if formato == f %}selected{% endif %}>{{ f.filtro|trans }}</option>{% endfor %}
+        </select>
         <button type="submit" class="boton boton--secundario">{{ 'bases.buscar'|trans }}</button>
     </form>
 
@@ -42,7 +52,7 @@
                                 {% if not recurso.visible %}<span class="etiqueta">{{ 'recurso.oculto'|trans }}</span>{% elseif not recurso.estaDisponible %}<span class="etiqueta">{{ 'recurso.prueba_vencida'|trans }}</span>{% endif %}
                                 <br><small class="tabla__url">{{ recurso.url }}</small>
                             </td>
-                            <td>{{ recurso.tipo.etiqueta|trans }}</td>
+                            <td>{{ recurso.tipo.etiqueta|trans }}{% if recurso.formato %}<br>{{ include('recursos/_formato.html.twig', {formato: recurso.formato.value}) }}{% endif %}</td>
                             <td>{{ recurso.acceso.etiqueta|trans }}</td>
                             <td>{{ (recurso.requiereProxy ? 'formulario.si' : 'formulario.no')|trans }}</td>
                             <td>{{ recurso.clics }}</td>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Repository\RecursoRepository;
@@ -15,7 +16,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Recurso bibliográfico electrónico de la lista A-Z (base de datos, revista, libro, norma, repositorio, etc.).
+ * Recurso bibliográfico de la lista A-Z (base de datos, revista, libro, norma, repositorio, etc.).
  *
  * Los datos bibliográficos (autores, ISBN, ISSN, año...) dependen del tipo: ver TipoRecurso::campos().
  * Los que no corresponden al tipo se vacían al guardar (limpiarCamposNoAplicables).
@@ -73,6 +74,10 @@ class Recurso
 
     #[ORM\Column(length: 20, enumType: TipoAcceso::class)]
     private TipoAcceso $acceso = TipoAcceso::Suscripcion;
+
+    /** Impreso, electrónico o ambos (solo libros y revistas; ver TipoRecurso::tieneFormato()). */
+    #[ORM\Column(length: 20, nullable: true, enumType: FormatoRecurso::class)]
+    private ?FormatoRecurso $formato = null;
 
     /** Fin del periodo de prueba (solo para acceso "prueba"); después deja de mostrarse. */
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
@@ -180,6 +185,14 @@ class Recurso
     public function marcarActualizado(): void
     {
         $this->actualizadoEn = new \DateTimeImmutable();
+        $this->fijarFormato();
+    }
+
+    /** Guarda el formato explícito en libros y revistas (electrónico si no se indicó) y lo vacía en los demás tipos. */
+    #[ORM\PrePersist]
+    public function fijarFormato(): void
+    {
+        $this->formato = $this->getFormato();
     }
 
     public function getId(): ?int
@@ -299,6 +312,19 @@ class Recurso
     public function setTipo(TipoRecurso $tipo): static
     {
         $this->tipo = $tipo;
+
+        return $this;
+    }
+
+    /** Formato del libro o revista (electrónico si no se indicó); null en los demás tipos. */
+    public function getFormato(): ?FormatoRecurso
+    {
+        return $this->tipo->tieneFormato() ? ($this->formato ?? FormatoRecurso::Electronico) : null;
+    }
+
+    public function setFormato(?FormatoRecurso $formato): static
+    {
+        $this->formato = $formato;
 
         return $this;
     }
@@ -593,6 +619,7 @@ class Recurso
     /** Vacía los datos bibliográficos que no corresponden al tipo (p. ej. un ISBN que quedó al cambiar de Libro a Revista). */
     public function limpiarCamposNoAplicables(): static
     {
+        $this->fijarFormato();
         foreach (TipoRecurso::CAMPOS_BIBLIOGRAFICOS as $campo) {
             if ($this->tipo->usaCampo($campo)) {
                 continue;

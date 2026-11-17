@@ -49,7 +49,7 @@ final class CatalogoFalso
             $docs = match ($query['q'] ?? '') {
                 'isbn,exact,9780262033848' => [
                     ['context' => 'PC', 'pnx' => ['control' => ['recordid' => ['cdi_otro']], 'display' => ['title' => ['Otra edición']]]],
-                    ['context' => 'L', 'pnx' => [
+                    ['context' => 'L', 'delivery' => ['deliveryCategory' => ['Alma-P']], 'pnx' => [
                         'control' => ['recordid' => ['alma'.self::MMS_CORMEN]],
                         'display' => [
                             'title' => ['Introduction to algorithms /'],

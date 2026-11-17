@@ -18,6 +18,7 @@
             <legend>{{ 'recurso.grupo_bibliograficos'|trans }}</legend>
             <p class="campo__ayuda" data-campos-tipo-target="vacio" hidden>{{ 'recurso.sin_bibliograficos'|trans }}</p>
             <div class="formulario__columnas">
+                <div data-campos-tipo-target="campo" data-tipos="libros revistas">{{ form_row(formulario.formato) }}</div>
                 {% for campo in campos_bibliograficos %}
                     {% if campo == 'autores' %}
                         <div class="campo--completo" data-campos-tipo-target="campo" data-tipos="{{ tipos_por_campo[campo]|join(' ') }}">{% include 'panel/recursos/_selector_autores.html.twig' %}</div>

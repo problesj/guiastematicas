@@ -7,6 +7,7 @@ namespace App\Servicio;
 use App\Entity\Guia;
 use App\Entity\Materia;
 use App\Entity\Recurso;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Repository\RecursoRepository;
@@ -75,6 +76,12 @@ final class LibrosEnRecursos
                     }
                 }
             }
+            // Formato: el elegido en el bloque; si quedó en «Detectar», el del recurso que ya existía o uno deducido.
+            $formato = FormatoRecurso::tryFrom((string) ($libro['formato'] ?? ''))
+                ?? (!$nuevo ? $recurso?->getFormato() : null)
+                ?? self::formatoPorDefecto($libro);
+            $recurso?->setFormato($formato);
+            $libros[$n]['formato'] = $formato->value;
             $vinculados[] = $recurso;
         }
         $this->em->flush();
@@ -171,6 +178,13 @@ final class LibrosEnRecursos
     }
 
     /** El libro sigue siendo el mismo recurso si su ISBN o DOI (cuando los tiene) son los del recurso. */
+    private static function formatoPorDefecto(array $libro): FormatoRecurso
+    {
+        // Sin dato del catálogo: con enlace propio o DOI se lee en línea; si solo está en el catálogo, es impreso.
+        return null !== self::texto($libro['enlace'] ?? null) || null !== self::texto($libro['doi'] ?? null)
+            ? FormatoRecurso::Electronico : FormatoRecurso::Impreso;
+    }
+
     private static function coincide(Recurso $recurso, array $libro): bool
     {
         $isbn = self::texto($libro['isbn'] ?? null);

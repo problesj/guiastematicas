@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Configuracion\Apariencia;
 use App\Entity\Recurso;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Paginacion\Pagina;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/** Lista pública A-Z de recursos bibliográficos electrónicos (bases de datos, revistas, libros, normas, etc.). */
+/** Lista pública A-Z de recursos bibliográficos (bases de datos, revistas, libros, normas, etc.). */
 final class RecursosController extends AbstractController
 {
     #[Route('/{_locale}/recursos-bibliograficos', name: 'recursos', requirements: ['_locale' => 'es|en'], methods: ['GET'])]
@@ -54,9 +55,12 @@ final class RecursosController extends AbstractController
             : null;
         $tipo = $tipoFijo ?? TipoRecurso::tryFrom($consulta->getString('tipo'));
         $acceso = TipoAcceso::tryFrom($consulta->getString('acceso'));
+        // El formato solo aplica a libros y revistas: en las vistas de otro tipo no se ofrece.
+        $conFormato = null === $tipoFijo || $tipoFijo->tieneFormato();
+        $formato = $conFormato ? FormatoRecurso::tryFrom($consulta->getString('formato')) : null;
 
         [$numero, $porPagina] = Pagina::leerParametros($request);
-        $pagina = $recursos->buscarPublicos($numero, $porPagina, $letra, $texto, $materia, $tipo, $acceso);
+        $pagina = $recursos->buscarPublicos($numero, $porPagina, $letra, $texto, $materia, $tipo, $acceso, $formato);
 
         // Agrupados por letra para la vista sin filtro de letra.
         $grupos = [];
@@ -71,14 +75,16 @@ final class RecursosController extends AbstractController
             'materias' => $materias->activas(),
             'tipos' => TipoRecurso::cases(),
             'accesos' => TipoAcceso::cases(),
+            'formatos' => $conFormato ? FormatoRecurso::cases() : [],
             'filtro' => [
                 'letra' => $letra,
                 'q' => $texto,
                 'materia' => $materia,
                 'tipo' => $tipoFijo ? null : $tipo,
                 'acceso' => $acceso,
+                'formato' => $formato,
             ],
-            'hay_filtros' => null !== $letra || '' !== $texto || null !== $materia || (null === $tipoFijo && null !== $tipo) || null !== $acceso,
+            'hay_filtros' => null !== $letra || '' !== $texto || null !== $materia || (null === $tipoFijo && null !== $tipo) || null !== $acceso || null !== $formato,
             'tipo_fijo' => $tipoFijo,
             'presentacion' => $presentacion,
             'ruta' => null !== $vista ? 'recursos_vista' : 'recursos',

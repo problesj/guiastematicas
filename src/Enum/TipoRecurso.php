@@ -42,6 +42,12 @@ enum TipoRecurso: string
         };
     }
 
+    /** Libros y revistas pueden estar impresos, en formato electrónico o en ambos (ver FormatoRecurso). */
+    public function tieneFormato(): bool
+    {
+        return self::Libros === $this || self::Revistas === $this;
+    }
+
     public function usaCampo(string $campo): bool
     {
         return \in_array($campo, $this->campos(), true);

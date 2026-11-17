@@ -7,6 +7,7 @@ namespace App\Servicio;
 use App\Entity\Guia;
 use App\Entity\Materia;
 use App\Entity\Recurso;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Repository\RecursoRepository;
@@ -71,6 +72,12 @@ final class RevistasEnRecursos
                     }
                 }
             }
+            // Formato: el elegido en el bloque; si quedó en «Detectar», el del recurso que ya existía o uno deducido.
+            $formato = FormatoRecurso::tryFrom((string) ($revista['formato'] ?? ''))
+                ?? (!$nuevo ? $recurso?->getFormato() : null)
+                ?? self::formatoPorDefecto($revista);
+            $recurso?->setFormato($formato);
+            $revistas[$n]['formato'] = $formato->value;
             $vinculados[] = $recurso;
         }
         $this->em->flush();
@@ -134,6 +141,14 @@ final class RevistasEnRecursos
         $this->em->persist($recurso);
 
         return $recurso;
+    }
+
+    private static function formatoPorDefecto(array $revista): FormatoRecurso
+    {
+        // Sin dato del catálogo: con enlace propio o registro en la búsqueda de revistas (revistas electrónicas) se lee
+        // en línea; si no, es impresa.
+        return null !== self::texto($revista['enlace'] ?? null) || null !== self::texto($revista['registro'] ?? null)
+            ? FormatoRecurso::Electronico : FormatoRecurso::Impreso;
     }
 
     private static function coincide(Recurso $recurso, array $revista): bool

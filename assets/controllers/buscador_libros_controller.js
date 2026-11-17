@@ -16,7 +16,7 @@ export default class extends Controller {
         biblioteca: String, tipos: Object,
     };
 
-    static CAMPOS = ['isbn', 'doi', 'titulo', 'autor', 'editorial', 'anio', 'enlace'];
+    static CAMPOS = ['isbn', 'doi', 'titulo', 'autor', 'editorial', 'anio', 'enlace', 'formato'];
 
     connect() {
         this.libros = [];

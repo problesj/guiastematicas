@@ -43,9 +43,9 @@ final class DatosRevista
         if (null === $datos) {
             return $revista;
         }
-        foreach (['titulo', 'editorial', 'issn', 'eissn'] as $campo) {
+        foreach (['titulo', 'editorial', 'issn', 'eissn', 'formato'] as $campo) {
             if (null === ($revista[$campo] ?? null) || '' === $revista[$campo]) {
-                $revista[$campo] = $datos[$campo];
+                $revista[$campo] = $datos[$campo] ?? null;
             }
         }
         if (($revista['eissn'] ?? null) === $revista['issn']) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Panel;
 
 use App\Entity\Recurso;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoRecurso;
 use App\Form\RecursoType;
 use App\Paginacion\Pagina;
@@ -45,11 +46,17 @@ final class RecursoController extends AbstractController
     public function listado(Request $request, RecursoRepository $recursos): Response
     {
         $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
+        $tipo = TipoRecurso::tryFrom($request->query->getString('tipo'));
+        $formato = FormatoRecurso::tryFrom($request->query->getString('formato'));
         [$numero, $porPagina] = Pagina::leerParametros($request);
 
         return $this->render('panel/recursos/listado.html.twig', [
-            'pagina' => $recursos->listadoAdministracion($numero, $porPagina, $texto),
+            'pagina' => $recursos->listadoAdministracion($numero, $porPagina, $texto, $tipo, null, $formato),
             'q' => $texto,
+            'tipo' => $tipo,
+            'formato' => $formato,
+            'tipos' => TipoRecurso::cases(),
+            'formatos' => FormatoRecurso::cases(),
         ]);
     }
 

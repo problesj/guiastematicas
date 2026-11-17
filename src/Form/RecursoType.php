@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Entity\Autor;
 use App\Entity\Materia;
 use App\Entity\Recurso;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Repository\AutorRepository;
@@ -46,6 +47,15 @@ final class RecursoType extends AbstractType
                 'label' => 'recurso.tipo',
                 'class' => TipoRecurso::class,
                 'choice_label' => fn (TipoRecurso $t) => $t->etiqueta(),
+            ])
+            // Solo libros y revistas (el formulario lo muestra según el tipo; en los demás se vacía al guardar).
+            ->add('formato', EnumType::class, [
+                'label' => 'formato_recurso.etiqueta',
+                'class' => FormatoRecurso::class,
+                'choice_label' => fn (FormatoRecurso $f) => $f->etiqueta(),
+                'required' => false,
+                'placeholder' => false,
+                'help' => 'formato_recurso.ayuda',
             ])
             ->add('acceso', EnumType::class, [
                 'label' => 'recurso.acceso',

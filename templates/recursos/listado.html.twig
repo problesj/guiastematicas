@@ -55,6 +55,17 @@
                     {% endfor %}
                 </select>
             </div>
+            {% if formatos is not empty %}
+            <div class="campo">
+                <label for="formato">{{ 'formato_recurso.filtro'|trans }}</label>
+                <select id="formato" name="formato">
+                    <option value="">{{ 'formato_recurso.todos'|trans }}</option>
+                    {% for f in formatos %}
+                        <option value="{{ f.value }}" {% if filtro.formato == f %}selected{% endif %}>{{ f.filtro|trans }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
             {% if filtro.letra %}<input type="hidden" name="letra" value="{{ filtro.letra }}">{% endif %}
             <div class="filtros__acciones">
                 <button type="submit" class="boton">{{ 'bases.filtrar'|trans }}</button>
@@ -87,6 +98,7 @@
                             </h3>
                             <p class="recurso__meta">
                                 {% if not tipo_fijo %}{{ recurso.tipo.etiqueta|trans }}{% if recurso.proveedor %} · {% endif %}{% endif %}{% if recurso.proveedor %}{{ recurso.proveedor }}{% endif %}
+                                {% if recurso.formato %}{{ include('recursos/_formato.html.twig', {formato: recurso.formato.value}) }}{% endif %}
                                 {% if recurso.requiereProxy %} · <span title="{{ 'bases.proxy_ayuda'|trans }}">{{ 'bases.proxy'|trans }}</span>{% endif %}
                             </p>
                             {% set datos = recurso.datosBibliograficos %}

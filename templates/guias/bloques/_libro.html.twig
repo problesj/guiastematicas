@@ -5,6 +5,8 @@
 {% if not destino and libro.doi is defined and libro.doi %}{% set destino = 'https://doi.org/' ~ libro.doi %}{% endif %}
 {% if not destino and hay_buscador_primo() %}{% set destino = path('catalogo', {_locale: guia.idioma, q: libro.isbn ?? libro.titulo}) %}{% endif %}
 {% set edicion = [libro.editorial ?? null, libro.anio ?? null]|filter(v => v)|join(', ') %}
+{# Libros guardados antes de indicar el formato: electrónico si tienen enlace propio o DOI; impreso si no. #}
+{% set formato = (libro.formato ?? null) ?: (((libro.enlace ?? null) or (libro.doi ?? null)) ? 'electronico' : 'impreso') %}
 <li class="libro{{ lista ? ' libro--lista' }}">
     {% if destino %}<a class="libro__enlace" href="{{ destino }}" target="_blank" rel="noopener"{% if lista %} tabindex="-1" aria-hidden="true"{% endif %}>{% else %}<span class="libro__enlace">{% endif %}
         <span class="libro__portada" aria-hidden="true">
@@ -21,12 +23,14 @@
             <span class="libro__titulo">{% if destino %}<a href="{{ destino }}" target="_blank" rel="noopener">{{ libro.titulo }}<span class="solo-lectores"> ({{ 'bases.ventana_nueva'|trans }})</span></a>{% else %}{{ libro.titulo }}{% endif %}</span>
             {% if libro.autor %}<span class="libro__autor">{{ libro.autor }}</span>{% endif %}
             {% if edicion %}<span class="libro__edicion">{{ edicion }}</span>{% endif %}
+            {{ include('recursos/_formato.html.twig', {formato: formato}) }}
             {% if destino %}<span class="libro__acceso"><a href="{{ destino }}" target="_blank" rel="noopener">{{ (libro.enlace ?? null) ? 'bloque.libro_acceso'|trans : ((libro.registro ?? null) ? 'bloque.libro_ver_catalogo'|trans : ((libro.doi ?? null) ? 'DOI: ' ~ libro.doi : 'bloque.libro_buscar_catalogo'|trans)) }}<span class="solo-lectores"> {{ libro.titulo }} ({{ 'bases.ventana_nueva'|trans }})</span></a></span>{% endif %}
             {% if libro.mms ?? false %}<span class="libro__disponibilidad" data-disponibilidad-target="libro" data-mms="{{ libro.mms }}" role="status"></span>{% endif %}
         </div>
     {% else %}
         {% if libro.autor %}<span class="libro__autor">{{ libro.autor }}</span>{% endif %}
         {% if edicion %}<span class="libro__edicion">{{ edicion }}</span>{% endif %}
+            {{ include('recursos/_formato.html.twig', {formato: formato}) }}
         {% if libro.mms ?? false %}<span class="libro__disponibilidad" data-disponibilidad-target="libro" data-mms="{{ libro.mms }}" role="status"></span>{% endif %}
     {% endif %}
 </li>

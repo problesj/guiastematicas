@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\Entity\Materia;
 use App\Entity\Sugerencia;
+use App\Enum\FormatoRecurso;
 use App\Enum\TipoRecurso;
 use App\Repository\MateriaRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -29,6 +30,13 @@ final class SugerenciaType extends AbstractType
                 'label' => 'sugerencia.tipo',
                 'class' => TipoRecurso::class,
                 'choice_label' => fn (TipoRecurso $t) => $t->etiqueta(),
+            ])
+            ->add('formato', EnumType::class, [
+                'label' => 'formato_recurso.etiqueta',
+                'class' => FormatoRecurso::class,
+                'choice_label' => fn (FormatoRecurso $f) => $f->etiqueta(),
+                'required' => false,
+                'placeholder' => 'formato_recurso.no_se',
             ])
             ->add('titulo', TextType::class, ['label' => 'sugerencia.titulo', 'attr' => ['maxlength' => 255]])
             ->add('autores', TextType::class, ['label' => 'sugerencia.autores', 'required' => false, 'help' => 'sugerencia.autores_ayuda', 'attr' => ['maxlength' => 255]])
