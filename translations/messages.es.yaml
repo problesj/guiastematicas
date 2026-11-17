@@ -674,7 +674,7 @@ bloque:
   enlace_url: Dirección (URL)
   enlace_descripcion: Descripción (opcional)
   enlace_en_recursos: "Agregar a recursos bibliográficos (lista A-Z)"
-  enlace_en_recursos_ayuda: "Al guardar, el sitio se agrega a la lista de recursos bibliográficos como «Sitio web», de acceso abierto y con las materias de la guía. Si lo desmarcas, sigue en la lista pero deja de estar vinculado."
+  enlace_en_recursos_ayuda: "(como «Sitio web», de acceso abierto y con las materias de la guía)"
   enlace_vinculado: "Este sitio está en los recursos bibliográficos."
   libro_titulo: Título
   libro_autor: Autor (opcional)

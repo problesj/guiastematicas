@@ -674,7 +674,7 @@ bloque:
   enlace_url: Address (URL)
   enlace_descripcion: Description (optional)
   enlace_en_recursos: "Add to library resources (A-Z list)"
-  enlace_en_recursos_ayuda: "When saved, the site is added to the library resources list as a \"Website\", open access and with the guide's subjects. If you untick it, it stays in the list but is no longer linked."
+  enlace_en_recursos_ayuda: "(as an open-access \"Website\" with the guide's subjects)"
   enlace_vinculado: "This site is in the library resources."
   libro_titulo: Title
   libro_autor: Author (optional)
