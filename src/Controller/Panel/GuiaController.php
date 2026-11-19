@@ -11,11 +11,13 @@ use App\Entity\Pestana;
 use App\Entity\Recurso;
 use App\Entity\Seccion;
 use App\Entity\Usuario;
+use App\Enum\EstadoGuia;
 use App\Enum\TipoBloque;
 use App\Enum\FormatoRecurso;
 use App\Enum\TipoRecurso;
 use App\Form\BloqueType;
 use App\Form\GuiaType;
+use App\Paginacion\FiltrosSesion;
 use App\Repository\GuiaRepository;
 use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
@@ -52,6 +54,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/{_locale}/panel/guias', requirements: ['_locale' => 'es|en'])]
 final class GuiaController extends AbstractController
 {
+    /** Parámetros del listado que se recuerdan durante la sesión. */
+    private const array FILTROS = ['q', 'estado', 'materia', 'idioma', 'responsable'];
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly BloquesGuia $bloques,
@@ -69,13 +74,45 @@ final class GuiaController extends AbstractController
     }
 
     #[Route('', name: 'panel_guias', methods: ['GET'])]
-    public function listado(Request $request, GuiaRepository $guias, #[CurrentUser] Usuario $usuario): Response
+    public function listado(Request $request, GuiaRepository $guias, MateriaRepository $materias, FiltrosSesion $filtros, #[CurrentUser] Usuario $usuario): Response
     {
-        $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
+        if (null !== $guardados = $filtros->recordar($request, 'guias', self::FILTROS)) {
+            return $this->redirectToRoute('panel_guias', $guardados);
+        }
+
+        $todas = $this->isGranted('ROLE_ADMINISTRADOR');
+        $consulta = $request->query;
+        $texto = mb_substr(trim($consulta->getString('q')), 0, 100);
+        $estado = EstadoGuia::tryFrom($consulta->getString('estado'));
+        $idioma = \in_array($consulta->getString('idioma'), ['es', 'en'], true) ? $consulta->getString('idioma') : null;
+        $materia = '' === $consulta->getString('materia') ? null : $materias->findOneBy(['slug' => $consulta->getString('materia')]);
+
+        // Opciones de los filtros: solo lo que aparece en las guías que la persona puede editar.
+        $editables = $guias->editablesPor($usuario, $todas);
+        $responsables = $materiasEnUso = [];
+        foreach ($editables as $guia) {
+            if (null !== $r = $guia->getResponsable()) {
+                $responsables[$r->getId()] = $r;
+            }
+            foreach ($guia->getMaterias() as $m) {
+                $materiasEnUso[$m->getId()] = $m;
+            }
+        }
+        uasort($responsables, fn (Usuario $a, Usuario $b) => strcasecmp($a->getNombreCompleto(), $b->getNombreCompleto()));
+        $responsable = $responsables[$consulta->getInt('responsable')] ?? null;
 
         return $this->render('panel/guias/listado.html.twig', [
-            'guias' => $guias->editablesPor($usuario, $this->isGranted('ROLE_ADMINISTRADOR'), $texto),
+            'guias' => $guias->editablesPor($usuario, $todas, $texto, $estado, $materia, $idioma, $responsable),
+            'total_editables' => \count($editables),
             'q' => $texto,
+            'estado' => $estado,
+            'estados' => EstadoGuia::cases(),
+            'idioma' => $idioma,
+            'materia' => $materia,
+            'materias' => array_values($materiasEnUso),
+            'responsable' => $responsable,
+            'responsables' => array_values($responsables),
+            'hay_filtros' => FiltrosSesion::hayFiltros($request, self::FILTROS),
         ]);
     }
 

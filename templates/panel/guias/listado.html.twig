@@ -11,12 +11,38 @@
     <form method="get" class="filtro" role="search">
         <label for="q" class="solo-lectores">{{ 'guias.buscar'|trans }}</label>
         <input type="search" id="q" name="q" value="{{ q }}" placeholder="{{ 'guias.buscar_placeholder'|trans }}" class="filtro__texto">
+        <label for="filtro-estado" class="solo-lectores">{{ 'guia.estado'|trans }}</label>
+        <select id="filtro-estado" name="estado">
+            <option value="">{{ 'guia.todos_estados'|trans }}</option>
+            {% for e in estados %}<option value="{{ e.value }}" {% if estado == e %}selected{% endif %}>{{ e.etiqueta|trans }}</option>{% endfor %}
+        </select>
+        {% if materias is not empty %}
+            <label for="filtro-materia" class="solo-lectores">{{ 'bases.materia'|trans }}</label>
+            <select id="filtro-materia" name="materia">
+                <option value="">{{ 'bases.todas_materias'|trans }}</option>
+                {{ include('_opciones_materias.html.twig', {materias: materias, elegida: materia}) }}
+            </select>
+        {% endif %}
+        {% if responsables|length > 1 %}
+            <label for="filtro-responsable" class="solo-lectores">{{ 'guia.responsable'|trans }}</label>
+            <select id="filtro-responsable" name="responsable">
+                <option value="">{{ 'guia.todos_responsables'|trans }}</option>
+                {% for r in responsables %}<option value="{{ r.id }}" {% if responsable and responsable.id == r.id %}selected{% endif %}>{{ r.nombreCompleto }}</option>{% endfor %}
+            </select>
+        {% endif %}
+        <label for="filtro-idioma" class="solo-lectores">{{ 'guia.idioma'|trans }}</label>
+        <select id="filtro-idioma" name="idioma">
+            <option value="">{{ 'guia.todos_idiomas'|trans }}</option>
+            {% for i in ['es', 'en'] %}<option value="{{ i }}" {% if idioma == i %}selected{% endif %}>{{ ('idioma.' ~ i)|trans }}</option>{% endfor %}
+        </select>
         <button type="submit" class="boton boton--secundario">{{ 'guias.buscar'|trans }}</button>
     </form>
+    {{ include('panel/_filtros_recordados.html.twig', {ruta: 'panel_guias'}) }}
 
     {% if guias is empty %}
-        <p>{{ (is_granted('ROLE_EDITOR') ? 'guia.vacio_editor' : 'guia.vacio_colaborador')|trans }}</p>
+        <p>{{ total_editables > 0 ? 'guia.sin_resultados_filtros'|trans : (is_granted('ROLE_EDITOR') ? 'guia.vacio_editor' : 'guia.vacio_colaborador')|trans }}</p>
     {% else %}
+        <p>{{ 'guias.resultados'|trans({'%count%': guias|length}) }}</p>
         <div class="tabla-desplazable">
             <table class="tabla tabla--guias">
                 <thead>

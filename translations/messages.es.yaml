@@ -66,6 +66,8 @@ sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
 panel:
+  filtros_recordados: Los filtros se mantienen mientras dure tu sesión.
+  limpiar_filtros: Limpiar filtros
   consultas: Consultas
   sugerencias: Sugerencias
   contenido: Contenido
@@ -577,6 +579,10 @@ guias:
   vacio: Todavía no hay guías publicadas.
   sin_resultados: No hay guías publicadas con esos filtros.
 guia:
+  todos_estados: Todos los estados
+  todos_idiomas: Todos los idiomas
+  todos_responsables: Todos los responsables
+  sin_resultados_filtros: No hay guías con esos filtros.
   nueva_manual: Nueva guía (manual)
   comun: "Guía de contenido común"
   comun_ayuda: "No se publica: sus pestañas y bloques quedan disponibles para vincularlos o copiarlos en las demás guías (herramientas, recursos transversales, horarios…)."

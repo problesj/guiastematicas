@@ -117,9 +117,9 @@ class RecursoRepository extends ServiceEntityRepository
      *
      * @return list<Recurso>
      */
-    public function paraExportar(?string $texto = null, ?TipoRecurso $tipo = null, ?FormatoRecurso $formato = null): array
+    public function paraExportar(?string $texto = null, ?TipoRecurso $tipo = null, ?FormatoRecurso $formato = null, ?Materia $materia = null): array
     {
-        return $this->consultaAdministracion($texto, $tipo, null, $formato)
+        return $this->consultaAdministracion($texto, $tipo, $materia, $formato)
             ->leftJoin('r.materias', 'exm')->addSelect('exm')
             ->leftJoin('r.editorial', 'exe')->addSelect('exe')
             ->getQuery()->getResult();

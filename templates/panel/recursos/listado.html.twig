@@ -24,13 +24,20 @@
             <option value="">{{ 'formato_recurso.todos'|trans }}</option>
             {% for f in formatos %}<option value="{{ f.value }}" {% if formato == f %}selected{% endif %}>{{ f.filtro|trans }}</option>{% endfor %}
         </select>
+        <label for="filtro-materia" class="solo-lectores">{{ 'bases.materia'|trans }}</label>
+        <select id="filtro-materia" name="materia">
+            <option value="">{{ 'bases.todas_materias'|trans }}</option>
+            {{ include('_opciones_materias.html.twig', {materias: materias, elegida: materia}) }}
+        </select>
+        {% if app.request.query.get('por_pagina') %}<input type="hidden" name="por_pagina" value="{{ pagina.porPagina }}">{% endif %}
         <button type="submit" class="boton boton--secundario">{{ 'bases.buscar'|trans }}</button>
     </form>
+    {{ include('panel/_filtros_recordados.html.twig', {ruta: 'panel_recursos'}) }}
 
     {% if pagina.total == 0 %}
         <p>{{ 'recurso.vacio'|trans }}</p>
     {% else %}
-        {% set filtros = {q: q ?: null, tipo: tipo ? tipo.value : null, formato: formato ? formato.value : null}|filter(v => v is not null) %}
+        {% set filtros = {q: q ?: null, tipo: tipo ? tipo.value : null, formato: formato ? formato.value : null, materia: materia ? materia.slug : null}|filter(v => v is not null) %}
         <div class="exportar-recursos">
             <p>{{ 'bases.resultados'|trans({'%count%': pagina.total}) }}</p>
             <p class="exportar-recursos__enlaces">

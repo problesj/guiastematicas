@@ -1,0 +1,5 @@
+{# Aviso bajo los filtros de un listado del panel: se recuerdan durante la sesión. Parámetros: ruta, hay_filtros. #}
+<p class="filtros-recordados">
+    <span class="filtros-recordados__texto">{{ 'panel.filtros_recordados'|trans }}</span>
+    {% if hay_filtros %}<a class="boton boton--secundario boton--pequeno" href="{{ path(ruta, {limpiar: 1}) }}">{{ icono('cancelar') }} {{ 'panel.limpiar_filtros'|trans }}</a>{% endif %}
+</p>

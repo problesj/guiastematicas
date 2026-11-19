@@ -66,6 +66,8 @@ sede:
   antofagasta: Antofagasta
   coquimbo: Coquimbo
 panel:
+  filtros_recordados: Filters are kept for the rest of your session.
+  limpiar_filtros: Clear filters
   consultas: Messages
   sugerencias: Suggestions
   contenido: Content
@@ -577,6 +579,10 @@ guias:
   vacio: No guides have been published yet.
   sin_resultados: No published guides match those filters.
 guia:
+  todos_estados: All statuses
+  todos_idiomas: All languages
+  todos_responsables: All owners
+  sin_resultados_filtros: No guides match these filters.
   nueva_manual: New guide (manual)
   comun: "Shared content guide"
   comun_ayuda: "Not published: its tabs and blocks can be linked or copied into the other guides (tools, cross-cutting resources, opening hours…)."

@@ -726,7 +726,7 @@ h1 .insignia--restringida { font-size: 0.875rem; }
 .configuracion__grupo legend { padding: 0 0.5rem; font-size: 1.125rem; font-weight: 700; }
 .configuracion__grupo > .campo__ayuda { margin-top: 0; }
 .configuracion__ajuste { padding: 0.75rem 0; border-top: 1px solid #f0eae0; }
-.configuracion__estado { margin: -0.5rem 0 0.5rem; font-size: 0.875rem; color: var(--color-texto-suave, #555); overflow-wrap: anywhere; }
+.configuracion__estado { margin: -0.5rem 0 0.5rem; font-size: 0.875rem; color: var(--color-texto-secundario); overflow-wrap: anywhere; }
 .configuracion__alerta { color: #a4262c; }
 
 .apariencia__logo img { max-height: 4rem; max-width: 100%; padding: 0.5rem; border: 1px solid #e4dccf; border-radius: var(--radio); background: #fff; }
@@ -953,3 +953,8 @@ h1 .etiqueta { font-size: 0.875rem; vertical-align: middle; }
 .exportar-recursos p { margin: 0; }
 .exportar-recursos__enlaces { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .exportar-recursos__enlaces .boton { display: inline-flex; align-items: center; gap: 0.35rem; }
+
+/* Filtros del panel recordados en la sesión */
+.filtros-recordados { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin: -0.75rem 0 1.25rem; }
+.filtros-recordados__texto { color: var(--color-texto-secundario); font-size: 0.9375rem; }
+.filtros-recordados .boton { display: inline-flex; align-items: center; gap: 0.35rem; }
