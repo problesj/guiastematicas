@@ -223,7 +223,7 @@ revisa cada punto:
 | Punto | Cómo comprobarlo | Cómo corregirlo |
 | ------------ | ---------------------------- | ---------------------------- |
 | Código sin escritura para otros usuarios | `find /var/www/guias -maxdepth 2 -perm -o+w` no lista nada | `sudo bash scripts/desplegar.sh main` (aplica `chmod -R go-w`) |
-| Apache sin versión ni listados | `curl -sI http://127.0.0.1/es` muestra `Server: Apache` sin número | `/etc/apache2/conf-available/guias-seguridad.conf` con `ServerTokens Prod`, `ServerSignature Off`, `TraceEnable Off`; `a2enconf guias-seguridad`; `a2dismod -f autoindex status` |
+| Apache sin versión ni listados | `curl -sI http://127.0.0.1/es` muestra `Server: Apache` sin número | `/etc/apache2/conf-available/zz-guias-seguridad.conf` (el prefijo hace que se cargue después de `security.conf`) con `ServerTokens Prod`, `ServerSignature Off`, `TraceEnable Off`; `a2enconf zz-guias-seguridad`; `a2dismod -f autoindex status` |
 | VirtualHost al día | `grep Permissions-Policy /etc/apache2/sites-available/guias.conf` | Copiar `deploy/apache/guias.conf` (conservando `ServerName`) y `systemctl reload apache2` |
 | PHP sin versión y con límites | `php-fpm8.5 -i \| grep -E 'expose_php\|upload_max'` | `90-guias.ini` (ver 3.3, paso 1) |
 | Solo los puertos necesarios | `sudo ufw status` y `ss -tln` | Abiertos solo 22, 80 y 443; MySQL solo en 127.0.0.1 |
