@@ -14,8 +14,8 @@ use App\Enum\TipoBloque;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Homologa una materia propia a una categoría ASJC: lo que tenía la propia (recursos, guías, especialistas,
- * sugerencias y bloques de búsqueda) pasa a la categoría, y la propia se elimina.
+ * Elimina una materia propia traspasando lo que la tenía (recursos, guías, especialistas, sugerencias y bloques de
+ * búsqueda) a otra materia: a una categoría ASJC al homologar, o a cualquier otra (propia o ASJC) al eliminar.
  */
 final class HomologadorMaterias
 {
@@ -40,6 +40,8 @@ final class HomologadorMaterias
     }
 
     /**
+     * Homologa una materia propia a una categoría ASJC (ver traspasar()).
+     *
      * @return array{recursos: int, guias: int, especialistas: int, sugerencias: int, bloques: int} elementos cambiados
      */
     public function homologar(Materia $propia, Materia $categoria): array
@@ -47,25 +49,42 @@ final class HomologadorMaterias
         if ($propia->isBase() || !$categoria->isBase()) {
             throw new \InvalidArgumentException('Solo se homologa una materia propia a una categoría ASJC.');
         }
+
+        return $this->traspasar($propia, $categoria);
+    }
+
+    /**
+     * Elimina una materia propia pasando lo que la tenía a otra materia (propia o ASJC); sin destino, solo se le
+     * quita. Las categorías ASJC no se eliminan.
+     *
+     * @return array{recursos: int, guias: int, especialistas: int, sugerencias: int, bloques: int} elementos cambiados
+     */
+    public function traspasar(Materia $origen, ?Materia $destino): array
+    {
+        if ($origen->isBase() || $destino === $origen) {
+            throw new \InvalidArgumentException('Solo se elimina una materia propia, hacia otra materia.');
+        }
         $cambios = ['recursos' => 0, 'guias' => 0, 'especialistas' => 0, 'sugerencias' => 0, 'bloques' => 0];
 
         $clases = ['recursos' => Recurso::class, 'guias' => Guia::class, 'especialistas' => Usuario::class, 'sugerencias' => Sugerencia::class];
         foreach ($clases as $clave => $clase) {
-            foreach ($this->con($clase, $propia) as $elemento) {
-                $elemento->removeMateria($propia);
-                $elemento->addMateria($categoria);
+            foreach ($this->con($clase, $origen) as $elemento) {
+                $elemento->removeMateria($origen);
+                if (null !== $destino) {
+                    $elemento->addMateria($destino);
+                }
                 ++$cambios[$clave];
             }
         }
 
         // Bloques «Buscar en el catálogo» con materias elegidas a mano (ids en el contenido).
-        foreach ($this->bloquesCon($propia) as $bloque) {
+        foreach ($this->bloquesCon($origen) as $bloque) {
             $ids = array_map('intval', (array) $bloque->dato('materias'));
-            $ids = array_values(array_unique(array_map(fn (int $id) => $id === $propia->getId() ? (int) $categoria->getId() : $id, $ids)));
-            $bloque->setContenido(['materias' => $ids] + $bloque->getContenido());
+            $ids = array_map(fn (int $id) => $id === $origen->getId() ? $destino?->getId() : $id, $ids);
+            $bloque->setContenido(['materias' => array_values(array_unique(array_filter($ids, fn ($id) => null !== $id)))] + $bloque->getContenido());
             ++$cambios['bloques'];
         }
-        $this->em->remove($propia);
+        $this->em->remove($origen);
         $this->em->flush();
 
         return $cambios;
