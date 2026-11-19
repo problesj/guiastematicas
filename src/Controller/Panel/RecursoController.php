@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Panel;
 
+use App\Entity\Materia;
 use App\Entity\Recurso;
 use App\Enum\FormatoRecurso;
 use App\Enum\TipoRecurso;
 use App\Form\RecursoType;
+use App\Paginacion\FiltrosSesion;
 use App\Paginacion\Pagina;
 use App\Repository\EditorialRepository;
 use App\Repository\MateriaRepository;
@@ -35,6 +37,9 @@ final class RecursoController extends AbstractController
 {
     private const array EXTENSIONES = ['xlsx', 'xls', 'ods', 'csv', 'bib', 'bibtex', 'ris'];
 
+    /** Parámetros del listado que se recuerdan durante la sesión. */
+    private const array FILTROS = ['q', 'tipo', 'formato', 'materia', 'pagina', 'por_pagina'];
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         #[Autowire('%kernel.project_dir%/var/importaciones')]
@@ -44,20 +49,28 @@ final class RecursoController extends AbstractController
     }
 
     #[Route('', name: 'panel_recursos', methods: ['GET'])]
-    public function listado(Request $request, RecursoRepository $recursos): Response
+    public function listado(Request $request, RecursoRepository $recursos, MateriaRepository $materias, FiltrosSesion $filtros): Response
     {
+        if (null !== $guardados = $filtros->recordar($request, 'recursos', self::FILTROS)) {
+            return $this->redirectToRoute('panel_recursos', $guardados);
+        }
+
         $texto = mb_substr(trim($request->query->getString('q')), 0, 100);
         $tipo = TipoRecurso::tryFrom($request->query->getString('tipo'));
         $formato = FormatoRecurso::tryFrom($request->query->getString('formato'));
+        $materia = $this->materiaFiltro($request, $materias);
         [$numero, $porPagina] = Pagina::leerParametros($request);
 
         return $this->render('panel/recursos/listado.html.twig', [
-            'pagina' => $recursos->listadoAdministracion($numero, $porPagina, $texto, $tipo, null, $formato),
+            'pagina' => $recursos->listadoAdministracion($numero, $porPagina, $texto, $tipo, $materia, $formato),
             'q' => $texto,
             'tipo' => $tipo,
             'formato' => $formato,
+            'materia' => $materia,
             'tipos' => TipoRecurso::cases(),
             'formatos' => FormatoRecurso::cases(),
+            'materias' => $materias->enUso(),
+            'hay_filtros' => FiltrosSesion::hayFiltros($request, self::FILTROS),
         ]);
     }
 
@@ -164,12 +177,13 @@ final class RecursoController extends AbstractController
 
     /** Exporta los recursos que cumplen los filtros del listado: Excel reimportable o RIS para gestores bibliográficos. */
     #[Route('/exportar.{extension<xlsx|ris>}', name: 'panel_recursos_exportar', methods: ['GET'])]
-    public function exportar(Request $request, string $extension, RecursoRepository $recursos, ExportadorRecursos $exportador): Response
+    public function exportar(Request $request, string $extension, RecursoRepository $recursos, MateriaRepository $materias, ExportadorRecursos $exportador): Response
     {
         $lista = $recursos->paraExportar(
             mb_substr(trim($request->query->getString('q')), 0, 100),
             TipoRecurso::tryFrom($request->query->getString('tipo')),
             FormatoRecurso::tryFrom($request->query->getString('formato')),
+            $this->materiaFiltro($request, $materias),
         );
         $nombre = 'recursos-bibliograficos-'.date('Y-m-d').'.'.$extension;
         $idioma = $request->getLocale();
@@ -194,6 +208,13 @@ final class RecursoController extends AbstractController
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="plantilla-recursos.xlsx"',
         ]);
+    }
+
+    private function materiaFiltro(Request $request, MateriaRepository $materias): ?Materia
+    {
+        $slug = $request->query->getString('materia');
+
+        return '' === $slug ? null : $materias->findOneBy(['slug' => $slug]);
     }
 
     /** Borra los archivos de vistas previas que nunca se confirmaron (más de un día). */

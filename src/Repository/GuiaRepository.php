@@ -101,8 +101,15 @@ class GuiaRepository extends ServiceEntityRepository
      *
      * @return list<Guia>
      */
-    public function editablesPor(Usuario $usuario, bool $todas, ?string $texto = null): array
-    {
+    public function editablesPor(
+        Usuario $usuario,
+        bool $todas,
+        ?string $texto = null,
+        ?EstadoGuia $estado = null,
+        ?Materia $materia = null,
+        ?string $idioma = null,
+        ?Usuario $responsable = null,
+    ): array {
         $consulta = $this->createQueryBuilder('g')
             ->leftJoin('g.responsable', 'u')->addSelect('u')
             ->orderBy('g.actualizadaEn', 'DESC');
@@ -111,6 +118,20 @@ class GuiaRepository extends ServiceEntityRepository
         }
         if (null !== $texto && '' !== trim($texto)) {
             $consulta->andWhere('g.titulo LIKE :texto')->setParameter('texto', '%'.addcslashes(trim($texto), '%_\\').'%');
+        }
+        if (null !== $estado) {
+            $consulta->andWhere('g.estado = :estado')->setParameter('estado', $estado);
+        }
+        if (null !== $idioma) {
+            $consulta->andWhere('g.idioma = :idioma')->setParameter('idioma', $idioma);
+        }
+        if (null !== $responsable) {
+            $consulta->andWhere('g.responsable = :responsable')->setParameter('responsable', $responsable);
+        }
+        if (null !== $materia) {
+            // Una categoría ASJC incluye las guías de las materias propias clasificadas en ella.
+            $consulta->andWhere('g.id IN (SELECT gf.id FROM '.Guia::class.' gf JOIN gf.materias mf WHERE mf IN (:materiaFiltro))')
+                ->setParameter('materiaFiltro', $this->getEntityManager()->getRepository(Materia::class)->conClasificadas($materia));
         }
 
         return $consulta->getQuery()->getResult();
