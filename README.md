@@ -383,4 +383,5 @@ agrega estos códigos cortos al sitio de Bibliotecas: `[guias_ucn]` (lista de gu
 `[guia_ucn_bloque id="…"]` (un bloque) y `[recursos_ucn]` (recursos A-Z). Usa la API pública, nunca muestra guías
 restringidas y guarda los datos en caché los minutos indicados en sus ajustes. Detalles en su `readme.txt`.
 
-CKEditor 5 (licencia GPL 2+) y SortableJS (MIT) están copiados en `assets/lib/`, sin depender de un CDN.
+CKEditor 5 (licencia GPL 2+), SortableJS (MIT) y SweetAlert2 11.26.25 (MIT; avisos y confirmaciones, ver
+`assets/avisos.js`) están copiados en `assets/lib/`, sin depender de un CDN.

@@ -939,3 +939,11 @@ h1 .etiqueta { font-size: 0.875rem; vertical-align: middle; }
 .selector-materias__opciones li { padding: 0.375rem 0.75rem; cursor: pointer; }
 .selector-materias__opciones li small { display: block; color: var(--color-texto-secundario); }
 .selector-materias__opciones li:hover, .selector-materias__opciones li[aria-selected="true"] { background: var(--color-fondo-suave); }
+
+/* Avisos y confirmaciones (SweetAlert2) */
+.aviso-emergente { font-family: inherit; color: var(--color-texto, #222); border-radius: var(--radio); }
+.aviso-emergente .swal2-html-container { font-size: 1.0625rem; line-height: 1.5; }
+.aviso-emergente__acciones { gap: 0.75rem; }
+.aviso-emergente .swal2-icon.swal2-question { border-color: var(--color-principal); color: var(--color-principal); }
+.boton--peligro { background: #b3261e; border-color: #b3261e; color: #fff; }
+.boton--peligro:hover, .boton--peligro:focus-visible { background: #8c1d17; border-color: #8c1d17; }

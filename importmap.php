@@ -29,6 +29,9 @@ return [
     'ckeditor5/translations/es.js' => [
         'path' => './assets/lib/ckeditor5/translations/es.js',
     ],
+    'sweetalert2' => [
+        'path' => './assets/lib/sweetalert2/sweetalert2.esm.all.min.js',
+    ],
     'sortablejs' => [
         'path' => './assets/lib/sortablejs/sortable.esm.js',
     ],

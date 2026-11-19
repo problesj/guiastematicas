@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import { avisar } from '../avisos.js';
 
 /*
  * Arrastrar y soltar en el editor de guías (SortableJS, cargado solo en esta página).
@@ -35,7 +36,7 @@ export default class extends Controller {
             body: JSON.stringify({ tipo: lista.dataset.tipo, padre: lista.dataset.padre ? Number(lista.dataset.padre) : null, ids }),
         }).catch(() => null);
         if (!respuesta || !respuesta.ok) {
-            window.alert(this.errorValue);
+            await avisar(this.errorValue, 'error');
             window.location.reload();
         }
     }
