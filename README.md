@@ -3,6 +3,10 @@
 Plataforma para gestionar guías temáticas de Bibliotecas UCN, inspirada en las funcionalidades de
 [SubjectsPlus 5](https://subjectsplus.github.io/sp5-new-release.html). Las decisiones y las fases están en [docs/PLAN.md](docs/PLAN.md).
 
+**Manual de uso** (administrador, editor y colaborador, con pantallas y ejemplos): [docs/manual](docs/manual/README.md),
+también en HTML estilo wiki (`docs/manual/html/index.html`) y en Word (`docs/manual/Manual-Guias-tematicas-UCN.docx`).
+Se regeneran desde los Markdown con `python3 scripts/generar-manual.py` (requiere pandoc).
+
 **Stack:** Symfony 7.4 LTS, PHP 8.5, MySQL 8.4, Apache 2.4 sobre Ubuntu 26.04 LTS.
 
 ## Desarrollo local con Docker

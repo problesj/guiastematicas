@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5. Manual del administrador · Manual de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Manual · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el manual</label>
+    <input id="buscar" type="search" placeholder="Buscar en el manual…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-introduccion.html">1. Introducción</a></li><li><a href="02-funciones-comunes.html">2. Funciones comunes del personal</a></li><li><a href="03-colaborador.html">3. Manual del colaborador: editar el contenido de una guía</a></li><li><a href="04-editor.html">4. Manual del editor: crear guías y mantener la lista de recursos</a></li><li><a href="05-administrador.html" aria-current="page">5. Manual del administrador</a></li><li><a href="06-preguntas-frecuentes.html">6. Preguntas frecuentes</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Manual</a> › 5. Manual del administrador</p>
+    <article><h1 id="5-manual-del-administrador">5. Manual del administrador</h1>
+<p>El <strong>administrador</strong> gestiona las cuentas, el esquema de
+materias, la apariencia del sitio y las conexiones con otros sistemas.
+Además puede editar todas las guías y hace todo lo que hacen editores y
+colaboradores (<a href="03-colaborador.html">capítulos 3</a> y <a
+href="04-editor.html">4</a>).</p>
+<p>Las opciones propias del administrador están en el grupo
+<strong>Administración</strong> del menú.</p>
+<h2 id="51-usuarios">5.1 Usuarios<a class="ancla" href="#51-usuarios" aria-label="Enlace a esta sección">#</a></h2>
+<p><strong>Usuarios</strong> lista todas las cuentas con su correo, rol,
+si está activa y el último acceso.</p>
+<figure>
+<img src="../img/61-usuarios.png" alt="Usuarios" />
+<figcaption aria-hidden="true">Usuarios</figcaption>
+</figure>
+<p><strong>Nueva persona</strong> abre el formulario:</p>
+<figure>
+<img src="../img/62-usuario-nuevo.png" alt="Nueva persona" />
+<figcaption aria-hidden="true">Nueva persona</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Grupo</th>
+<th>Campos</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cuenta</td>
+<td>Correo electrónico (con él se identifica), rol, cuenta activa</td>
+</tr>
+<tr class="even">
+<td>Métodos de acceso</td>
+<td>Contraseña propia (mínimo 12 caracteres) y/o usuario LDAP UCN. Para
+Google basta con que el correo coincida</td>
+</tr>
+<tr class="odd">
+<td>Perfil público</td>
+<td>Los mismos datos de <a
+href="02-funciones-comunes.html#21-mi-perfil">Mi perfil</a>, que la
+persona luego puede completar</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Roles:</strong> Administrador (todo el sitio), Editor (crea
+y publica sus guías), Colaborador (edita las guías que le compartan) y
+Lector (no entra al panel; solo ve las guías restringidas que tenga
+asignadas).</li>
+<li><strong>Dar de baja a alguien:</strong> desmarca <strong>Cuenta
+activa</strong>. La persona ya no puede entrar, pero sus guías,
+consultas y revisiones conservan su nombre.</li>
+<li><strong>Olvidó su contraseña:</strong> edita la cuenta y escribe una
+nueva en <strong>Contraseña propia</strong>; comunícasela por un canal
+seguro y pídele que la cambie en <strong>Cambiar
+contraseña</strong>.</li>
+</ul>
+<p><strong>Ejemplo.</strong> Llega Javiera, nueva bibliotecaria de
+Coquimbo. Creas su cuenta con su correo <code>@ucn.cl</code>, rol
+<strong>Editor</strong>, usuario LDAP <code>jperez</code> (entrará con
+su clave institucional), departamento «Biblioteca Coquimbo» y sede
+Coquimbo. Ella completa su foto y materias en <strong>Mi
+perfil</strong>.</p>
+<h2 id="52-departamentos">5.2 Departamentos<a class="ancla" href="#52-departamentos" aria-label="Enlace a esta sección">#</a></h2>
+<p>Agrupan al personal en el directorio de bibliotecarios (por ejemplo,
+«Referencia y formación de usuarios»). Cada departamento tiene nombre,
+sede y un <strong>orden</strong> que define su posición en el
+directorio.</p>
+<figure>
+<img src="../img/63-departamentos.png" alt="Departamentos" />
+<figcaption aria-hidden="true">Departamentos</figcaption>
+</figure>
+<h2 id="53-materias-y-categorías-asjc">5.3 Materias y categorías
+ASJC</h2>
+<p>El esquema de materias se basa en las <strong>334 categorías
+ASJC</strong> de Scopus, agrupadas en 27 campos y 5 grandes áreas.
+Vienen cargadas y no se pueden eliminar (sí desactivar). Sobre ellas se
+crean <strong>materias propias</strong> (carreras, asignaturas, líneas
+de investigación), que deben quedar <strong>clasificadas</strong> en al
+menos una categoría ASJC.</p>
+<figure>
+<img src="../img/64-materias.png" alt="Materias" />
+<figcaption aria-hidden="true">Materias</figcaption>
+</figure>
+<p>El listado muestra las materias propias y las categorías en uso,
+agrupadas por campo; <strong>Ver las 334 categorías ASJC</strong> las
+muestra todas. Si hay materias propias sin clasificar, aparece un
+aviso.</p>
+<p>Al filtrar por una categoría ASJC en el sitio (guías, lista A-Z,
+directorio), aparecen también los recursos y guías de las materias
+propias clasificadas en ella.</p>
+<h3 id="crear-una-materia-propia">Crear una materia propia<a class="ancla" href="#crear-una-materia-propia" aria-label="Enlace a esta sección">#</a></h3>
+<figure>
+<img src="../img/65-materia-nueva.png" alt="Nueva materia" />
+<figcaption aria-hidden="true">Nueva materia</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Campo</th>
+<th>Para qué sirve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Nombre y nombre en inglés</td>
+<td>Cómo se muestra en cada idioma</td>
+</tr>
+<tr class="even">
+<td>Identificador en la URL</td>
+<td>Se usa en los filtros (<code>?materia=…</code>); si lo dejas vacío
+se arma con el nombre</td>
+</tr>
+<tr class="odd">
+<td>Código UCN</td>
+<td>Opcional, el código interno de la carrera o asignatura</td>
+</tr>
+<tr class="even">
+<td>Activa</td>
+<td>Desmarcada, la materia deja de ofrecerse en los formularios y
+filtros</td>
+</tr>
+<tr class="odd">
+<td>Categorías ASJC</td>
+<td>Al menos una. Usa el buscador por nombre o código</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ejemplo.</strong> Para la carrera «Ingeniería Civil en Obras
+Civiles»: nombre en inglés «Civil Engineering», el código UCN de la
+carrera y las categorías <strong>2205 Ingeniería civil y
+estructural</strong> y <strong>1909 Ingeniería geotécnica y geología
+aplicada</strong> (en el buscador basta escribir «civil» o «2205»). Al
+filtrar por «Ingeniería civil y estructural» en la lista A-Z aparecerán
+también los recursos de esta carrera.</p>
+<h3 id="homologar-una-materia-propia">Homologar una materia propia<a class="ancla" href="#homologar-una-materia-propia" aria-label="Enlace a esta sección">#</a></h3>
+<p>Si una materia propia equivale exactamente a una categoría ASJC,
+<strong>Homologar</strong> la reemplaza: sus recursos, guías,
+especialistas, sugerencias y bloques de búsqueda pasan a la categoría y
+la materia propia se elimina. Antes de confirmar se muestra cuántos
+elementos cambian.</p>
+<figure>
+<img src="../img/66-homologar-materia.png"
+alt="Homologar una materia" />
+<figcaption aria-hidden="true">Homologar una materia</figcaption>
+</figure>
+<h3 id="eliminar-una-materia-propia">Eliminar una materia propia<a class="ancla" href="#eliminar-una-materia-propia" aria-label="Enlace a esta sección">#</a></h3>
+<p><strong>Eliminar</strong> abre una página con lo que usa la materia y
+el campo <strong>Reasignar a</strong>: elige otra materia (propia o
+categoría ASJC) para que reciba sus recursos, guías, especialistas,
+sugerencias y bloques, o <strong>No reasignar</strong> para solo
+quitarla. La plataforma propone la categoría ASJC en que estaba
+clasificada. Esta acción no se puede deshacer.</p>
+<figure>
+<img src="../img/67-eliminar-materia.png"
+alt="Eliminar una materia con reasignación" />
+<figcaption aria-hidden="true">Eliminar una materia con
+reasignación</figcaption>
+</figure>
+<h2 id="54-países">5.4 Países<a class="ancla" href="#54-países" aria-label="Enlace a esta sección">#</a></h2>
+<p>Tabla ISO 3166-1 de países (nombre en español e inglés) que usan
+autores y editoriales. <strong>Completar lista ISO</strong> repone los
+que falten.</p>
+<figure>
+<img src="../img/68-paises.png" alt="Países" />
+<figcaption aria-hidden="true">Países</figcaption>
+</figure>
+<h2 id="55-apariencia">5.5 Apariencia<a class="ancla" href="#55-apariencia" aria-label="Enlace a esta sección">#</a></h2>
+<p>Personaliza el sitio sin tocar código. Lo que se deja vacío usa el
+tema de Bibliotecas UCN.</p>
+<figure>
+<img src="../img/69-apariencia.png" alt="Apariencia" />
+<figcaption aria-hidden="true">Apariencia</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Grupo</th>
+<th>Qué se define</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Nombre del sitio</td>
+<td>Título en español e inglés, e institución</td>
+</tr>
+<tr class="even">
+<td>Logo</td>
+<td>Imagen de la cabecera (PNG, JPG o WebP, mejor horizontal y con fondo
+transparente)</td>
+</tr>
+<tr class="odd">
+<td>Imagen de la portada</td>
+<td>Fondo de la portada (recomendado 1920 × 600 px o más)</td>
+</tr>
+<tr class="even">
+<td>Guías por materia</td>
+<td>Presentación de la lista de guías: lista, cuadrícula de tarjetas o
+carrusel</td>
+</tr>
+<tr class="odd">
+<td>Accesos a recursos</td>
+<td>Para Bases de datos, Libros y Revistas: deshabilitado, lista o
+cuadrícula. Cada acceso habilitado aparece en el menú principal con su
+propia página</td>
+</tr>
+<tr class="even">
+<td>Colores de fondo</td>
+<td>Principal, barra superior y pie de página</td>
+</tr>
+<tr class="odd">
+<td>Colores de texto</td>
+<td>General, títulos, cabecera, barra, botones y pie</td>
+</tr>
+</tbody>
+</table>
+<p>Cada combinación de color de texto y fondo se valida con el contraste
+mínimo de accesibilidad (WCAG AA) antes de guardar: si un par no cumple,
+se indica cuál y no se guarda.</p>
+<h2 id="56-guías-por-materia-en-la-portada">5.6 Guías por materia en la
+portada</h2>
+<p>La sección «Guías por materia» del sitio muestra solo guías
+publicadas y públicas. El filtro <strong>Gran área</strong> (Ciencias de
+la salud, de la vida, físicas, sociales y humanidades,
+multidisciplinaria) aparece solo con áreas que tienen contenido.</p>
+<h2 id="57-integraciones">5.7 Integraciones<a class="ancla" href="#57-integraciones" aria-label="Enlace a esta sección">#</a></h2>
+<p><strong>Integraciones</strong> reúne los datos de conexión con
+servicios externos. Lo que se deja vacío usa la configuración del
+servidor (archivo <code>.env.local</code>, que administra el encargado
+de sistemas). Las claves se guardan cifradas y nunca se vuelven a
+mostrar: para cambiar una, escribe la nueva.</p>
+<figure>
+<img src="../img/70-integraciones.png" alt="Integraciones" />
+<figcaption aria-hidden="true">Integraciones</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 50%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Grupo</th>
+<th>Para qué sirve</th>
+<th>Quién entrega los datos</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Proxy AccesUM</td>
+<td>Prefijo o plantilla con <code>{url}</code> para abrir los recursos
+suscritos desde fuera del campus</td>
+<td>Proveedor del proxy</td>
+</tr>
+<tr class="even">
+<td>Catálogo (Primo VE y Alma)</td>
+<td>Búsqueda en el catálogo, datos de libros y revistas por ISBN/ISSN y
+disponibilidad de ejemplares</td>
+<td>Administrador de Alma / Ex Libris</td>
+</tr>
+<tr class="odd">
+<td>Biblioges</td>
+<td>Bibliografía de carreras y asignaturas en el bloque Libros y en el
+asistente</td>
+<td>Administrador de Biblioges (Administración → API Keys)</td>
+</tr>
+<tr class="even">
+<td>LDAP</td>
+<td>Inicio de sesión con la cuenta institucional</td>
+<td>Unidad de informática de la UCN</td>
+</tr>
+<tr class="odd">
+<td>Google</td>
+<td>Inicio de sesión con Google (ID de cliente OAuth)</td>
+<td>Consola de Google Cloud de la institución</td>
+</tr>
+<tr class="even">
+<td>Correo (SMTP)</td>
+<td>Avisos de consultas a bibliotecarios. El botón <strong>Enviar correo
+de prueba</strong> comprueba la configuración</td>
+<td>Unidad de informática</td>
+</tr>
+<tr class="odd">
+<td>Inteligencia artificial (Gemini)</td>
+<td>Asistente «Nueva guía con IA»</td>
+<td>Cuenta de Google AI Studio</td>
+</tr>
+<tr class="even">
+<td>Moodle (LTI 1.3)</td>
+<td>Agregar guías a los cursos de Moodle</td>
+<td>Administrador de Moodle</td>
+</tr>
+</tbody>
+</table>
+<p>En la misma página se descarga el <strong>plugin de
+WordPress</strong> ya configurado con la dirección del servidor.</p>
+<p><strong>Ejemplo.</strong> Para activar el correo: en <strong>Correo
+(SMTP)</strong> escribe el servidor, el puerto (por ejemplo 587), el
+cifrado (STARTTLS), el usuario y la clave, y el remitente
+<code>biblioteca@ucn.cl</code> con nombre «Bibliotecas UCN». Guarda y
+presiona <strong>Enviar correo de prueba</strong>: debe llegarte un
+mensaje a tu correo.</p>
+<blockquote>
+<p>Nunca compartas por correo ni en documentos las claves de las
+integraciones: se escriben solo en esta página.</p>
+</blockquote>
+<h2 id="58-conexión-con-otros-sistemas">5.8 Conexión con otros
+sistemas</h2>
+<h3 id="moodle">Moodle<a class="ancla" href="#moodle" aria-label="Enlace a esta sección">#</a></h3>
+<p>La plataforma funciona como <strong>herramienta externa LTI
+1.3</strong> de Moodle. El administrador de Moodle la registra con estas
+direcciones del servidor: inicio de sesión <code>/lti/login</code>,
+lanzamiento <code>/lti/lanzar</code>, Deep Linking
+<code>/lti/vincular</code> y llaves públicas <code>/lti/jwks</code>. Los
+datos que entrega Moodle al registrarla se escriben en el grupo
+<strong>Moodle (LTI 1.3)</strong> de Integraciones. Después, cada
+docente agrega «Guías temáticas» como actividad de su curso, elige la
+guía, y sus estudiantes la abren desde el curso.</p>
+<h3 id="wordpress">WordPress<a class="ancla" href="#wordpress" aria-label="Enlace a esta sección">#</a></h3>
+<p>El plugin de WordPress (se descarga desde Integraciones) agrega
+códigos cortos al sitio de Bibliotecas:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Código</th>
+<th>Muestra</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>[guias_ucn]</code></td>
+<td>La lista de guías</td>
+</tr>
+<tr class="even">
+<td><code>[guia_ucn slug="ingenieria"]</code></td>
+<td>Una guía</td>
+</tr>
+<tr class="odd">
+<td><code>[guia_ucn_bloque id="12"]</code></td>
+<td>Un bloque</td>
+</tr>
+<tr class="even">
+<td><code>[recursos_ucn]</code></td>
+<td>La lista de recursos A-Z</td>
+</tr>
+</tbody>
+</table>
+<p>Solo muestra contenido público.</p>
+<h3 id="incrustar-bloques-y-api-pública">Incrustar bloques y API
+pública</h3>
+<p>Cualquier bloque de una guía publicada y pública se puede mostrar en
+otra web con <strong>Incrustar</strong> (<a
+href="03-colaborador.html#35-mover-e-incrustar-un-bloque">3.5</a>). Para
+desarrolladores hay una API de solo lectura en JSON:
+<code>/api/v1/guias</code>, <code>/api/v1/guias/{dirección}</code> y
+<code>/api/v1/recursos</code>.</p>
+<h2 id="59-guías-de-todo-el-equipo-y-contenido-común">5.9 Guías de todo
+el equipo y contenido común</h2>
+<p>El administrador ve y edita <strong>todas</strong> las guías. En
+<strong>Datos de la guía</strong> puede además:</p>
+<ul>
+<li>cambiar el <strong>Responsable</strong> (por ejemplo, cuando alguien
+deja la biblioteca);</li>
+<li>marcar la guía como <strong>Guía de contenido común</strong>: no se
+publica, y todos sus bloques y pestañas quedan disponibles para vincular
+o copiar en las demás guías (bases multidisciplinarias, normas de
+citación, horarios…).</li>
+</ul>
+<figure>
+<img src="../img/71-guias-administrador.png"
+alt="Guías vistas por el administrador" />
+<figcaption aria-hidden="true">Guías vistas por el
+administrador</figcaption>
+</figure>
+<p>Al final de la página del asistente «Nueva guía con IA», el
+administrador elige el bloque transversal de bases multidisciplinarias y
+la pestaña transversal de citación que el asistente vincula en cada guía
+nueva.</p>
+<p><strong>Ejemplo.</strong> Crea la guía «Contenido común», márcala
+como de contenido común y agrega una pestaña «Cómo citar» con bloques de
+APA, IEEE y Vancouver. En el asistente, elígela como pestaña de
+citación. Desde entonces cada guía nueva la incluye como vínculo, y un
+cambio en la original se ve en todas.</p>
+<h2 id="510-respaldos-y-servidores">5.10 Respaldos y servidores<a class="ancla" href="#510-respaldos-y-servidores" aria-label="Enlace a esta sección">#</a></h2>
+<p>Los respaldos diarios, las actualizaciones de versión y el paso de
+datos entre servidores (pruebas, piloto, producción) los hace el
+encargado de sistemas con los scripts de la carpeta
+<code>scripts/</code> del repositorio (<code>respaldar.sh</code>,
+<code>restaurar.sh</code>, <code>desplegar.sh</code>). Están descritos
+en el <code>README.md</code> del repositorio.</p>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="04-editor.html"><small>← Anterior</small>4. Manual del editor: crear guías y mantener la lista de recursos</a><a class="siguiente" href="06-preguntas-frecuentes.html"><small>Siguiente →</small>6. Preguntas frecuentes</a></nav>
+    <footer class="pie">Bibliotecas UCN · Manual generado el 19-11-2026 a partir de <code>docs/manual</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a href="#51-usuarios" id="toc-51-usuarios">5.1 Usuarios</a></li>
+<li><a href="#52-departamentos" id="toc-52-departamentos">5.2
+Departamentos</a></li>
+<li><a href="#53-materias-y-categorías-asjc"
+id="toc-53-materias-y-categorías-asjc">5.3 Materias y categorías
+ASJC</a>
+<ul>
+<li><a href="#crear-una-materia-propia"
+id="toc-crear-una-materia-propia">Crear una materia propia</a></li>
+<li><a href="#homologar-una-materia-propia"
+id="toc-homologar-una-materia-propia">Homologar una materia
+propia</a></li>
+<li><a href="#eliminar-una-materia-propia"
+id="toc-eliminar-una-materia-propia">Eliminar una materia
+propia</a></li>
+</ul></li>
+<li><a href="#54-países" id="toc-54-países">5.4 Países</a></li>
+<li><a href="#55-apariencia" id="toc-55-apariencia">5.5
+Apariencia</a></li>
+<li><a href="#56-guías-por-materia-en-la-portada"
+id="toc-56-guías-por-materia-en-la-portada">5.6 Guías por materia en la
+portada</a></li>
+<li><a href="#57-integraciones" id="toc-57-integraciones">5.7
+Integraciones</a></li>
+<li><a href="#58-conexión-con-otros-sistemas"
+id="toc-58-conexión-con-otros-sistemas">5.8 Conexión con otros
+sistemas</a>
+<ul>
+<li><a href="#moodle" id="toc-moodle">Moodle</a></li>
+<li><a href="#wordpress" id="toc-wordpress">WordPress</a></li>
+<li><a href="#incrustar-bloques-y-api-pública"
+id="toc-incrustar-bloques-y-api-pública">Incrustar bloques y API
+pública</a></li>
+</ul></li>
+<li><a href="#59-guías-de-todo-el-equipo-y-contenido-común"
+id="toc-59-guías-de-todo-el-equipo-y-contenido-común">5.9 Guías de todo
+el equipo y contenido común</a></li>
+<li><a href="#510-respaldos-y-servidores"
+id="toc-510-respaldos-y-servidores">5.10 Respaldos y servidores</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

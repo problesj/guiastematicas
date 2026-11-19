@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3. Manual del colaborador: editar el contenido de una guía · Manual de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Manual · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el manual</label>
+    <input id="buscar" type="search" placeholder="Buscar en el manual…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-introduccion.html">1. Introducción</a></li><li><a href="02-funciones-comunes.html">2. Funciones comunes del personal</a></li><li><a href="03-colaborador.html" aria-current="page">3. Manual del colaborador: editar el contenido de una guía</a></li><li><a href="04-editor.html">4. Manual del editor: crear guías y mantener la lista de recursos</a></li><li><a href="05-administrador.html">5. Manual del administrador</a></li><li><a href="06-preguntas-frecuentes.html">6. Preguntas frecuentes</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Manual</a> › 3. Manual del colaborador: editar el contenido de una guía</p>
+    <article><h1 id="3-manual-del-colaborador-editar-el-contenido-de-una-guía">3.
+Manual del colaborador: editar el contenido de una guía</h1>
+<p>Un <strong>colaborador</strong> edita las guías en que el responsable
+lo agregó como <strong>coeditor</strong>. Puede crear, cambiar, ordenar
+y eliminar pestañas, secciones y bloques. No puede cambiar los datos de
+la guía (título, materias, visibilidad), ni publicarla, ni eliminarla:
+eso lo hace su responsable (ver <a href="04-editor.html">capítulo
+4</a>).</p>
+<p>Todo este capítulo vale también para editores y administradores.</p>
+<h2 id="31-mis-guías">3.1 Mis guías<a class="ancla" href="#31-mis-guías" aria-label="Enlace a esta sección">#</a></h2>
+<p><strong>Guías temáticas</strong> muestra las guías que puedes editar,
+con su estado (Borrador o Publicada), responsable, fecha de la última
+actualización y visitas.</p>
+<figure>
+<img src="../img/12-guias-colaborador.png"
+alt="Guías de un colaborador" />
+<figcaption aria-hidden="true">Guías de un colaborador</figcaption>
+</figure>
+<p>Sobre la tabla hay filtros por texto, estado, materia, idioma y, si
+hay varios, responsable. <strong>Los filtros se mantienen mientras dure
+tu sesión</strong>: si entras a editar una guía y vuelves, el listado
+sigue filtrado. <strong>Limpiar filtros</strong> los quita.</p>
+<p>Haz clic en el título (o en ✏️) para abrir el editor de la guía.</p>
+<h2 id="32-cómo-está-organizada-una-guía">3.2 Cómo está organizada una
+guía</h2>
+<pre><code>Guía
+├── Pestaña «Inicio»
+│   ├── Sección «Bienvenida» (2 columnas)
+│   │   ├── Bloque Texto
+│   │   └── Bloque Perfil del bibliotecario
+│   └── Sección «Busca en el catálogo»
+│       └── Bloque Búsqueda en el catálogo
+├── Pestaña «Bases de datos»
+│   └── …
+└── Pestaña «Cómo citar»
+    └── Subpestaña «Normas APA»</code></pre>
+<ul>
+<li><strong>Pestaña:</strong> una página de la guía. Puede ser
+subpestaña de otra (un solo nivel) o un enlace externo.</li>
+<li><strong>Sección:</strong> un grupo de bloques con título, que
+reparte sus bloques en 1, 2 o 3 columnas (en celulares, siempre en
+una).</li>
+<li><strong>Bloque:</strong> una caja con contenido: texto, recursos,
+libros, un video, etc.</li>
+</ul>
+<h2 id="33-el-editor-de-la-guía">3.3 El editor de la guía<a class="ancla" href="#33-el-editor-de-la-guía" aria-label="Enlace a esta sección">#</a></h2>
+<figure>
+<img src="../img/20-editor-guia.png" alt="Editor de la guía" />
+<figcaption aria-hidden="true">Editor de la guía</figcaption>
+</figure>
+<p>De arriba hacia abajo:</p>
+<ol type="1">
+<li><strong>Cabecera:</strong> título, estado y fecha de actualización,
+y los botones <strong>Vista previa</strong>, <strong>Ver
+publicada</strong> y (solo para el responsable) <strong>Datos de la
+guía</strong> y <strong>Publicar / Pasar a borrador</strong>.</li>
+<li><strong>Barra de pestañas:</strong> un clic abre la pestaña. Al
+final, el campo <strong>Nueva pestaña</strong> con el botón
+<strong>Agregar</strong>, y el enlace <strong>Pestaña de otra
+guía</strong>.</li>
+<li><strong>Contenido de la pestaña:</strong> sus secciones, cada una
+con sus bloques y el botón <strong>Agregar bloque</strong>. Al final, el
+campo para <strong>Agregar sección</strong>.</li>
+</ol>
+<h3 id="ordenar-arrastrando">Ordenar arrastrando<a class="ancla" href="#ordenar-arrastrando" aria-label="Enlace a esta sección">#</a></h3>
+<p>Pestañas, secciones y bloques se reordenan arrastrando el icono
+<strong>⠿</strong> que tienen a la izquierda. Un bloque puede
+arrastrarse a otra sección de la misma pestaña. El orden se guarda solo
+al soltar.</p>
+<h3 id="pestañas">Pestañas<a class="ancla" href="#pestañas" aria-label="Enlace a esta sección">#</a></h3>
+<ul>
+<li><strong>Agregar:</strong> escribe el nombre en <strong>Nueva
+pestaña</strong> y presiona <strong>Agregar</strong>. Se crea con una
+sección vacía.</li>
+<li><strong>Opciones de la pestaña</strong> (enlace a la derecha del
+título de la pestaña abierta):</li>
+</ul>
+<figure>
+<img src="../img/22-opciones-pestana.png"
+alt="Opciones de la pestaña" />
+<figcaption aria-hidden="true">Opciones de la pestaña</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Opción</th>
+<th>Efecto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Título</td>
+<td>Nombre que se ve en la barra de pestañas</td>
+</tr>
+<tr class="even">
+<td>Ubicación</td>
+<td>«Pestaña principal» o «Subpestaña de…» otra pestaña (se despliega
+bajo ella)</td>
+</tr>
+<tr class="odd">
+<td>Enlace externo</td>
+<td>Si lo indicas, la pestaña abre esa dirección en otra ventana en vez
+de mostrar contenido</td>
+</tr>
+<tr class="even">
+<td>Mostrar la etiqueta «Nuevo»</td>
+<td>Destaca la pestaña con una etiqueta</td>
+</tr>
+<tr class="odd">
+<td>Permitir reutilizar en otras guías</td>
+<td>Otras guías podrán vincular o copiar esta pestaña (ver 3.6)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Eliminar:</strong> el botón 🗑️ bajo las opciones borra la
+pestaña con todo su contenido, después de confirmar.</li>
+</ul>
+<h3 id="secciones">Secciones<a class="ancla" href="#secciones" aria-label="Enlace a esta sección">#</a></h3>
+<p>Cada sección tiene un campo de título, un selector de
+<strong>columnas</strong> (1, 2 o 3) y los botones 💾 (guardar título y
+columnas) y 🗑️ (eliminar la sección y sus bloques). Para crear una,
+escribe el título en <strong>Agregar sección</strong> al final de la
+pestaña.</p>
+<h3 id="bloques">Bloques<a class="ancla" href="#bloques" aria-label="Enlace a esta sección">#</a></h3>
+<p>Cada bloque muestra un resumen y estos botones:</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Botón</th>
+<th>Qué hace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>✏️ Editar</td>
+<td>Abre el formulario del bloque</td>
+</tr>
+<tr class="even">
+<td>✥ Mover</td>
+<td>Lo lleva a otra sección, de esta u otra pestaña, o a otra guía que
+puedas editar</td>
+</tr>
+<tr class="odd">
+<td>&lt;/&gt; Incrustar</td>
+<td>Entrega el código para mostrar el bloque en otra web (Moodle, sitio
+de una carrera)</td>
+</tr>
+<tr class="even">
+<td>🗑️ Eliminar</td>
+<td>Lo borra, después de confirmar</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agregar bloque</strong> despliega los tipos disponibles:</p>
+<figure>
+<img src="../img/21-agregar-bloque.png"
+alt="Tipos de bloque al agregar" />
+<figcaption aria-hidden="true">Tipos de bloque al agregar</figcaption>
+</figure>
+<h2 id="34-tipos-de-bloque">3.4 Tipos de bloque<a class="ancla" href="#34-tipos-de-bloque" aria-label="Enlace a esta sección">#</a></h2>
+<p>Todos los bloques tienen un <strong>Título</strong> opcional (se
+muestra en la barra de la caja) y la casilla <strong>Permitir reutilizar
+en otras guías</strong>.</p>
+<h3 id="texto">Texto<a class="ancla" href="#texto" aria-label="Enlace a esta sección">#</a></h3>
+<p>Editor con formato: negrita, cursiva, listas, enlaces, tablas,
+títulos. El texto pegado desde Word se limpia de estilos extraños al
+guardar.</p>
+<figure>
+<img src="../img/23-bloque-texto.png" alt="Bloque de texto" />
+<figcaption aria-hidden="true">Bloque de texto</figcaption>
+</figure>
+<p><strong>Ejemplo.</strong> En la pestaña «Cómo citar», un bloque Texto
+titulado «Normas de citación» explica en una lista breve que IEEE usa
+referencias numeradas y APA autor y año.</p>
+<h3 id="recursos-bibliográficos">Recursos bibliográficos<a class="ancla" href="#recursos-bibliográficos" aria-label="Enlace a esta sección">#</a></h3>
+<p>Muestra recursos elegidos de la lista A-Z (bases de datos, revistas,
+libros, normas, herramientas…). Su enlace pasa por el proxy cuando
+corresponde, y los de acceso abierto llevan la marca «Recurso
+libre».</p>
+<figure>
+<img src="../img/24-bloque-recursos.png"
+alt="Bloque de recursos bibliográficos" />
+<figcaption aria-hidden="true">Bloque de recursos
+bibliográficos</figcaption>
+</figure>
+<ul>
+<li><strong>Orden de los recursos:</strong> <em>Manual</em> (con las
+flechas ↑ ↓ de cada recurso) o <em>Alfabético (A–Z)</em>.</li>
+<li><strong>Recursos elegidos:</strong> los que ya están en el bloque; ✕
+los quita (no los borra de la lista A-Z).</li>
+<li><strong>Buscar y agregar recursos:</strong> filtra la lista A-Z por
+texto, tipo, formato y materia, marca los que quieras (o <strong>Marcar
+todos los mostrados</strong>) y presiona <strong>Agregar los marcados al
+bloque</strong>.</li>
+</ul>
+<p>Si el recurso no está en la lista A-Z, pide a un editor que lo
+agregue, o sugiérelo desde el sitio público.</p>
+<p>En la guía publicada, un bloque con más de 20 recursos de dos o más
+tipos ofrece botones para filtrar por tipo.</p>
+<h3 id="libros">Libros<a class="ancla" href="#libros" aria-label="Enlace a esta sección">#</a></h3>
+<p>Lista de libros con portada, autor, editorial y año, enlazados a su
+registro en el catálogo o a su versión electrónica.</p>
+<figure>
+<img src="../img/25-bloque-libros.png" alt="Bloque de libros" />
+<figcaption aria-hidden="true">Bloque de libros</figcaption>
+</figure>
+<ul>
+<li><strong>Presentación:</strong> cuadrícula de portadas (eliges las
+columnas), carrusel o lista breve paginada.</li>
+<li><strong>Orden:</strong> manual o por título A–Z.</li>
+<li><strong>Agregar libro:</strong> escribe el ISBN (o el DOI) y
+presiona <strong>Buscar datos</strong>: se completan título, autores,
+editorial, año y portada desde el catálogo Primo o desde doi.org. Lo que
+escribas a mano tiene prioridad.</li>
+<li><strong>Agregar varios por ISBN:</strong> pega varios ISBN, uno por
+línea o separados por comas; al guardar se buscan sus datos.</li>
+<li><strong>Buscador de libros:</strong> busca en el catálogo (título,
+autor, editorial) o en <strong>Biblioges</strong> (bibliografía de una
+carrera o asignatura). Marca los resultados y presiona <strong>Agregar
+los marcados</strong>.</li>
+<li><strong>Formato</strong> de cada libro: impreso, electrónico o
+ambos; «Detectar» lo deduce del catálogo.</li>
+<li><strong>Materias</strong> de cada libro, y el desplegable
+<strong>Asignar materias a los que agregues</strong> del buscador.</li>
+</ul>
+<p>Al guardar, cada libro se incorpora solo a la lista de recursos A-Z
+como tipo Libros (si ya estaba, se vincula sin duplicarlo). Quitar un
+libro del bloque no lo borra de la lista.</p>
+<p><strong>Ejemplo.</strong> Para la pestaña «Libros» de Ingeniería: en
+el buscador eliges <strong>Biblioges</strong>, la carrera Ingeniería
+Civil, bibliografía <strong>básica</strong>, <strong>disponible</strong>
+y «solo la última edición»; marcas los resultados, eliges la materia
+«Ingeniería civil» en <strong>Asignar materias a los que
+agregues</strong>, presionas <strong>Agregar los marcados</strong> y
+luego <strong>Guardar</strong>.</p>
+<h3 id="revistas">Revistas<a class="ancla" href="#revistas" aria-label="Enlace a esta sección">#</a></h3>
+<p>Igual que Libros, para revistas: a mano, por ISSN o desde la búsqueda
+de revistas del catálogo Primo (por título o por categoría: área,
+subárea y especialidad). También acepta pegar un enlace de una búsqueda
+de revistas de Primo. Las revistas se incorporan a la lista A-Z como
+tipo Revistas.</p>
+<figure>
+<img src="../img/27-bloque-revistas.png" alt="Bloque de revistas" />
+<figcaption aria-hidden="true">Bloque de revistas</figcaption>
+</figure>
+<h3 id="lista-de-enlaces">Lista de enlaces<a class="ancla" href="#lista-de-enlaces" aria-label="Enlace a esta sección">#</a></h3>
+<p>Sitios web externos, cada uno con texto, dirección y descripción
+opcional. La casilla <strong>Agregar a recursos bibliográficos (lista
+A-Z)</strong> crea (o vincula, si la dirección ya existe) un recurso de
+tipo Sitio web, de acceso abierto y con las materias de la guía.</p>
+<figure>
+<img src="../img/26-bloque-enlaces.png" alt="Bloque lista de enlaces" />
+<figcaption aria-hidden="true">Bloque lista de enlaces</figcaption>
+</figure>
+<h3 id="perfil-del-bibliotecario">Perfil del bibliotecario<a class="ancla" href="#perfil-del-bibliotecario" aria-label="Enlace a esta sección">#</a></h3>
+<p>Tarjeta de contacto de una persona del directorio: foto, cargo,
+correo, ubicación y botón para agendar una cita.</p>
+<figure>
+<img src="../img/28-bloque-perfil.png"
+alt="Bloque perfil del bibliotecario" />
+<figcaption aria-hidden="true">Bloque perfil del
+bibliotecario</figcaption>
+</figure>
+<h3 id="video">Video<a class="ancla" href="#video" aria-label="Enlace a esta sección">#</a></h3>
+<p>Pega el enlace de YouTube o Vimeo y, si quieres, una descripción.
+YouTube se muestra en modo de privacidad mejorada.</p>
+<figure>
+<img src="../img/29-bloque-video.png" alt="Bloque de video" />
+<figcaption aria-hidden="true">Bloque de video</figcaption>
+</figure>
+<h3 id="búsqueda-en-el-catálogo">Búsqueda en el catálogo<a class="ancla" href="#búsqueda-en-el-catálogo" aria-label="Enlace a esta sección">#</a></h3>
+<p>Caja de búsqueda que envía la consulta al catálogo Primo VE, con un
+texto de ayuda opcional.</p>
+<h3 id="diapositivas">Diapositivas<a class="ancla" href="#diapositivas" aria-label="Enlace a esta sección">#</a></h3>
+<p>Carrusel de imágenes que se van pasando. Cada imagen puede llevar un
+texto y un enlace. Sube imágenes JPG, PNG o WebP con <strong>Agregar
+diapositiva</strong>.</p>
+<figure>
+<img src="../img/30-bloque-diapositivas.png"
+alt="Bloque de diapositivas" />
+<figcaption aria-hidden="true">Bloque de diapositivas</figcaption>
+</figure>
+<h2 id="35-mover-e-incrustar-un-bloque">3.5 Mover e incrustar un
+bloque</h2>
+<p><strong>Mover</strong> permite elegir la guía, la pestaña y la
+sección de destino, y si el bloque va al final o al principio.</p>
+<figure>
+<img src="../img/31-mover-bloque.png" alt="Mover un bloque" />
+<figcaption aria-hidden="true">Mover un bloque</figcaption>
+</figure>
+<p><strong>Incrustar</strong> entrega dos códigos para mostrar el bloque
+en otra página web (solo funciona con guías publicadas y públicas): el
+recomendado, que ajusta el alto solo, y un <code>&lt;iframe&gt;</code>
+para sitios que no aceptan scripts. Debajo se ve cómo quedará.</p>
+<figure>
+<img src="../img/32-incrustar-bloque.png" alt="Incrustar un bloque" />
+<figcaption aria-hidden="true">Incrustar un bloque</figcaption>
+</figure>
+<p><strong>Ejemplo.</strong> Un docente quiere mostrar en su curso de
+Moodle el bloque «Multidisciplinarias». En <strong>Incrustar</strong>
+copias el «Código con iframe» y se lo envías; él lo pega en una etiqueta
+de texto de Moodle en modo HTML.</p>
+<h2 id="36-reutilizar-contenido-de-otras-guías">3.6 Reutilizar contenido
+de otras guías</h2>
+<p>Para no repetir lo mismo en varias guías (bases multidisciplinarias,
+normas de citación, horarios), un bloque o una pestaña marcados como
+<strong>Permitir reutilizar en otras guías</strong> se pueden agregar a
+otra guía:</p>
+<ul>
+<li>En una sección, <strong>Agregar bloque → Bloque de otra
+guía</strong>.</li>
+<li>En la barra de pestañas, <strong>Pestaña de otra guía</strong>.</li>
+</ul>
+<figure>
+<img src="../img/33-bloque-de-otra-guia.png"
+alt="Agregar un bloque de otra guía" />
+<figcaption aria-hidden="true">Agregar un bloque de otra
+guía</figcaption>
+</figure>
+<p>Hay dos formas de agregarlo:</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Forma</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Vincular</strong></td>
+<td>Muestra siempre el contenido actual del original. Solo se edita en
+la guía original; en esta aparece como vínculo</td>
+</tr>
+<tr class="even">
+<td><strong>Copiar</strong></td>
+<td>Crea una copia independiente que puedes cambiar sin afectar al
+original</td>
+</tr>
+</tbody>
+</table>
+<p>Un vínculo puede pasar a ser copia con <strong>Convertir en copia
+propia</strong>. Si alguien elimina un original que tiene vínculos, la
+plataforma avisa qué guías lo usan, y esos vínculos se borran con
+él.</p>
+<p>El administrador puede mantener una guía de <strong>contenido
+común</strong>, que no se publica y cuyos bloques y pestañas están
+siempre disponibles para reutilizar (ver <a
+href="05-administrador.html#59-guías-de-todo-el-equipo-y-contenido-común">5.9</a>).</p>
+<h2 id="37-vista-previa">3.7 Vista previa<a class="ancla" href="#37-vista-previa" aria-label="Enlace a esta sección">#</a></h2>
+<p><strong>Vista previa</strong> muestra la guía tal como se verá
+publicada, incluso si está en borrador. Una franja arriba indica el
+estado y lleva de vuelta al editor.</p>
+<figure>
+<img src="../img/35-vista-previa.png"
+alt="Vista previa de una pestaña" />
+<figcaption aria-hidden="true">Vista previa de una pestaña</figcaption>
+</figure>
+<h2 id="38-ejemplo-completo-agregar-una-pestaña-tesis">3.8 Ejemplo
+completo: agregar una pestaña «Tesis»</h2>
+<ol type="1">
+<li>En el editor de la guía, escribe «Tesis» en <strong>Nueva
+pestaña</strong> y presiona <strong>Agregar</strong>.</li>
+<li>En la sección que se creó, escribe el título «Dónde buscar tesis»,
+elige <strong>2 columnas</strong> y presiona 💾.</li>
+<li><strong>Agregar bloque → Texto</strong>: título «Repositorio UCN»,
+un párrafo explicando qué tesis hay y un enlace.
+<strong>Guardar</strong>.</li>
+<li><strong>Agregar bloque → Lista de enlaces</strong>: título «Otros
+repositorios», agrega «LA Referencia» y «Repositorio Institucional de la
+U. de Chile» con su dirección. <strong>Guardar</strong>.</li>
+<li>Arrastra la pestaña «Tesis» con su icono ⠿ para dejarla antes de
+«Cómo citar».</li>
+<li>Revisa con <strong>Vista previa</strong>. Si la guía ya está
+publicada, los cambios se ven de inmediato en el sitio.</li>
+</ol>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="02-funciones-comunes.html"><small>← Anterior</small>2. Funciones comunes del personal</a><a class="siguiente" href="04-editor.html"><small>Siguiente →</small>4. Manual del editor: crear guías y mantener la lista de recursos</a></nav>
+    <footer class="pie">Bibliotecas UCN · Manual generado el 19-11-2026 a partir de <code>docs/manual</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a href="#31-mis-guías" id="toc-31-mis-guías">3.1 Mis guías</a></li>
+<li><a href="#32-cómo-está-organizada-una-guía"
+id="toc-32-cómo-está-organizada-una-guía">3.2 Cómo está organizada una
+guía</a></li>
+<li><a href="#33-el-editor-de-la-guía"
+id="toc-33-el-editor-de-la-guía">3.3 El editor de la guía</a>
+<ul>
+<li><a href="#ordenar-arrastrando" id="toc-ordenar-arrastrando">Ordenar
+arrastrando</a></li>
+<li><a href="#pestañas" id="toc-pestañas">Pestañas</a></li>
+<li><a href="#secciones" id="toc-secciones">Secciones</a></li>
+<li><a href="#bloques" id="toc-bloques">Bloques</a></li>
+</ul></li>
+<li><a href="#34-tipos-de-bloque" id="toc-34-tipos-de-bloque">3.4 Tipos
+de bloque</a>
+<ul>
+<li><a href="#texto" id="toc-texto">Texto</a></li>
+<li><a href="#recursos-bibliográficos"
+id="toc-recursos-bibliográficos">Recursos bibliográficos</a></li>
+<li><a href="#libros" id="toc-libros">Libros</a></li>
+<li><a href="#revistas" id="toc-revistas">Revistas</a></li>
+<li><a href="#lista-de-enlaces" id="toc-lista-de-enlaces">Lista de
+enlaces</a></li>
+<li><a href="#perfil-del-bibliotecario"
+id="toc-perfil-del-bibliotecario">Perfil del bibliotecario</a></li>
+<li><a href="#video" id="toc-video">Video</a></li>
+<li><a href="#búsqueda-en-el-catálogo"
+id="toc-búsqueda-en-el-catálogo">Búsqueda en el catálogo</a></li>
+<li><a href="#diapositivas" id="toc-diapositivas">Diapositivas</a></li>
+</ul></li>
+<li><a href="#35-mover-e-incrustar-un-bloque"
+id="toc-35-mover-e-incrustar-un-bloque">3.5 Mover e incrustar un
+bloque</a></li>
+<li><a href="#36-reutilizar-contenido-de-otras-guías"
+id="toc-36-reutilizar-contenido-de-otras-guías">3.6 Reutilizar contenido
+de otras guías</a></li>
+<li><a href="#37-vista-previa" id="toc-37-vista-previa">3.7 Vista
+previa</a></li>
+<li><a href="#38-ejemplo-completo-agregar-una-pestaña-tesis"
+id="toc-38-ejemplo-completo-agregar-una-pestaña-tesis">3.8 Ejemplo
+completo: agregar una pestaña «Tesis»</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

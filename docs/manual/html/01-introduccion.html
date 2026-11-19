@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1. Introducción · Manual de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Manual · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el manual</label>
+    <input id="buscar" type="search" placeholder="Buscar en el manual…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-introduccion.html" aria-current="page">1. Introducción</a></li><li><a href="02-funciones-comunes.html">2. Funciones comunes del personal</a></li><li><a href="03-colaborador.html">3. Manual del colaborador: editar el contenido de una guía</a></li><li><a href="04-editor.html">4. Manual del editor: crear guías y mantener la lista de recursos</a></li><li><a href="05-administrador.html">5. Manual del administrador</a></li><li><a href="06-preguntas-frecuentes.html">6. Preguntas frecuentes</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Manual</a> › 1. Introducción</p>
+    <article><h1 id="1-introducción">1. Introducción</h1>
+<h2 id="11-qué-es-la-plataforma">1.1 ¿Qué es la plataforma?<a class="ancla" href="#11-qué-es-la-plataforma" aria-label="Enlace a esta sección">#</a></h2>
+<p>La plataforma de <strong>Guías temáticas</strong> reúne, por materia,
+los recursos de información que Bibliotecas UCN recomienda: bases de
+datos, revistas, libros, normas, sitios web, videos y consejos de
+búsqueda. Cada guía la prepara un bibliotecario o bibliotecaria y se
+publica en el sitio para estudiantes y académicos.</p>
+<p>La plataforma tiene dos partes:</p>
+<ul>
+<li><strong>El sitio público</strong>, que ve cualquier persona:
+portada, guías por materia, lista de recursos bibliográficos A-Z y
+directorio de bibliotecarios.</li>
+<li><strong>El panel de trabajo</strong>, donde el personal de la
+biblioteca crea y mantiene las guías y los recursos. Solo entran las
+personas que un administrador ha registrado.</li>
+</ul>
+<p>El sitio está en español e inglés: el selector <strong>ES /
+EN</strong> de la barra superior cambia el idioma de la interfaz.</p>
+<h2 id="12-roles-y-permisos">1.2 Roles y permisos<a class="ancla" href="#12-roles-y-permisos" aria-label="Enlace a esta sección">#</a></h2>
+<p>Cada persona tiene uno de estos roles. Los permisos se suman de abajo
+hacia arriba: un editor puede hacer todo lo que hace un colaborador, y
+un administrador todo lo que hace un editor.</p>
+<table>
+<colgroup>
+<col style="width: 48%" />
+<col style="width: 10%" />
+<col style="width: 13%" />
+<col style="width: 10%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acción</th>
+<th style="text-align: center;">Lector</th>
+<th style="text-align: center;">Colaborador</th>
+<th style="text-align: center;">Editor</th>
+<th style="text-align: center;">Administrador</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ver las guías restringidas que tiene asignadas</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="even">
+<td>Entrar al panel, editar su perfil y responder consultas</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="odd">
+<td>Editar el contenido (pestañas, secciones y bloques) de las guías en
+que es coeditor</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="even">
+<td>Revisar sugerencias de recursos de sus materias</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="odd">
+<td>Crear guías, publicarlas, elegir coeditores y eliminarlas</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="even">
+<td>Crear guías con el asistente de inteligencia artificial</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="odd">
+<td>Gestionar la lista de recursos A-Z, autores y editoriales; importar
+y exportar</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="even">
+<td>Editar todas las guías y cambiar su responsable</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="odd">
+<td>Gestionar usuarios, departamentos, materias y países</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+</tr>
+<tr class="even">
+<td>Cambiar la apariencia del sitio y las integraciones (catálogo, LDAP,
+correo, IA…)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✔</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Responsable de una guía:</strong> el editor que la creó (o a
+quien el administrador se la asignó). Es quien edita los datos de la
+guía, la publica y la elimina.</li>
+<li><strong>Coeditores:</strong> editores o colaboradores que el
+responsable agrega a la guía. Editan su contenido, pero no sus datos ni
+su publicación.</li>
+<li><strong>Lector:</strong> persona que solo inicia sesión para ver
+guías de acceso restringido (por ejemplo, un curso piloto). No entra al
+panel ni aparece en el directorio.</li>
+</ul>
+<h2 id="13-cómo-entrar">1.3 Cómo entrar<a class="ancla" href="#13-cómo-entrar" aria-label="Enlace a esta sección">#</a></h2>
+<ol type="1">
+<li>Abre la plataforma y elige <strong>Acceso personal</strong> en la
+barra superior (o entra directo a <code>/es/acceso</code>).</li>
+<li>Escribe tu correo electrónico y tu contraseña y presiona
+<strong>Entrar</strong>.</li>
+</ol>
+<figure>
+<img src="../img/10-acceso.png" alt="Pantalla de inicio de sesión" />
+<figcaption aria-hidden="true">Pantalla de inicio de sesión</figcaption>
+</figure>
+<p>Según lo que haya configurado el administrador, la pantalla puede
+ofrecer hasta tres formas de entrar:</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Forma</th>
+<th>Qué escribes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Contraseña propia</td>
+<td>Tu correo y la contraseña que te dio el administrador (mínimo 12
+caracteres)</td>
+</tr>
+<tr class="even">
+<td>Cuenta institucional (LDAP)</td>
+<td>Tu usuario y contraseña de la UCN</td>
+</tr>
+<tr class="odd">
+<td>Google</td>
+<td>Botón «Entrar con Google», con la cuenta cuyo correo coincide con el
+registrado</td>
+</tr>
+</tbody>
+</table>
+<p>Nadie puede registrarse solo: si no tienes cuenta, pídela al
+administrador de la plataforma. Para salir usa <strong>Cerrar
+sesión</strong> en la barra superior. Por seguridad, cierra la sesión si
+usas un computador compartido.</p>
+<h2 id="14-el-panel-de-trabajo">1.4 El panel de trabajo<a class="ancla" href="#14-el-panel-de-trabajo" aria-label="Enlace a esta sección">#</a></h2>
+<p>Al entrar llegas a <strong>Inicio</strong> del panel. A la izquierda
+está el menú, agrupado en secciones; cada persona ve solo las opciones
+de su rol.</p>
+<figure>
+<img src="../img/60-panel-administrador.png"
+alt="Inicio del panel de un administrador" />
+<figcaption aria-hidden="true">Inicio del panel de un
+administrador</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 50%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Sección del menú</th>
+<th>Opciones</th>
+<th>Roles</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(sin título)</td>
+<td>Inicio, Mi perfil, Consultas, Cambiar contraseña</td>
+<td>Todo el personal</td>
+</tr>
+<tr class="even">
+<td>Contenido</td>
+<td>Guías temáticas, Sugerencias</td>
+<td>Todo el personal</td>
+</tr>
+<tr class="odd">
+<td>Contenido</td>
+<td>Recursos bibliográficos, Autores, Editoriales</td>
+<td>Editor y administrador</td>
+</tr>
+<tr class="even">
+<td>Administración</td>
+<td>Usuarios, Departamentos, Materias, Países, Apariencia,
+Integraciones</td>
+<td>Administrador</td>
+</tr>
+</tbody>
+</table>
+<p>Junto a <strong>Consultas</strong> y <strong>Sugerencias</strong>
+aparece un número cuando hay mensajes o sugerencias pendientes.</p>
+<p>En las tablas del panel, las acciones son botones con icono (✏️
+editar, 🗑️ eliminar, 👁️ ver, etc.). Al pasar el mouse sobre ellos
+aparece su nombre. Antes de eliminar algo, la plataforma pide
+confirmación en una ventana.</p>
+<h2 id="15-lo-que-ve-el-público">1.5 Lo que ve el público<a class="ancla" href="#15-lo-que-ve-el-público" aria-label="Enlace a esta sección">#</a></h2>
+<p>Conviene conocer el sitio público, porque es el resultado de todo lo
+que se hace en el panel.</p>
+<p><strong>Portada.</strong> Imagen de fondo con un buscador (catálogo
+de la biblioteca o el propio sitio), accesos rápidos, tarjetas de las
+secciones principales y un carrusel con los recursos agregados más
+recientemente.</p>
+<figure>
+<img src="../img/01-portada.png" alt="Portada del sitio" />
+<figcaption aria-hidden="true">Portada del sitio</figcaption>
+</figure>
+<p><strong>Guía publicada.</strong> Cada guía tiene pestañas (arriba o
+en un menú lateral), y cada pestaña muestra sus secciones y bloques.
+Arriba aparecen la ruta (migas de pan), el responsable y botones para
+compartir la guía; abajo, la fecha de actualización, las materias y los
+botones Imprimir y Reportar un problema.</p>
+<figure>
+<img src="../img/02-guia-publicada.png" alt="Guía publicada" />
+<figcaption aria-hidden="true">Guía publicada</figcaption>
+</figure>
+<p><strong>Recursos bibliográficos A-Z.</strong> Lista de todos los
+recursos visibles, con índice alfabético y filtros por materia, tipo,
+acceso y formato. Los recursos suscritos se abren a través del proxy
+AccesUM, para que funcionen también fuera del campus.</p>
+<figure>
+<img src="../img/03-recursos-az.png"
+alt="Lista pública de recursos A-Z" />
+<figcaption aria-hidden="true">Lista pública de recursos
+A-Z</figcaption>
+</figure>
+<p><strong>Bibliotecarios.</strong> Directorio del personal con su ficha
+pública: cargo, contacto, guías que edita, materias y un formulario
+«Escribir a…» para enviarle una consulta.</p>
+<figure>
+<img src="../img/05-directorio.png"
+alt="Directorio de bibliotecarios" />
+<figcaption aria-hidden="true">Directorio de bibliotecarios</figcaption>
+</figure>
+<figure>
+<img src="../img/06-ficha-bibliotecaria.png"
+alt="Ficha pública de una bibliotecaria con el formulario de consulta" />
+<figcaption aria-hidden="true">Ficha pública de una bibliotecaria con el
+formulario de consulta</figcaption>
+</figure>
+<p><strong>Sugerir un recurso.</strong> Cualquier persona puede proponer
+un recurso que falte en la lista, sin crear cuenta. La sugerencia llega
+al panel (ver <a
+href="02-funciones-comunes.html#24-sugerencias-de-recursos">2.4
+Sugerencias</a>).</p>
+<figure>
+<img src="../img/04-sugerir-recurso.png"
+alt="Formulario público para sugerir un recurso" />
+<figcaption aria-hidden="true">Formulario público para sugerir un
+recurso</figcaption>
+</figure>
+<p>Los formularios públicos tienen una verificación anti-robots propia
+que se resuelve sola mientras la persona escribe: no hay que marcar
+casillas ni reconocer imágenes.</p>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="index.html"><small>← Anterior</small>Inicio</a><a class="siguiente" href="02-funciones-comunes.html"><small>Siguiente →</small>2. Funciones comunes del personal</a></nav>
+    <footer class="pie">Bibliotecas UCN · Manual generado el 19-11-2026 a partir de <code>docs/manual</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a href="#11-qué-es-la-plataforma"
+id="toc-11-qué-es-la-plataforma">1.1 ¿Qué es la plataforma?</a></li>
+<li><a href="#12-roles-y-permisos" id="toc-12-roles-y-permisos">1.2
+Roles y permisos</a></li>
+<li><a href="#13-cómo-entrar" id="toc-13-cómo-entrar">1.3 Cómo
+entrar</a></li>
+<li><a href="#14-el-panel-de-trabajo"
+id="toc-14-el-panel-de-trabajo">1.4 El panel de trabajo</a></li>
+<li><a href="#15-lo-que-ve-el-público"
+id="toc-15-lo-que-ve-el-público">1.5 Lo que ve el público</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

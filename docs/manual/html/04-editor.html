@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4. Manual del editor: crear guías y mantener la lista de recursos · Manual de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Manual · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el manual</label>
+    <input id="buscar" type="search" placeholder="Buscar en el manual…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-introduccion.html">1. Introducción</a></li><li><a href="02-funciones-comunes.html">2. Funciones comunes del personal</a></li><li><a href="03-colaborador.html">3. Manual del colaborador: editar el contenido de una guía</a></li><li><a href="04-editor.html" aria-current="page">4. Manual del editor: crear guías y mantener la lista de recursos</a></li><li><a href="05-administrador.html">5. Manual del administrador</a></li><li><a href="06-preguntas-frecuentes.html">6. Preguntas frecuentes</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Manual</a> › 4. Manual del editor: crear guías y mantener la lista de recursos</p>
+    <article><h1
+id="4-manual-del-editor-crear-guías-y-mantener-la-lista-de-recursos">4.
+Manual del editor: crear guías y mantener la lista de recursos</h1>
+<p>Un <strong>editor</strong> crea guías, es su
+<strong>responsable</strong> y decide quién más las edita. También
+mantiene la lista de recursos bibliográficos A-Z, los autores y las
+editoriales. Hace además todo lo que hace un colaborador (<a
+href="03-colaborador.html">capítulo 3</a>).</p>
+<figure>
+<img src="../img/40-panel-editor.png"
+alt="Inicio del panel de una editora" />
+<figcaption aria-hidden="true">Inicio del panel de una
+editora</figcaption>
+</figure>
+<h2 id="41-crear-una-guía">4.1 Crear una guía<a class="ancla" href="#41-crear-una-guía" aria-label="Enlace a esta sección">#</a></h2>
+<p>En <strong>Guías temáticas</strong> hay dos botones:</p>
+<ul>
+<li><strong>Nueva guía (manual):</strong> crea una guía vacía con una
+pestaña «Inicio».</li>
+<li><strong>Nueva guía con IA:</strong> arma una guía completa a partir
+de las materias (ver 4.5).</li>
+</ul>
+<figure>
+<img src="../img/41-guias-editor.png"
+alt="Listado de guías de una editora" />
+<figcaption aria-hidden="true">Listado de guías de una
+editora</figcaption>
+</figure>
+<h3 id="datos-de-la-guía">Datos de la guía<a class="ancla" href="#datos-de-la-guía" aria-label="Enlace a esta sección">#</a></h3>
+<p>Al crear la guía (y luego con <strong>Datos de la guía</strong> en el
+editor) se completa este formulario:</p>
+<figure>
+<img src="../img/42-nueva-guia.png"
+alt="Formulario de una guía nueva" />
+<figcaption aria-hidden="true">Formulario de una guía nueva</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Campo</th>
+<th>Para qué sirve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Título</td>
+<td>Nombre de la guía</td>
+</tr>
+<tr class="even">
+<td>Dirección</td>
+<td>Parte final de la dirección pública (<code>/es/guias/…</code>). Si
+la dejas vacía se arma con el título. Solo minúsculas sin tildes,
+números y guiones</td>
+</tr>
+<tr class="odd">
+<td>Descripción breve</td>
+<td>Aparece en la lista de guías y en los buscadores (hasta 300
+caracteres)</td>
+</tr>
+<tr class="even">
+<td>Idioma de la guía</td>
+<td>Español o inglés</td>
+</tr>
+<tr class="odd">
+<td>Versión en el otro idioma</td>
+<td>Enlaza la misma guía en el otro idioma: el botón ES / EN lleva de
+una a otra</td>
+</tr>
+<tr class="even">
+<td>Guía principal</td>
+<td>Si esta guía es parte de otra más general (por ejemplo, «Química
+orgánica» dentro de «Química»)</td>
+</tr>
+<tr class="odd">
+<td>Presentación de las pestañas</td>
+<td>Pestañas arriba del contenido o menú lateral</td>
+</tr>
+<tr class="even">
+<td>Imagen de cabecera (banner)</td>
+<td>JPG, PNG o WebP de hasta 4 MB, recortada a 4:1 (recomendado 1600 ×
+400 px)</td>
+</tr>
+<tr class="odd">
+<td>Ícono de la guía</td>
+<td>Cuadrado, hasta 1 MB (recomendado 256 × 256 px); se ve en la lista
+de guías</td>
+</tr>
+<tr class="even">
+<td>Materias</td>
+<td>Las de la guía: definen dónde aparece en «Guías por materia», qué
+sugerencias recibe y las materias de los recursos que se agregan desde
+ella</td>
+</tr>
+<tr class="odd">
+<td>Coeditores</td>
+<td>Personas que pueden editar el contenido, pero no publicar ni cambiar
+estos datos</td>
+</tr>
+<tr class="even">
+<td>Visibilidad</td>
+<td><strong>Pública</strong> o <strong>Solo usuarios
+asignados</strong></td>
+</tr>
+<tr class="odd">
+<td>Usuarios asignados</td>
+<td>Quiénes pueden ver la guía si es restringida</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img src="../img/43-datos-guia.png" alt="Datos de una guía existente" />
+<figcaption aria-hidden="true">Datos de una guía existente</figcaption>
+</figure>
+<p><strong>Ejemplo.</strong> Ana crea la guía «Química»: dirección
+<code>quimica</code>, idioma español, materias «Química (general)» y
+«Química orgánica», coeditora Carla (colaboradora del área) y
+presentación «Menú lateral». Luego crea «Chemistry» en inglés y, en
+<strong>Versión en el otro idioma</strong>, enlaza ambas.</p>
+<h3 id="guías-restringidas">Guías restringidas<a class="ancla" href="#guías-restringidas" aria-label="Enlace a esta sección">#</a></h3>
+<p>Con <strong>Visibilidad: Solo usuarios asignados</strong>, la guía no
+aparece en la lista pública ni en los buscadores. Al abrir su dirección
+se pide iniciar sesión, y solo la ven los usuarios asignados, el
+responsable, los coeditores y los administradores. Para alguien que no
+es del personal (por ejemplo, estudiantes de un curso piloto), el
+administrador le crea una cuenta con el rol <strong>Lector</strong>.</p>
+<h3 id="guías-principales-y-subguías">Guías principales y subguías<a class="ancla" href="#guías-principales-y-subguías" aria-label="Enlace a esta sección">#</a></h3>
+<p>Si eliges una <strong>Guía principal</strong>, esta guía pasa a ser
+una subguía: la principal muestra la lista de sus subguías en su
+portada, y la subguía muestra «Parte de…» y la ruta completa en las
+migas de pan.</p>
+<h2 id="42-publicar-pasar-a-borrador-y-eliminar">4.2 Publicar, pasar a
+borrador y eliminar</h2>
+<p>Toda guía nace en <strong>Borrador</strong>: solo se ve en la vista
+previa del panel. Con <strong>Publicar</strong> (en la cabecera del
+editor) aparece en el sitio; <strong>Pasar a borrador</strong> la retira
+sin perder nada. Los cambios en una guía publicada se ven de
+inmediato.</p>
+<p>Para <strong>eliminar</strong> una guía, ve a <strong>Datos de la
+guía</strong> y usa <strong>Eliminar la guía</strong> al final. Se
+borran sus pestañas, secciones y bloques; los recursos de la lista A-Z y
+los perfiles no se modifican. No se puede deshacer.</p>
+<p>Solo el responsable (o un administrador) publica, cambia los datos o
+elimina la guía.</p>
+<h2 id="43-lista-de-recursos-bibliográficos-a-z">4.3 Lista de recursos
+bibliográficos A-Z</h2>
+<p><strong>Recursos bibliográficos</strong> es la lista maestra de todo
+lo que se recomienda: bases de datos, revistas, libros, artículos,
+normas, repositorios, multimedia, herramientas y sitios web. Lo que se
+agrega aquí aparece en la lista pública A-Z y se puede usar en los
+bloques de las guías.</p>
+<figure>
+<img src="../img/45-recursos-panel.png"
+alt="Listado de recursos en el panel" />
+<figcaption aria-hidden="true">Listado de recursos en el
+panel</figcaption>
+</figure>
+<p><strong>Filtros.</strong> Texto (título, autor, ISBN, ISSN o tema),
+tipo, formato y materia. Como en las guías, los filtros, la página y la
+cantidad por página <strong>se recuerdan mientras dure la
+sesión</strong>.</p>
+<h3 id="crear-o-editar-un-recurso">Crear o editar un recurso<a class="ancla" href="#crear-o-editar-un-recurso" aria-label="Enlace a esta sección">#</a></h3>
+<p><strong>Nuevo recurso</strong> abre el formulario. Los datos
+bibliográficos cambian según el tipo elegido.</p>
+<figure>
+<img src="../img/46-recurso-nuevo.png"
+alt="Formulario de un recurso nuevo de tipo Libros" />
+<figcaption aria-hidden="true">Formulario de un recurso nuevo de tipo
+Libros</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Campo</th>
+<th>Para qué sirve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Título y nombres alternativos</td>
+<td>Los alternativos (siglas, nombres antiguos) también sirven para
+buscar</td>
+</tr>
+<tr class="even">
+<td>URL original</td>
+<td>La dirección del recurso <strong>sin</strong> el proxy</td>
+</tr>
+<tr class="odd">
+<td>Requiere proxy AccesUM</td>
+<td>Marcado para los recursos suscritos: el enlace público pasa por el
+proxy y funciona fuera del campus</td>
+</tr>
+<tr class="even">
+<td>Tipo</td>
+<td>Base de datos, Revistas, Artículo científico, Libros, Repositorio,
+Normas y patentes, Multimedia, Herramienta, Sitio web</td>
+</tr>
+<tr class="odd">
+<td>Acceso</td>
+<td>Suscripción UCN, Acceso abierto o En prueba</td>
+</tr>
+<tr class="even">
+<td>En prueba hasta</td>
+<td>Para accesos de prueba: después de esa fecha el recurso deja de
+mostrarse</td>
+</tr>
+<tr class="odd">
+<td>Proveedor</td>
+<td>Plataforma o editor (EBSCO, Elsevier, ProQuest…)</td>
+</tr>
+<tr class="even">
+<td>Descripción y descripción en inglés</td>
+<td>Texto que se ve en la lista A-Z y en los bloques</td>
+</tr>
+<tr class="odd">
+<td>Datos bibliográficos</td>
+<td>Según el tipo (ver tabla)</td>
+</tr>
+<tr class="even">
+<td>Materias</td>
+<td>En qué materias aparece</td>
+</tr>
+<tr class="odd">
+<td>Visible</td>
+<td>Desmarcado, el recurso se oculta del público sin borrarlo</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Datos bibliográficos</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Libros</td>
+<td>Formato, autores, editorial, año de edición, ISBN, e-ISBN, DOI</td>
+</tr>
+<tr class="even">
+<td>Revistas</td>
+<td>Formato, editorial, ISSN, e-ISSN, disponible desde</td>
+</tr>
+<tr class="odd">
+<td>Artículo científico</td>
+<td>Autores, fuente (revista), año, volumen, fascículo, páginas,
+DOI</td>
+</tr>
+<tr class="even">
+<td>Base de datos</td>
+<td>Disponible desde</td>
+</tr>
+<tr class="odd">
+<td>Normas y patentes</td>
+<td>Código de la norma, organismo emisor, año</td>
+</tr>
+<tr class="even">
+<td>Multimedia</td>
+<td>Autores, año (un enlace de YouTube o Vimeo muestra el
+reproductor)</td>
+</tr>
+</tbody>
+</table>
+<p>Los autores se buscan entre los existentes o se agregan escribiendo
+«Apellidos, Nombres», y se ordenan como en la cita. La editorial se
+elige de la lista o se escribe una nueva. ISBN, ISSN y DOI se validan al
+guardar.</p>
+<p><strong>Ejemplo.</strong> Para agregar <em>Web of Science</em>: tipo
+<strong>Base de datos</strong>, URL
+<code>https://www.webofscience.com</code>, <strong>Requiere
+proxy</strong> marcado, acceso <strong>Suscripción UCN</strong>,
+proveedor «Clarivate», materias «Multidisciplinaria». En el sitio, el
+enlace saldrá como
+<code>https://itmsp.museknowledge.com/UCN?qurl=…</code> y funcionará
+desde la casa del estudiante.</p>
+<h3 id="importar-desde-excel-bibtex-o-ris">Importar desde Excel, BibTeX
+o RIS</h3>
+<p><strong>Importar recursos</strong> carga muchos recursos de una vez
+desde Excel (.xlsx, .xls), OpenDocument (.ods), CSV, BibTeX (.bib) o RIS
+(.ris), hasta 10 MB y 5.000 registros.</p>
+<figure>
+<img src="../img/47-importar.png" alt="Importar recursos" />
+<figcaption aria-hidden="true">Importar recursos</figcaption>
+</figure>
+<ol type="1">
+<li>Descarga la <strong>plantilla de ejemplo</strong> y complétala (o
+usa tu propia planilla: los encabezados se reconocen en español o
+inglés, con o sin tildes; solo título y URL son obligatorios).</li>
+<li>Súbela y presiona <strong>Revisar archivo</strong>.</li>
+<li>En la <strong>vista previa</strong>, cada fila indica si se creará,
+se actualizará (ya existe un recurso con la misma URL o título) o tiene
+errores. Puedes desmarcar filas, elegir la URL cuando hay varias, marcar
+el proxy y ajustar las materias.</li>
+<li>Presiona <strong>Importar</strong> para guardar.</li>
+</ol>
+<figure>
+<img src="../img/48-importar-vista-previa.png"
+alt="Vista previa de la importación" />
+<figcaption aria-hidden="true">Vista previa de la
+importación</figcaption>
+</figure>
+<p>Detalles útiles:</p>
+<ul>
+<li>Si las URL vienen con el prefijo del proxy, la importación lo quita
+y marca «Requiere proxy».</li>
+<li>En la columna <strong>Materias</strong>, separa varias con punto y
+coma (<code>Ingeniería civil; Geología</code>). La importación no crea
+materias: los nombres que no coinciden se informan para que elijas la
+categoría.</li>
+<li>Autores en formato «Apellidos, Nombres», separados por punto y
+coma.</li>
+<li>Los archivos BibTeX y RIS se exportan desde Zotero, Mendeley,
+EndNote, Google Académico, Scopus o Web of Science.</li>
+</ul>
+<h3 id="exportar">Exportar<a class="ancla" href="#exportar" aria-label="Enlace a esta sección">#</a></h3>
+<p>Sobre la tabla hay dos botones que exportan <strong>los recursos que
+cumplen los filtros actuales</strong>:</p>
+<ul>
+<li><strong>Excel (plantilla de importación):</strong> mismas columnas
+que la plantilla. Sirve para respaldar, revisar o corregir datos en
+bloque y volver a importarlos (al reimportar se actualizan los mismos
+recursos).</li>
+<li><strong>RIS (Zotero, Mendeley, EndNote):</strong> para gestores
+bibliográficos, con autores, año, editorial, ISBN/ISSN, DOI, enlace con
+proxy y materias como palabras clave.</li>
+</ul>
+<p><strong>Ejemplo.</strong> Para corregir los proveedores de todas las
+bases de datos: filtra por tipo <strong>Base de datos</strong>, exporta
+a Excel, corrige la columna Proveedor y vuelve a importar el
+archivo.</p>
+<h2 id="44-autores-y-editoriales">4.4 Autores y editoriales<a class="ancla" href="#44-autores-y-editoriales" aria-label="Enlace a esta sección">#</a></h2>
+<p><strong>Autores</strong> y <strong>Editoriales</strong> son tablas
+propias que usan los recursos.</p>
+<figure>
+<img src="../img/49-autores.png" alt="Autores" />
+<figcaption aria-hidden="true">Autores</figcaption>
+</figure>
+<ul>
+<li><strong>Autor:</strong> nombres, apellidos, ORCID iD (se valida),
+sexo y país. Un autor institucional (por ejemplo «Organización Mundial
+de la Salud») lleva el nombre completo en apellidos.</li>
+<li><strong>Editorial:</strong> nombre (no se repite) y país.</li>
+</ul>
+<p>La columna <strong>Recursos</strong> indica cuántos recursos usan
+cada uno. Al importar, los autores y editoriales se buscan sin
+distinguir mayúsculas ni tildes y se crean solo si no existen.</p>
+<figure>
+<img src="../img/50-editoriales.png" alt="Editoriales" />
+<figcaption aria-hidden="true">Editoriales</figcaption>
+</figure>
+<h2 id="45-nueva-guía-con-ia">4.5 Nueva guía con IA<a class="ancla" href="#45-nueva-guía-con-ia" aria-label="Enlace a esta sección">#</a></h2>
+<p>El asistente arma una guía en borrador con seis pestañas a partir de
+las materias que elijas: Presentación, Bases de datos, Revistas, Sitios
+web, Citación y gestores, y Libros.</p>
+<figure>
+<img src="../img/44-asistente-ia.png"
+alt="Asistente Nueva guía con IA" />
+<figcaption aria-hidden="true">Asistente Nueva guía con IA</figcaption>
+</figure>
+<ol type="1">
+<li>Escribe el título, una descripción breve y el idioma.</li>
+<li>Elige al menos una <strong>materia</strong>: los recursos de la
+lista A-Z de esas materias llenan las pestañas.</li>
+<li>Opcional: <strong>coeditores</strong> y hasta 5 <strong>carreras de
+Biblioges</strong>, cuya bibliografía básica disponible (última edición)
+se agrega a la pestaña Libros y a la lista A-Z.</li>
+<li>Presiona <strong>Crear la guía</strong>. En unos segundos se abre el
+editor con la guía armada.</li>
+</ol>
+<p>Con la inteligencia artificial (Gemini) configurada, se eligen los
+recursos más pertinentes, se escriben los textos de presentación y se
+proponen sitios web adicionales en un bloque «Sugeridos por IA
+(revisar)». Esos sitios no entran a la lista A-Z: revísalos y bórralos o
+muévelos antes de publicar. Sin IA, la guía se arma igual con todos los
+recursos de las materias en orden alfabético.</p>
+<p>A Gemini solo se envían las materias, carreras y títulos y
+descripciones de recursos; nunca datos de personas.</p>
+<p><strong>La guía queda en borrador:</strong> revísala completa, ajusta
+los textos y publícala cuando esté lista.</p>
+<h2 id="46-ejemplo-completo-guía-de-geología-de-principio-a-fin">4.6
+Ejemplo completo: guía de Geología de principio a fin</h2>
+<ol type="1">
+<li><strong>Nueva guía (manual)</strong>: título «Geología», materias
+«Geología» y «Ciencias de la Tierra y planetarias (general)», coeditor
+Diego, presentación «Menú lateral». <strong>Guardar</strong>.</li>
+<li>En <strong>Recursos bibliográficos</strong>, verifica que GeoRef y
+Scopus tengan la materia Geología; si falta GeoRef, créalo.</li>
+<li>En el editor, renombra «Inicio» si quieres y agrega una sección con
+un bloque <strong>Texto</strong> de bienvenida y un bloque
+<strong>Perfil del bibliotecario</strong>.</li>
+<li>Pestaña «Bases de datos» con un bloque <strong>Recursos
+bibliográficos</strong>: filtra por materia Geología, marca todos y
+agrégalos en orden alfabético.</li>
+<li>Pestaña «Libros» con un bloque <strong>Libros</strong> cargado desde
+Biblioges.</li>
+<li>Pestaña «Cómo citar»: <strong>Pestaña de otra guía →
+Vincular</strong> la pestaña común de citación.</li>
+<li>Revisa con <strong>Vista previa</strong> y presiona
+<strong>Publicar</strong>.</li>
+</ol>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="03-colaborador.html"><small>← Anterior</small>3. Manual del colaborador: editar el contenido de una guía</a><a class="siguiente" href="05-administrador.html"><small>Siguiente →</small>5. Manual del administrador</a></nav>
+    <footer class="pie">Bibliotecas UCN · Manual generado el 19-11-2026 a partir de <code>docs/manual</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a
+href="#4-manual-del-editor-crear-guías-y-mantener-la-lista-de-recursos"
+id="toc-4-manual-del-editor-crear-guías-y-mantener-la-lista-de-recursos">4.
+Manual del editor: crear guías y mantener la lista de recursos</a>
+<ul>
+<li><a href="#41-crear-una-guía" id="toc-41-crear-una-guía">4.1 Crear
+una guía</a>
+<ul>
+<li><a href="#datos-de-la-guía" id="toc-datos-de-la-guía">Datos de la
+guía</a></li>
+<li><a href="#guías-restringidas" id="toc-guías-restringidas">Guías
+restringidas</a></li>
+<li><a href="#guías-principales-y-subguías"
+id="toc-guías-principales-y-subguías">Guías principales y
+subguías</a></li>
+</ul></li>
+<li><a href="#42-publicar-pasar-a-borrador-y-eliminar"
+id="toc-42-publicar-pasar-a-borrador-y-eliminar">4.2 Publicar, pasar a
+borrador y eliminar</a></li>
+<li><a href="#43-lista-de-recursos-bibliográficos-a-z"
+id="toc-43-lista-de-recursos-bibliográficos-a-z">4.3 Lista de recursos
+bibliográficos A-Z</a>
+<ul>
+<li><a href="#crear-o-editar-un-recurso"
+id="toc-crear-o-editar-un-recurso">Crear o editar un recurso</a></li>
+<li><a href="#importar-desde-excel-bibtex-o-ris"
+id="toc-importar-desde-excel-bibtex-o-ris">Importar desde Excel, BibTeX
+o RIS</a></li>
+<li><a href="#exportar" id="toc-exportar">Exportar</a></li>
+</ul></li>
+<li><a href="#44-autores-y-editoriales"
+id="toc-44-autores-y-editoriales">4.4 Autores y editoriales</a></li>
+<li><a href="#45-nueva-guía-con-ia" id="toc-45-nueva-guía-con-ia">4.5
+Nueva guía con IA</a></li>
+<li><a href="#46-ejemplo-completo-guía-de-geología-de-principio-a-fin"
+id="toc-46-ejemplo-completo-guía-de-geología-de-principio-a-fin">4.6
+Ejemplo completo: guía de Geología de principio a fin</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

@@ -163,7 +163,7 @@ final class AppFixtures extends Fixture
         $ingenieria = (new Guia())->setTitulo('Ingeniería: cómo buscar información')->setSlug('ingenieria')
             ->setDescripcion('Bases de datos, normas técnicas y libros electrónicos para estudiantes de ingeniería.')
             ->setDisposicion(DisposicionGuia::Pestanas)->setResponsable($usuarios['editora1@ucn.cl'])
-            ->addCoeditor($usuarios['editora3@ucn.cl'])->addMateria($materias[0]);
+            ->addCoeditor($usuarios['editora3@ucn.cl'])->addCoeditor($usuarios['colaborador@ucn.cl'])->addMateria($materias[0]);
 
         $inicio = new Pestana('Inicio');
         $inicio->agregarSeccion((new Seccion('Bienvenida'))->setColumnas(2)
