@@ -215,7 +215,24 @@ por etiqueta en producción y por `main` en pruebas.
 
 Cada entorno tiene su propio `.env.local`, `APP_SECRET`, base de datos y respaldos.
 
-## 3.8 Problemas frecuentes
+## 3.8 Seguridad del servidor
+
+`instalar-servidor.sh` y `desplegar.sh` dejan el servidor así; en un servidor instalado antes de noviembre de 2026,
+revisa cada punto:
+
+| Punto | Cómo comprobarlo | Cómo corregirlo |
+| ------------ | ---------------------------- | ---------------------------- |
+| Código sin escritura para otros usuarios | `find /var/www/guias -maxdepth 2 -perm -o+w` no lista nada | `sudo bash scripts/desplegar.sh main` (aplica `chmod -R go-w`) |
+| Apache sin versión ni listados | `curl -sI http://127.0.0.1/es` muestra `Server: Apache` sin número | `/etc/apache2/conf-available/guias-seguridad.conf` con `ServerTokens Prod`, `ServerSignature Off`, `TraceEnable Off`; `a2enconf guias-seguridad`; `a2dismod -f autoindex status` |
+| VirtualHost al día | `grep Permissions-Policy /etc/apache2/sites-available/guias.conf` | Copiar `deploy/apache/guias.conf` (conservando `ServerName`) y `systemctl reload apache2` |
+| PHP sin versión y con límites | `php-fpm8.5 -i \| grep -E 'expose_php\|upload_max'` | `90-guias.ini` (ver 3.3, paso 1) |
+| Solo los puertos necesarios | `sudo ufw status` y `ss -tln` | Abiertos solo 22, 80 y 443; MySQL solo en 127.0.0.1 |
+| Respaldo diario fuera del servidor | `cat /etc/cron.d/guias-respaldo` | Paso 6 de 3.3, y copiar `/var/backups/guias` a otro equipo |
+| HTTPS | Certificado en `/etc/letsencrypt/live` | `certbot --apache` (producción) |
+| Actualizaciones de seguridad | `systemctl is-enabled unattended-upgrades` | `sudo dpkg-reconfigure unattended-upgrades` |
+| Dependencias sin vulnerabilidades conocidas | `composer audit` | `composer update <paquete>` en una rama, pruebas y despliegue |
+
+## 3.9 Problemas frecuentes
 
 | Síntoma | Causa probable | Qué hacer |
 | ------------ | ---------------------------- | ---------------------------- |

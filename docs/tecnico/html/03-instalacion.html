@@ -347,7 +347,81 @@ etiqueta en producción y por <code>main</code> en pruebas.</p>
 </table>
 <p>Cada entorno tiene su propio <code>.env.local</code>,
 <code>APP_SECRET</code>, base de datos y respaldos.</p>
-<h2 id="38-problemas-frecuentes">3.8 Problemas frecuentes<a class="ancla" href="#38-problemas-frecuentes" aria-label="Enlace a esta sección">#</a></h2>
+<h2 id="38-seguridad-del-servidor">3.8 Seguridad del servidor<a class="ancla" href="#38-seguridad-del-servidor" aria-label="Enlace a esta sección">#</a></h2>
+<p><code>instalar-servidor.sh</code> y <code>desplegar.sh</code> dejan
+el servidor así; en un servidor instalado antes de noviembre de 2026,
+revisa cada punto:</p>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 41%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Punto</th>
+<th>Cómo comprobarlo</th>
+<th>Cómo corregirlo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Código sin escritura para otros usuarios</td>
+<td><code>find /var/www/guias -maxdepth 2 -perm -o+w</code> no lista
+nada</td>
+<td><code>sudo bash scripts/desplegar.sh main</code> (aplica
+<code>chmod -R go-w</code>)</td>
+</tr>
+<tr class="even">
+<td>Apache sin versión ni listados</td>
+<td><code>curl -sI http://127.0.0.1/es</code> muestra
+<code>Server: Apache</code> sin número</td>
+<td><code>/etc/apache2/conf-available/guias-seguridad.conf</code> con
+<code>ServerTokens Prod</code>, <code>ServerSignature Off</code>,
+<code>TraceEnable Off</code>; <code>a2enconf guias-seguridad</code>;
+<code>a2dismod -f autoindex status</code></td>
+</tr>
+<tr class="odd">
+<td>VirtualHost al día</td>
+<td><code>grep Permissions-Policy /etc/apache2/sites-available/guias.conf</code></td>
+<td>Copiar <code>deploy/apache/guias.conf</code> (conservando
+<code>ServerName</code>) y <code>systemctl reload apache2</code></td>
+</tr>
+<tr class="even">
+<td>PHP sin versión y con límites</td>
+<td><code>php-fpm8.5 -i \| grep -E 'expose_php\|upload_max'</code></td>
+<td><code>90-guias.ini</code> (ver 3.3, paso 1)</td>
+</tr>
+<tr class="odd">
+<td>Solo los puertos necesarios</td>
+<td><code>sudo ufw status</code> y <code>ss -tln</code></td>
+<td>Abiertos solo 22, 80 y 443; MySQL solo en 127.0.0.1</td>
+</tr>
+<tr class="even">
+<td>Respaldo diario fuera del servidor</td>
+<td><code>cat /etc/cron.d/guias-respaldo</code></td>
+<td>Paso 6 de 3.3, y copiar <code>/var/backups/guias</code> a otro
+equipo</td>
+</tr>
+<tr class="odd">
+<td>HTTPS</td>
+<td>Certificado en <code>/etc/letsencrypt/live</code></td>
+<td><code>certbot --apache</code> (producción)</td>
+</tr>
+<tr class="even">
+<td>Actualizaciones de seguridad</td>
+<td><code>systemctl is-enabled unattended-upgrades</code></td>
+<td><code>sudo dpkg-reconfigure unattended-upgrades</code></td>
+</tr>
+<tr class="odd">
+<td>Dependencias sin vulnerabilidades conocidas</td>
+<td><code>composer audit</code></td>
+<td><code>composer update &lt;paquete&gt;</code> en una rama, pruebas y
+despliegue</td>
+</tr>
+</tbody>
+</table>
+<h2 id="39-problemas-frecuentes">3.9 Problemas frecuentes<a class="ancla" href="#39-problemas-frecuentes" aria-label="Enlace a esta sección">#</a></h2>
 <table>
 <colgroup>
 <col style="width: 17%" />
@@ -454,8 +528,10 @@ id="toc-36-actualizar-a-una-nueva-versión">3.6 Actualizar a una nueva
 versión</a></li>
 <li><a href="#37-varios-entornos" id="toc-37-varios-entornos">3.7 Varios
 entornos</a></li>
-<li><a href="#38-problemas-frecuentes"
-id="toc-38-problemas-frecuentes">3.8 Problemas frecuentes</a></li>
+<li><a href="#38-seguridad-del-servidor"
+id="toc-38-seguridad-del-servidor">3.8 Seguridad del servidor</a></li>
+<li><a href="#39-problemas-frecuentes"
+id="toc-39-problemas-frecuentes">3.9 Problemas frecuentes</a></li>
 </ul></li>
 </ul>
 </aside>
