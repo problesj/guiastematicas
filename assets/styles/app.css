@@ -947,3 +947,9 @@ h1 .etiqueta { font-size: 0.875rem; vertical-align: middle; }
 .aviso-emergente .swal2-icon.swal2-question { border-color: var(--color-principal); color: var(--color-principal); }
 .boton--peligro { background: #b3261e; border-color: #b3261e; color: #fff; }
 .boton--peligro:hover, .boton--peligro:focus-visible { background: #8c1d17; border-color: #8c1d17; }
+
+/* Exportar recursos del panel (Excel / RIS) */
+.exportar-recursos { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
+.exportar-recursos p { margin: 0; }
+.exportar-recursos__enlaces { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.exportar-recursos__enlaces .boton { display: inline-flex; align-items: center; gap: 0.35rem; }

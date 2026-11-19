@@ -353,6 +353,11 @@ recurso:
   paginas: Pages
   doi: DOI
   doi_ayuda: "For example 10.1016/j.cell.2020.01.001. You can also paste the https://doi.org/... link."
+exportacion:
+  exportar: "{1}Export this resource:|]1,Inf[Export these %count% resources:"
+  excel: Excel (import template)
+  ris: RIS (Zotero, Mendeley, EndNote)
+  hoja: Library resources
 importacion:
   materias_sin_coincidencia: "No matching subject (will not be created): %materias%. Choose the right category or subject."
   materias_fila: "Add subject to row %fila%"

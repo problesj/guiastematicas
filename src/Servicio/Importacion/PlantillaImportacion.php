@@ -8,14 +8,14 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-/** Genera el Excel de ejemplo con las columnas que reconoce el importador. */
+/** Genera el Excel de ejemplo con las columnas que reconoce el importador (las mismas que usa la exportación). */
 final class PlantillaImportacion
 {
     public const array ENCABEZADOS = [
         'Título', 'URL', 'Requiere proxy', 'Tipo', 'Acceso', 'Formato', 'Proveedor', 'Materias',
         'Descripción', 'Descripción en inglés', 'Nombres alternativos', 'Visible', 'Prueba hasta',
         'Autores', 'Editorial', 'Año de edición', 'ISBN', 'e-ISBN', 'ISSN', 'e-ISSN', 'Disponible desde',
-        'Código de la norma', 'Organismo emisor',
+        'Código de la norma', 'Organismo emisor', 'Fuente', 'Volumen', 'Fascículo', 'Páginas', 'DOI',
     ];
 
     public function escribir(string $destino): void
