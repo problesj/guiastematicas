@@ -107,7 +107,7 @@ final class RecursoController extends AbstractController
 
                 return $this->render('panel/recursos/vista_previa.html.twig', [
                     'filas' => $filas,
-                    'materias' => $materias->activas(),
+                    'materias' => $materias->porCampo(),
                     'materias_por_fila' => $importador->clasificarMaterias($filas),
                     'archivo' => $nombre,
                     'nombre_original' => $archivo->getClientOriginalName(),
@@ -155,7 +155,7 @@ final class RecursoController extends AbstractController
             '%creados%' => $resultado['creados'],
             '%actualizados%' => $resultado['actualizados'],
             '%omitidos%' => $resultado['omitidos'],
-            '%materias%' => $resultado['materias_nuevas'],
+            '%materias%' => $resultado['materias_sin_clasificar'],
         ]));
 
         return $this->redirectToRoute('panel_recursos');

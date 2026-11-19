@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Clasificacion\SincronizadorAsjc;
 use App\Entity\Autor;
 use App\Entity\Bloque;
 use App\Entity\Departamento;
@@ -26,6 +27,7 @@ use App\Enum\TipoRecurso;
 use App\Enum\VisibilidadGuia;
 use App\Servicio\CatalogoPaises;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -139,6 +141,11 @@ final class AppFixtures extends Fixture
 
         $this->guiasDeEjemplo($manager, $usuarios, $recursos, $materias);
         $manager->flush();
+
+        // Materias base: las 334 categorías ASJC (Derecho, Geología y Arquitectura se reutilizan por su nombre).
+        if ($manager instanceof EntityManagerInterface) {
+            SincronizadorAsjc::sincronizar($manager->getConnection());
+        }
     }
 
     /**

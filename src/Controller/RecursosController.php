@@ -76,7 +76,7 @@ final class RecursosController extends AbstractController
             'grupos' => $grupos,
             'pagina' => $pagina,
             'letras' => $recursos->letrasConRecursos($tipoFijo),
-            'materias' => null !== $area ? $materias->deArea($area) : $materias->activas(),
+            'materias' => array_values(array_filter($materias->enUso(), fn ($m) => null === $area || \in_array($area, $m->getAreas(), true))),
             'areas' => $areas,
             'tipos' => TipoRecurso::cases(),
             'accesos' => TipoAcceso::cases(),

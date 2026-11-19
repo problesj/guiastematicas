@@ -94,7 +94,7 @@ final class ImportadorRecursosTest extends KernelTestCase
         self::assertNotEmpty($raro->avisos);
     }
 
-    public function testAplicaCreandoMateriasYActualizaExistentes(): void
+    public function testAplicaConMateriasExistentesSinCrearNuevasYActualizaExistentes(): void
     {
         $medicina = self::crearMateria('Medicina', 'medicina');
         $existente = (new Recurso())->setTitulo('Scopus')->setUrl('https://www.scopus.com')->setDescripcion('Antigua');
@@ -112,14 +112,14 @@ final class ImportadorRecursosTest extends KernelTestCase
 
         $resultado = $importador->aplicar($filas);
 
-        self::assertSame(['creados' => 1, 'actualizados' => 1, 'omitidos' => 1, 'materias_nuevas' => 1], $resultado);
+        self::assertSame(['creados' => 1, 'actualizados' => 1, 'omitidos' => 1, 'materias_sin_clasificar' => 1], $resultado);
         self::em()->clear();
         $scopus = self::em()->getRepository(Recurso::class)->findOneBy(['url' => 'https://www.scopus.com']);
         self::assertSame('Nueva descripción', $scopus->getDescripcion());
         self::assertSame($medicina->getId(), $scopus->getMaterias()->first()->getId());
         $pubmed = self::em()->getRepository(Recurso::class)->findOneBy(['titulo' => 'PubMed']);
-        self::assertCount(2, $pubmed->getMaterias());
-        self::assertNotNull(self::em()->getRepository(Materia::class)->findOneBy(['slug' => 'enfermeria']));
+        self::assertCount(1, $pubmed->getMaterias());
+        self::assertNull(self::em()->getRepository(Materia::class)->findOneBy(['slug' => 'enfermeria']));
     }
 
     public function testImportaDatosBibliograficosSegunElTipo(): void

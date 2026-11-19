@@ -1,0 +1,10 @@
+{# Opciones de un <select> de materias agrupadas por campo ASJC. Parámetros: materias, elegida (Materia o null) y,
+   opcional, valor ('slug' por omisión, o 'id'). #}
+{% set valor = valor|default('slug') %}
+{% for campo, lista in materias_por_campo(materias, 'materia.sin_clasificar'|trans) %}
+    <optgroup label="{{ campo }}">
+        {% for m in lista %}
+            <option value="{{ valor == 'id' ? m.id : m.slug }}"{% if elegida and elegida.id == m.id %} selected{% endif %}>{{ (m.base or m.asjc is empty) ? '' : '— ' }}{{ m.nombreTraducido(app.request.locale) }}</option>
+        {% endfor %}
+    </optgroup>
+{% endfor %}

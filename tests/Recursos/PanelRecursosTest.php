@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Recursos;
 
+use App\Entity\Materia;
 use App\Entity\Recurso;
 use App\Enum\Rol;
 use App\Tests\CreaDatosTrait;
@@ -193,12 +194,14 @@ final class PanelRecursosTest extends WebTestCase
         $crawler = $this->cliente->submit($formulario);
 
         self::assertCount(2, $crawler->filter('input[data-campo="url"]'));
-        self::assertSame('Biología marina', $crawler->filter('input[data-campo="materia"][data-nueva]')->attr('value'));
+        // Un nombre sin materia equivalente no se crea: se avisa para elegir la categoría que corresponda.
+        self::assertStringContainsString('Biología marina', $crawler->filter('.selector-materias .campo__ayuda')->first()->text());
+        self::assertCount(0, $crawler->filter('input[data-campo="materia"][data-nueva]'));
         self::assertNotNull($crawler->filter('input[data-campo="materia"][value="'.$medicina->getId().'"]')->first()->attr('checked'));
 
         $confirmar = $crawler->selectButton('Importar 2 recursos')->form();
         $confirmar['seleccion'] = json_encode([
-            2 => ['importar' => true, 'url' => 'https://www.scopus.com/sources', 'proxy' => true, 'materias' => ['Biología marina']],
+            2 => ['importar' => true, 'url' => 'https://www.scopus.com/sources', 'proxy' => true, 'materias' => ['Biología marina', $medicina->getId()]],
             3 => ['importar' => false],
         ]);
         $this->cliente->submit($confirmar);
@@ -207,7 +210,8 @@ final class PanelRecursosTest extends WebTestCase
         $recursos = self::em()->getRepository(Recurso::class)->findAll();
         self::assertCount(1, $recursos);
         self::assertSame('https://www.scopus.com/sources', $recursos[0]->getUrl());
-        self::assertSame(['Biología marina'], $recursos[0]->getMaterias()->map(fn ($m) => $m->getNombre())->getValues());
+        self::assertSame(['Medicina'], $recursos[0]->getMaterias()->map(fn ($m) => $m->getNombre())->getValues());
+        self::assertNull(self::em()->getRepository(Materia::class)->findOneBy(['nombre' => 'Biología marina']));
         @unlink($ruta);
     }
 

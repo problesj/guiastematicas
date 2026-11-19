@@ -163,6 +163,17 @@ departamento:
   orden_ayuda: Departments are listed from lowest to highest.
   integrantes: People
 materia:
+  selector_buscar: "Search a subject by name or code"
+  selector_sin_resultados: "No subject matches"
+  selector_resultados: "Matching subjects: %n%"
+  sin_clasificar: "Unclassified"
+  asjc_obligatoria: "Choose at least one ASJC category for this subject."
+  propia: "Local"
+  base_no_eliminable: "ASJC categories are the basis of the subject scheme: they can be deactivated but not deleted."
+  esquema_ayuda: "Base subjects are the 334 Scopus ASJC categories. Local subjects (programmes, courses) are classified under one or more of them; filtering by a category also shows its local subjects."
+  hay_sin_clasificar: "{1}There is 1 unclassified local subject: edit it and choose its ASJC category.|]1,Inf[There are %count% unclassified local subjects: edit them and choose their ASJC category."
+  ver_todas: "Show all 334 ASJC categories"
+  ver_en_uso: "Show only local subjects and categories in use"
   nuevo: New subject
   editar: Edit subject
   guardado: The subject was saved.
@@ -175,7 +186,7 @@ materia:
   codigo: UCN code
   activa: Active
   asjc: "ASJC categories (Scopus)"
-  asjc_ayuda: "Scopus subject classification for this subject. Used to group guides and resources by broad area. You can tick several."
+  asjc_ayuda: "Scopus ASJC categories this local subject belongs to (at least one). Filtering by those categories also shows its guides and resources."
   asjc_buscar: "Search a category by name or code"
   asjc_resultados: "Matching categories: %n%"
   asjc_columna: "ASJC"
@@ -318,6 +329,8 @@ recurso:
   doi: DOI
   doi_ayuda: "For example 10.1016/j.cell.2020.01.001. You can also paste the https://doi.org/... link."
 importacion:
+  materias_sin_coincidencia: "No matching subject (will not be created): %materias%. Choose the right category or subject."
+  materias_fila: "Add subject to row %fila%"
   titulo: Import resources
   bajada: Upload the list of library resources as Excel (.xlsx, .xls), OpenDocument (.ods) or CSV. Before saving you will see what will be created, what will be updated and which rows have errors.
   archivo: File
@@ -399,7 +412,7 @@ importacion:
   accion_actualizar: Update
   accion_error: Error
   observaciones: Notes
-  resultado: "Import finished: %creados% created, %actualizados% updated, %omitidos% rows skipped and %materias% new subjects."
+  resultado: "Import finished: %creados% created, %actualizados% updated and %omitidos% rows skipped. Subjects in the file with no match (not created): %materias%."
   expirada: The preview expired. Upload the file again.
   sin_archivo: Choose a file.
   extension: The file must be .xlsx, .xls, .ods, .csv, .bib or .ris.

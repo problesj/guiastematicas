@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Materia;
 use App\Entity\Usuario;
 use App\Enum\TipoBloque;
-use App\Repository\MateriaRepository;
 use App\Repository\UsuarioRepository;
 use App\Servicio\BloquesGuia;
 use App\Servicio\VideoIncrustado;
@@ -109,14 +107,9 @@ final class BloqueType extends AbstractType
                     ),
                     'constraints' => [new Assert\Choice(choices: ['todos', ...array_keys(BloquesGuia::TIPOS_MATERIAL)])],
                 ])
-                ->add('materias', EntityType::class, [
+                ->add('materias', MateriasType::class, [
                     'label' => 'bloque.busqueda_materias',
                     'help' => 'bloque.busqueda_materias_ayuda',
-                    'class' => Materia::class,
-                    'choice_label' => 'nombre',
-                    'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
-                    'multiple' => true,
-                    'expanded' => true,
                     'required' => false,
                 ])
                 ->add('otras', CheckboxType::class, [

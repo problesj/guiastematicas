@@ -1,0 +1,24 @@
+{# Selector compacto de materias (controlador selector-materias). Parámetros: id, nombre (atributo name de las
+   casillas; vacío si solo las lee otro controlador), marcadas (lista de {id, etiqueta}) y, opcional, casilla
+   (atributos extra de cada casilla) y etiqueta (texto accesible del buscador). #}
+{% set casilla = casilla|default({}) %}
+<div class="selector-materias" data-controller="selector-materias"
+     data-selector-materias-url-value="{{ path('materias_catalogo') }}"
+     data-selector-materias-nombre-value="{{ nombre }}"
+     data-selector-materias-casilla-value="{{ casilla|json_encode(constant('JSON_FORCE_OBJECT')) }}"
+     data-selector-materias-sin-resultados-value="{{ 'materia.selector_sin_resultados'|trans }}"
+     data-selector-materias-resultados-value="{{ 'materia.selector_resultados'|trans }}"
+     data-action="selector-materias:agregar->selector-materias#agregarExterno">
+    <div class="casillas selector-materias__marcadas" data-selector-materias-target="marcadas">
+        {%- for m in marcadas %}
+            <label class="casillas__opcion"><input type="checkbox"{% if nombre %} name="{{ nombre }}"{% endif %} value="{{ m.id }}" checked{% for a, v in casilla %} {{ a }}="{{ v }}"{% endfor %}> {{ m.etiqueta }}</label>
+        {%- endfor -%}
+    </div>
+    <div class="selector-materias__buscar">
+        <input type="search" id="{{ id }}" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="{{ id }}-opciones" autocomplete="off"
+               aria-label="{{ etiqueta|default('materia.selector_buscar'|trans) }}" placeholder="{{ 'materia.selector_buscar'|trans }}"
+               data-selector-materias-target="entrada" data-action="input->selector-materias#buscar keydown->selector-materias#tecla blur->selector-materias#cerrar">
+        <ul id="{{ id }}-opciones" class="selector-materias__opciones" role="listbox" hidden data-selector-materias-target="lista"></ul>
+        <p class="solo-lectores" role="status" data-selector-materias-target="estado"></p>
+    </div>
+</div>

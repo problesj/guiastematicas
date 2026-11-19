@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Autor;
-use App\Entity\Materia;
 use App\Entity\Recurso;
 use App\Enum\FormatoRecurso;
 use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Repository\AutorRepository;
-use App\Repository\MateriaRepository;
 use App\Servicio\RegistroBibliografico;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -72,13 +69,8 @@ final class RecursoType extends AbstractType
             ->add('proveedor', TextType::class, ['label' => 'recurso.proveedor', 'required' => false])
             ->add('descripcion', TextareaType::class, ['label' => 'recurso.descripcion', 'required' => false, 'attr' => ['rows' => 4]])
             ->add('descripcionEn', TextareaType::class, ['label' => 'recurso.descripcion_en', 'required' => false, 'attr' => ['rows' => 4]])
-            ->add('materias', EntityType::class, [
+            ->add('materias', MateriasType::class, [
                 'label' => 'recurso.materias',
-                'class' => Materia::class,
-                'choice_label' => 'nombre',
-                'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
-                'multiple' => true,
-                'expanded' => true,
                 'required' => false,
             ])
             ->add('visible', CheckboxType::class, ['label' => 'recurso.visible', 'required' => false])

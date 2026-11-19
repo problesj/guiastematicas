@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Materia;
 use App\Entity\Sugerencia;
 use App\Enum\FormatoRecurso;
 use App\Enum\TipoRecurso;
-use App\Repository\MateriaRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -43,14 +40,9 @@ final class SugerenciaType extends AbstractType
             ->add('identificador', TextType::class, ['label' => 'sugerencia.identificador', 'required' => false, 'help' => 'sugerencia.identificador_ayuda', 'attr' => ['maxlength' => 30, 'inputmode' => 'numeric']])
             ->add('url', UrlType::class, ['label' => 'sugerencia.url', 'required' => false, 'default_protocol' => 'https', 'help' => 'sugerencia.url_ayuda'])
             ->add('descripcion', TextareaType::class, ['label' => 'sugerencia.descripcion', 'required' => false, 'attr' => ['rows' => 3, 'maxlength' => 2000]])
-            ->add('materias', EntityType::class, [
+            ->add('materias', MateriasType::class, [
                 'label' => 'sugerencia.materias',
                 'help' => 'sugerencia.materias_ayuda',
-                'class' => Materia::class,
-                'choice_label' => fn (Materia $m) => $m->getNombreTraducido($options['idioma']),
-                'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
-                'multiple' => true,
-                'expanded' => true,
             ])
             ->add('motivo', TextareaType::class, ['label' => 'sugerencia.motivo', 'required' => false, 'help' => 'sugerencia.motivo_ayuda', 'attr' => ['rows' => 3, 'maxlength' => 2000]])
             ->add('nombre', TextType::class, ['label' => 'sugerencia.nombre', 'attr' => ['autocomplete' => 'name', 'maxlength' => 120]])

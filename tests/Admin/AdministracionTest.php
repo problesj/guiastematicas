@@ -114,8 +114,19 @@ final class AdministracionTest extends WebTestCase
     {
         self::crearMateria('Ingeniería Civil', 'ingenieria-civil');
 
-        $this->cliente->request('GET', '/en/admin/materias/nuevo');
-        $this->cliente->submitForm('Save', ['materia[nombre]' => 'Ingeniería Civil', 'materia[activa]' => true]);
+        $crawler = $this->cliente->request('GET', '/en/admin/materias/nuevo');
+        $formulario = $crawler->selectButton('Save')->form(['materia[nombre]' => 'Ingeniería Civil', 'materia[activa]' => true]);
+        // Sin categoría ASJC no se guarda: las materias propias deben quedar clasificadas.
+        $this->cliente->submit($formulario);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('.campo__errores', 'ASJC');
+
+        foreach ($formulario['materia[asjc]'] as $casilla) {
+            if ('2205' === $casilla->availableOptionValues()[0]) {
+                $casilla->tick();
+            }
+        }
+        $this->cliente->submit($formulario);
 
         self::assertResponseRedirects('/en/admin/materias');
         self::assertNotNull(self::em()->getRepository(Materia::class)->findOneBy(['slug' => 'ingenieria-civil-2']));

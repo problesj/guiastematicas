@@ -49,7 +49,7 @@ final class PersonalController extends AbstractController
 
         return $this->render('personal/directorio.html.twig', [
             'grupos' => $grupos,
-            'materias' => $materias->activas(),
+            'materias' => $materias->enUso(),
             'materia' => $materia,
         ]);
     }

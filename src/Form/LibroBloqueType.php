@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Materia;
 use App\Enum\FormatoRecurso;
-use App\Repository\MateriaRepository;
 use App\Servicio\DatosLibro;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Servicio\MetadatosDoi;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -100,14 +97,9 @@ final class LibroBloqueType extends AbstractType
                 'help' => 'formato_recurso.ayuda_bloque',
                 'attr' => ['data-libro-datos-target' => 'formato'],
             ])
-            ->add('materias', EntityType::class, [
+            ->add('materias', MateriasCompactasType::class, [
                 'label' => 'bloque.libro_materias',
                 'help' => 'bloque.libro_materias_ayuda',
-                'class' => Materia::class,
-                'choice_label' => 'nombre',
-                'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
-                'multiple' => true,
-                'expanded' => true,
                 'required' => false,
             ])
             ->add('recurso', HiddenType::class, ['required' => false]);
