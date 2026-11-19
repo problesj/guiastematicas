@@ -18,6 +18,7 @@
                         <th scope="col">{{ 'materia.nombre'|trans }}</th>
                         <th scope="col">{{ 'materia.slug'|trans }}</th>
                         <th scope="col">{{ 'materia.codigo'|trans }}</th>
+                        <th scope="col">{{ 'materia.asjc_columna'|trans }}</th>
                         <th scope="col">{{ 'materia.especialistas'|trans }}</th>
                         <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
                     </tr>
@@ -32,6 +33,7 @@
                             </td>
                             <td><code>{{ materia.slug }}</code></td>
                             <td>{{ materia.codigo ?? '—' }}</td>
+                            <td>{% for c in materia.asjc %}<abbr class="etiqueta" title="{{ asjc_nombre(c) }}">{{ c }}</abbr> {% else %}—{% endfor %}</td>
                             <td>{{ materia.especialistas|map(e => e.nombreCompleto)|join(', ') ?: '—' }}</td>
                             <td class="tabla__acciones">
                                 <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('admin_materia_editar', {id: materia.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ materia.nombre }}</span></a>

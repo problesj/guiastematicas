@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Clasificacion\Asjc;
 use App\Repository\MateriaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -44,6 +46,14 @@ class Materia
 
     #[ORM\Column(options: ['default' => true])]
     private bool $activa = true;
+
+    /**
+     * Categorías ASJC de Scopus a las que corresponde la materia (códigos de cuatro dígitos; ver App\Clasificacion\Asjc).
+     *
+     * @var list<int>
+     */
+    #[ORM\Column(type: Types::JSON)]
+    private array $asjc = [];
 
     #[ORM\ManyToMany(targetEntity: Usuario::class, mappedBy: 'materias')]
     private Collection $especialistas;
@@ -110,6 +120,32 @@ class Materia
         $this->codigo = $codigo;
 
         return $this;
+    }
+
+    /** @return list<int> */
+    public function getAsjc(): array
+    {
+        return Asjc::normalizar($this->asjc);
+    }
+
+    /** @param iterable<int|string> $codigos */
+    public function setAsjc(iterable $codigos): static
+    {
+        $this->asjc = Asjc::normalizar($codigos);
+
+        return $this;
+    }
+
+    /**
+     * Grandes áreas ASJC de la materia, en el orden de Asjc::AREAS.
+     *
+     * @return list<string>
+     */
+    public function getAreas(): array
+    {
+        $areas = array_map(fn (int $c) => Asjc::area($c), $this->getAsjc());
+
+        return array_values(array_filter(Asjc::AREAS, fn (string $a) => \in_array($a, $areas, true)));
     }
 
     public function isActiva(): bool

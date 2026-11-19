@@ -8,7 +8,9 @@
         <h1>{{ 'guias.titulo'|trans }}</h1>
         <p class="pagina__bajada">{{ 'guias.bajada'|trans }}</p>
 
+        {{ include('_areas_asjc.html.twig', {ruta: 'guias', ruta_parametros: {}}) }}
         <form method="get" action="{{ path('guias') }}" class="filtros filtros--guias" role="search">
+            {% if filtro.area %}<input type="hidden" name="area" value="{{ filtro.area }}">{% endif %}
             <div class="campo filtros__texto">
                 <label for="q">{{ 'guias.buscar'|trans }}</label>
                 <input type="search" id="q" name="q" value="{{ filtro.q }}" placeholder="{{ 'guias.buscar_placeholder'|trans }}">
@@ -24,13 +26,13 @@
             </div>
             <div class="filtros__acciones">
                 <button type="submit" class="boton">{{ 'bases.filtrar'|trans }}</button>
-                {% if filtro.q or filtro.materia %}<a href="{{ path('guias') }}">{{ 'bases.limpiar'|trans }}</a>{% endif %}
+                {% if filtro.q or filtro.materia or filtro.area %}<a href="{{ path('guias') }}">{{ 'bases.limpiar'|trans }}</a>{% endif %}
             </div>
         </form>
 
         <p class="resultados" role="status">{{ 'guias.resultados'|trans({'%count%': guias|length}) }}</p>
         {% if guias is empty %}
-            <p>{{ ((filtro.q or filtro.materia) ? 'guias.sin_resultados' : 'guias.vacio')|trans }}</p>
+            <p>{{ ((filtro.q or filtro.materia or filtro.area) ? 'guias.sin_resultados' : 'guias.vacio')|trans }}</p>
         {% else %}
             {# Presentación elegida en Administración → Apariencia: lista, cuadricula o carrusel. #}
             {% set vista = sitio_vista_guias() %}
