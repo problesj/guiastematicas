@@ -1,0 +1,36 @@
+{% extends 'panel/_layout.html.twig' %}
+
+{% block title %}{{ 'materia.eliminar_titulo'|trans({'%materia%': materia.nombre}) }}{% endblock %}
+
+{% block contenido %}
+    <h1>{{ 'materia.eliminar_titulo'|trans({'%materia%': materia.nombre}) }}</h1>
+    <p>{{ 'materia.eliminar_explicacion'|trans }}</p>
+
+    <h2>{{ 'materia.homologar_afectados'|trans }}</h2>
+    <ul class="homologar__cuentas">
+        {% for clave, n in cuentas %}
+            <li>{{ ('materia.homologar_' ~ clave)|trans({'%count%': n}) }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if error %}<p class="aviso aviso--error" role="alert">{{ error|trans }}</p>{% endif %}
+
+    <form method="post" class="formulario formulario--angosto"
+          data-controller="confirmar" data-action="submit->confirmar#preguntar"
+          data-confirmar-peligro-value="true" data-confirmar-boton-value="{{ 'formulario.eliminar'|trans }}"
+          data-confirmar-mensaje-value="{{ 'formulario.confirmar_eliminar'|trans({'%nombre%': materia.nombre}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('eliminar-materia-' ~ materia.id) }}">
+        <div class="campo">
+            <label for="destino">{{ 'materia.eliminar_destino'|trans }}</label>
+            <select id="destino" name="destino">
+                <option value="">{{ 'materia.eliminar_sin_reasignar'|trans }}</option>
+                {{ include('_opciones_materias.html.twig', {materias: destinos, elegida: elegida, valor: 'id'}) }}
+            </select>
+            <p class="campo__ayuda">{{ 'materia.eliminar_destino_ayuda'|trans }}</p>
+        </div>
+        <div class="formulario__acciones">
+            <button type="submit" class="boton boton--peligro">{{ icono('eliminar') }}{{ 'formulario.eliminar'|trans }}</button>
+            <a class="boton boton--secundario" href="{{ path('admin_materias') }}">{{ icono('cancelar') }}{{ 'formulario.cancelar'|trans }}</a>
+        </div>
+    </form>
+{% endblock %}

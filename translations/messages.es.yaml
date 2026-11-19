@@ -163,6 +163,14 @@ departamento:
   orden_ayuda: Los departamentos se muestran de menor a mayor.
   integrantes: Personas
 materia:
+  eliminar_titulo: "Eliminar la materia «%materia%»"
+  eliminar_explicacion: "Puedes reasignar a otra materia (propia o categoría ASJC) los recursos bibliográficos, guías, especialistas, sugerencias y bloques de búsqueda que tienen esta materia. Si no la reasignas, solo se les quita."
+  eliminar_destino: "Reasignar a"
+  eliminar_sin_reasignar: "No reasignar (solo quitar la materia)"
+  eliminar_destino_ayuda: "Se propone la categoría ASJC en que está clasificada; puedes elegir cualquier otra materia."
+  eliminar_destino_invalido: "Elige una materia válida para reasignar, o «No reasignar»."
+  eliminada_reasignada: "Se eliminó «%materia%». Reasignados a «%destino%»: recursos %recursos%, guías %guias%, especialistas %especialistas%."
+  eliminada_sin_reasignar: "Se eliminó «%materia%» sin reasignar (se quitó de %recursos% recursos)."
   homologar: "Homologar"
   homologar_ayuda: "Homologar a una categoría ASJC"
   homologar_titulo: "Homologar «%materia%» a una categoría ASJC"

@@ -51,26 +51,56 @@ final class MateriaController extends AbstractController
         return $this->formulario($request, $materia, 'materia.editar');
     }
 
-    #[Route('/{id<\d+>}/eliminar', name: 'admin_materia_eliminar', methods: ['POST'])]
-    public function eliminar(Request $request, Materia $materia): Response
+    /**
+     * Elimina una materia propia, con la opción de reasignar sus recursos, guías y especialistas a otra materia
+     * (propia o categoría ASJC). Las categorías ASJC no se eliminan.
+     */
+    #[Route('/{id<\d+>}/eliminar', name: 'admin_materia_eliminar', methods: ['GET', 'POST'])]
+    public function eliminar(Request $request, Materia $materia, MateriaRepository $materias, HomologadorMaterias $homologador): Response
     {
-        // Las categorías ASJC son la base del esquema: se pueden desactivar, no eliminar.
         if ($materia->isBase()) {
             $this->addFlash('error', 'materia.base_no_eliminable');
 
             return $this->redirectToRoute('admin_materias');
         }
-        if ($this->isCsrfTokenValid('eliminar-materia-'.$materia->getId(), $request->getPayload()->getString('_token'))) {
-            // Se quita la materia de los especialistas; las guías asociadas (fase 4) impedirán eliminarla.
-            foreach ($materia->getEspecialistas() as $especialista) {
-                $especialista->removeMateria($materia);
+        $destinos = array_values(array_filter($materias->porCampo(), fn (Materia $m) => $m->getId() !== $materia->getId()));
+        $elegida = null;
+        $error = null;
+
+        if ($request->isMethod('POST')) {
+            $id = $request->getPayload()->getString('destino');
+            $elegida = ctype_digit($id) ? $materias->find((int) $id) : null;
+            if (!$this->isCsrfTokenValid('eliminar-materia-'.$materia->getId(), $request->getPayload()->getString('_token'))) {
+                $error = 'materia.homologar_token';
+            } elseif ('' !== $id && (null === $elegida || !\in_array($elegida, $destinos, true))) {
+                $error = 'materia.eliminar_destino_invalido';
+            } else {
+                $nombre = $materia->getNombre();
+                $cambios = $homologador->traspasar($materia, $elegida);
+                $this->addFlash('exito', null === $elegida
+                    ? $this->traductor->trans('materia.eliminada_sin_reasignar', ['%materia%' => $nombre, '%recursos%' => $cambios['recursos']])
+                    : $this->traductor->trans('materia.eliminada_reasignada', [
+                        '%materia%' => $nombre,
+                        '%destino%' => $elegida->getNombre(),
+                        '%recursos%' => $cambios['recursos'],
+                        '%guias%' => $cambios['guias'],
+                        '%especialistas%' => $cambios['especialistas'],
+                    ]));
+
+                return $this->redirectToRoute('admin_materias');
             }
-            $this->em->remove($materia);
-            $this->em->flush();
-            $this->addFlash('exito', 'materia.eliminado');
         }
 
-        return $this->redirectToRoute('admin_materias');
+        // Propuesta: la categoría ASJC en que está clasificada.
+        $elegida ??= [] !== $materia->getAsjc() ? $materias->findOneBy(['codigoAsjc' => $materia->getAsjc()[0]]) : null;
+
+        return $this->render('admin/materias/eliminar.html.twig', [
+            'materia' => $materia,
+            'destinos' => $destinos,
+            'elegida' => $elegida,
+            'cuentas' => $homologador->contar($materia),
+            'error' => $error,
+        ], new Response(status: null !== $error ? 422 : 200));
     }
 
     /**

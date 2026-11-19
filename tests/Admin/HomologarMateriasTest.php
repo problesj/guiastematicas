@@ -86,4 +86,41 @@ final class HomologarMateriasTest extends WebTestCase
         $cliente->request('GET', '/es/admin/materias/'.$derecho->getId().'/homologar');
         self::assertResponseStatusCodeSame(404);
     }
+
+    public function testAlEliminarUnaMateriaPropiaSeReasignanSusRecursosAOtraMateria(): void
+    {
+        $cliente = static::createClient();
+        $cliente->disableReboot();
+        $cliente->setServerParameter('HTTP_ORIGIN', 'http://localhost');
+        $repo = self::em()->getRepository(Materia::class);
+        $vieja = self::crearMateria('Derecho antiguo', 'derecho-antiguo')->setAsjc([3308]);
+        $nueva = self::crearMateria('Ciencias Jurídicas', 'ciencias-juridicas')->setAsjc([3308]);
+        $sobra = self::crearMateria('Taller', 'taller')->setAsjc([3304]);
+        $vlex = (new Recurso())->setTitulo('vLex')->setUrl('https://ejemplo.cl/vlex')->setTipo(TipoRecurso::BaseDatos)->setAcceso(TipoAcceso::Abierto)->addMateria($vieja);
+        $otro = (new Recurso())->setTitulo('Otro')->setUrl('https://ejemplo.cl/otro')->setTipo(TipoRecurso::BaseDatos)->setAcceso(TipoAcceso::Abierto)->addMateria($sobra);
+        self::em()->persist($vlex);
+        self::em()->persist($otro);
+        self::em()->flush();
+        $ids = [$vieja->getId(), $nueva->getId(), $sobra->getId(), $vlex->getId(), $otro->getId()];
+
+        $cliente->loginUser(self::crearUsuario('admin@ucn.cl', Rol::Administrador));
+        $crawler = $cliente->request('GET', '/es/admin/materias/'.$ids[0].'/eliminar');
+        self::assertResponseIsSuccessful();
+        // Se puede reasignar a una materia propia (y no a sí misma).
+        self::assertCount(1, $crawler->filter('#destino option[value="'.$ids[1].'"]'));
+        self::assertCount(0, $crawler->filter('#destino option[value="'.$ids[0].'"]'));
+        $cliente->submit($crawler->selectButton('Eliminar')->form(), ['destino' => (string) $ids[1]]);
+        self::assertResponseRedirects('/es/admin/materias');
+
+        // Sin reasignar: solo se quita.
+        $crawler = $cliente->request('GET', '/es/admin/materias/'.$ids[2].'/eliminar');
+        $cliente->submit($crawler->selectButton('Eliminar')->form(), ['destino' => '']);
+        self::assertResponseRedirects('/es/admin/materias');
+
+        self::em()->clear();
+        self::assertNull($repo->find($ids[0]));
+        self::assertNull($repo->find($ids[2]));
+        self::assertSame(['ciencias-juridicas'], self::em()->find(Recurso::class, $ids[3])->getMaterias()->map(fn (Materia $m) => $m->getSlug())->getValues());
+        self::assertCount(0, self::em()->find(Recurso::class, $ids[4])->getMaterias());
+    }
 }

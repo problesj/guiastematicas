@@ -163,6 +163,14 @@ departamento:
   orden_ayuda: Departments are listed from lowest to highest.
   integrantes: People
 materia:
+  eliminar_titulo: "Delete the subject “%materia%”"
+  eliminar_explicacion: "You can reassign the resources, guides, specialists, suggestions and search blocks with this subject to another subject (local or ASJC category). If you do not, the subject is just removed from them."
+  eliminar_destino: "Reassign to"
+  eliminar_sin_reasignar: "Do not reassign (just remove the subject)"
+  eliminar_destino_ayuda: "The ASJC category it is classified under is suggested; you can choose any other subject."
+  eliminar_destino_invalido: "Choose a valid subject to reassign to, or “Do not reassign”."
+  eliminada_reasignada: "“%materia%” was deleted. Reassigned to “%destino%”: resources %recursos%, guides %guias%, specialists %especialistas%."
+  eliminada_sin_reasignar: "“%materia%” was deleted without reassigning (removed from %recursos% resources)."
   homologar: "Merge"
   homologar_ayuda: "Merge into an ASJC category"
   homologar_titulo: "Merge “%materia%” into an ASJC category"
