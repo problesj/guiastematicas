@@ -59,8 +59,12 @@ final class RecursosController extends AbstractController
         $conFormato = null === $tipoFijo || $tipoFijo->tieneFormato();
         $formato = $conFormato ? FormatoRecurso::tryFrom($consulta->getString('formato')) : null;
 
+        // Gran área ASJC (Scopus), según las categorías de las materias.
+        $areas = $materias->areasConMaterias();
+        $area = \in_array($consulta->getString('area'), $areas, true) ? $consulta->getString('area') : null;
+
         [$numero, $porPagina] = Pagina::leerParametros($request);
-        $pagina = $recursos->buscarPublicos($numero, $porPagina, $letra, $texto, $materia, $tipo, $acceso, $formato);
+        $pagina = $recursos->buscarPublicos($numero, $porPagina, $letra, $texto, $materia, $tipo, $acceso, $formato, null !== $area ? $materias->deArea($area) : null);
 
         // Agrupados por letra para la vista sin filtro de letra.
         $grupos = [];
@@ -72,7 +76,8 @@ final class RecursosController extends AbstractController
             'grupos' => $grupos,
             'pagina' => $pagina,
             'letras' => $recursos->letrasConRecursos($tipoFijo),
-            'materias' => $materias->activas(),
+            'materias' => null !== $area ? $materias->deArea($area) : $materias->activas(),
+            'areas' => $areas,
             'tipos' => TipoRecurso::cases(),
             'accesos' => TipoAcceso::cases(),
             'formatos' => $conFormato ? FormatoRecurso::cases() : [],
@@ -83,8 +88,9 @@ final class RecursosController extends AbstractController
                 'tipo' => $tipoFijo ? null : $tipo,
                 'acceso' => $acceso,
                 'formato' => $formato,
+                'area' => $area,
             ],
-            'hay_filtros' => null !== $letra || '' !== $texto || null !== $materia || (null === $tipoFijo && null !== $tipo) || null !== $acceso || null !== $formato,
+            'hay_filtros' => null !== $area || null !== $letra || '' !== $texto || null !== $materia || (null === $tipoFijo && null !== $tipo) || null !== $acceso || null !== $formato,
             'tipo_fijo' => $tipoFijo,
             'presentacion' => $presentacion,
             'ruta' => null !== $vista ? 'recursos_vista' : 'recursos',

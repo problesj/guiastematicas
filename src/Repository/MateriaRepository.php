@@ -24,6 +24,28 @@ class MateriaRepository extends ServiceEntityRepository
         return $this->findBy(['activa' => true], ['nombre' => 'ASC']);
     }
 
+    /**
+     * Materias activas asociadas a alguna categoría ASJC de la gran área.
+     *
+     * @return list<Materia>
+     */
+    public function deArea(string $area): array
+    {
+        return array_values(array_filter($this->activas(), fn (Materia $m) => \in_array($area, $m->getAreas(), true)));
+    }
+
+    /**
+     * Grandes áreas ASJC que tienen al menos una materia activa, en el orden de Asjc::AREAS.
+     *
+     * @return list<string>
+     */
+    public function areasConMaterias(): array
+    {
+        $areas = array_merge([], ...array_map(fn (Materia $m) => $m->getAreas(), $this->activas()));
+
+        return array_values(array_filter(\App\Clasificacion\Asjc::AREAS, fn (string $a) => \in_array($a, $areas, true)));
+    }
+
     /** @return list<Materia> */
     public function todas(): array
     {

@@ -38,6 +38,7 @@ class RecursoRepository extends ServiceEntityRepository
         ?TipoRecurso $tipo = null,
         ?TipoAcceso $acceso = null,
         ?FormatoRecurso $formato = null,
+        ?array $deMaterias = null,
     ): Pagina {
         $consulta = $this->disponibles();
 
@@ -49,6 +50,13 @@ class RecursoRepository extends ServiceEntityRepository
         }
         if (null !== $materia) {
             $consulta->andWhere(':materia MEMBER OF r.materias')->setParameter('materia', $materia);
+        }
+        // Gran área ASJC: recursos con alguna de las materias del área (lista vacía: ninguno).
+        if (null !== $deMaterias) {
+            $consulta->andWhere([] === $deMaterias ? '1 = 0' : 'r.id IN (SELECT rar.id FROM '.Recurso::class.' rar JOIN rar.materias rma WHERE rma IN (:deMaterias))');
+            if ([] !== $deMaterias) {
+                $consulta->setParameter('deMaterias', $deMaterias);
+            }
         }
         if (null !== $tipo) {
             $consulta->andWhere('r.tipo = :tipo')->setParameter('tipo', $tipo);

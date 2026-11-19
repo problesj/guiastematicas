@@ -28,6 +28,7 @@ final class MateriaType extends AbstractType
             ->add('slug', TextType::class, ['label' => 'materia.slug', 'required' => false, 'help' => 'materia.slug_ayuda', 'empty_data' => ''])
             ->add('codigo', TextType::class, ['label' => 'materia.codigo', 'required' => false])
             ->add('activa', CheckboxType::class, ['label' => 'materia.activa', 'required' => false])
+            ->add('asjc', AsjcType::class, ['label' => 'materia.asjc', 'help' => 'materia.asjc_ayuda'])
             // Si el identificador queda vacío, se genera desde el nombre antes de validar.
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $evento): void {
                 $materia = $evento->getData();

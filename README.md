@@ -199,6 +199,18 @@ hora por dirección IP. Las revisan en **Panel → Sugerencias** quienes tienen 
 y coeditores de guías con esa materia; el administrador ve todas. El panel muestra cuántas hay pendientes. Al aprobar,
 el recurso entra a la lista A-Z.
 
+## Materias y categorías ASJC (Scopus)
+
+Las materias son propias de la UCN (Administración → Materias). Cada una puede asociarse a una o más categorías
+**ASJC** de Scopus (334 categorías de 4 dígitos en 27 campos; lista oficial de Elsevier, nombres en español
+traducidos por nosotros). El formulario de la materia agrupa las categorías por campo y tiene un buscador por
+nombre o código.
+
+Con las categorías, la plataforma calcula la **gran área** de cada materia (Ciencias de la salud, de la vida,
+físicas, sociales y humanidades, multidisciplinaria). En «Guías por materia» y en la lista A-Z de recursos aparece
+el filtro «Gran área» (parámetro `area`), solo con las áreas que tienen materias. Las materias sin categorías
+siguen funcionando igual; solo no aparecen al filtrar por área.
+
 ## Directorio y consultas a bibliotecarios
 
 La ficha pública de cada bibliotecario tiene el formulario «Escribir a…» (captcha propio, 10 mensajes por hora por IP;

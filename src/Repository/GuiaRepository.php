@@ -27,7 +27,7 @@ class GuiaRepository extends ServiceEntityRepository
      *
      * @return list<Guia>
      */
-    public function publicadas(?Materia $materia = null, ?string $texto = null, ?Usuario $lector = null, bool $todas = false): array
+    public function publicadas(?Materia $materia = null, ?string $texto = null, ?Usuario $lector = null, bool $todas = false, ?array $deMaterias = null): array
     {
         $consulta = $this->createQueryBuilder('g')
             ->leftJoin('g.materias', 'm')->addSelect('m')
@@ -46,6 +46,13 @@ class GuiaRepository extends ServiceEntityRepository
         }
         if (null !== $materia) {
             $consulta->andWhere(':materia MEMBER OF g.materias')->setParameter('materia', $materia);
+        }
+        // Gran área ASJC: guías con alguna de las materias del área (lista vacía: ninguna).
+        if (null !== $deMaterias) {
+            $consulta->andWhere([] === $deMaterias ? '1 = 0' : 'g.id IN (SELECT ga.id FROM '.Guia::class.' ga JOIN ga.materias ma WHERE ma IN (:deMaterias))');
+            if ([] !== $deMaterias) {
+                $consulta->setParameter('deMaterias', $deMaterias);
+            }
         }
         if (null !== $texto && '' !== trim($texto)) {
             $consulta->andWhere('g.titulo LIKE :texto OR g.descripcion LIKE :texto')

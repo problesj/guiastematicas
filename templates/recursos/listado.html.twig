@@ -11,17 +11,19 @@
         <p class="pagina__sugerir">{{ 'bases.sugerir_texto'|trans }} <a href="{{ path('recursos_sugerir', tipo_fijo ? {tipo: tipo_fijo.value} : {}) }}">{{ 'bases.sugerir'|trans }}</a></p>
 
         <nav class="indice-az" aria-label="{{ 'bases.indice'|trans }}">
-            <a href="{{ path(ruta, ruta_parametros) }}" {% if filtro.letra is null %}aria-current="page"{% endif %}>{{ 'bases.todas'|trans }}</a>
+            <a href="{{ path(ruta, ruta_parametros|merge(filtro.area ? {area: filtro.area} : {})) }}" {% if filtro.letra is null %}aria-current="page"{% endif %}>{{ 'bases.todas'|trans }}</a>
             {% for letra in ['#']|merge(range('A', 'Z')) %}
                 {% if letra in letras %}
-                    <a href="{{ path(ruta, ruta_parametros|merge({letra: letra})) }}" {% if filtro.letra == letra %}aria-current="page"{% endif %}>{{ letra }}</a>
+                    <a href="{{ path(ruta, ruta_parametros|merge(filtro.area ? {letra: letra, area: filtro.area} : {letra: letra})) }}" {% if filtro.letra == letra %}aria-current="page"{% endif %}>{{ letra }}</a>
                 {% else %}
                     <span aria-hidden="true">{{ letra }}</span>
                 {% endif %}
             {% endfor %}
         </nav>
 
+        {{ include('_areas_asjc.html.twig') }}
         <form method="get" action="{{ path(ruta, ruta_parametros) }}" class="filtros" role="search">
+            {% if filtro.area %}<input type="hidden" name="area" value="{{ filtro.area }}">{% endif %}
             <div class="campo filtros__texto">
                 <label for="q">{{ 'bases.buscar'|trans }}</label>
                 <input type="search" id="q" name="q" value="{{ filtro.q }}" placeholder="{{ 'bases.buscar_placeholder'|trans }}">

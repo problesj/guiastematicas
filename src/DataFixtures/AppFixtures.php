@@ -61,14 +61,14 @@ final class AppFixtures extends Fixture
         $usuarios = [];
         $recursos = [];
         foreach ([
-            ['Ingeniería Civil', 'Civil Engineering'],
-            ['Medicina', 'Medicine'],
-            ['Derecho', 'Law'],
-            ['Biología Marina', 'Marine Biology'],
-            ['Geología', 'Geology'],
-            ['Arquitectura', 'Architecture'],
-        ] as [$nombre, $nombreEn]) {
-            $materia = (new Materia())->setNombre($nombre)->setNombreEn($nombreEn)->setSlug($slugger->slug($nombre)->lower()->toString());
+            ['Ingeniería Civil', 'Civil Engineering', [2205, 2215]],
+            ['Medicina', 'Medicine', [2700]],
+            ['Derecho', 'Law', [3308]],
+            ['Biología Marina', 'Marine Biology', [1104, 1910]],
+            ['Geología', 'Geology', [1907]],
+            ['Arquitectura', 'Architecture', [2216]],
+        ] as [$nombre, $nombreEn, $asjc]) {
+            $materia = (new Materia())->setNombre($nombre)->setNombreEn($nombreEn)->setSlug($slugger->slug($nombre)->lower()->toString())->setAsjc($asjc);
             $manager->persist($materia);
             $materias[] = $materia;
         }

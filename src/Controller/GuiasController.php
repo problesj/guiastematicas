@@ -25,10 +25,15 @@ final class GuiasController extends AbstractController
             ? $materias->findOneBy(['slug' => $request->query->getString('materia'), 'activa' => true])
             : null;
 
+        // Gran área ASJC (Scopus), según las categorías de las materias.
+        $areas = $materias->areasConMaterias();
+        $area = \in_array($request->query->getString('area'), $areas, true) ? $request->query->getString('area') : null;
+
         return $this->render('guias/listado.html.twig', [
-            'guias' => $guias->publicadas($materia, $texto, $usuario instanceof Usuario ? $usuario : null, $this->isGranted('ROLE_ADMINISTRADOR')),
-            'materias' => $materias->activas(),
-            'filtro' => ['materia' => $materia, 'q' => $texto],
+            'guias' => $guias->publicadas($materia, $texto, $usuario instanceof Usuario ? $usuario : null, $this->isGranted('ROLE_ADMINISTRADOR'), null !== $area ? $materias->deArea($area) : null),
+            'materias' => null !== $area ? $materias->deArea($area) : $materias->activas(),
+            'areas' => $areas,
+            'filtro' => ['materia' => $materia, 'q' => $texto, 'area' => $area],
         ]);
     }
 

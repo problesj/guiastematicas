@@ -421,10 +421,11 @@ a:hover { color: var(--color-principal-oscuro); }
 .filtro-tipos { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0 0 0.85rem; }
 .filtro-tipos__etiqueta { font-weight: 600; margin-right: 0.25rem; }
 .filtro-tipos__opcion { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem; font: inherit; font-size: 0.875rem; color: var(--color-texto); background: #fff; border: 1px solid var(--color-gris); border-radius: 999px; cursor: pointer; }
+a.filtro-tipos__opcion { text-decoration: none; }
 .filtro-tipos__opcion:hover { border-color: var(--color-principal); }
-.filtro-tipos__opcion[aria-pressed="true"] { color: var(--color-texto-boton); background: var(--color-principal-oscuro); border-color: var(--color-principal-oscuro); }
+.filtro-tipos__opcion[aria-pressed="true"], .filtro-tipos__opcion[aria-current="true"] { color: var(--color-texto-boton); background: var(--color-principal-oscuro); border-color: var(--color-principal-oscuro); }
 .filtro-tipos__cuenta { font-size: 0.75rem; font-weight: 600; padding: 0 0.4rem; border-radius: 999px; background: rgb(0 0 0 / 0.08); }
-.filtro-tipos__opcion[aria-pressed="true"] .filtro-tipos__cuenta { background: rgb(0 0 0 / 0.25); }
+.filtro-tipos__opcion[aria-current="true"] .filtro-tipos__cuenta, .filtro-tipos__opcion[aria-pressed="true"] .filtro-tipos__cuenta { background: rgb(0 0 0 / 0.25); }
 .bloque__recursos > li[hidden] { display: none; }
 .bloque__descripcion { margin: 0.4rem 0 0; color: var(--color-texto-secundario); }
 .bloque--perfil .persona { max-width: 32rem; }
@@ -918,3 +919,10 @@ h1 .etiqueta { font-size: 0.875rem; vertical-align: middle; }
 .compartido-item__datos small { color: var(--color-texto-secundario); overflow-wrap: anywhere; }
 .compartido-item__origen { font-weight: 600; }
 .compartido-item__acciones { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* Categorías ASJC en el formulario de materias */
+.asjc__buscar { width: 100%; max-width: 28rem; padding: 0.5rem 0.75rem; font: inherit; border: 1px solid var(--color-gris); border-radius: var(--radio); }
+.asjc__campo { margin: 0.25rem 0; }
+.asjc__campo > summary { cursor: pointer; padding: 0.25rem 0; }
+.asjc__campo .casillas__opcion { margin-left: 1.5rem; }
+.asjc__cuenta { font-weight: 600; }

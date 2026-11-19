@@ -1,0 +1,12 @@
+{# Filtro por gran área ASJC (Scopus), según las categorías de las materias. Enlaces que conservan los demás filtros
+   (salvo materia y página). Solo aparece si alguna materia tiene categorías. #}
+{% if areas is not empty %}
+    {% set parametros = app.request.query.all|filter((v, k) => k not in ['area', 'materia', 'pagina']) %}
+    <nav class="filtro-tipos filtro-areas" aria-label="{{ 'asjc_area.titulo'|trans }}">
+        <span class="filtro-tipos__etiqueta" aria-hidden="true">{{ 'asjc_area.titulo'|trans }}:</span>
+        <a class="filtro-tipos__opcion" href="{{ path(ruta, ruta_parametros|merge(parametros)) }}"{% if not filtro.area %} aria-current="true"{% endif %}>{{ 'asjc_area.todas'|trans }}</a>
+        {% for area in areas %}
+            <a class="filtro-tipos__opcion" href="{{ path(ruta, ruta_parametros|merge(parametros)|merge({area: area})) }}"{% if filtro.area == area %} aria-current="true"{% endif %}>{{ ('asjc_area.' ~ area)|trans }}</a>
+        {% endfor %}
+    </nav>
+{% endif %}
