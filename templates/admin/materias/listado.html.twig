@@ -56,6 +56,7 @@
                                 <td class="tabla__acciones">
                                     <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('admin_materia_editar', {id: materia.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ materia.nombre }}</span></a>
                                     {% if not materia.base %}
+                                        <a class="accion" data-tooltip="{{ 'materia.homologar_ayuda'|trans }}" href="{{ path('admin_materia_homologar', {id: materia.id}) }}">{{ icono('homologar') }}<span class="solo-lectores">{{ 'materia.homologar'|trans }} {{ materia.nombre }}</span></a>
                                         {% include 'admin/_eliminar.html.twig' with {ruta: 'admin_materia_eliminar', id: materia.id, token: 'eliminar-materia-' ~ materia.id, nombre: materia.nombre} %}
                                     {% endif %}
                                 </td>

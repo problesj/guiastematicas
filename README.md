@@ -207,7 +207,9 @@ español o inglés), la reutiliza. También se puede ejecutar a mano: `php bin/c
 
 Las **materias propias** (carreras, asignaturas) se crean en Administración → Materias y deben quedar clasificadas en
 al menos una categoría ASJC. Al filtrar por una categoría (lista A-Z, guías, directorio, API) aparecen también los
-recursos y guías de sus materias propias. Las categorías ASJC se pueden desactivar pero no eliminar. El listado de
+recursos y guías de sus materias propias. Las categorías ASJC se pueden desactivar pero no eliminar. Una materia propia se puede **homologar** a una categoría ASJC (botón «Homologar» en el
+listado): sus recursos, guías, especialistas, sugerencias y bloques de búsqueda pasan a la categoría y la propia se
+elimina, después de mostrar cuántos elementos cambian. El listado de
 Administración → Materias muestra las propias y las categorías en uso («Ver las 334 categorías ASJC» las muestra todas)
 y avisa de las propias sin clasificar.
 

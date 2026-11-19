@@ -17,6 +17,7 @@ final class IconosAccion
         'editar' => '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/>',
         'eliminar' => '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
         'ver' => '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+        'homologar' => '<path d="M4 6h6l4 6h6M4 18h6l4-6"/><path d="M17 9l3 3-3 3"/>',
         'mover' => '<path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/>',
         'incrustar' => '<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/>',
         'cancelar' => '<path d="M6 6l12 12M18 6L6 18"/>',
