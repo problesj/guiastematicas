@@ -48,6 +48,10 @@ jobs:
         run: |
           php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration --env=test
           php bin/console doctrine:schema:validate --env=test
+          # La migración carga las 334 categorías ASJC como materias (y debe dejar 334); las pruebas parten sin
+          # materias y cada una crea las que necesita (las de ASJC con SincronizadorAsjc).
+          test "$(php bin/console dbal:run-sql --env=test 'SELECT COUNT(*) AS n FROM materia WHERE codigo_asjc IS NOT NULL' | grep -Eo '[0-9]+' | tail -1)" = 334
+          php bin/console dbal:run-sql --env=test 'DELETE FROM materia'
 
       - name: PHPUnit
         run: php bin/phpunit
