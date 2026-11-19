@@ -25,13 +25,15 @@ systemctl restart php8.5-fpm
 
 # Apache con PHP-FPM
 a2enmod proxy_fcgi setenvif rewrite headers ssl
-# Sin versión de Apache en las cabeceras ni en las páginas de error; sin listado de carpetas.
-cat > /etc/apache2/conf-available/guias-seguridad.conf <<'CONF'
+# Sin versión de Apache en las cabeceras ni en las páginas de error; sin listado de carpetas. El nombre empieza con
+# «zz-» para cargarse después de security.conf de Ubuntu, que define ServerTokens OS.
+rm -f /etc/apache2/conf-enabled/guias-seguridad.conf /etc/apache2/conf-available/guias-seguridad.conf
+cat > /etc/apache2/conf-available/zz-guias-seguridad.conf <<'CONF'
 ServerTokens Prod
 ServerSignature Off
 TraceEnable Off
 CONF
-a2enconf guias-seguridad
+a2enconf zz-guias-seguridad
 a2dismod -f autoindex status || true
 a2enconf php8.5-fpm
 cp "$(dirname "$0")/../deploy/apache/guias.conf" /etc/apache2/sites-available/guias.conf

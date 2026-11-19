@@ -376,9 +376,10 @@ nada</td>
 <td>Apache sin versión ni listados</td>
 <td><code>curl -sI http://127.0.0.1/es</code> muestra
 <code>Server: Apache</code> sin número</td>
-<td><code>/etc/apache2/conf-available/guias-seguridad.conf</code> con
+<td><code>/etc/apache2/conf-available/zz-guias-seguridad.conf</code> (el
+prefijo hace que se cargue después de <code>security.conf</code>) con
 <code>ServerTokens Prod</code>, <code>ServerSignature Off</code>,
-<code>TraceEnable Off</code>; <code>a2enconf guias-seguridad</code>;
+<code>TraceEnable Off</code>; <code>a2enconf zz-guias-seguridad</code>;
 <code>a2dismod -f autoindex status</code></td>
 </tr>
 <tr class="odd">
