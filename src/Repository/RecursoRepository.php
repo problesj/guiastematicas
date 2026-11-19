@@ -109,6 +109,24 @@ class RecursoRepository extends ServiceEntityRepository
     /** @return Pagina<Recurso> */
     public function listadoAdministracion(int $pagina, int $porPagina, ?string $texto = null, ?TipoRecurso $tipo = null, ?Materia $materia = null, ?FormatoRecurso $formato = null): Pagina
     {
+        return Pagina::desdeConsulta($this->consultaAdministracion($texto, $tipo, $materia, $formato), $pagina, $porPagina);
+    }
+
+    /**
+     * Todos los recursos que cumplen los filtros del panel, para exportarlos (con materias y editorial ya cargadas).
+     *
+     * @return list<Recurso>
+     */
+    public function paraExportar(?string $texto = null, ?TipoRecurso $tipo = null, ?FormatoRecurso $formato = null): array
+    {
+        return $this->consultaAdministracion($texto, $tipo, null, $formato)
+            ->leftJoin('r.materias', 'exm')->addSelect('exm')
+            ->leftJoin('r.editorial', 'exe')->addSelect('exe')
+            ->getQuery()->getResult();
+    }
+
+    private function consultaAdministracion(?string $texto, ?TipoRecurso $tipo, ?Materia $materia, ?FormatoRecurso $formato): QueryBuilder
+    {
         $consulta = $this->createQueryBuilder('r')->orderBy('r.titulo', 'ASC')->addOrderBy('r.id', 'ASC');
         if (null !== $texto && '' !== trim($texto)) {
             self::filtrarTexto($consulta, $texto);
@@ -121,7 +139,7 @@ class RecursoRepository extends ServiceEntityRepository
         }
         self::filtrarFormato($consulta, $formato);
 
-        return Pagina::desdeConsulta($consulta, $pagina, $porPagina);
+        return $consulta;
     }
 
     /** Busca un recurso existente para la importación: primero por URL, luego por título. */

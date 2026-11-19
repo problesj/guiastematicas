@@ -12,6 +12,7 @@ use App\Paginacion\Pagina;
 use App\Repository\EditorialRepository;
 use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
+use App\Servicio\Exportacion\ExportadorRecursos;
 use App\Servicio\Importacion\ArchivoNoValidoException;
 use App\Servicio\Importacion\ImportadorRecursos;
 use App\Servicio\Importacion\PlantillaImportacion;
@@ -159,6 +160,31 @@ final class RecursoController extends AbstractController
         ]));
 
         return $this->redirectToRoute('panel_recursos');
+    }
+
+    /** Exporta los recursos que cumplen los filtros del listado: Excel reimportable o RIS para gestores bibliográficos. */
+    #[Route('/exportar.{extension<xlsx|ris>}', name: 'panel_recursos_exportar', methods: ['GET'])]
+    public function exportar(Request $request, string $extension, RecursoRepository $recursos, ExportadorRecursos $exportador): Response
+    {
+        $lista = $recursos->paraExportar(
+            mb_substr(trim($request->query->getString('q')), 0, 100),
+            TipoRecurso::tryFrom($request->query->getString('tipo')),
+            FormatoRecurso::tryFrom($request->query->getString('formato')),
+        );
+        $nombre = 'recursos-bibliograficos-'.date('Y-m-d').'.'.$extension;
+        $idioma = $request->getLocale();
+
+        if ('ris' === $extension) {
+            return new Response($exportador->ris($lista, $idioma), 200, [
+                'Content-Type' => 'application/x-research-info-systems; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="'.$nombre.'"',
+            ]);
+        }
+
+        return new StreamedResponse(fn () => $exportador->excel($lista, 'php://output', $idioma), 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="'.$nombre.'"',
+        ]);
     }
 
     #[Route('/plantilla.xlsx', name: 'panel_recursos_plantilla', methods: ['GET'])]

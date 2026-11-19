@@ -503,7 +503,10 @@ final class ImportadorRecursos
             ?? ($traiaProxy || TipoAcceso::Abierto !== ($fila->datos['acceso'] ?? TipoAcceso::Suscripcion));
 
         if (null !== $materias = $valor('materias')) {
-            $nombres = array_map('trim', preg_split('/[;,|\/\n]+/', $materias) ?: []);
+            // Con «;», «|» o saltos de línea se separa solo por ellos: así se conservan nombres con coma como la
+            // categoría ASJC «Bioquímica, genética y biología molecular» (la exportación usa «; »).
+            $separador = 1 === preg_match('/[;|\n]/', $materias) ? '/[;|\n]+/' : '/[,\/]+/';
+            $nombres = array_map('trim', preg_split($separador, $materias) ?: []);
             $fila->materias = array_values(array_unique(array_filter($nombres, fn (string $m) => '' !== $m && mb_strlen($m) <= 150)));
         }
 

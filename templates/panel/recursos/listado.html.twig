@@ -30,7 +30,15 @@
     {% if pagina.total == 0 %}
         <p>{{ 'recurso.vacio'|trans }}</p>
     {% else %}
-        <p>{{ 'bases.resultados'|trans({'%count%': pagina.total}) }}</p>
+        {% set filtros = {q: q ?: null, tipo: tipo ? tipo.value : null, formato: formato ? formato.value : null}|filter(v => v is not null) %}
+        <div class="exportar-recursos">
+            <p>{{ 'bases.resultados'|trans({'%count%': pagina.total}) }}</p>
+            <p class="exportar-recursos__enlaces">
+                <span>{{ 'exportacion.exportar'|trans({'%count%': pagina.total}) }}</span>
+                <a class="boton boton--secundario boton--pequeno" href="{{ path('panel_recursos_exportar', filtros|merge({extension: 'xlsx'})) }}" data-turbo="false" download>{{ icono('descargar') }} {{ 'exportacion.excel'|trans }}</a>
+                <a class="boton boton--secundario boton--pequeno" href="{{ path('panel_recursos_exportar', filtros|merge({extension: 'ris'})) }}" data-turbo="false" download>{{ icono('descargar') }} {{ 'exportacion.ris'|trans }}</a>
+            </p>
+        </div>
         {% include 'paginacion/_cantidad.html.twig' %}
         <div class="tabla-desplazable">
             <table class="tabla">

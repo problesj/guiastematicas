@@ -353,6 +353,11 @@ recurso:
   paginas: Páginas
   doi: DOI
   doi_ayuda: "Por ejemplo 10.1016/j.cell.2020.01.001. También puedes pegar el enlace https://doi.org/..."
+exportacion:
+  exportar: "{1}Exportar este recurso:|]1,Inf[Exportar estos %count% recursos:"
+  excel: Excel (plantilla de importación)
+  ris: RIS (Zotero, Mendeley, EndNote)
+  hoja: Recursos bibliográficos
 importacion:
   materias_sin_coincidencia: "Sin coincidencia en las materias (no se crearán): %materias%. Elige la categoría o materia que corresponda."
   materias_fila: "Agregar materia a la fila %fila%"
