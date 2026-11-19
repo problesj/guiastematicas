@@ -11,7 +11,6 @@ use App\Enum\TipoAcceso;
 use App\Enum\TipoRecurso;
 use App\Repository\MateriaRepository;
 use App\Repository\RecursoRepository;
-use App\Servicio\GeneradorSlug;
 use App\Servicio\ProxyAccesum;
 use App\Servicio\RegistroBibliografico;
 use Doctrine\ORM\EntityManagerInterface;
@@ -106,7 +105,6 @@ final class ImportadorRecursos
         private readonly MateriaRepository $materiasRepo,
         private readonly EntityManagerInterface $em,
         private readonly ProxyAccesum $proxy,
-        private readonly GeneradorSlug $slugs,
         private readonly ValidatorInterface $validador,
         private readonly LectorBibliografia $lectorBibliografia,
         private readonly RegistroBibliografico $registro,
@@ -301,8 +299,9 @@ final class ImportadorRecursos
      */
     public function aplicar(array $filas): array
     {
-        $resultado = ['creados' => 0, 'actualizados' => 0, 'omitidos' => 0, 'materias_nuevas' => 0];
+        $resultado = ['creados' => 0, 'actualizados' => 0, 'omitidos' => 0, 'materias_sin_clasificar' => 0];
         $materias = $this->indiceMaterias();
+        $sinClasificar = [];
 
         foreach ($filas as $fila) {
             if (!$fila->esValida() || $fila->descartada) {
@@ -356,16 +355,15 @@ final class ImportadorRecursos
             }
             $recurso->limpiarCamposNoAplicables();
 
+            // Solo materias existentes (categorías ASJC o propias ya clasificadas): un nombre desconocido no crea una
+            // materia sin clasificar; se informa para elegirla en la vista previa o crearla antes en Administración.
             foreach ($fila->materias as $nombre) {
                 $clave = self::normalizar($nombre);
-                if (!isset($materias[$clave])) {
-                    $materia = (new Materia())->setNombre($nombre);
-                    $materia->setSlug($this->slugUnico($nombre, $materias));
-                    $this->em->persist($materia);
-                    $materias[$clave] = $materia;
-                    ++$resultado['materias_nuevas'];
+                if (isset($materias[$clave])) {
+                    $recurso->addMateria($materias[$clave]);
+                } else {
+                    $sinClasificar[$clave] = true;
                 }
-                $recurso->addMateria($materias[$clave]);
             }
 
             if (null === $fila->existente) {
@@ -377,6 +375,7 @@ final class ImportadorRecursos
         }
 
         $this->em->flush();
+        $resultado['materias_sin_clasificar'] = \count($sinClasificar);
 
         return $resultado;
     }
@@ -675,21 +674,17 @@ final class ImportadorRecursos
             if (null !== $materia->getNombreEn()) {
                 $indice[self::normalizar($materia->getNombreEn())] ??= $materia;
             }
+            // Categorías ASJC «Medicina (general)», «General Engineering»: también por el nombre sin «general».
+            if ($materia->isBase()) {
+                foreach ([$materia->getNombre(), (string) $materia->getNombreEn()] as $nombre) {
+                    $corto = trim((string) preg_replace('/\s*\((general|miscel[aá]nea|miscellaneous)\)|^general\s+/iu', '', $nombre));
+                    if ('' !== $corto) {
+                        $indice[self::normalizar($corto)] ??= $materia;
+                    }
+                }
+            }
         }
 
         return $indice;
-    }
-
-    /** @param array<string, Materia> $materias */
-    private function slugUnico(string $nombre, array $materias): string
-    {
-        $usados = array_map(fn (Materia $m) => $m->getSlug(), $materias);
-        $base = $this->slugs->generar(Materia::class, $nombre);
-        $slug = $base;
-        for ($n = 2; \in_array($slug, $usados, true); ++$n) {
-            $slug = $base.'-'.$n;
-        }
-
-        return $slug;
     }
 }

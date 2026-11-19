@@ -43,10 +43,12 @@
     </div>
 {%- endblock choice_widget_expanded -%}
 
-{# Categorías ASJC: un desplegable por campo (abierto si tiene categorías marcadas) y un buscador (filtro-asjc). #}
+{# Categorías ASJC y materias: un desplegable por campo (abierto si tiene marcadas) y un buscador (filtro-asjc).
+   En el selector de materias, las propias van tras su categoría (data-propia). #}
 {%- block asjc_widget -%}
     <div {{ block('widget_container_attributes') }} class="asjc" data-controller="filtro-asjc" data-filtro-asjc-resultados-value="{{ 'materia.asjc_resultados'|trans }}">
-        <input type="search" class="asjc__buscar" autocomplete="off" placeholder="{{ 'materia.asjc_buscar'|trans }}" aria-label="{{ 'materia.asjc_buscar'|trans }}" data-action="input->filtro-asjc#filtrar">
+        {%- set buscar = buscar|default('materia.asjc_buscar'|trans) -%}
+        <input type="search" class="asjc__buscar" autocomplete="off" placeholder="{{ buscar }}" aria-label="{{ buscar }}" data-action="input->filtro-asjc#filtrar">
         <p class="campo__ayuda" role="status" data-filtro-asjc-target="estado"></p>
         {%- set campo = null -%}
         {%- for child in form -%}
@@ -54,12 +56,21 @@
             {%- if actual != campo -%}
                 {%- if campo is not null %}</div></details>{% endif -%}
                 <details class="asjc__campo" data-filtro-asjc-target="campo"{% if marcados[actual] is defined %} open{% endif %}>
-                    <summary>{{ actual }} · {{ campos[actual] }}{% if marcados[actual] is defined %} <span class="asjc__cuenta">({{ marcados[actual] }})</span>{% endif %}</summary>
+                    <summary>{% if actual > 0 %}{{ actual }} · {{ campos[actual] }}{% else %}{{ 'materia.sin_clasificar'|trans }}{% endif %}{% if marcados[actual] is defined %} <span class="asjc__cuenta">({{ marcados[actual] }})</span>{% endif %}</summary>
                     <div class="casillas">
                 {%- set campo = actual -%}
             {%- endif -%}
-            <label class="casillas__opcion">{{- form_widget(child) -}} {{ child.vars.label }}</label>
+            <label class="casillas__opcion{% if child.vars.attr['data-propia'] is defined %} casillas__opcion--propia{% endif %}">{{- form_widget(child) -}} {{ child.vars.label }}</label>
         {%- endfor -%}
         {%- if campo is not null %}</div></details>{% endif -%}
     </div>
 {%- endblock asjc_widget -%}
+
+{%- block materias_asjc_widget -%}
+    {%- set buscar = 'materia.selector_buscar'|trans -%}
+    {{ block('asjc_widget') }}
+{%- endblock materias_asjc_widget -%}
+
+{%- block materias_compactas_widget -%}
+    {{ include('_selector_materias.html.twig', {id: id ~ '_buscar', nombre: full_name, marcadas: marcadas}) }}
+{%- endblock materias_compactas_widget -%}

@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Departamento;
-use App\Entity\Materia;
 use App\Entity\Usuario;
 use App\Enum\Rol;
 use App\Enum\Sede;
 use App\Repository\DepartamentoRepository;
-use App\Repository\MateriaRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -70,13 +68,8 @@ final class UsuarioType extends AbstractType
             ->add('ubicacion', TextType::class, ['label' => 'usuario.ubicacion', 'required' => false, 'help' => 'usuario.ubicacion_ayuda'])
             ->add('telefono', TelType::class, ['label' => 'usuario.telefono', 'required' => false])
             ->add('enlaceCita', UrlType::class, ['label' => 'usuario.enlace_cita', 'required' => false, 'default_protocol' => 'https', 'help' => 'usuario.enlace_cita_ayuda'])
-            ->add('materias', EntityType::class, [
+            ->add('materias', MateriasType::class, [
                 'label' => 'usuario.materias',
-                'class' => Materia::class,
-                'choice_label' => 'nombre',
-                'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
-                'multiple' => true,
-                'expanded' => true,
                 'required' => false,
                 'help' => 'usuario.materias_ayuda',
             ])

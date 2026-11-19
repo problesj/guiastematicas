@@ -66,7 +66,7 @@
                             <label for="catalogo-materia">{{ 'bloque.catalogo_materia'|trans }}</label>
                             <select id="catalogo-materia" data-catalogo-recursos-target="materia" data-action="catalogo-recursos#filtrarYa">
                                 <option value="">{{ 'bloque.catalogo_todas_materias'|trans }}</option>
-                                {% for m in materias %}<option value="{{ m.id }}">{{ m.nombreTraducido(app.request.locale) }}</option>{% endfor %}
+                                {{ include('_opciones_materias.html.twig', {materias: materias, elegida: null, valor: 'id'}) }}
                             </select>
                         </div>
                     </div>

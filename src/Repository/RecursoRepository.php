@@ -49,7 +49,7 @@ class RecursoRepository extends ServiceEntityRepository
             self::filtrarTexto($consulta, $texto);
         }
         if (null !== $materia) {
-            $consulta->andWhere(':materia MEMBER OF r.materias')->setParameter('materia', $materia);
+            self::filtrarMateria($consulta, $this->getEntityManager()->getRepository(Materia::class)->conClasificadas($materia));
         }
         // Gran área ASJC: recursos con alguna de las materias del área (lista vacía: ninguno).
         if (null !== $deMaterias) {
@@ -117,7 +117,7 @@ class RecursoRepository extends ServiceEntityRepository
             $consulta->andWhere('r.tipo = :tipo')->setParameter('tipo', $tipo);
         }
         if (null !== $materia) {
-            $consulta->andWhere(':materia MEMBER OF r.materias')->setParameter('materia', $materia);
+            self::filtrarMateria($consulta, $this->getEntityManager()->getRepository(Materia::class)->conClasificadas($materia));
         }
         self::filtrarFormato($consulta, $formato);
 
@@ -167,5 +167,16 @@ class RecursoRepository extends ServiceEntityRepository
             .' OR EXISTS (SELECT sed.id FROM App\\Entity\\Editorial sed WHERE sed = r.editorial AND sed.nombre LIKE :texto)'
             .' OR r.isbn LIKE :texto OR r.eisbn LIKE :texto OR r.issn LIKE :texto OR r.eissn LIKE :texto OR r.codigoNorma LIKE :texto')
             ->setParameter('texto', '%'.addcslashes(trim($texto), '%_\\').'%');
+    }
+
+    /**
+     * Recursos de la materia; si es una categoría ASJC, también los de las materias propias clasificadas en ella.
+     *
+     * @param list<Materia> $materias la materia y sus clasificadas (MateriaRepository::conClasificadas)
+     */
+    private static function filtrarMateria(QueryBuilder $consulta, array $materias): void
+    {
+        $consulta->andWhere('r.id IN (SELECT rm.id FROM '.Recurso::class.' rm JOIN rm.materias mm WHERE mm IN (:materia))')
+            ->setParameter('materia', $materias);
     }
 }

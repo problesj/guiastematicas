@@ -31,7 +31,7 @@ final class GuiasController extends AbstractController
 
         return $this->render('guias/listado.html.twig', [
             'guias' => $guias->publicadas($materia, $texto, $usuario instanceof Usuario ? $usuario : null, $this->isGranted('ROLE_ADMINISTRADOR'), null !== $area ? $materias->deArea($area) : null),
-            'materias' => null !== $area ? $materias->deArea($area) : $materias->activas(),
+            'materias' => array_values(array_filter($materias->enUso(), fn ($m) => null === $area || \in_array($area, $m->getAreas(), true))),
             'areas' => $areas,
             'filtro' => ['materia' => $materia, 'q' => $texto, 'area' => $area],
         ]);

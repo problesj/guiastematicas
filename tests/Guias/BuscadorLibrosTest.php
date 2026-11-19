@@ -59,7 +59,10 @@ final class BuscadorLibrosTest extends WebTestCase
         self::crearMateria('Derecho', 'derecho');
         $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/libros');
         self::assertSelectorTextContains('[data-controller="buscador-libros"] .materias-masivas summary', 'Asignar materias a los que agregues');
-        self::assertContains('Derecho', $crawler->filter('[data-buscador-libros-target="materia"]')->each(fn ($c) => trim($c->ancestors()->first()->text())));
+        // Selector compacto: las casillas que agrega el buscador de materias quedan como destino del controlador.
+        $selector = $crawler->filter('.materias-masivas [data-controller="selector-materias"]');
+        self::assertSame(['data-buscador-libros-target' => 'materia', 'data-action' => 'buscador-libros#contarMaterias'], json_decode((string) $selector->attr('data-selector-materias-casilla-value'), true));
+        self::assertStringEndsWith('/es/materias/catalogo', (string) $selector->attr('data-selector-materias-url-value'));
 
         // El buscador no se ofrece en otros bloques.
         $crawler = $this->cliente->request('GET', '/es/panel/guias/'.$guia->getId().'/secciones/'.$seccion->getId().'/bloques/enlaces');

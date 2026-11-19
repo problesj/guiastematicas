@@ -90,15 +90,17 @@
                                 {% if valida %}
                                     {% set propuestas = materias_por_fila[fila.numero] ?? {ids: [], nuevas: []} %}
                                     <details class="selector-materias">
-                                        <summary data-vista-previa-target="resumen">{{ 'importacion.materias_elegidas'|trans({'%count%': propuestas.ids|length + propuestas.nuevas|length}) }}</summary>
-                                        <div class="selector-materias__lista">
-                                            {% for nueva in propuestas.nuevas %}
-                                                <label><input type="checkbox" data-campo="materia" data-nueva value="{{ nueva }}" checked> {{ nueva }} <small>({{ 'importacion.materia_nueva'|trans }})</small></label>
-                                            {% endfor %}
-                                            {% for materia in materias %}
-                                                <label><input type="checkbox" data-campo="materia" value="{{ materia.id }}" {% if materia.id in propuestas.ids %}checked{% endif %}> {{ materia.nombre }}</label>
-                                            {% endfor %}
-                                        </div>
+                                        <summary data-vista-previa-target="resumen">{{ 'importacion.materias_elegidas'|trans({'%count%': propuestas.ids|length}) }}</summary>
+                                        {% if propuestas.nuevas is not empty %}
+                                            <p class="campo__ayuda">{{ 'importacion.materias_sin_coincidencia'|trans({'%materias%': propuestas.nuevas|join(', ')}) }}</p>
+                                        {% endif %}
+                                        {{ include('_selector_materias.html.twig', {
+                                            id: 'materias-fila-' ~ fila.numero,
+                                            nombre: '',
+                                            marcadas: materias|filter(m => m.id in propuestas.ids)|map(m => {id: m.id, etiqueta: materia_etiqueta(m)}),
+                                            casilla: {'data-campo': 'materia'},
+                                            etiqueta: 'importacion.materias_fila'|trans({'%fila%': fila.numero}),
+                                        }) }}
                                     </details>
                                 {% else %}
                                     {{ fila.materias|join(', ') ?: '—' }}

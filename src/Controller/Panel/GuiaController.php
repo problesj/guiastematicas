@@ -781,7 +781,7 @@ final class GuiaController extends AbstractController
             'seccion' => $seccion,
             'tipos_recurso' => TipoRecurso::cases(),
             'formatos_recurso' => FormatoRecurso::cases(),
-            'materias' => \in_array($tipo, [TipoBloque::Recursos, TipoBloque::Libros, TipoBloque::Revistas], true) ? $this->em->getRepository(Materia::class)->findBy(['activa' => true], ['nombre' => 'ASC']) : [],
+            'materias' => \in_array($tipo, [TipoBloque::Recursos, TipoBloque::Libros, TipoBloque::Revistas], true) ? $this->em->getRepository(Materia::class)->porCampo() : [],
             'buscador_libros' => TipoBloque::Libros === $tipo ? [
                 'catalogo' => $this->catalogo->buscaPorIsbn(),
                 'biblioges' => $this->biblioges->disponible(),

@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class MateriaType extends AbstractType
 {
@@ -28,7 +29,18 @@ final class MateriaType extends AbstractType
             ->add('slug', TextType::class, ['label' => 'materia.slug', 'required' => false, 'help' => 'materia.slug_ayuda', 'empty_data' => ''])
             ->add('codigo', TextType::class, ['label' => 'materia.codigo', 'required' => false])
             ->add('activa', CheckboxType::class, ['label' => 'materia.activa', 'required' => false])
-            ->add('asjc', AsjcType::class, ['label' => 'materia.asjc', 'help' => 'materia.asjc_ayuda'])
+            // Las materias propias se clasifican en una o más categorías ASJC; las categorías ASJC ya lo son.
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $evento): void {
+                $materia = $evento->getData();
+                if (!$materia instanceof Materia || !$materia->isBase()) {
+                    $evento->getForm()->add('asjc', AsjcType::class, [
+                        'label' => 'materia.asjc',
+                        'help' => 'materia.asjc_ayuda',
+                        'required' => true,
+                        'constraints' => [new Assert\Count(min: 1, minMessage: 'materia.asjc_obligatoria')],
+                    ]);
+                }
+            })
             // Si el identificador queda vacío, se genera desde el nombre antes de validar.
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $evento): void {
                 $materia = $evento->getData();

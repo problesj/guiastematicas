@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Guia;
-use App\Entity\Materia;
 use App\Entity\Usuario;
 use App\Enum\DisposicionGuia;
 use App\Enum\Rol;
 use App\Enum\VisibilidadGuia;
 use App\Repository\GuiaRepository;
-use App\Repository\MateriaRepository;
 use App\Repository\UsuarioRepository;
 use App\Servicio\GeneradorSlug;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -80,13 +78,8 @@ final class GuiaType extends AbstractType
                 'choice_label' => fn (DisposicionGuia $d) => $d->etiqueta(),
                 'expanded' => true,
             ])
-            ->add('materias', EntityType::class, [
+            ->add('materias', MateriasType::class, [
                 'label' => 'guia.materias',
-                'class' => Materia::class,
-                'choice_label' => 'nombre',
-                'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
-                'multiple' => true,
-                'expanded' => true,
                 'required' => false,
                 'by_reference' => false,
             ])

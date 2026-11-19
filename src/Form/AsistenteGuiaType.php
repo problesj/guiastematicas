@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Guia;
-use App\Entity\Materia;
 use App\Entity\Usuario;
-use App\Repository\MateriaRepository;
 use App\Repository\UsuarioRepository;
 use App\Servicio\GeneradorSlug;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -38,14 +36,9 @@ final class AsistenteGuiaType extends AbstractType
             ->add('titulo', TextType::class, ['label' => 'guia.titulo', 'attr' => ['maxlength' => 200]])
             ->add('descripcion', TextareaType::class, ['label' => 'guia.descripcion', 'required' => false, 'help' => 'asistente.descripcion_ayuda', 'attr' => ['rows' => 2, 'maxlength' => 500]])
             ->add('idioma', ChoiceType::class, ['label' => 'guia.idioma', 'choices' => ['idioma.es' => 'es', 'idioma.en' => 'en']])
-            ->add('materias', EntityType::class, [
+            ->add('materias', MateriasType::class, [
                 'label' => 'asistente.materias',
                 'help' => 'asistente.materias_ayuda',
-                'class' => Materia::class,
-                'choice_label' => 'nombre',
-                'query_builder' => fn (MateriaRepository $r) => $r->createQueryBuilder('m')->where('m.activa = true')->orderBy('m.nombre'),
-                'multiple' => true,
-                'expanded' => true,
                 'by_reference' => false,
                 'constraints' => [new Assert\Count(min: 1, minMessage: 'asistente.materias_obligatorias')],
             ])

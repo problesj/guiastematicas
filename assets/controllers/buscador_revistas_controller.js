@@ -251,19 +251,30 @@ export default class extends Controller {
     }
 
     aplicarMaterias(item) {
-        const elegidas = this.materiasElegidas();
-        if (elegidas.length === 0) {
+        const elegidas = this.materiaTargets.filter((c) => c.checked);
+        const selector = item.querySelector('[data-controller~="selector-materias"]');
+        if (elegidas.length === 0 || !selector) {
             return;
         }
-        item.querySelectorAll('input[type="checkbox"][name$="[materias][]"]').forEach((casilla) => {
-            if (elegidas.includes(casilla.value)) {
-                casilla.checked = true;
-            }
-        });
+        // El elemento recién agregado conecta su selector de materias en la siguiente vuelta: se espera.
+        setTimeout(() => elegidas.forEach((casilla) => {
+            selector.dispatchEvent(new CustomEvent('selector-materias:agregar', {
+                detail: { id: casilla.value, etiqueta: casilla.closest('label').textContent.trim() },
+            }));
+        }), 0);
         const resumen = item.querySelector('.libro-form__materias');
         if (resumen) {
             resumen.open = true;
         }
+    }
+
+    // Las casillas de «Asignar materias…» las crea el selector de materias: se cuentan al cambiar.
+    materiaTargetConnected() {
+        this.contarMaterias();
+    }
+
+    materiaTargetDisconnected() {
+        this.contarMaterias();
     }
 
     contarMaterias() {

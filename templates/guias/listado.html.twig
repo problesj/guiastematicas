@@ -19,9 +19,7 @@
                 <label for="materia">{{ 'bases.materia'|trans }}</label>
                 <select id="materia" name="materia">
                     <option value="">{{ 'bases.todas_materias'|trans }}</option>
-                    {% for m in materias %}
-                        <option value="{{ m.slug }}" {% if filtro.materia and filtro.materia.id == m.id %}selected{% endif %}>{{ m.nombreTraducido(idioma) }}</option>
-                    {% endfor %}
+                    {{ include('_opciones_materias.html.twig', {materias: materias, elegida: filtro.materia}) }}
                 </select>
             </div>
             <div class="filtros__acciones">

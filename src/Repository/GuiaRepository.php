@@ -45,7 +45,9 @@ class GuiaRepository extends ServiceEntityRepository
             $consulta->setParameter('publica', VisibilidadGuia::Publica);
         }
         if (null !== $materia) {
-            $consulta->andWhere(':materia MEMBER OF g.materias')->setParameter('materia', $materia);
+            // Una categoría ASJC incluye las guías de las materias propias clasificadas en ella.
+            $consulta->andWhere('g.id IN (SELECT gm.id FROM '.Guia::class.' gm JOIN gm.materias mm WHERE mm IN (:materia))')
+                ->setParameter('materia', $this->getEntityManager()->getRepository(Materia::class)->conClasificadas($materia));
         }
         // Gran área ASJC: guías con alguna de las materias del área (lista vacía: ninguna).
         if (null !== $deMaterias) {

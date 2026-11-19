@@ -163,6 +163,17 @@ departamento:
   orden_ayuda: Los departamentos se muestran de menor a mayor.
   integrantes: Personas
 materia:
+  selector_buscar: "Buscar materia por nombre o código"
+  selector_sin_resultados: "Ninguna materia coincide"
+  selector_resultados: "Materias que coinciden: %n%"
+  sin_clasificar: "Sin clasificar"
+  asjc_obligatoria: "Elige al menos una categoría ASJC en la que se clasifica la materia."
+  propia: "Propia"
+  base_no_eliminable: "Las categorías ASJC son la base del esquema de materias: se pueden desactivar, pero no eliminar."
+  esquema_ayuda: "Las materias base son las 334 categorías ASJC de Scopus. Las materias propias (carreras, asignaturas) se clasifican en una o más de ellas; al filtrar por una categoría aparecen también sus materias propias."
+  hay_sin_clasificar: "{1}Hay 1 materia propia sin clasificar: edítala y elige su categoría ASJC.|]1,Inf[Hay %count% materias propias sin clasificar: edítalas y elige su categoría ASJC."
+  ver_todas: "Ver las 334 categorías ASJC"
+  ver_en_uso: "Ver solo las materias propias y las categorías en uso"
   nuevo: Nueva materia
   editar: Editar materia
   guardado: La materia quedó guardada.
@@ -175,7 +186,7 @@ materia:
   codigo: Código UCN
   activa: Activa
   asjc: "Categorías ASJC (Scopus)"
-  asjc_ayuda: "Clasificación temática de Scopus a la que corresponde la materia. Sirve para agrupar guías y recursos por gran área. Puedes marcar varias."
+  asjc_ayuda: "Categorías ASJC de Scopus en que se clasifica esta materia propia (al menos una). Al filtrar por esas categorías, también aparecen sus guías y recursos."
   asjc_buscar: "Buscar categoría por nombre o código"
   asjc_resultados: "Categorías que coinciden: %n%"
   asjc_columna: "ASJC"
@@ -318,6 +329,8 @@ recurso:
   doi: DOI
   doi_ayuda: "Por ejemplo 10.1016/j.cell.2020.01.001. También puedes pegar el enlace https://doi.org/..."
 importacion:
+  materias_sin_coincidencia: "Sin coincidencia en las materias (no se crearán): %materias%. Elige la categoría o materia que corresponda."
+  materias_fila: "Agregar materia a la fila %fila%"
   titulo: Importar recursos
   bajada: Sube la lista de recursos bibliográficos en Excel (.xlsx, .xls), OpenDocument (.ods) o CSV. Antes de guardar verás qué se creará, qué se actualizará y qué filas tienen errores.
   archivo: Archivo
@@ -399,7 +412,7 @@ importacion:
   accion_actualizar: Actualizar
   accion_error: Error
   observaciones: Observaciones
-  resultado: "Importación terminada: %creados% creados, %actualizados% actualizados, %omitidos% filas omitidas y %materias% materias nuevas."
+  resultado: "Importación terminada: %creados% creados, %actualizados% actualizados y %omitidos% filas omitidas. Materias del archivo sin coincidencia (no se crearon): %materias%."
   expirada: La vista previa expiró. Sube el archivo otra vez.
   sin_archivo: Selecciona un archivo.
   extension: El archivo debe ser .xlsx, .xls, .ods, .csv, .bib o .ris.

@@ -21,9 +21,18 @@ final class MateriaController extends AbstractController
     }
 
     #[Route('', name: 'admin_materias', methods: ['GET'])]
-    public function listado(MateriaRepository $materias): Response
+    public function listado(Request $request, MateriaRepository $materias): Response
     {
-        return $this->render('admin/materias/listado.html.twig', ['materias' => $materias->todas()]);
+        // Por omisión: las propias y las categorías ASJC en uso; «todas» muestra también las 334 categorías.
+        $todas = $request->query->getBoolean('todas');
+        $enUso = array_map(fn (Materia $m) => $m->getId(), $materias->enUso());
+        $lista = array_filter($materias->todas(), fn (Materia $m) => $todas || !$m->isBase() || \in_array($m->getId(), $enUso, true));
+
+        return $this->render('admin/materias/listado.html.twig', [
+            'materias' => MateriaRepository::ordenarPorCampo(array_values($lista)),
+            'todas' => $todas,
+            'sin_clasificar' => \count($materias->sinClasificar()),
+        ]);
     }
 
     #[Route('/nuevo', name: 'admin_materia_nuevo', methods: ['GET', 'POST'])]
@@ -41,6 +50,12 @@ final class MateriaController extends AbstractController
     #[Route('/{id<\d+>}/eliminar', name: 'admin_materia_eliminar', methods: ['POST'])]
     public function eliminar(Request $request, Materia $materia): Response
     {
+        // Las categorías ASJC son la base del esquema: se pueden desactivar, no eliminar.
+        if ($materia->isBase()) {
+            $this->addFlash('error', 'materia.base_no_eliminable');
+
+            return $this->redirectToRoute('admin_materias');
+        }
         if ($this->isCsrfTokenValid('eliminar-materia-'.$materia->getId(), $request->getPayload()->getString('_token'))) {
             // Se quita la materia de los especialistas; las guías asociadas (fase 4) impedirán eliminarla.
             foreach ($materia->getEspecialistas() as $especialista) {

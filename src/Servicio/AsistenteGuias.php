@@ -218,7 +218,7 @@ final class AsistenteGuias
         }
         $recursos = $this->em->createQueryBuilder()->select('DISTINCT r')->from(Recurso::class, 'r')->join('r.materias', 'm')
             ->where('m IN (:materias)')->andWhere('r.tipo = :tipo')
-            ->setParameter('materias', $materias)->setParameter('tipo', $tipo)
+            ->setParameter('materias', $this->em->getRepository(Materia::class)->relacionadas($materias))->setParameter('tipo', $tipo)
             ->orderBy('r.titulo')->getQuery()->getResult();
 
         return \array_slice(array_values(array_filter($recursos, fn (Recurso $r) => $r->estaDisponible())), 0, self::MAXIMO_CANDIDATOS);

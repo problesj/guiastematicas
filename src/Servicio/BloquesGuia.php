@@ -135,7 +135,7 @@ final class BloquesGuia
     #[AsTwigFunction('otras_materias_busqueda')]
     public function otrasMaterias(array $excepto): array
     {
-        return array_values(array_filter($this->materias->activas(), fn (Materia $m) => !\in_array($m, $excepto, true)));
+        return array_values(array_filter($this->materias->enUso(), fn (Materia $m) => !\in_array($m, $excepto, true)));
     }
 
     /**

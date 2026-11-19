@@ -60,7 +60,8 @@ class UsuarioRepository extends ServiceEntityRepository implements PasswordUpgra
             ->addOrderBy('u.nombre', 'ASC');
 
         if (null !== $materia) {
-            $consulta->andWhere(':materia MEMBER OF u.materias')->setParameter('materia', $materia);
+            $consulta->andWhere('u.id IN (SELECT um.id FROM '.Usuario::class.' um JOIN um.materias mm WHERE mm IN (:materia))')
+                ->setParameter('materia', $this->getEntityManager()->getRepository(Materia::class)->conClasificadas($materia));
         }
 
         return $consulta->getQuery()->getResult();

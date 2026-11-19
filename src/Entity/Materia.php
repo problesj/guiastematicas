@@ -14,7 +14,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Área temática (carrera, disciplina o asignatura). Organiza guías, bases de datos y especialistas.
+ * Área temática. Las materias base son las categorías ASJC de Scopus (codigoAsjc); las propias de la UCN (carreras,
+ * asignaturas) quedan clasificadas en una o más de esas categorías, así que se encuentran al filtrar por ellas.
  */
 #[ORM\Entity(repositoryClass: MateriaRepository::class)]
 #[UniqueEntity(fields: ['slug'], message: 'materia.slug_repetido')]
@@ -54,6 +55,10 @@ class Materia
      */
     #[ORM\Column(type: Types::JSON)]
     private array $asjc = [];
+
+    /** Categoría ASJC que representa esta materia base (null en las materias propias). */
+    #[ORM\Column(nullable: true, unique: true)]
+    private ?int $codigoAsjc = null;
 
     #[ORM\ManyToMany(targetEntity: Usuario::class, mappedBy: 'materias')]
     private Collection $especialistas;
@@ -122,10 +127,43 @@ class Materia
         return $this;
     }
 
-    /** @return list<int> */
+    /**
+     * Categorías ASJC de la materia: la suya si es una materia base; si es propia, en las que está clasificada.
+     *
+     * @return list<int>
+     */
     public function getAsjc(): array
     {
-        return Asjc::normalizar($this->asjc);
+        return null !== $this->codigoAsjc ? [$this->codigoAsjc] : Asjc::normalizar($this->asjc);
+    }
+
+    public function getCodigoAsjc(): ?int
+    {
+        return $this->codigoAsjc;
+    }
+
+    public function setCodigoAsjc(?int $codigo): static
+    {
+        $this->codigoAsjc = null !== $codigo && Asjc::existe($codigo) ? $codigo : null;
+        if (null !== $this->codigoAsjc) {
+            $this->asjc = [$this->codigoAsjc];
+        }
+
+        return $this;
+    }
+
+    /** Materia base (categoría ASJC), no propia. */
+    public function isBase(): bool
+    {
+        return null !== $this->codigoAsjc;
+    }
+
+    /** Campo ASJC (XX00) en que se agrupa la materia; 0 si es propia y aún no está clasificada. */
+    public function getCampoAsjc(): int
+    {
+        $codigos = $this->getAsjc();
+
+        return [] === $codigos ? 0 : Asjc::campo($codigos[0]);
     }
 
     /** @param iterable<int|string> $codigos */

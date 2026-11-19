@@ -7,6 +7,17 @@
         <h1>{{ 'panel.materias'|trans }}</h1>
         <a class="boton" href="{{ path('admin_materia_nuevo') }}">{{ 'materia.nuevo'|trans }}</a>
     </div>
+    <p class="campo__ayuda">{{ 'materia.esquema_ayuda'|trans }}</p>
+    {% if sin_clasificar > 0 %}
+        <p class="aviso aviso--error" role="status">{{ 'materia.hay_sin_clasificar'|trans({'%count%': sin_clasificar}) }}</p>
+    {% endif %}
+    <p>
+        {% if todas %}
+            <a href="{{ path('admin_materias') }}">{{ 'materia.ver_en_uso'|trans }}</a>
+        {% else %}
+            <a href="{{ path('admin_materias', {todas: 1}) }}">{{ 'materia.ver_todas'|trans }}</a>
+        {% endif %}
+    </p>
 
     {% if materias is empty %}
         <p>{{ 'materia.vacio'|trans }}</p>
@@ -16,32 +27,42 @@
                 <thead>
                     <tr>
                         <th scope="col">{{ 'materia.nombre'|trans }}</th>
-                        <th scope="col">{{ 'materia.slug'|trans }}</th>
-                        <th scope="col">{{ 'materia.codigo'|trans }}</th>
                         <th scope="col">{{ 'materia.asjc_columna'|trans }}</th>
+                        <th scope="col">{{ 'materia.codigo'|trans }}</th>
                         <th scope="col">{{ 'materia.especialistas'|trans }}</th>
                         <th scope="col"><span class="solo-lectores">{{ 'formulario.acciones'|trans }}</span></th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for materia in materias %}
-                        <tr{% if not materia.activa %} class="tabla__inactivo"{% endif %}>
-                            <td>
-                                {{ materia.nombre }}
-                                {% if not materia.activa %}<span class="etiqueta">{{ 'materia.inactiva'|trans }}</span>{% endif %}
-                                {% if materia.nombreEn %}<br><small lang="en">{{ materia.nombreEn }}</small>{% endif %}
-                            </td>
-                            <td><code>{{ materia.slug }}</code></td>
-                            <td>{{ materia.codigo ?? '—' }}</td>
-                            <td>{% for c in materia.asjc %}<abbr class="etiqueta" title="{{ asjc_nombre(c) }}">{{ c }}</abbr> {% else %}—{% endfor %}</td>
-                            <td>{{ materia.especialistas|map(e => e.nombreCompleto)|join(', ') ?: '—' }}</td>
-                            <td class="tabla__acciones">
-                                <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('admin_materia_editar', {id: materia.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ materia.nombre }}</span></a>
-                                {% include 'admin/_eliminar.html.twig' with {ruta: 'admin_materia_eliminar', id: materia.id, token: 'eliminar-materia-' ~ materia.id, nombre: materia.nombre} %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+                {% for campo, lista in materias_por_campo(materias, 'materia.sin_clasificar'|trans) %}
+                    <tbody>
+                        <tr class="tabla__grupo"><th scope="colgroup" colspan="5">{{ campo }}</th></tr>
+                        {% for materia in lista %}
+                            <tr{% if not materia.activa %} class="tabla__inactivo"{% endif %}>
+                                <td{% if not materia.base %} class="tabla__propia"{% endif %}>
+                                    {{ materia.nombre }}
+                                    {% if not materia.activa %}<span class="etiqueta">{{ 'materia.inactiva'|trans }}</span>{% endif %}
+                                    {% if not materia.base %}<span class="etiqueta">{{ 'materia.propia'|trans }}</span>{% endif %}
+                                    {% if materia.nombreEn %}<br><small lang="en">{{ materia.nombreEn }}</small>{% endif %}
+                                </td>
+                                <td>
+                                    {% if materia.base %}
+                                        {{ materia.codigoAsjc }}
+                                    {% else %}
+                                        {% for c in materia.asjc %}<abbr class="etiqueta" title="{{ asjc_nombre(c) }}">{{ c }}</abbr> {% else %}<span class="texto-error">{{ 'materia.sin_clasificar'|trans }}</span>{% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td>{{ materia.codigo ?? '—' }}</td>
+                                <td>{{ materia.especialistas|map(e => e.nombreCompleto)|join(', ') ?: '—' }}</td>
+                                <td class="tabla__acciones">
+                                    <a class="accion" data-tooltip="{{ 'formulario.editar'|trans }}" href="{{ path('admin_materia_editar', {id: materia.id}) }}">{{ icono('editar') }}<span class="solo-lectores">{{ 'formulario.editar'|trans }} {{ materia.nombre }}</span></a>
+                                    {% if not materia.base %}
+                                        {% include 'admin/_eliminar.html.twig' with {ruta: 'admin_materia_eliminar', id: materia.id, token: 'eliminar-materia-' ~ materia.id, nombre: materia.nombre} %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                {% endfor %}
             </table>
         </div>
     {% endif %}

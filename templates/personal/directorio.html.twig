@@ -13,9 +13,7 @@
                 <label for="materia">{{ 'personal.filtrar'|trans }}</label>
                 <select id="materia" name="materia">
                     <option value="">{{ 'personal.todas'|trans }}</option>
-                    {% for m in materias %}
-                        <option value="{{ m.slug }}" {% if materia and materia.id == m.id %}selected{% endif %}>{{ m.nombreTraducido(idioma) }}</option>
-                    {% endfor %}
+                    {{ include('_opciones_materias.html.twig', {materias: materias, elegida: materia}) }}
                 </select>
                 <button type="submit" class="boton boton--secundario">{{ 'personal.aplicar'|trans }}</button>
             </form>
