@@ -163,6 +163,23 @@ departamento:
   orden_ayuda: Departments are listed from lowest to highest.
   integrantes: People
 materia:
+  homologar: "Merge"
+  homologar_ayuda: "Merge into an ASJC category"
+  homologar_titulo: "Merge “%materia%” into an ASJC category"
+  homologar_explicacion: "Resources, guides, specialists, suggestions and search blocks with this subject will move to the ASJC category you choose, and the local subject will be deleted."
+  homologar_confirmar: "Merge “%materia%”? Its items will move to the chosen category and the subject will be deleted. This cannot be undone."
+  homologar_afectados: "Items that change"
+  homologar_recursos: "{0}No resources|{1}1 resource|]1,Inf[%count% resources"
+  homologar_guias: "{0}No guides|{1}1 guide|]1,Inf[%count% guides"
+  homologar_especialistas: "{0}No specialists|{1}1 specialist|]1,Inf[%count% specialists"
+  homologar_sugerencias: "{0}No suggestions|{1}1 suggestion|]1,Inf[%count% suggestions"
+  homologar_bloques: "{0}No search blocks|{1}1 search block|]1,Inf[%count% search blocks"
+  homologar_categoria: "ASJC category"
+  homologar_elige_opcion: "Choose a category"
+  homologar_elige: "Choose the ASJC category to merge the subject into."
+  homologar_token: "Your session expired. Please try again."
+  homologar_clasificada: "Classified under: %categorias%."
+  homologada: "“%materia%” was merged into %categoria%. Updated: resources %recursos%, guides %guias%, specialists %especialistas%."
   selector_buscar: "Search a subject by name or code"
   selector_sin_resultados: "No subject matches"
   selector_resultados: "Matching subjects: %n%"

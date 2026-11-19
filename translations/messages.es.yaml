@@ -163,6 +163,23 @@ departamento:
   orden_ayuda: Los departamentos se muestran de menor a mayor.
   integrantes: Personas
 materia:
+  homologar: "Homologar"
+  homologar_ayuda: "Homologar a una categoría ASJC"
+  homologar_titulo: "Homologar «%materia%» a una categoría ASJC"
+  homologar_explicacion: "Los recursos, guías, especialistas, sugerencias y bloques de búsqueda que tienen esta materia pasarán a la categoría ASJC que elijas, y la materia propia se eliminará."
+  homologar_confirmar: "¿Homologar «%materia%»? Sus elementos pasarán a la categoría elegida y la materia se eliminará. No se puede deshacer."
+  homologar_afectados: "Elementos que cambian"
+  homologar_recursos: "{0}Ningún recurso|{1}1 recurso|]1,Inf[%count% recursos"
+  homologar_guias: "{0}Ninguna guía|{1}1 guía|]1,Inf[%count% guías"
+  homologar_especialistas: "{0}Ningún especialista|{1}1 especialista|]1,Inf[%count% especialistas"
+  homologar_sugerencias: "{0}Ninguna sugerencia|{1}1 sugerencia|]1,Inf[%count% sugerencias"
+  homologar_bloques: "{0}Ningún bloque de búsqueda|{1}1 bloque de búsqueda|]1,Inf[%count% bloques de búsqueda"
+  homologar_categoria: "Categoría ASJC"
+  homologar_elige_opcion: "Elige una categoría"
+  homologar_elige: "Elige la categoría ASJC a la que se homologa la materia."
+  homologar_token: "La sesión expiró. Vuelve a intentarlo."
+  homologar_clasificada: "Está clasificada en: %categorias%."
+  homologada: "«%materia%» quedó homologada a %categoria%. Actualizados: recursos %recursos%, guías %guias%, especialistas %especialistas%."
   selector_buscar: "Buscar materia por nombre o código"
   selector_sin_resultados: "Ninguna materia coincide"
   selector_resultados: "Materias que coinciden: %n%"
