@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1. Arquitectura · Documento técnico de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Documento técnico · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el documento</label>
+    <input id="buscar" type="search" placeholder="Buscar en el documento…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-arquitectura.html" aria-current="page">1. Arquitectura</a></li><li><a href="02-modelo-de-datos.html">2. Modelo de datos</a></li><li><a href="03-instalacion.html">3. Instalación en otro servidor</a></li><li><a href="04-diccionario-de-datos.html">4. Diccionario de datos</a></li><li><a href="05-desarrollo.html">5. Desarrollo</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Documento técnico</a> › 1. Arquitectura</p>
+    <article><h1 id="1-arquitectura">1. Arquitectura</h1>
+<h2 id="11-tecnologías">1.1 Tecnologías<a class="ancla" href="#11-tecnologías" aria-label="Enlace a esta sección">#</a></h2>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Capa</th>
+<th>Tecnología</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sistema operativo</td>
+<td>Ubuntu 26.04 LTS</td>
+<td>Probado en la VM de pruebas y en el servidor piloto</td>
+</tr>
+<tr class="even">
+<td>Servidor web</td>
+<td>Apache 2.4 + PHP-FPM</td>
+<td>VirtualHost en <code>deploy/apache/guias.conf</code></td>
+</tr>
+<tr class="odd">
+<td>Lenguaje</td>
+<td>PHP 8.5</td>
+<td>Extensiones: intl, pdo_mysql, mbstring, xml, zip, curl, gd, ldap,
+apcu, sodium</td>
+</tr>
+<tr class="even">
+<td>Framework</td>
+<td>Symfony 7.4 LTS</td>
+<td>Controladores con atributos, formularios, seguridad, traducciones,
+rate limiter, mailer, HTML sanitizer</td>
+</tr>
+<tr class="odd">
+<td>Base de datos</td>
+<td>MySQL 8.4 LTS</td>
+<td>Doctrine ORM 3 y Doctrine Migrations;
+<code>utf8mb4_unicode_ci</code></td>
+</tr>
+<tr class="even">
+<td>Interfaz</td>
+<td>Twig + AssetMapper</td>
+<td>Sin Node ni compilación: los JS se sirven como módulos ES con
+importmap</td>
+</tr>
+<tr class="odd">
+<td>JavaScript</td>
+<td>Stimulus y Turbo (Symfony UX)</td>
+<td>Controladores en <code>assets/controllers</code></td>
+</tr>
+<tr class="even">
+<td>Librerías JS</td>
+<td>CKEditor 5, SweetAlert2, SortableJS</td>
+<td>Por importmap (<code>importmap.php</code>), descargadas al
+desplegar; nunca desde un CDN en el navegador</td>
+</tr>
+<tr class="odd">
+<td>Planillas</td>
+<td>PhpSpreadsheet</td>
+<td>Importar y exportar recursos (Excel, ODS, CSV)</td>
+</tr>
+<tr class="even">
+<td>Autenticación externa</td>
+<td>Symfony LDAP, league/oauth2-google, firebase/php-jwt</td>
+<td>LDAP UCN, Google y LTI 1.3</td>
+</tr>
+</tbody>
+</table>
+<h2 id="12-componentes">1.2 Componentes<a class="ancla" href="#12-componentes" aria-label="Enlace a esta sección">#</a></h2>
+<pre><code> Navegador (público y personal) · Moodle (LTI) · WordPress (plugin, iframes)
+                               │ HTTP(S)
+                               ▼
+ ┌──────────────────────────────────────────┐
+ │ Apache 2.4 + certbot                     │
+ │ public/: index.php, assets/, uploads/    │
+ └────────────────────┬─────────────────────┘
+                      │ FastCGI
+ ┌────────────────────▼─────────────────────┐     ┌─────────────────────┐
+ │ PHP-FPM 8.5 · Symfony 7.4                │────▶│ MySQL 8.4 (guias)   │
+ │ · sitio público, panel, admin, API       │     └─────────────────────┘
+ │ · servicios (catálogo, IA, correo…)      │────▶ Primo VE y Alma
+ │ · seguridad (formulario, LDAP, Google)   │────▶ Biblioges
+ │ · herramienta LTI 1.3                    │────▶ Gemini
+ │ var/: caché, logs, importaciones         │────▶ LDAP, Google, SMTP
+ └──────────────────────────────────────────┘</code></pre>
+<p>Es una aplicación monolítica: un solo proyecto Symfony sirve el sitio
+público, el panel de trabajo, la API JSON, los bloques incrustables y la
+herramienta LTI. No hay colas ni procesos en segundo plano; lo único
+programado es el respaldo diario (cron).</p>
+<h2 id="13-estructura-del-repositorio">1.3 Estructura del
+repositorio</h2>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Carpeta o archivo</th>
+<th>Contenido</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>assets/</code></td>
+<td>JS (controladores Stimulus), CSS (<code>styles/</code>), librerías
+locales (<code>lib/</code>), íconos</td>
+</tr>
+<tr class="even">
+<td><code>bin/console</code></td>
+<td>Consola de Symfony</td>
+</tr>
+<tr class="odd">
+<td><code>config/</code></td>
+<td>Configuración de Symfony (<code>packages/</code>,
+<code>routes/</code>, <code>services.yaml</code>)</td>
+</tr>
+<tr class="even">
+<td><code>deploy/apache/guias.conf</code></td>
+<td>VirtualHost para el servidor</td>
+</tr>
+<tr class="odd">
+<td><code>docker/</code>, <code>compose.yaml</code></td>
+<td>Entorno de desarrollo con Docker (Apache + PHP 8.5 y MySQL 8.4)</td>
+</tr>
+<tr class="even">
+<td><code>docs/</code></td>
+<td>Manual de uso (<code>manual/</code>), este documento
+(<code>tecnico/</code>) y la planificación (<code>PLAN.md</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>migrations/</code></td>
+<td>Migraciones de Doctrine (una por cambio de esquema)</td>
+</tr>
+<tr class="even">
+<td><code>public/</code></td>
+<td>Raíz web: <code>index.php</code>, <code>assets/</code> compilados,
+<code>uploads/</code> (archivos subidos, fuera del repositorio)</td>
+</tr>
+<tr class="odd">
+<td><code>scripts/</code></td>
+<td>Instalación, despliegue, respaldo y restauración; generación del
+manual y de este documento</td>
+</tr>
+<tr class="even">
+<td><code>src/</code></td>
+<td>Código PHP (ver tabla siguiente)</td>
+</tr>
+<tr class="odd">
+<td><code>integraciones/wordpress/guias-ucn</code></td>
+<td>Plugin de WordPress (el panel lo entrega en .zip ya
+configurado)</td>
+</tr>
+<tr class="even">
+<td><code>templates/</code></td>
+<td>Plantillas Twig: <code>inicio/</code>, <code>guias/</code>,
+<code>recursos/</code>, <code>personal/</code>, <code>panel/</code>,
+<code>admin/</code>, <code>incrustar/</code>, <code>correo/</code>…</td>
+</tr>
+<tr class="odd">
+<td><code>tests/</code></td>
+<td>Pruebas PHPUnit (funcionales con el cliente HTTP de Symfony y
+unitarias)</td>
+</tr>
+<tr class="even">
+<td><code>translations/</code></td>
+<td>Textos de la interfaz en español e inglés
+(<code>messages.es.yaml</code>, <code>messages.en.yaml</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="código-php-src">Código PHP (<code>src/</code>)<a class="ancla" href="#código-php-src" aria-label="Enlace a esta sección">#</a></h3>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Espacio de nombres</th>
+<th>Responsabilidad</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Controller\</code></td>
+<td>Sitio público: portada, guías, recursos A-Z, directorio, consultas,
+sugerencias, búsqueda, incrustar, salud</td>
+</tr>
+<tr class="even">
+<td><code>Controller\Panel\</code></td>
+<td>Panel del personal: guías y su editor, recursos, autores,
+editoriales, consultas, sugerencias, asistente IA</td>
+</tr>
+<tr class="odd">
+<td><code>Controller\Admin\</code></td>
+<td>Administración: usuarios, departamentos, materias, países,
+apariencia, integraciones</td>
+</tr>
+<tr class="even">
+<td><code>Controller\Api\</code></td>
+<td>API pública de solo lectura <code>/api/v1</code></td>
+</tr>
+<tr class="odd">
+<td><code>Controller\LtiController</code></td>
+<td>Herramienta LTI 1.3 (login, lanzamiento, deep linking, JWKS)</td>
+</tr>
+<tr class="even">
+<td><code>Entity\</code>, <code>Repository\</code></td>
+<td>Entidades de Doctrine y sus consultas (ver capítulo 2)</td>
+</tr>
+<tr class="odd">
+<td><code>Enum\</code></td>
+<td>Enumeraciones guardadas como texto (roles, estados, tipos)</td>
+</tr>
+<tr class="even">
+<td><code>Form\</code></td>
+<td>Formularios de Symfony (<code>GuiaType</code>,
+<code>BloqueType</code>, <code>RecursoType</code>,
+<code>MateriasType</code>…)</td>
+</tr>
+<tr class="odd">
+<td><code>Security\</code></td>
+<td>Autenticadores (formulario + LDAP, Google), <code>GuiaVoter</code>
+(VER, EDITAR, GESTIONAR), <code>SugerenciaVoter</code></td>
+</tr>
+<tr class="even">
+<td><code>Servicio\</code></td>
+<td>Lógica de negocio: catálogo Primo/Alma, Biblioges, Gemini, bloques,
+contenido compartido, proxy, imágenes…</td>
+</tr>
+<tr class="odd">
+<td><code>Servicio\Importacion\</code>,
+<code>Servicio\Exportacion\</code></td>
+<td>Importar (Excel, ODS, CSV, BibTeX, RIS) y exportar (Excel, RIS)
+recursos</td>
+</tr>
+<tr class="even">
+<td><code>Clasificacion\</code></td>
+<td>Esquema ASJC (334 categorías, 27 campos, 5 grandes áreas) y su
+sincronización con <code>materia</code></td>
+</tr>
+<tr class="odd">
+<td><code>Configuracion\</code></td>
+<td>Ajustes editables desde el panel (<code>Ajustes</code>,
+<code>Apariencia</code>) y el procesador
+<code>%env(ajuste:…)%</code></td>
+</tr>
+<tr class="even">
+<td><code>Correo\</code></td>
+<td>Envío de correos (<code>Cartero</code>) con SMTP configurado en el
+panel o <code>CORREO_DSN</code></td>
+</tr>
+<tr class="odd">
+<td><code>Captcha\</code></td>
+<td>Verificación anti-robots propia (prueba de trabajo, sin servicios
+externos)</td>
+</tr>
+<tr class="even">
+<td><code>Lti\</code></td>
+<td>Verificación de mensajes LTI, llaves RSA de la herramienta y deep
+linking</td>
+</tr>
+<tr class="odd">
+<td><code>Paginacion\</code></td>
+<td>Paginación y filtros recordados en la sesión</td>
+</tr>
+<tr class="even">
+<td><code>Twig\</code></td>
+<td>Funciones y filtros propios (íconos de acción, apariencia, enlaces
+con proxy)</td>
+</tr>
+<tr class="odd">
+<td><code>Command\</code></td>
+<td>Comandos de consola (ver 1.6)</td>
+</tr>
+<tr class="even">
+<td><code>DataFixtures\</code></td>
+<td>Datos de ejemplo para desarrollo</td>
+</tr>
+</tbody>
+</table>
+<h2 id="14-rutas-principales">1.4 Rutas principales<a class="ancla" href="#14-rutas-principales" aria-label="Enlace a esta sección">#</a></h2>
+<p>Las rutas públicas llevan el idioma: <code>/{_locale}/…</code> con
+<code>es</code> o <code>en</code>.</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Ruta</th>
+<th>Qué es</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/es</code>, <code>/en</code></td>
+<td>Portada</td>
+</tr>
+<tr class="even">
+<td><code>/es/guias</code>, <code>/es/guias/{slug}/{pestana}</code></td>
+<td>Lista de guías y una guía (la pestaña es opcional)</td>
+</tr>
+<tr class="odd">
+<td><code>/es/recursos-bibliograficos</code> y
+<code>/es/recursos-bibliograficos/{bases-de-datos\|libros\|revistas}</code></td>
+<td>Lista A-Z y accesos por tipo</td>
+</tr>
+<tr class="even">
+<td><code>/recursos/{id}/ir</code></td>
+<td>Redirección al recurso (con proxy si corresponde) y conteo de
+clics</td>
+</tr>
+<tr class="odd">
+<td><code>/es/personal</code>, <code>/es/personal/{slug}</code></td>
+<td>Directorio de bibliotecarios y ficha con el formulario de
+consulta</td>
+</tr>
+<tr class="even">
+<td><code>/es/consulta/{token}</code></td>
+<td>Conversación privada de una consulta</td>
+</tr>
+<tr class="odd">
+<td><code>/es/recursos-bibliograficos/sugerir</code></td>
+<td>Formulario público de sugerencias</td>
+</tr>
+<tr class="even">
+<td><code>/es/incrustar/bloque/{id}</code></td>
+<td>Bloque para mostrar en otra web (iframe)</td>
+</tr>
+<tr class="odd">
+<td><code>/es/acceso</code>, <code>/conectar/google</code></td>
+<td>Inicio de sesión</td>
+</tr>
+<tr class="even">
+<td><code>/es/buscar</code>, <code>/es/catalogo</code></td>
+<td>Búsqueda en el sitio y en el catálogo</td>
+</tr>
+<tr class="odd">
+<td><code>/es/panel/…</code></td>
+<td>Panel del personal (rol colaborador o superior)</td>
+</tr>
+<tr class="even">
+<td><code>/es/admin/…</code></td>
+<td>Administración (rol administrador)</td>
+</tr>
+<tr class="odd">
+<td><code>/api/v1/guias</code>, <code>/api/v1/guias/{slug}</code>,
+<code>/api/v1/recursos</code></td>
+<td>API JSON pública</td>
+</tr>
+<tr class="even">
+<td><code>/lti/login</code>, <code>/lti/lanzar</code>,
+<code>/lti/vincular</code>, <code>/lti/jwks</code></td>
+<td>LTI 1.3 para Moodle</td>
+</tr>
+<tr class="odd">
+<td><code>/salud</code></td>
+<td>Comprobación de funcionamiento:
+<code>{"estado":"ok","base_de_datos":"ok"}</code> (503 si la base no
+responde)</td>
+</tr>
+</tbody>
+</table>
+<p>Para ver todas: <code>php bin/console debug:router</code>.</p>
+<h2 id="15-seguridad">1.5 Seguridad<a class="ancla" href="#15-seguridad" aria-label="Enlace a esta sección">#</a></h2>
+<ul>
+<li><strong>Roles</strong> (<code>App\Enum\Rol</code>):
+<code>ROLE_LECTOR</code> &lt; <code>ROLE_COLABORADOR</code> &lt;
+<code>ROLE_EDITOR</code> &lt; <code>ROLE_ADMINISTRADOR</code>, con
+jerarquía en <code>config/packages/security.yaml</code>.
+<code>/{idioma}/panel</code> exige colaborador y
+<code>/{idioma}/admin</code> administrador.</li>
+<li><strong>Permisos por guía</strong> (<code>GuiaVoter</code>):
+<code>VER</code> (publicada y pública, o restringida con el usuario
+asignado), <code>EDITAR</code> (responsable, coeditor o administrador) y
+<code>GESTIONAR</code> (responsable o administrador: datos, publicar,
+eliminar).</li>
+<li><strong>Inicio de sesión</strong>: formulario con contraseña propia
+(hash de Symfony, mínimo 12 caracteres) o LDAP, y Google OAuth. No hay
+registro público; las cuentas las crea un administrador. Se limita el
+número de intentos.</li>
+<li><strong>CSRF</strong> en todos los formularios y acciones del panel;
+<strong>HTML sanitizer</strong> para el texto enriquecido de los
+bloques.</li>
+<li><strong>Formularios públicos</strong> (consultas y sugerencias):
+captcha propio de prueba de trabajo y límite por IP
+(<code>config/packages/rate_limiter.yaml</code>).</li>
+<li><strong>Secretos</strong>: claves de API y contraseñas viven en
+<code>.env.local</code> del servidor (permisos 640, fuera del
+repositorio) o en la tabla <code>ajuste</code> cifradas con sodium
+(XSalsa20-Poly1305) con una clave derivada de <code>APP_SECRET</code>.
+Nunca se muestran en el panel.</li>
+<li><strong>Archivos subidos</strong>: se validan tipo y tamaño, se
+renombran, y Apache no ejecuta PHP en <code>public/uploads</code>.</li>
+<li><strong>Cabeceras</strong>: <code>X-Content-Type-Options</code>,
+<code>Referrer-Policy</code> y <code>X-Frame-Options</code> (salvo en
+<code>/incrustar</code>, que envía <code>frame-ancestors *</code> para
+poder mostrarse en otras webs).</li>
+</ul>
+<h2 id="16-comandos-de-consola-propios">1.6 Comandos de consola
+propios</h2>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Comando</th>
+<th>Para qué</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>app:crear-administrador correo "Nombre" "Apellidos"</code></td>
+<td>Crea (o reactiva) un administrador; pide la contraseña oculta</td>
+</tr>
+<tr class="even">
+<td><code>app:materias-asjc</code></td>
+<td>Crea o actualiza las 334 materias base ASJC (lo hace también la
+migración)</td>
+</tr>
+<tr class="odd">
+<td><code>app:incorporar-libros</code></td>
+<td>Incorpora a la lista A-Z los libros de los bloques Libros que aún no
+estén (lo corre <code>desplegar.sh</code>)</td>
+</tr>
+<tr class="even">
+<td><code>app:probar-catalogo</code></td>
+<td>Busca un ISBN en Primo VE y su disponibilidad en Alma (prueba la
+configuración)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="17-configuración-variables-de-entorno-y-ajustes-del-panel">1.7
+Configuración: variables de entorno y ajustes del panel</h2>
+<p>Symfony lee <code>.env</code> (valores por omisión, en el
+repositorio, sin secretos) y <code>.env.local</code> (propio de cada
+servidor). Muchas variables se pueden además definir desde
+<strong>Administración → Integraciones</strong>: el valor del panel
+(tabla <code>ajuste</code>) tiene prioridad, y si está vacío se usa el
+de <code>.env.local</code>. Esto lo hace el procesador
+<code>%env(ajuste:NOMBRE)%</code> de
+<code>App\Configuracion\AjusteEnvVarProcessor</code>.</p>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 9%" />
+<col style="width: 63%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th style="text-align: center;">Obligatoria</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>APP_ENV</code></td>
+<td style="text-align: center;">sí</td>
+<td><code>prod</code> en servidores</td>
+</tr>
+<tr class="even">
+<td><code>APP_SECRET</code></td>
+<td style="text-align: center;">sí</td>
+<td>Cadena aleatoria (48+ caracteres). Firma sesiones y CSRF y deriva la
+clave de cifrado de los ajustes</td>
+</tr>
+<tr class="odd">
+<td><code>DATABASE_URL</code></td>
+<td style="text-align: center;">sí</td>
+<td><code>mysql://usuario:clave@127.0.0.1:3306/guias?serverVersion=8.4.11&amp;charset=utf8mb4</code></td>
+</tr>
+<tr class="even">
+<td><code>DEFAULT_URI</code></td>
+<td style="text-align: center;"></td>
+<td>URL pública (para enlaces en correos y comandos), p. ej.
+<code>https://guias.ucn.cl</code></td>
+</tr>
+<tr class="odd">
+<td><code>PROXY_URL</code></td>
+<td style="text-align: center;"></td>
+<td>Plantilla del proxy AccesUM:
+<code>https://itmsp.museknowledge.com/UCN?qurl={url}</code></td>
+</tr>
+<tr class="even">
+<td><code>PRIMO_URL</code>, <code>PRIMO_VID</code></td>
+<td style="text-align: center;"></td>
+<td>Catálogo Primo VE (búsqueda, categorías de revistas)</td>
+</tr>
+<tr class="odd">
+<td><code>EXLIBRIS_API_URL</code>, <code>PRIMO_API_KEY</code>,
+<code>ALMA_API_KEY</code></td>
+<td style="text-align: center;"></td>
+<td>API de Ex Libris (libros por ISBN, disponibilidad)</td>
+</tr>
+<tr class="even">
+<td><code>BIBLIOGES_API_URL</code>, <code>BIBLIOGES_API_KEY</code></td>
+<td style="text-align: center;"></td>
+<td>Bibliografía de carreras</td>
+</tr>
+<tr class="odd">
+<td><code>LDAP_URL</code>, <code>LDAP_CIFRADO</code>,
+<code>LDAP_DN_USUARIO</code> o <code>LDAP_BASE_DN</code> +
+<code>LDAP_FILTRO</code>, <code>LDAP_BIND_DN</code>,
+<code>LDAP_BIND_PASSWORD</code></td>
+<td style="text-align: center;"></td>
+<td>Inicio de sesión institucional</td>
+</tr>
+<tr class="even">
+<td><code>GOOGLE_CLIENT_ID</code>, <code>GOOGLE_CLIENT_SECRET</code>,
+<code>GOOGLE_DOMINIO</code></td>
+<td style="text-align: center;"></td>
+<td>Inicio de sesión con Google</td>
+</tr>
+<tr class="odd">
+<td><code>CORREO_DSN</code></td>
+<td style="text-align: center;"></td>
+<td>Si se define (p. ej. <code>smtp://usuario:clave@host:587</code>),
+reemplaza la configuración SMTP del panel</td>
+</tr>
+<tr class="even">
+<td><code>GEMINI_API_KEY</code>, <code>GEMINI_MODELO</code></td>
+<td style="text-align: center;"></td>
+<td>Asistente «Nueva guía con IA» (por omisión
+<code>gemini-2.5-flash</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>LTI_ISSUER</code>, <code>LTI_CLIENT_ID</code>,
+<code>LTI_DEPLOYMENT_ID</code>, <code>LTI_AUTH_URL</code>,
+<code>LTI_JWKS_URL</code></td>
+<td style="text-align: center;"></td>
+<td>Registro de la herramienta en Moodle</td>
+</tr>
+</tbody>
+</table>
+<p>Los ajustes de <strong>Apariencia</strong> (título, colores, logo,
+presentación de listas) se guardan solo en la tabla <code>ajuste</code>.
+La llave privada RSA de LTI (<code>LTI_LLAVE_PRIVADA</code>) se genera
+sola la primera vez y se guarda cifrada.</p>
+<h2 id="18-integraciones-externas">1.8 Integraciones externas<a class="ancla" href="#18-integraciones-externas" aria-label="Enlace a esta sección">#</a></h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 35%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Servicio</th>
+<th>Servicio PHP</th>
+<th>Cómo se usa</th>
+<th>Si no está configurado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Proxy AccesUM</td>
+<td><code>ProxyAccesum</code></td>
+<td>Arma el enlace público de los recursos con «Requiere proxy»</td>
+<td>Se enlaza la URL original</td>
+</tr>
+<tr class="even">
+<td>Primo VE</td>
+<td><code>Catalogo</code></td>
+<td>Búsqueda en el catálogo, libros y revistas por título/ISBN/ISSN,
+árbol de categorías de revistas (API pública <code>primaws</code>)</td>
+<td>No se ofrece el buscador</td>
+</tr>
+<tr class="odd">
+<td>Alma</td>
+<td><code>Catalogo</code></td>
+<td>Disponibilidad de ejemplares impresos</td>
+<td>No se muestra la disponibilidad</td>
+</tr>
+<tr class="even">
+<td>Biblioges</td>
+<td><code>Biblioges</code></td>
+<td>Bibliografía básica de carreras y asignaturas</td>
+<td>Se oculta la opción</td>
+</tr>
+<tr class="odd">
+<td>Gemini</td>
+<td><code>Gemini</code>, <code>AsistenteGuias</code></td>
+<td>Elegir recursos y redactar textos en el asistente; solo se envían
+materias, carreras y títulos/descripciones de recursos</td>
+<td>La guía se arma sin IA</td>
+</tr>
+<tr class="even">
+<td>SMTP</td>
+<td><code>Correo\Cartero</code></td>
+<td>Avisos de consultas</td>
+<td>La consulta se registra, sin correo</td>
+</tr>
+<tr class="odd">
+<td>LDAP / Google</td>
+<td><code>Security\…</code></td>
+<td>Inicio de sesión</td>
+<td>Solo contraseña propia</td>
+</tr>
+<tr class="even">
+<td>Moodle</td>
+<td><code>Lti\…</code></td>
+<td>LTI 1.3 con deep linking</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>WordPress</td>
+<td>plugin en <code>integraciones/wordpress</code></td>
+<td>Códigos cortos que leen la API pública</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Las respuestas de Primo y Alma se guardan en la caché
+<code>cache.catalogo</code> (sistema de archivos, en
+<code>var/cache</code>).</p>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="index.html"><small>← Anterior</small>Inicio</a><a class="siguiente" href="02-modelo-de-datos.html"><small>Siguiente →</small>2. Modelo de datos</a></nav>
+    <footer class="pie">Bibliotecas UCN · Documento técnico generado el 19-11-2026 a partir de <code>docs/tecnico</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a href="#11-tecnologías" id="toc-11-tecnologías">1.1
+Tecnologías</a></li>
+<li><a href="#12-componentes" id="toc-12-componentes">1.2
+Componentes</a></li>
+<li><a href="#13-estructura-del-repositorio"
+id="toc-13-estructura-del-repositorio">1.3 Estructura del
+repositorio</a>
+<ul>
+<li><a href="#código-php-src" id="toc-código-php-src">Código PHP
+(<code>src/</code>)</a></li>
+</ul></li>
+<li><a href="#14-rutas-principales" id="toc-14-rutas-principales">1.4
+Rutas principales</a></li>
+<li><a href="#15-seguridad" id="toc-15-seguridad">1.5 Seguridad</a></li>
+<li><a href="#16-comandos-de-consola-propios"
+id="toc-16-comandos-de-consola-propios">1.6 Comandos de consola
+propios</a></li>
+<li><a href="#17-configuración-variables-de-entorno-y-ajustes-del-panel"
+id="toc-17-configuración-variables-de-entorno-y-ajustes-del-panel">1.7
+Configuración: variables de entorno y ajustes del panel</a></li>
+<li><a href="#18-integraciones-externas"
+id="toc-18-integraciones-externas">1.8 Integraciones externas</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

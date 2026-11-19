@@ -1,0 +1,2031 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4. Diccionario de datos · Documento técnico de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Documento técnico · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el documento</label>
+    <input id="buscar" type="search" placeholder="Buscar en el documento…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-arquitectura.html">1. Arquitectura</a></li><li><a href="02-modelo-de-datos.html">2. Modelo de datos</a></li><li><a href="03-instalacion.html">3. Instalación en otro servidor</a></li><li><a href="04-diccionario-de-datos.html" aria-current="page">4. Diccionario de datos</a></li><li><a href="05-desarrollo.html">5. Desarrollo</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Documento técnico</a> › 4. Diccionario de datos</p>
+    <article><h1 id="4-diccionario-de-datos">4. Diccionario de datos</h1>
+<blockquote>
+<p>Este capítulo se genera con
+<code>scripts/generar-diagrama-er.py</code> a partir de las entidades de
+Doctrine (<code>src/Entity</code>). No lo edites a mano: cambia la
+entidad, crea la migración y vuelve a generarlo.</p>
+</blockquote>
+<p>La base de datos tiene <strong>22 tablas</strong> (más
+<code>doctrine_migration_versions</code>, que lleva el registro de las
+migraciones aplicadas). Todas usan InnoDB con <code>utf8mb4</code> y
+<code>utf8mb4_unicode_ci</code>.</p>
+<p><strong>Convenciones.</strong> Claves primarias <code>id</code>
+autoincrementales (salvo <code>ajuste</code>, cuya clave es
+<code>clave</code>, y las tablas intermedias, con clave compuesta). Las
+columnas <code>*_id</code> son claves foráneas. Las fechas se guardan
+como <code>DATETIME</code> en la hora del servidor. Los valores de las
+enumeraciones (<code>App\Enum</code>) se guardan como texto.</p>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tabla</th>
+<th>Entidad</th>
+<th>Para qué sirve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#ajuste"><code>ajuste</code></a></td>
+<td>Ajuste</td>
+<td>Configuración editable desde el panel (Apariencia e Integraciones).
+Reemplaza las variables de entorno.</td>
+</tr>
+<tr class="even">
+<td><a href="#autor"><code>autor</code></a></td>
+<td>Autor</td>
+<td>Autores personales o institucionales de los recursos.</td>
+</tr>
+<tr class="odd">
+<td><a href="#bloque"><code>bloque</code></a></td>
+<td>Bloque</td>
+<td>Unidad de contenido de una sección (texto, lista de recursos,
+libros, video…).</td>
+</tr>
+<tr class="even">
+<td><a href="#consulta"><code>consulta</code></a></td>
+<td>Consulta</td>
+<td>Conversación iniciada desde el formulario «Escribir a…» de la ficha
+de un bibliotecario.</td>
+</tr>
+<tr class="odd">
+<td><a href="#departamento"><code>departamento</code></a></td>
+<td>Departamento</td>
+<td>Agrupa al personal en el directorio.</td>
+</tr>
+<tr class="even">
+<td><a href="#editorial"><code>editorial</code></a></td>
+<td>Editorial</td>
+<td>Editoriales de libros y revistas.</td>
+</tr>
+<tr class="odd">
+<td><a href="#guia"><code>guia</code></a></td>
+<td>Guia</td>
+<td>Guía temática.</td>
+</tr>
+<tr class="even">
+<td><a href="#guia_coeditor"><code>guia_coeditor</code></a></td>
+<td>(intermedia)</td>
+<td>Personas que editan el contenido de una guía además del
+responsable.</td>
+</tr>
+<tr class="odd">
+<td><a href="#guia_lector"><code>guia_lector</code></a></td>
+<td>(intermedia)</td>
+<td>Usuarios que pueden ver una guía restringida.</td>
+</tr>
+<tr class="even">
+<td><a href="#guia_materia"><code>guia_materia</code></a></td>
+<td>(intermedia)</td>
+<td>Materias de una guía.</td>
+</tr>
+<tr class="odd">
+<td><a href="#materia"><code>materia</code></a></td>
+<td>Materia</td>
+<td>Materias: las 334 categorías ASJC de Scopus y las materias propias
+de la UCN.</td>
+</tr>
+<tr class="even">
+<td><a href="#mensaje_consulta"><code>mensaje_consulta</code></a></td>
+<td>MensajeConsulta</td>
+<td>Mensajes de una consulta.</td>
+</tr>
+<tr class="odd">
+<td><a href="#pais"><code>pais</code></a></td>
+<td>Pais</td>
+<td>Países ISO 3166-1.</td>
+</tr>
+<tr class="even">
+<td><a href="#pestana"><code>pestana</code></a></td>
+<td>Pestana</td>
+<td>Pestaña (o subpestaña) de una guía.</td>
+</tr>
+<tr class="odd">
+<td><a href="#recurso"><code>recurso</code></a></td>
+<td>Recurso</td>
+<td>Lista maestra de recursos bibliográficos A-Z.</td>
+</tr>
+<tr class="even">
+<td><a href="#recurso_autor"><code>recurso_autor</code></a></td>
+<td>RecursoAutor</td>
+<td>Autores de un recurso, en orden.</td>
+</tr>
+<tr class="odd">
+<td><a href="#recurso_materia"><code>recurso_materia</code></a></td>
+<td>(intermedia)</td>
+<td>Materias de un recurso.</td>
+</tr>
+<tr class="even">
+<td><a href="#seccion"><code>seccion</code></a></td>
+<td>Seccion</td>
+<td>Sección de una pestaña; contiene bloques en una o más columnas.</td>
+</tr>
+<tr class="odd">
+<td><a href="#sugerencia"><code>sugerencia</code></a></td>
+<td>Sugerencia</td>
+<td>Recurso sugerido por el público desde el formulario «Sugerir un
+recurso».</td>
+</tr>
+<tr class="even">
+<td><a
+href="#sugerencia_materia"><code>sugerencia_materia</code></a></td>
+<td>(intermedia)</td>
+<td>Materias propuestas para una sugerencia.</td>
+</tr>
+<tr class="odd">
+<td><a href="#usuario"><code>usuario</code></a></td>
+<td>Usuario</td>
+<td>Personal de la biblioteca y lectores de guías restringidas.</td>
+</tr>
+<tr class="even">
+<td><a href="#usuario_materia"><code>usuario_materia</code></a></td>
+<td>(intermedia)</td>
+<td>Materias de especialidad de una persona (directorio y
+sugerencias).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ajuste">ajuste<a class="ancla" href="#ajuste" aria-label="Enlace a esta sección">#</a></h2>
+<p>Configuración editable desde el panel (Apariencia e Integraciones).
+Reemplaza las variables de entorno. Entidad
+<code>App\Entity\Ajuste</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>clave</code></td>
+<td>varchar(60)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td>Nombre del ajuste; coincide con la variable de entorno que reemplaza
+(p. ej. PROXY_URL)</td>
+</tr>
+<tr class="even">
+<td><code>actualizado_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>valor</code></td>
+<td>text</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Valor; si «cifrado», va cifrado con sodium y una clave derivada de
+APP_SECRET</td>
+</tr>
+<tr class="even">
+<td><code>cifrado</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Secreto (clave de API, contraseña): nunca se muestra en el
+panel</td>
+</tr>
+</tbody>
+</table>
+<h2 id="autor">autor<a class="ancla" href="#autor" aria-label="Enlace a esta sección">#</a></h2>
+<p>Autores personales o institucionales de los recursos. Entidad
+<code>App\Entity\Autor</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>pais_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>pais.id</code> (al borrar el destino: queda en nulo)</td>
+</tr>
+<tr class="odd">
+<td><code>nombres</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>apellidos</code></td>
+<td>varchar(150)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Apellidos; un autor institucional lleva aquí el nombre completo</td>
+</tr>
+<tr class="odd">
+<td><code>orcid</code></td>
+<td>varchar(19)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">UQ</td>
+<td>ORCID iD (0000-0000-0000-000X), validado</td>
+</tr>
+<tr class="even">
+<td><code>sexo</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>femenino</code>, <code>masculino</code>,
+<code>otro</code>, <code>no_informado</code></td>
+</tr>
+</tbody>
+</table>
+<p>Índices adicionales: índice (apellidos, nombres).</p>
+<h2 id="bloque">bloque<a class="ancla" href="#bloque" aria-label="Enlace a esta sección">#</a></h2>
+<p>Unidad de contenido de una sección (texto, lista de recursos, libros,
+video…). Entidad <code>App\Entity\Bloque</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>seccion_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>seccion.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="odd">
+<td><code>origen_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>Si no es nulo, el bloque es un vínculo: muestra el tipo, título y
+contenido del original. → <code>bloque.id</code> (al borrar el destino:
+se borra en cascada)</td>
+</tr>
+<tr class="even">
+<td><code>tipo</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Tipo de bloque; define la forma de «contenido». Valores:
+<code>texto</code>, <code>recursos</code>, <code>perfil</code>,
+<code>video</code>, <code>busqueda</code>, <code>enlaces</code>,
+<code>libros</code>, <code>revistas</code>,
+<code>diapositivas</code></td>
+</tr>
+<tr class="odd">
+<td><code>titulo</code></td>
+<td>varchar(150)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>posicion</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Orden dentro de la sección</td>
+</tr>
+<tr class="odd">
+<td><code>contenido</code></td>
+<td>json</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Datos del bloque según su tipo (ver «Contenido de los bloques»)</td>
+</tr>
+<tr class="even">
+<td><code>compartible</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Se ofrece en la biblioteca «Bloque de otra guía» para vincularlo o
+copiarlo</td>
+</tr>
+</tbody>
+</table>
+<h2 id="consulta">consulta<a class="ancla" href="#consulta" aria-label="Enlace a esta sección">#</a></h2>
+<p>Conversación iniciada desde el formulario «Escribir a…» de la ficha
+de un bibliotecario. Entidad <code>App\Entity\Consulta</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>bibliotecario_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">FK</td>
+<td>Bibliotecario a quien se escribió. → <code>usuario.id</code> (al
+borrar el destino: se borra en cascada)</td>
+</tr>
+<tr class="odd">
+<td><code>nombre</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>correo</code></td>
+<td>varchar(180)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>asunto</code></td>
+<td>varchar(200)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>token</code></td>
+<td>varchar(64)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">UQ</td>
+<td>Enlace privado /consulta/{token} con que la persona sigue la
+conversación</td>
+</tr>
+<tr class="odd">
+<td><code>idioma</code></td>
+<td>varchar(2)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>pendiente</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>El último mensaje es de la persona (falta respuesta)</td>
+</tr>
+<tr class="odd">
+<td><code>cerrada</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>creada_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>actualizada_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Índices adicionales: índice (pendiente, cerrada).</p>
+<h2 id="departamento">departamento<a class="ancla" href="#departamento" aria-label="Enlace a esta sección">#</a></h2>
+<p>Agrupa al personal en el directorio. Entidad
+<code>App\Entity\Departamento</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>nombre</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>nombre_en</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>sede</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>antofagasta</code>, <code>coquimbo</code></td>
+</tr>
+<tr class="odd">
+<td><code>email</code></td>
+<td>varchar(180)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>telefono</code></td>
+<td>varchar(40)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>orden</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Posición en el directorio de bibliotecarios</td>
+</tr>
+</tbody>
+</table>
+<h2 id="editorial">editorial<a class="ancla" href="#editorial" aria-label="Enlace a esta sección">#</a></h2>
+<p>Editoriales de libros y revistas. Entidad
+<code>App\Entity\Editorial</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>pais_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>pais.id</code> (al borrar el destino: queda en nulo)</td>
+</tr>
+<tr class="odd">
+<td><code>nombre</code></td>
+<td>varchar(150)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">UQ</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="guia">guia<a class="ancla" href="#guia" aria-label="Enlace a esta sección">#</a></h2>
+<p>Guía temática. Entidad <code>App\Entity\Guia</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>traduccion_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>La misma guía en el otro idioma. → <code>guia.id</code> (al borrar
+el destino: queda en nulo)</td>
+</tr>
+<tr class="odd">
+<td><code>responsable_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>Editor responsable: publica, cambia los datos y elimina. →
+<code>usuario.id</code> (al borrar el destino: queda en nulo)</td>
+</tr>
+<tr class="even">
+<td><code>principal_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>Guía principal de la que es subguía. → <code>guia.id</code> (al
+borrar el destino: queda en nulo)</td>
+</tr>
+<tr class="odd">
+<td><code>titulo</code></td>
+<td>varchar(200)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>slug</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">UQ</td>
+<td>Dirección pública /{idioma}/guias/{slug}</td>
+</tr>
+<tr class="odd">
+<td><code>descripcion</code></td>
+<td>varchar(500)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>idioma</code></td>
+<td>varchar(2)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>estado</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>borrador</code>, <code>publicada</code></td>
+</tr>
+<tr class="even">
+<td><code>disposicion</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Pestañas arriba o menú lateral. Valores: <code>pestanas</code>,
+<code>menu_lateral</code></td>
+</tr>
+<tr class="odd">
+<td><code>banner</code></td>
+<td>varchar(100)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Archivo en public/uploads/guias</td>
+</tr>
+<tr class="even">
+<td><code>icono</code></td>
+<td>varchar(100)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Archivo en public/uploads/guias</td>
+</tr>
+<tr class="odd">
+<td><code>visibilidad</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Pública o solo para usuarios asignados (guia_lector). Valores:
+<code>publica</code>, <code>restringida</code></td>
+</tr>
+<tr class="even">
+<td><code>comun</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Guía de contenido común: no se publica; todo su contenido es
+reutilizable</td>
+</tr>
+<tr class="odd">
+<td><code>visitas</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>publicada_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>creada_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>actualizada_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Índices adicionales: índice (estado).</p>
+<h2 id="guia_coeditor">guia_coeditor<a class="ancla" href="#guia_coeditor" aria-label="Enlace a esta sección">#</a></h2>
+<p>Personas que editan el contenido de una guía además del
+responsable.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>guia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>guia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="even">
+<td><code>usuario_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>usuario.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="guia_lector">guia_lector<a class="ancla" href="#guia_lector" aria-label="Enlace a esta sección">#</a></h2>
+<p>Usuarios que pueden ver una guía restringida.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>guia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>guia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="even">
+<td><code>usuario_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>usuario.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="guia_materia">guia_materia<a class="ancla" href="#guia_materia" aria-label="Enlace a esta sección">#</a></h2>
+<p>Materias de una guía.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>guia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>guia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="even">
+<td><code>materia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>materia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="materia">materia<a class="ancla" href="#materia" aria-label="Enlace a esta sección">#</a></h2>
+<p>Materias: las 334 categorías ASJC de Scopus y las materias propias de
+la UCN. Entidad <code>App\Entity\Materia</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>nombre</code></td>
+<td>varchar(150)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>nombre_en</code></td>
+<td>varchar(150)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>slug</code></td>
+<td>varchar(160)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">UQ</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>codigo</code></td>
+<td>varchar(30)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Código interno UCN de la carrera o asignatura</td>
+</tr>
+<tr class="even">
+<td><code>activa</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>asjc</code></td>
+<td>json</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Códigos ASJC en que se clasifica una materia propia (lista JSON de
+enteros)</td>
+</tr>
+<tr class="even">
+<td><code>codigo_asjc</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">UQ</td>
+<td>Código ASJC si la materia ES una de las 334 categorías base (no se
+elimina)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="mensaje_consulta">mensaje_consulta<a class="ancla" href="#mensaje_consulta" aria-label="Enlace a esta sección">#</a></h2>
+<p>Mensajes de una consulta. Entidad
+<code>App\Entity\MensajeConsulta</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>consulta_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>consulta.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="odd">
+<td><code>autor_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>usuario.id</code> (al borrar el destino: queda en nulo)</td>
+</tr>
+<tr class="even">
+<td><code>texto</code></td>
+<td>text</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>de_personal</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Lo escribió el personal (si no, la persona que consultó)</td>
+</tr>
+<tr class="even">
+<td><code>enviado_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>correo_enviado</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>El aviso por correo salió bien</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pais">pais<a class="ancla" href="#pais" aria-label="Enlace a esta sección">#</a></h2>
+<p>Países ISO 3166-1. Entidad <code>App\Entity\Pais</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>codigo</code></td>
+<td>varchar(2)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">UQ</td>
+<td>ISO 3166-1 alfa-2</td>
+</tr>
+<tr class="odd">
+<td><code>nombre</code></td>
+<td>varchar(100)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>nombre_en</code></td>
+<td>varchar(100)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="pestana">pestana<a class="ancla" href="#pestana" aria-label="Enlace a esta sección">#</a></h2>
+<p>Pestaña (o subpestaña) de una guía. Entidad
+<code>App\Entity\Pestana</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>guia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>guia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="odd">
+<td><code>padre_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>Pestaña de la que es subpestaña. → <code>pestana.id</code> (al
+borrar el destino: queda en nulo)</td>
+</tr>
+<tr class="even">
+<td><code>origen_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>Si no es nulo, la pestaña es un vínculo y muestra las secciones del
+original. → <code>pestana.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="odd">
+<td><code>titulo</code></td>
+<td>varchar(100)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>slug</code></td>
+<td>varchar(110)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>posicion</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>enlace</code></td>
+<td>varchar(500)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Si tiene enlace, la pestaña lleva a esa dirección en vez de tener
+contenido</td>
+</tr>
+<tr class="odd">
+<td><code>nueva</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Abre el enlace en otra ventana</td>
+</tr>
+<tr class="even">
+<td><code>compartible</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="recurso">recurso<a class="ancla" href="#recurso" aria-label="Enlace a esta sección">#</a></h2>
+<p>Lista maestra de recursos bibliográficos A-Z. Entidad
+<code>App\Entity\Recurso</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>editorial_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>editorial.id</code> (al borrar el destino: queda en
+nulo)</td>
+</tr>
+<tr class="odd">
+<td><code>titulo</code></td>
+<td>varchar(200)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>letra</code></td>
+<td>varchar(1)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Primera letra del título sin tildes (A-Z) o «#»; índice de la lista
+A-Z</td>
+</tr>
+<tr class="odd">
+<td><code>nombres_alternativos</code></td>
+<td>varchar(255)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>url</code></td>
+<td>varchar(1000)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>URL original, sin el prefijo del proxy</td>
+</tr>
+<tr class="odd">
+<td><code>requiere_proxy</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>El enlace público pasa por el proxy AccesUM</td>
+</tr>
+<tr class="even">
+<td><code>descripcion</code></td>
+<td>text</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>descripcion_en</code></td>
+<td>text</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>proveedor</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>tipo</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>base_datos</code>, <code>revistas</code>,
+<code>articulo</code>, <code>libros</code>, <code>repositorio</code>,
+<code>normas</code>, <code>multimedia</code>, <code>herramienta</code>,
+<code>sitio_web</code></td>
+</tr>
+<tr class="even">
+<td><code>acceso</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>suscripcion</code>, <code>abierto</code>,
+<code>prueba</code></td>
+</tr>
+<tr class="odd">
+<td><code>formato</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>electronico</code>, <code>impreso</code>,
+<code>ambos</code></td>
+</tr>
+<tr class="even">
+<td><code>prueba_hasta</code></td>
+<td>date</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Fin de un acceso de prueba: después deja de mostrarse</td>
+</tr>
+<tr class="odd">
+<td><code>fuente</code></td>
+<td>varchar(255)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Revista en que se publicó (artículos)</td>
+</tr>
+<tr class="even">
+<td><code>volumen</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>fasciculo</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>paginas</code></td>
+<td>varchar(30)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>doi</code></td>
+<td>varchar(200)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>isbn</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>eisbn</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>anio</code></td>
+<td>smallint</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>issn</code></td>
+<td>varchar(9)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>eissn</code></td>
+<td>varchar(9)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>disponible_desde</code></td>
+<td>date</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>codigo_norma</code></td>
+<td>varchar(60)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>organismo</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>visible</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>clics</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Contador de visitas por /recursos/{id}/ir</td>
+</tr>
+<tr class="even">
+<td><code>creado_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>actualizado_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Índices adicionales: índice (letra).</p>
+<h2 id="recurso_autor">recurso_autor<a class="ancla" href="#recurso_autor" aria-label="Enlace a esta sección">#</a></h2>
+<p>Autores de un recurso, en orden. Entidad
+<code>App\Entity\RecursoAutor</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>recurso_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>recurso.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="odd">
+<td><code>autor_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>autor.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="even">
+<td><code>posicion</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Orden del autor en la cita</td>
+</tr>
+</tbody>
+</table>
+<p>Índices adicionales: única (recurso_id, autor_id).</p>
+<h2 id="recurso_materia">recurso_materia<a class="ancla" href="#recurso_materia" aria-label="Enlace a esta sección">#</a></h2>
+<p>Materias de un recurso.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>recurso_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>recurso.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="even">
+<td><code>materia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>materia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="seccion">seccion<a class="ancla" href="#seccion" aria-label="Enlace a esta sección">#</a></h2>
+<p>Sección de una pestaña; contiene bloques en una o más columnas.
+Entidad <code>App\Entity\Seccion</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>pestana_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">FK</td>
+<td>→ <code>pestana.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="odd">
+<td><code>titulo</code></td>
+<td>varchar(150)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>posicion</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>columnas</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Columnas en que se reparten los bloques (1 a 3)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sugerencia">sugerencia<a class="ancla" href="#sugerencia" aria-label="Enlace a esta sección">#</a></h2>
+<p>Recurso sugerido por el público desde el formulario «Sugerir un
+recurso». Entidad <code>App\Entity\Sugerencia</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>decidida_por_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>Quién la aprobó o rechazó. → <code>usuario.id</code> (al borrar el
+destino: queda en nulo)</td>
+</tr>
+<tr class="odd">
+<td><code>recurso_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>Recurso creado al aprobarla. → <code>recurso.id</code> (al borrar el
+destino: queda en nulo)</td>
+</tr>
+<tr class="even">
+<td><code>tipo</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>base_datos</code>, <code>revistas</code>,
+<code>articulo</code>, <code>libros</code>, <code>repositorio</code>,
+<code>normas</code>, <code>multimedia</code>, <code>herramienta</code>,
+<code>sitio_web</code></td>
+</tr>
+<tr class="odd">
+<td><code>formato</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>electronico</code>, <code>impreso</code>,
+<code>ambos</code></td>
+</tr>
+<tr class="even">
+<td><code>titulo</code></td>
+<td>varchar(255)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>url</code></td>
+<td>varchar(500)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>autores</code></td>
+<td>varchar(255)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>identificador</code></td>
+<td>varchar(30)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>ISBN, ISSN o DOI indicado por quien sugiere</td>
+</tr>
+<tr class="even">
+<td><code>descripcion</code></td>
+<td>text</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>motivo</code></td>
+<td>text</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>nombre</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>correo</code></td>
+<td>varchar(180)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>idioma</code></td>
+<td>varchar(2)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>estado</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>pendiente</code>, <code>aprobada</code>,
+<code>rechazada</code></td>
+</tr>
+<tr class="even">
+<td><code>motivo_rechazo</code></td>
+<td>text</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>creada_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>decidida_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Índices adicionales: índice (estado).</p>
+<h2 id="sugerencia_materia">sugerencia_materia<a class="ancla" href="#sugerencia_materia" aria-label="Enlace a esta sección">#</a></h2>
+<p>Materias propuestas para una sugerencia.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sugerencia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>sugerencia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="even">
+<td><code>materia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>materia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="usuario">usuario<a class="ancla" href="#usuario" aria-label="Enlace a esta sección">#</a></h2>
+<p>Personal de la biblioteca y lectores de guías restringidas. Entidad
+<code>App\Entity\Usuario</code>.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>departamento_id</code></td>
+<td>int</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">FK</td>
+<td>Departamento en el directorio. → <code>departamento.id</code> (al
+borrar el destino: queda en nulo)</td>
+</tr>
+<tr class="odd">
+<td><code>email</code></td>
+<td>varchar(180)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">UQ</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>nombre</code></td>
+<td>varchar(100)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>apellidos</code></td>
+<td>varchar(100)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>slug</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">UQ</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>rol</code></td>
+<td>varchar(30)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>ROLE_ADMINISTRADOR</code>, <code>ROLE_EDITOR</code>,
+<code>ROLE_COLABORADOR</code>, <code>ROLE_LECTOR</code></td>
+</tr>
+<tr class="even">
+<td><code>password</code></td>
+<td>varchar(255)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Hash de la contraseña propia (nulo si entra solo por LDAP o
+Google)</td>
+</tr>
+<tr class="odd">
+<td><code>ldap_usuario</code></td>
+<td>varchar(100)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">UQ</td>
+<td>Usuario institucional para LDAP</td>
+</tr>
+<tr class="even">
+<td><code>google_id</code></td>
+<td>varchar(64)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;">UQ</td>
+<td>Identificador de Google, se completa en el primer acceso</td>
+</tr>
+<tr class="odd">
+<td><code>activo</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>visible_en_directorio</code></td>
+<td>bool</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>cargo</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>cargo_en</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>telefono</code></td>
+<td>varchar(40)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>ubicacion</code></td>
+<td>varchar(120)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>enlace_cita</code></td>
+<td>varchar(500)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Enlace para agendar una cita</td>
+</tr>
+<tr class="even">
+<td><code>sede</code></td>
+<td>varchar(20)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Valores: <code>antofagasta</code>, <code>coquimbo</code></td>
+</tr>
+<tr class="odd">
+<td><code>biografia</code></td>
+<td>text</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>biografia_en</code></td>
+<td>text</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>foto</code></td>
+<td>varchar(80)</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td>Archivo en public/uploads/personal</td>
+</tr>
+<tr class="even">
+<td><code>creado_en</code></td>
+<td>datetime</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>ultimo_acceso</code></td>
+<td>datetime</td>
+<td style="text-align: center;">sí</td>
+<td style="text-align: center;"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="usuario_materia">usuario_materia<a class="ancla" href="#usuario_materia" aria-label="Enlace a esta sección">#</a></h2>
+<p>Materias de especialidad de una persona (directorio y
+sugerencias).</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Tipo</th>
+<th style="text-align: center;">Nulo</th>
+<th style="text-align: center;">Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>usuario_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>usuario.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+<tr class="even">
+<td><code>materia_id</code></td>
+<td>int</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">PK FK</td>
+<td>→ <code>materia.id</code> (al borrar el destino: se borra en
+cascada)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="diagrama-completo-en-mermaid">Diagrama completo en Mermaid<a class="ancla" href="#diagrama-completo-en-mermaid" aria-label="Enlace a esta sección">#</a></h2>
+<p>GitHub dibuja este bloque como diagrama. También sirve para pegarlo
+en https://mermaid.live o en cualquier herramienta compatible.</p>
+<p><em>(El diagrama Mermaid se ve en la versión Markdown de GitHub; aquí
+están las imágenes del capítulo 2.)</em></p>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="03-instalacion.html"><small>← Anterior</small>3. Instalación en otro servidor</a><a class="siguiente" href="05-desarrollo.html"><small>Siguiente →</small>5. Desarrollo</a></nav>
+    <footer class="pie">Bibliotecas UCN · Documento técnico generado el 19-11-2026 a partir de <code>docs/tecnico</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a href="#ajuste" id="toc-ajuste">ajuste</a></li>
+<li><a href="#autor" id="toc-autor">autor</a></li>
+<li><a href="#bloque" id="toc-bloque">bloque</a></li>
+<li><a href="#consulta" id="toc-consulta">consulta</a></li>
+<li><a href="#departamento" id="toc-departamento">departamento</a></li>
+<li><a href="#editorial" id="toc-editorial">editorial</a></li>
+<li><a href="#guia" id="toc-guia">guia</a></li>
+<li><a href="#guia_coeditor"
+id="toc-guia_coeditor">guia_coeditor</a></li>
+<li><a href="#guia_lector" id="toc-guia_lector">guia_lector</a></li>
+<li><a href="#guia_materia" id="toc-guia_materia">guia_materia</a></li>
+<li><a href="#materia" id="toc-materia">materia</a></li>
+<li><a href="#mensaje_consulta"
+id="toc-mensaje_consulta">mensaje_consulta</a></li>
+<li><a href="#pais" id="toc-pais">pais</a></li>
+<li><a href="#pestana" id="toc-pestana">pestana</a></li>
+<li><a href="#recurso" id="toc-recurso">recurso</a></li>
+<li><a href="#recurso_autor"
+id="toc-recurso_autor">recurso_autor</a></li>
+<li><a href="#recurso_materia"
+id="toc-recurso_materia">recurso_materia</a></li>
+<li><a href="#seccion" id="toc-seccion">seccion</a></li>
+<li><a href="#sugerencia" id="toc-sugerencia">sugerencia</a></li>
+<li><a href="#sugerencia_materia"
+id="toc-sugerencia_materia">sugerencia_materia</a></li>
+<li><a href="#usuario" id="toc-usuario">usuario</a></li>
+<li><a href="#usuario_materia"
+id="toc-usuario_materia">usuario_materia</a></li>
+<li><a href="#diagrama-completo-en-mermaid"
+id="toc-diagrama-completo-en-mermaid">Diagrama completo en
+Mermaid</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

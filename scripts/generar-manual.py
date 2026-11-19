@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Genera el manual de uso en HTML (estilo wiki) y en Word a partir de los Markdown de docs/manual.
+"""Genera en HTML (estilo wiki) y en Word la documentación escrita en Markdown en docs/manual o docs/tecnico.
 
-Uso: python3 scripts/generar-manual.py   (necesita pandoc 3 y, para Word, python-docx y Pillow)
+Uso: python3 scripts/generar-manual.py [manual|tecnico]   (necesita pandoc 3 y, para Word, python-docx y Pillow)
 
-- docs/manual/html/*.html : una página por capítulo, con menú lateral, índice de la página y buscador.
-- docs/manual/Manual-Guias-tematicas-UCN.docx : todo el manual en un documento, con portada e índice.
+- docs/<carpeta>/html/*.html : una página por capítulo, con menú lateral, índice de la página y buscador.
+- docs/<carpeta>/<nombre>.docx : todo el documento en un archivo, con portada e índice.
 
-Las imágenes quedan en docs/manual/img y las páginas HTML las enlazan como ../img/..., así que la carpeta
-docs/manual se puede copiar entera a cualquier servidor o abrir desde el disco.
+Las imágenes quedan en docs/<carpeta>/img y las páginas HTML las enlazan como ../img/..., así que la carpeta se puede
+copiar entera a cualquier servidor o abrir desde el disco. Los bloques Mermaid (que GitHub dibuja) se omiten en HTML y
+Word, que llevan los diagramas como imágenes.
 """
 
 from __future__ import annotations
@@ -24,12 +25,40 @@ from datetime import date
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-MANUAL = RAIZ / 'docs' / 'manual'
-SALIDA_HTML = MANUAL / 'html'
-DOCX = MANUAL / 'Manual-Guias-tematicas-UCN.docx'
-TITULO = 'Manual de uso · Guías temáticas de Bibliotecas UCN'
 FORMATO = 'markdown+gfm_auto_identifiers'
-CAPITULOS = sorted(p for p in MANUAL.glob('[0-9][0-9]-*.md'))
+DOCUMENTOS = {
+    'manual': {
+        'carpeta': 'manual', 'docx': 'Manual-Guias-tematicas-UCN.docx', 'nombre': 'Manual',
+        'marca': 'Manual · Guías temáticas', 'sufijo': 'Manual de Guías temáticas UCN',
+        'titulo': 'Manual de uso', 'subtitulo': 'Guías temáticas · Bibliotecas UCN',
+        'intro': 'Cómo usar este manual', 'buscar': 'Buscar en el manual',
+    },
+    'tecnico': {
+        'carpeta': 'tecnico', 'docx': 'Documento-tecnico-Guias-tematicas-UCN.docx', 'nombre': 'Documento técnico',
+        'marca': 'Documento técnico · Guías temáticas', 'sufijo': 'Documento técnico de Guías temáticas UCN',
+        'titulo': 'Documento técnico', 'subtitulo': 'Guías temáticas · Bibliotecas UCN · Para desarrolladores',
+        'intro': 'Acerca de este documento', 'buscar': 'Buscar en el documento',
+    },
+}
+DOC = DOCUMENTOS['manual']
+MANUAL = SALIDA_HTML = DOCX = None
+CAPITULOS: list[Path] = []
+
+
+def elegir(clave: str) -> None:
+    global DOC, MANUAL, SALIDA_HTML, DOCX, CAPITULOS
+    DOC = DOCUMENTOS[clave]
+    MANUAL = RAIZ / 'docs' / DOC['carpeta']
+    SALIDA_HTML = MANUAL / 'html'
+    DOCX = MANUAL / DOC['docx']
+    CAPITULOS = sorted(p for p in MANUAL.glob('[0-9][0-9]-*.md'))
+
+
+MERMAID = re.compile(r'```mermaid\n.*?```\n?', re.S)
+
+
+def sin_mermaid(md: str) -> str:
+    return MERMAID.sub('*(El diagrama Mermaid se ve en la versión Markdown de GitHub; aquí están las imágenes del capítulo 2.)*\n', md)
 
 
 def pandoc(texto: str, *argumentos: str) -> str:
@@ -55,16 +84,16 @@ PLANTILLA = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{titulo} · Manual de Guías temáticas UCN</title>
+<title>{titulo} · {sufijo}</title>
 <link rel="stylesheet" href="wiki.css">
 </head>
 <body>
 <header class="barra">
   <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
-  <a class="barra__marca" href="index.html">Manual · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <a class="barra__marca" href="index.html">{marca} <small>Bibliotecas UCN</small></a>
   <form class="buscador" role="search" onsubmit="return false">
-    <label for="buscar" class="oculto">Buscar en el manual</label>
-    <input id="buscar" type="search" placeholder="Buscar en el manual…" autocomplete="off">
+    <label for="buscar" class="oculto">{buscar}</label>
+    <input id="buscar" type="search" placeholder="{buscar}…" autocomplete="off">
     <div id="resultados" class="buscador__resultados" hidden></div>
   </form>
 </header>
@@ -74,10 +103,10 @@ PLANTILLA = """<!doctype html>
     <ul>{menu}</ul>
   </nav>
   <main class="contenido">
-    <p class="migas"><a href="index.html">Manual</a>{miga}</p>
+    <p class="migas"><a href="index.html">{nombre}</a>{miga}</p>
     <article>{cuerpo}</article>
     <nav class="paginacion" aria-label="Capítulos anterior y siguiente">{paginacion}</nav>
-    <footer class="pie">Bibliotecas UCN · Manual generado el {fecha} a partir de <code>docs/manual</code>.</footer>
+    <footer class="pie">Bibliotecas UCN · {nombre} generado el {fecha} a partir de <code>docs/{carpeta}</code>.</footer>
   </main>
   <aside class="indice" aria-label="En esta página">{indice}</aside>
 </div>
@@ -191,10 +220,13 @@ def html_de(nombre_md: str) -> str:
 def enlaces_html(md: str) -> str:
     md = re.sub(r'\]\(([0-9][0-9]-[\w-]+|README)\.md(#[^)]*)?\)', lambda m: f']({html_de(m.group(1) + ".md")}{m.group(2) or ""})', md)
     md = md.replace('](img/', '](../img/')
-    # En el índice (README) los formatos apuntan a archivos de la carpeta del manual
+    # Enlaces a la otra documentación (docs/manual ↔ docs/tecnico): a su versión HTML
+    md = re.sub(r'\]\(\.\./(manual|tecnico)/([\w-]+)\.md(#[^)]*)?\)',
+                lambda m: f'](../../{m.group(1)}/html/{html_de(m.group(2) + ".md")}{m.group(3) or ""})', md)
+    # En el índice (README) los formatos apuntan a archivos de la carpeta del documento
     md = md.replace('(`html/index.html`)', '(esta versión)')
-    md = md.replace('`Manual-Guias-tematicas-UCN.docx`', '[Manual-Guias-tematicas-UCN.docx](../Manual-Guias-tematicas-UCN.docx)')
-    return md
+    md = md.replace(f'`{DOC["docx"]}`', f'[{DOC["docx"]}](../{DOC["docx"]})')
+    return sin_mermaid(md)
 
 
 def anclas(cuerpo: str) -> str:
@@ -226,6 +258,8 @@ def generar_html() -> None:
                      (f'<a class="siguiente" href="{html_de(siguiente.name)}"><small>Siguiente →</small>{html.escape(titulos[siguiente.name])}</a>' if siguiente else '')
         (SALIDA_HTML / html_de(pagina.name)).write_text(PLANTILLA.format(
             titulo=html.escape(titulos[pagina.name]),
+            sufijo=html.escape(DOC['sufijo']), marca=html.escape(DOC['marca']), buscar=html.escape(DOC['buscar']),
+            nombre=html.escape(DOC['nombre']), carpeta=DOC['carpeta'],
             menu=menu,
             miga='' if pagina.name == 'README.md' else f' › {html.escape(titulos[pagina.name])}',
             cuerpo=cuerpo,
@@ -278,6 +312,9 @@ def plantilla_word(destino: Path) -> None:
         estilo.font.size = Pt(tam)
         estilo.font.bold = nombre != 'Subtitle'
     estilos['Heading 1'].paragraph_format.page_break_before = True
+    for nombre in ('Source Code', 'Verbatim Char'):
+        if nombre in estilos:
+            estilos[nombre].font.size = Pt(8.5)  # bloques de código: caben unos 95 caracteres por línea
     for nombre in ('Image Caption', 'Caption'):
         if nombre in estilos:
             estilos[nombre].font.size = Pt(9)
@@ -296,6 +333,8 @@ def generar_docx() -> None:
         # Enlaces entre capítulos → enlaces internos del documento
         md = re.sub(r'\]\(([0-9][0-9]-[\w-]+\.md)#([^)]+)\)', r'](#\2)', md)
         md = re.sub(r'\]\(([0-9][0-9]-[\w-]+\.md)\)', lambda m: f'](#{anclas_capitulo[m.group(1)]})', md)
+        md = re.sub(r'\[([^\]]+)\]\(\.\./(manual|tecnico)/[^)]*\)', r'\1', md)  # la otra documentación: solo el texto
+        md = sin_mermaid(md)
 
         # Capturas altas: ancho reducido para que quepan en la página (alto máximo ≈ 8,3 pulgadas)
         def ajustar(m: re.Match) -> str:
@@ -308,9 +347,10 @@ def generar_docx() -> None:
     introduccion = (MANUAL / 'README.md').read_text(encoding='utf-8').split('\n', 1)[1]
     introduccion = re.sub(r'\[([^\]]+)\]\(([0-9][0-9]-[\w-]+\.md)\)', lambda m: f'[{m.group(1)}](#{anclas_capitulo[m.group(2)]})', introduccion)
     introduccion = introduccion.replace('(`html/index.html`)', '(carpeta `html`)')
-    portada = ('---\ntitle: "Manual de uso"\nsubtitle: "Guías temáticas · Bibliotecas UCN"\n'
+    introduccion = re.sub(r'\[([^\]]+)\]\(\.\./(manual|tecnico)/[^)]*\)', r'\1', introduccion)
+    portada = (f'---\ntitle: "{DOC["titulo"]}"\nsubtitle: "{DOC["subtitulo"]}"\n'
                f'date: "Versión de {date.today().strftime("%m-%Y")}"\nlang: es-CL\ntoc-title: "Contenido"\n---\n\n')
-    texto = portada + '# Cómo usar este manual {.unnumbered}\n' + introduccion + '\n\n' + '\n\n'.join(partes)
+    texto = portada + f'# {DOC["intro"]} {{.unnumbered}}\n' + introduccion + '\n\n' + '\n\n'.join(partes)
 
     with tempfile.TemporaryDirectory() as tmp:
         referencia = Path(tmp) / 'referencia.docx'
@@ -324,6 +364,10 @@ def generar_docx() -> None:
 if __name__ == '__main__':
     if shutil.which('pandoc') is None:
         sys.exit('Falta pandoc (sudo apt install pandoc).')
+    clave = sys.argv[1] if len(sys.argv) > 1 else 'manual'
+    if clave not in DOCUMENTOS:
+        sys.exit(f'Uso: {sys.argv[0]} [{"|".join(DOCUMENTOS)}]')
+    elegir(clave)
     (MANUAL / 'toc.tmpl').write_text('$toc$\n', encoding='utf-8')
     try:
         generar_html()

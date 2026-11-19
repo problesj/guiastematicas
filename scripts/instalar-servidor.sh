@@ -14,6 +14,14 @@ apt-get install -y apache2 mysql-server composer git unzip certbot python3-certb
     php8.5-fpm php8.5-cli php8.5-mysql php8.5-intl php8.5-mbstring php8.5-xml php8.5-zip php8.5-curl \
     php8.5-gd php8.5-ldap php-apcu php-imagick
 
+# Límites de PHP: banners de 4 MB e importaciones de hasta 10 MB (los valores por omisión de Ubuntu son 2 MB/8 MB).
+cat > /etc/php/8.5/fpm/conf.d/90-guias.ini <<'INI'
+upload_max_filesize = 16M
+post_max_size = 16M
+memory_limit = 512M
+INI
+systemctl restart php8.5-fpm
+
 # Apache con PHP-FPM
 a2enmod proxy_fcgi setenvif rewrite headers ssl
 a2enconf php8.5-fpm

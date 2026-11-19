@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3. Instalación en otro servidor · Documento técnico de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Documento técnico · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el documento</label>
+    <input id="buscar" type="search" placeholder="Buscar en el documento…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-arquitectura.html">1. Arquitectura</a></li><li><a href="02-modelo-de-datos.html">2. Modelo de datos</a></li><li><a href="03-instalacion.html" aria-current="page">3. Instalación en otro servidor</a></li><li><a href="04-diccionario-de-datos.html">4. Diccionario de datos</a></li><li><a href="05-desarrollo.html">5. Desarrollo</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Documento técnico</a> › 3. Instalación en otro servidor</p>
+    <article><h1 id="3-instalación-en-otro-servidor">3. Instalación en otro
+servidor</h1>
+<p>Este capítulo explica cómo montar la plataforma en un servidor nuevo
+(por ejemplo, el de producción de la UCN), cómo pasarle los datos de
+otro servidor y cómo mantenerla. Los comandos se ejecutan como un
+usuario con <code>sudo</code>.</p>
+<h2 id="31-requisitos">3.1 Requisitos<a class="ancla" href="#31-requisitos" aria-label="Enlace a esta sección">#</a></h2>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Recurso</th>
+<th>Mínimo recomendado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sistema</td>
+<td>Ubuntu Server 26.04 LTS, recién instalado, con acceso a internet
+(paquetes, GitHub, Composer)</td>
+</tr>
+<tr class="even">
+<td>CPU y memoria</td>
+<td>2 vCPU y 4 GB de RAM</td>
+</tr>
+<tr class="odd">
+<td>Disco</td>
+<td>20 GB (más el espacio de los respaldos en
+<code>/var/backups/guias</code>)</td>
+</tr>
+<tr class="even">
+<td>Red</td>
+<td>Puertos 22, 80 y 443 abiertos; para producción, un nombre DNS que
+apunte al servidor</td>
+</tr>
+<tr class="odd">
+<td>Salida a internet desde el servidor</td>
+<td><code>github.com</code>,
+<code>packagist.org</code>/<code>repo.packagist.org</code>,
+<code>cdn.jsdelivr.net</code> y <code>data.jsdelivr.com</code>
+(importmap al desplegar), y los servicios que se usen: Primo/Alma
+(<code>*.exlibrisgroup.com</code>), Biblioges,
+<code>generativelanguage.googleapis.com</code> (Gemini),
+<code>oauth2.googleapis.com</code> (Google), LDAP y SMTP de la UCN</td>
+</tr>
+</tbody>
+</table>
+<p>Software que se instala (lo hace
+<code>scripts/instalar-servidor.sh</code>): Apache 2.4 con
+<code>proxy_fcgi</code>, <code>rewrite</code>, <code>headers</code> y
+<code>ssl</code>; PHP 8.5 FPM y CLI con <code>mysql</code>,
+<code>intl</code>, <code>mbstring</code>, <code>xml</code>,
+<code>zip</code>, <code>curl</code>, <code>gd</code>, <code>ldap</code>,
+<code>apcu</code> e <code>imagick</code>; MySQL 8.4; Composer; Git;
+certbot; ufw; fail2ban y actualizaciones automáticas de seguridad.</p>
+<h2 id="32-opción-a-instalación-en-un-solo-paso-recomendada">3.2 Opción
+A: instalación en un solo paso (recomendada)</h2>
+<p><code>scripts/montar-piloto.sh</code> hace todo: paquetes, base de
+datos con contraseña aleatoria, código, <code>.env.local</code>,
+dependencias, migraciones, primer administrador y respaldo diario.</p>
+<pre class="bash"><code>curl -fsSL -o montar-piloto.sh \
+  https://raw.githubusercontent.com/problesj/guiastematicas/main/scripts/montar-piloto.sh
+sudo VERSION=main SERVIDOR=guias.ucn.cl ADMIN_EMAIL=correo@ucn.cl bash montar-piloto.sh</code></pre>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 53%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Para qué</th>
+<th>Por omisión</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ADMIN_EMAIL</code></td>
+<td>Correo del primer administrador (obligatoria)</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td><code>ADMIN_NOMBRE</code>, <code>ADMIN_APELLIDOS</code></td>
+<td>Su nombre</td>
+<td>«Administración Guías»</td>
+</tr>
+<tr class="odd">
+<td><code>VERSION</code></td>
+<td>Rama o etiqueta a instalar. <strong>Usa <code>main</code></strong>
+para la versión actual</td>
+<td><code>piloto-2026-11-10</code></td>
+</tr>
+<tr class="even">
+<td><code>SERVIDOR</code></td>
+<td>Nombre o IP con que se entra (va al <code>ServerName</code> de
+Apache)</td>
+<td>IP principal</td>
+</tr>
+<tr class="odd">
+<td><code>RESTAURAR_BD</code>, <code>RESTAURAR_ARCHIVOS</code></td>
+<td>Respaldos de otro servidor para partir con sus datos (ver 3.5)</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td><code>APP_DIR</code></td>
+<td>Carpeta de la aplicación</td>
+<td><code>/var/www/guias</code></td>
+</tr>
+<tr class="odd">
+<td><code>REPO</code></td>
+<td>Repositorio</td>
+<td>GitHub <code>problesj/guiastematicas</code></td>
+</tr>
+</tbody>
+</table>
+<p>Al terminar muestra la dirección y el resultado de
+<code>/salud</code>. Las contraseñas generadas (base de datos y
+administrador) quedan <strong>solo</strong> en
+<code>/root/guias-credenciales.txt</code>. Si el script se corta después
+de crear <code>.env.local</code>, se puede volver a ejecutar igual:
+retoma desde las dependencias.</p>
+<p>Después sigue con <a href="#34-configuración-posterior">3.4
+Configuración posterior</a>.</p>
+<h2 id="33-opción-b-paso-a-paso">3.3 Opción B: paso a paso<a class="ancla" href="#33-opción-b-paso-a-paso" aria-label="Enlace a esta sección">#</a></h2>
+<h3 id="1-paquetes-apache-php-mysql-y-cortafuegos">1. Paquetes, Apache,
+PHP, MySQL y cortafuegos</h3>
+<pre class="bash"><code>sudo apt-get update &amp;&amp; sudo apt-get install -y git
+sudo git clone https://github.com/problesj/guiastematicas.git /var/www/guias
+cd /var/www/guias
+sudo DB_PASSWORD=&#39;&lt;contraseña segura para MySQL&gt;&#39; bash scripts/instalar-servidor.sh</code></pre>
+<p>El script instala los paquetes, activa el VirtualHost
+<code>deploy/apache/guias.conf</code> (desactiva el sitio por omisión),
+crea la base <code>guias</code> y el usuario
+<code>guias@localhost</code> con esa contraseña, sube los límites de PHP
+(<code>/etc/php/8.5/fpm/conf.d/90-guias.ini</code>: archivos de 16 MB y
+512 MB de memoria) y abre en ufw solo SSH y Apache. Variables
+opcionales: <code>DB_NAME</code>, <code>DB_USER</code>,
+<code>APP_DIR</code>.</p>
+<p>Edita el nombre del sitio en
+<code>/etc/apache2/sites-available/guias.conf</code>
+(<code>ServerName guias.ucn.cl</code>) y recarga:
+<code>sudo systemctl reload apache2</code>.</p>
+<h3 id="2-archivo-envlocal">2. Archivo <code>.env.local</code><a class="ancla" href="#2-archivo-envlocal" aria-label="Enlace a esta sección">#</a></h3>
+<p>Crea <code>/var/www/guias/.env.local</code> (no va al
+repositorio):</p>
+<pre class="bash"><code>APP_ENV=prod
+APP_SECRET=&lt;cadena aleatoria de 48 caracteres: openssl rand -hex 24&gt;
+# Reemplaza CLAVE por la contraseña de MySQL
+DATABASE_URL=&quot;mysql://guias:CLAVE@127.0.0.1:3306/guias?serverVersion=8.4.11&amp;charset=utf8mb4&quot;
+DEFAULT_URI=https://guias.ucn.cl
+
+# Proxy y catálogo (también se pueden definir en Administración → Integraciones)
+PROXY_URL=&quot;https://itmsp.museknowledge.com/UCN?qurl={url}&quot;
+PRIMO_URL=https://ucn.primo.exlibrisgroup.com
+PRIMO_VID=56UCN_INST:UCN</code></pre>
+<pre class="bash"><code>sudo chown root:www-data /var/www/guias/.env.local
+sudo chmod 640 /var/www/guias/.env.local</code></pre>
+<p>Las demás variables (claves de Ex Libris, Biblioges, Gemini, LDAP,
+Google, SMTP, LTI) están en <a
+href="01-arquitectura.html#17-configuración-variables-de-entorno-y-ajustes-del-panel">1.7</a>.
+Lo más cómodo es escribirlas después en el panel, donde quedan
+cifradas.</p>
+<blockquote>
+<p>Guarda <code>APP_SECRET</code> en un lugar seguro: si cambia, las
+claves guardadas en el panel dejan de poder leerse y las sesiones
+abiertas se cierran.</p>
+</blockquote>
+<h3 id="3-desplegar-el-código">3. Desplegar el código<a class="ancla" href="#3-desplegar-el-código" aria-label="Enlace a esta sección">#</a></h3>
+<pre class="bash"><code>sudo bash /var/www/guias/scripts/desplegar.sh main</code></pre>
+<p><code>desplegar.sh</code> deja el código en la rama o etiqueta
+indicada y ejecuta, con <code>APP_ENV=prod</code>:</p>
+<ol type="1">
+<li><code>composer install --no-dev --optimize-autoloader</code></li>
+<li><code>importmap:install</code> y <code>asset-map:compile</code> (JS
+y CSS a <code>public/assets</code>)</li>
+<li><code>doctrine:migrations:migrate</code> (crea las tablas y carga
+las 334 materias ASJC)</li>
+<li><code>cache:clear</code> y <code>cache:warmup</code></li>
+<li><code>app:incorporar-libros</code></li>
+<li>Crea <code>public/uploads/{personal,guias,sitio}</code>, da a
+<code>www-data</code> la propiedad de <code>var/</code>,
+<code>public/assets</code> y <code>public/uploads</code>, y recarga
+PHP-FPM.</li>
+</ol>
+<h3 id="4-primer-administrador">4. Primer administrador<a class="ancla" href="#4-primer-administrador" aria-label="Enlace a esta sección">#</a></h3>
+<pre class="bash"><code>cd /var/www/guias
+sudo -u www-data php bin/console app:crear-administrador correo@ucn.cl &quot;Nombre&quot; &quot;Apellidos&quot;</code></pre>
+<p>Pide la contraseña sin mostrarla (mínimo 12 caracteres).</p>
+<h3 id="5-https-producción">5. HTTPS (producción)<a class="ancla" href="#5-https-producción" aria-label="Enlace a esta sección">#</a></h3>
+<p>Con el nombre DNS ya apuntando al servidor:</p>
+<pre class="bash"><code>sudo certbot --apache -d guias.ucn.cl</code></pre>
+<p>certbot crea el VirtualHost 443, redirige HTTP a HTTPS y programa la
+renovación automática.</p>
+<h3 id="6-respaldo-diario">6. Respaldo diario<a class="ancla" href="#6-respaldo-diario" aria-label="Enlace a esta sección">#</a></h3>
+<pre class="bash"><code>echo &quot;30 2 * * * root /var/www/guias/scripts/respaldar.sh &gt;/var/log/guias-respaldo.log 2&gt;&amp;1&quot; \
+  | sudo tee /etc/cron.d/guias-respaldo
+sudo chmod 644 /etc/cron.d/guias-respaldo</code></pre>
+<p><code>respaldar.sh</code> guarda en <code>/var/backups/guias</code>
+la base (<code>bd_AAAA-MM-DD_hhmm.sql.gz</code>, con
+<code>mysqldump --single-transaction</code>) y los archivos subidos
+(<code>archivos_….tar.gz</code>), y borra los de más de 30 días.
+<strong>Copia esa carpeta a otro equipo</strong> (por ejemplo con rsync
+desde un servidor de respaldo): un respaldo dentro del mismo servidor no
+protege contra la pérdida del servidor.</p>
+<h3 id="7-comprobar">7. Comprobar<a class="ancla" href="#7-comprobar" aria-label="Enlace a esta sección">#</a></h3>
+<pre class="bash"><code>curl -s http://127.0.0.1/salud -H &#39;Host: guias.ucn.cl&#39;
+# Respuesta esperada: {&quot;estado&quot;:&quot;ok&quot;,&quot;base_de_datos&quot;:&quot;ok&quot;}</code></pre>
+<p>Entra a <code>https://guias.ucn.cl/es/acceso</code> con el
+administrador.</p>
+<h2 id="34-configuración-posterior">3.4 Configuración posterior<a class="ancla" href="#34-configuración-posterior" aria-label="Enlace a esta sección">#</a></h2>
+<p>En el panel, como administrador:</p>
+<ol type="1">
+<li><strong>Cambiar contraseña</strong> del administrador (si la generó
+el script).</li>
+<li><strong>Administración → Integraciones:</strong> proxy, Primo/Alma,
+Biblioges, LDAP, Google, correo SMTP (con <strong>Enviar correo de
+prueba</strong>), Gemini y Moodle. Ver el <a
+href="../../manual/html/05-administrador.html#57-integraciones">capítulo
+5 del manual</a>.</li>
+<li><strong>Administración → Apariencia:</strong> nombre del sitio,
+logo, portada y colores.</li>
+<li><strong>Usuarios, departamentos y materias propias</strong>
+(clasificadas en categorías ASJC).</li>
+<li>Si se usa Google: en la consola de Google Cloud, agrega la URI de
+redirección
+<code>https://guias.ucn.cl/conectar/google/verificar</code>.</li>
+<li>Si se usa Moodle: registrar la herramienta con
+<code>https://guias.ucn.cl/lti/login</code>, <code>/lti/lanzar</code>,
+<code>/lti/vincular</code> y <code>/lti/jwks</code>, y copiar en
+Integraciones los datos que entrega Moodle. Moodle y la plataforma deben
+alcanzarse entre sí (no sirve un servidor en una red privada sin
+salida).</li>
+<li>Si se usa WordPress: descargar el plugin desde Integraciones (ya
+lleva la dirección del servidor) e instalarlo.</li>
+</ol>
+<h2 id="35-pasar-los-datos-desde-otro-servidor">3.5 Pasar los datos
+desde otro servidor</h2>
+<p>Para llevar las guías, recursos y cuentas de un servidor a otro (por
+ejemplo, del piloto a producción):</p>
+<ol type="1">
+<li>En el <strong>origen</strong>:
+<code>sudo bash /var/www/guias/scripts/respaldar.sh</code>.</li>
+<li>Copia los dos archivos más recientes de
+<code>/var/backups/guias</code> al destino (<code>scp</code>).</li>
+<li>En el <strong>destino</strong> (ya instalado y en la misma versión
+del código o una posterior):</li>
+</ol>
+<pre class="bash"><code>sudo bash /var/www/guias/scripts/restaurar.sh \
+  bd_2026-11-19_0230.sql.gz archivos_2026-11-19_0230.tar.gz</code></pre>
+<p><code>restaurar.sh</code> pide confirmación (o
+<code>CONFIRMAR=si</code>), respalda primero los datos actuales del
+destino, reemplaza la base y <code>public/uploads</code>, aplica las
+migraciones pendientes, limpia la caché y ajusta permisos.</p>
+<p>Qué hay que saber:</p>
+<ul>
+<li>Las <strong>cuentas y contraseñas</strong> pasan con la base: se
+entra con las del servidor de origen.</li>
+<li>Las <strong>claves cifradas</strong> del panel (Integraciones, llave
+LTI) se borran porque el destino tiene otro <code>APP_SECRET</code>.
+Vuelve a escribirlas en Integraciones. La llave LTI se genera de nuevo
+sola; Moodle la toma de <code>/lti/jwks</code>.</li>
+<li>Si quieres conservar las claves (por ejemplo, al cambiar el servidor
+de producción por otro), copia el mismo <code>APP_SECRET</code> al
+<code>.env.local</code> nuevo y restaura a mano en vez de usar el
+script: <code>gunzip -c bd_….sql.gz | sudo mysql guias</code>, luego
+<code>desplegar.sh main</code>.</li>
+<li>Instalación nueva con datos desde el principio:
+<code>montar-piloto.sh</code> con <code>RESTAURAR_BD</code> y
+<code>RESTAURAR_ARCHIVOS</code>.</li>
+</ul>
+<h2 id="36-actualizar-a-una-nueva-versión">3.6 Actualizar a una nueva
+versión</h2>
+<pre class="bash"><code>sudo bash /var/www/guias/scripts/respaldar.sh      # por si hay que volver atrás
+sudo bash /var/www/guias/scripts/desplegar.sh main  # o una etiqueta, p. ej. v1.2.0</code></pre>
+<p>Es seguro repetirlo. Las migraciones se aplican solas. Para
+<strong>volver a una versión anterior</strong>: despliega la etiqueta
+anterior y, si la nueva versión cambió el esquema, restaura el respaldo
+previo con <code>restaurar.sh</code>.</p>
+<p>Se recomienda etiquetar en Git cada versión que pase a producción
+(<code>git tag v1.0.0 &amp;&amp; git push --tags</code>) y desplegar por
+etiqueta en producción y por <code>main</code> en pruebas.</p>
+<h2 id="37-varios-entornos">3.7 Varios entornos<a class="ancla" href="#37-varios-entornos" aria-label="Enlace a esta sección">#</a></h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 41%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Entorno</th>
+<th>Uso</th>
+<th>Cómo se actualiza</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Desarrollo</td>
+<td>Equipo de cada desarrollador (Docker, ver capítulo 5)</td>
+<td><code>git pull</code></td>
+</tr>
+<tr class="even">
+<td>Pruebas</td>
+<td>VM interna; recibe cada cambio de <code>main</code></td>
+<td><code>desplegar.sh main</code></td>
+</tr>
+<tr class="odd">
+<td>Piloto</td>
+<td>Personal de la biblioteca</td>
+<td><code>desplegar.sh main</code> cuando se aprueba</td>
+</tr>
+<tr class="even">
+<td>Producción</td>
+<td>Público, con dominio y HTTPS</td>
+<td><code>desplegar.sh &lt;etiqueta&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Cada entorno tiene su propio <code>.env.local</code>,
+<code>APP_SECRET</code>, base de datos y respaldos.</p>
+<h2 id="38-problemas-frecuentes">3.8 Problemas frecuentes<a class="ancla" href="#38-problemas-frecuentes" aria-label="Enlace a esta sección">#</a></h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 41%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Síntoma</th>
+<th>Causa probable</th>
+<th>Qué hacer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Error 500 en todo el sitio</td>
+<td>Permisos de <code>var/</code> o caché antigua</td>
+<td><code>sudo chown -R www-data:www-data var &amp;&amp; sudo -u www-data php bin/console cache:clear</code></td>
+</tr>
+<tr class="even">
+<td><code>/salud</code> responde <code>degradado</code></td>
+<td>MySQL detenido o <code>DATABASE_URL</code> incorrecta</td>
+<td><code>systemctl status mysql</code>; revisar
+<code>.env.local</code></td>
+</tr>
+<tr class="odd">
+<td>Página sin estilos</td>
+<td>Faltan los assets compilados</td>
+<td>Volver a ejecutar <code>desplegar.sh</code></td>
+</tr>
+<tr class="even">
+<td><code>composer install</code> o <code>importmap:install</code>
+fallan</td>
+<td>El servidor no sale a internet</td>
+<td>Abrir la salida a Packagist, GitHub y jsDelivr</td>
+</tr>
+<tr class="odd">
+<td>Las claves de Integraciones aparecen vacías</td>
+<td><code>APP_SECRET</code> cambió</td>
+<td>Volver a escribirlas en el panel</td>
+</tr>
+<tr class="even">
+<td>No llegan correos</td>
+<td>SMTP sin configurar o bloqueado</td>
+<td><strong>Enviar correo de prueba</strong> en Integraciones; revisar
+<code>var/log/prod-*.log</code></td>
+</tr>
+<tr class="odd">
+<td>Una imagen o una importación no sube</td>
+<td>Límite de PHP (servidores instalados antes de noviembre de
+2026)</td>
+<td>Crear <code>/etc/php/8.5/fpm/conf.d/90-guias.ini</code> con
+<code>upload_max_filesize = 16M</code>, <code>post_max_size = 16M</code>
+y <code>memory_limit = 512M</code>, y
+<code>sudo systemctl restart php8.5-fpm</code></td>
+</tr>
+<tr class="even">
+<td>Inicio con LDAP falla</td>
+<td>Datos LDAP o red</td>
+<td>Probar con <code>ldapsearch</code> desde el servidor; revisar
+cifrado (<code>none</code>, <code>ssl</code>, <code>tls</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Registros: <code>var/log/prod-AAAA-MM-DD.log</code> (aplicación, 14
+días), <code>/var/log/apache2/guias-error.log</code> y
+<code>guias-access.log</code>,
+<code>/var/log/guias-respaldo.log</code>.</p>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="02-modelo-de-datos.html"><small>← Anterior</small>2. Modelo de datos</a><a class="siguiente" href="04-diccionario-de-datos.html"><small>Siguiente →</small>4. Diccionario de datos</a></nav>
+    <footer class="pie">Bibliotecas UCN · Documento técnico generado el 19-11-2026 a partir de <code>docs/tecnico</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a href="#31-requisitos" id="toc-31-requisitos">3.1
+Requisitos</a></li>
+<li><a href="#32-opción-a-instalación-en-un-solo-paso-recomendada"
+id="toc-32-opción-a-instalación-en-un-solo-paso-recomendada">3.2 Opción
+A: instalación en un solo paso (recomendada)</a></li>
+<li><a href="#33-opción-b-paso-a-paso"
+id="toc-33-opción-b-paso-a-paso">3.3 Opción B: paso a paso</a>
+<ul>
+<li><a href="#1-paquetes-apache-php-mysql-y-cortafuegos"
+id="toc-1-paquetes-apache-php-mysql-y-cortafuegos">1. Paquetes, Apache,
+PHP, MySQL y cortafuegos</a></li>
+<li><a href="#2-archivo-envlocal" id="toc-2-archivo-envlocal">2. Archivo
+<code>.env.local</code></a></li>
+<li><a href="#3-desplegar-el-código" id="toc-3-desplegar-el-código">3.
+Desplegar el código</a></li>
+<li><a href="#4-primer-administrador" id="toc-4-primer-administrador">4.
+Primer administrador</a></li>
+<li><a href="#5-https-producción" id="toc-5-https-producción">5. HTTPS
+(producción)</a></li>
+<li><a href="#6-respaldo-diario" id="toc-6-respaldo-diario">6. Respaldo
+diario</a></li>
+<li><a href="#7-comprobar" id="toc-7-comprobar">7. Comprobar</a></li>
+</ul></li>
+<li><a href="#34-configuración-posterior"
+id="toc-34-configuración-posterior">3.4 Configuración posterior</a></li>
+<li><a href="#35-pasar-los-datos-desde-otro-servidor"
+id="toc-35-pasar-los-datos-desde-otro-servidor">3.5 Pasar los datos
+desde otro servidor</a></li>
+<li><a href="#36-actualizar-a-una-nueva-versión"
+id="toc-36-actualizar-a-una-nueva-versión">3.6 Actualizar a una nueva
+versión</a></li>
+<li><a href="#37-varios-entornos" id="toc-37-varios-entornos">3.7 Varios
+entornos</a></li>
+<li><a href="#38-problemas-frecuentes"
+id="toc-38-problemas-frecuentes">3.8 Problemas frecuentes</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

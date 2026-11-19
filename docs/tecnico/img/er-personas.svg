@@ -1,0 +1,210 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1210" height="799" viewBox="0 0 1210 799" font-family="DejaVu Sans, Segoe UI, Arial, sans-serif" font-size="12">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="40" y="48" font-size="20" font-weight="700" fill="#9a602c">Personas, consultas y configuración</text>
+<path d="M440.0 139.5 L376.0 139.5 L376.0 120.5 L310.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M426 139.5 L440 132.5 M426 139.5 L440 139.5 M426 139.5 L440 146.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M421 132.5 V146.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M320 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M325 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M840.0 120.5 L776.0 120.5 L776.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M826 120.5 L840 113.5 M826 120.5 L840 120.5 M826 120.5 L840 127.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M821 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1110.0 139.5 L1126.0 139.5 L1126.0 230.5 L1110.0 230.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1124 139.5 L1110 132.5 M1124 139.5 L1110 139.5 M1124 139.5 L1110 146.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1129 132.5 V146.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1120 223.5 V237.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1125 223.5 V237.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M840.0 349.5 L784.0 349.5 L784.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M826 349.5 L840 342.5 M826 349.5 L840 349.5 M826 349.5 L840 356.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M821 342.5 V356.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1110.0 599.5 L1134.0 599.5 L1134.0 330.5 L1110.0 330.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1124 599.5 L1110 592.5 M1124 599.5 L1110 599.5 M1124 599.5 L1110 606.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1129 592.5 V606.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1120 323.5 V337.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1125 323.5 V337.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M840.0 618.5 L792.0 618.5 L792.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M826 618.5 L840 611.5 M826 618.5 L840 618.5 M826 618.5 L840 625.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M821 611.5 V625.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<g><rect x="40" y="80" width="270" height="169" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M40 86 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="50" y="100" fill="#fff" font-weight="700" font-size="13">departamento</text>
+<text x="300" y="100" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Departamento</text>
+<text x="50" y="124" fill="#1d1d1b" font-weight="700">id</text>
+<text x="264" y="124" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="302" y="124" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="41" y="130" width="268" height="19" fill="#faf6f1"/>
+<text x="50" y="143" fill="#1d1d1b">nombre</text>
+<text x="264" y="143" fill="#77706a" font-size="10.5" text-anchor="end">varchar(120)</text>
+<text x="50" y="162" fill="#1d1d1b">nombre_en<tspan fill="#77706a">?</tspan></text>
+<text x="264" y="162" fill="#77706a" font-size="10.5" text-anchor="end">varchar(120)</text>
+<rect x="41" y="168" width="268" height="19" fill="#faf6f1"/>
+<text x="50" y="181" fill="#1d1d1b">sede<tspan fill="#77706a">?</tspan></text>
+<text x="264" y="181" fill="#77706a" font-size="10.5" text-anchor="end">varchar(20)</text>
+<text x="50" y="200" fill="#1d1d1b">email<tspan fill="#77706a">?</tspan></text>
+<text x="264" y="200" fill="#77706a" font-size="10.5" text-anchor="end">varchar(180)</text>
+<rect x="41" y="206" width="268" height="19" fill="#faf6f1"/>
+<text x="50" y="219" fill="#1d1d1b">telefono<tspan fill="#77706a">?</tspan></text>
+<text x="264" y="219" fill="#77706a" font-size="10.5" text-anchor="end">varchar(40)</text>
+<text x="50" y="238" fill="#1d1d1b">orden</text>
+<text x="264" y="238" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+</g>
+<g><rect x="40" y="300" width="270" height="112" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M40 306 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="50" y="320" fill="#fff" font-weight="700" font-size="13">ajuste</text>
+<text x="300" y="320" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Ajuste</text>
+<text x="50" y="344" fill="#1d1d1b" font-weight="700">clave</text>
+<text x="264" y="344" fill="#77706a" font-size="10.5" text-anchor="end">varchar(60)</text>
+<text x="302" y="344" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="41" y="350" width="268" height="19" fill="#faf6f1"/>
+<text x="50" y="363" fill="#1d1d1b">actualizado_en</text>
+<text x="264" y="363" fill="#77706a" font-size="10.5" text-anchor="end">datetime</text>
+<text x="50" y="382" fill="#1d1d1b">valor</text>
+<text x="264" y="382" fill="#77706a" font-size="10.5" text-anchor="end">text</text>
+<rect x="41" y="388" width="268" height="19" fill="#faf6f1"/>
+<text x="50" y="401" fill="#1d1d1b">cifrado</text>
+<text x="264" y="401" fill="#77706a" font-size="10.5" text-anchor="end">bool</text>
+</g>
+<g><rect x="440" y="80" width="270" height="473" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M440 86 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="450" y="100" fill="#fff" font-weight="700" font-size="13">usuario</text>
+<text x="700" y="100" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Usuario</text>
+<text x="450" y="124" fill="#1d1d1b" font-weight="700">id</text>
+<text x="664" y="124" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="124" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="441" y="130" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="143" fill="#1d1d1b">departamento_id<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="143" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="143" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="450" y="162" fill="#1d1d1b">email</text>
+<text x="664" y="162" fill="#77706a" font-size="10.5" text-anchor="end">varchar(180)</text>
+<text x="702" y="162" fill="#77706a" font-size="10" font-weight="700" text-anchor="end">UQ</text>
+<rect x="441" y="168" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="181" fill="#1d1d1b">nombre</text>
+<text x="664" y="181" fill="#77706a" font-size="10.5" text-anchor="end">varchar(100)</text>
+<text x="450" y="200" fill="#1d1d1b">apellidos</text>
+<text x="664" y="200" fill="#77706a" font-size="10.5" text-anchor="end">varchar(100)</text>
+<rect x="441" y="206" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="219" fill="#1d1d1b">slug</text>
+<text x="664" y="219" fill="#77706a" font-size="10.5" text-anchor="end">varchar(120)</text>
+<text x="702" y="219" fill="#77706a" font-size="10" font-weight="700" text-anchor="end">UQ</text>
+<text x="450" y="238" fill="#1d1d1b">rol</text>
+<text x="664" y="238" fill="#77706a" font-size="10.5" text-anchor="end">varchar(30)</text>
+<rect x="441" y="244" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="257" fill="#1d1d1b">password<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="257" fill="#77706a" font-size="10.5" text-anchor="end">varchar(255)</text>
+<text x="450" y="276" fill="#1d1d1b">ldap_usuario<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="276" fill="#77706a" font-size="10.5" text-anchor="end">varchar(100)</text>
+<text x="702" y="276" fill="#77706a" font-size="10" font-weight="700" text-anchor="end">UQ</text>
+<rect x="441" y="282" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="295" fill="#1d1d1b">google_id<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="295" fill="#77706a" font-size="10.5" text-anchor="end">varchar(64)</text>
+<text x="702" y="295" fill="#77706a" font-size="10" font-weight="700" text-anchor="end">UQ</text>
+<text x="450" y="314" fill="#1d1d1b">activo</text>
+<text x="664" y="314" fill="#77706a" font-size="10.5" text-anchor="end">bool</text>
+<rect x="441" y="320" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="333" fill="#1d1d1b">visible_en_directorio</text>
+<text x="664" y="333" fill="#77706a" font-size="10.5" text-anchor="end">bool</text>
+<text x="450" y="352" fill="#1d1d1b">cargo<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="352" fill="#77706a" font-size="10.5" text-anchor="end">varchar(120)</text>
+<rect x="441" y="358" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="371" fill="#1d1d1b">cargo_en<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="371" fill="#77706a" font-size="10.5" text-anchor="end">varchar(120)</text>
+<text x="450" y="390" fill="#1d1d1b">telefono<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="390" fill="#77706a" font-size="10.5" text-anchor="end">varchar(40)</text>
+<rect x="441" y="396" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="409" fill="#1d1d1b">ubicacion<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="409" fill="#77706a" font-size="10.5" text-anchor="end">varchar(120)</text>
+<text x="450" y="428" fill="#1d1d1b">enlace_cita<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="428" fill="#77706a" font-size="10.5" text-anchor="end">varchar(500)</text>
+<rect x="441" y="434" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="447" fill="#1d1d1b">sede<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="447" fill="#77706a" font-size="10.5" text-anchor="end">varchar(20)</text>
+<text x="450" y="466" fill="#1d1d1b">biografia<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="466" fill="#77706a" font-size="10.5" text-anchor="end">text</text>
+<rect x="441" y="472" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="485" fill="#1d1d1b">biografia_en<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="485" fill="#77706a" font-size="10.5" text-anchor="end">text</text>
+<text x="450" y="504" fill="#1d1d1b">foto<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="504" fill="#77706a" font-size="10.5" text-anchor="end">varchar(80)</text>
+<rect x="441" y="510" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="523" fill="#1d1d1b">creado_en</text>
+<text x="664" y="523" fill="#77706a" font-size="10.5" text-anchor="end">datetime</text>
+<text x="450" y="542" fill="#1d1d1b">ultimo_acceso<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="542" fill="#77706a" font-size="10.5" text-anchor="end">datetime</text>
+</g>
+<g><rect x="840" y="80" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 86 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#c49a6c"/>
+<text x="850" y="100" fill="#fff" font-weight="700" font-size="13">usuario_materia</text>
+<text x="850" y="124" fill="#1d1d1b" font-weight="700">usuario_id</text>
+<text x="1064" y="124" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="124" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+<rect x="841" y="130" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="143" fill="#1d1d1b" font-weight="700">materia_id</text>
+<text x="1064" y="143" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="143" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+</g>
+<g><rect x="840" y="190" width="270" height="55" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 196 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#8c8c8c"/>
+<text x="850" y="210" fill="#fff" font-weight="700" font-size="13">materia</text>
+<text x="1100" y="210" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Materia</text>
+<text x="850" y="234" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1064" y="234" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="234" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+</g>
+<g><rect x="840" y="290" width="270" height="245" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 296 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="850" y="310" fill="#fff" font-weight="700" font-size="13">consulta</text>
+<text x="1100" y="310" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Consulta</text>
+<text x="850" y="334" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1064" y="334" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="334" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="841" y="340" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="353" fill="#1d1d1b">bibliotecario_id</text>
+<text x="1064" y="353" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="353" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="850" y="372" fill="#1d1d1b">nombre</text>
+<text x="1064" y="372" fill="#77706a" font-size="10.5" text-anchor="end">varchar(120)</text>
+<rect x="841" y="378" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="391" fill="#1d1d1b">correo</text>
+<text x="1064" y="391" fill="#77706a" font-size="10.5" text-anchor="end">varchar(180)</text>
+<text x="850" y="410" fill="#1d1d1b">asunto</text>
+<text x="1064" y="410" fill="#77706a" font-size="10.5" text-anchor="end">varchar(200)</text>
+<rect x="841" y="416" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="429" fill="#1d1d1b">token</text>
+<text x="1064" y="429" fill="#77706a" font-size="10.5" text-anchor="end">varchar(64)</text>
+<text x="1102" y="429" fill="#77706a" font-size="10" font-weight="700" text-anchor="end">UQ</text>
+<text x="850" y="448" fill="#1d1d1b">idioma</text>
+<text x="1064" y="448" fill="#77706a" font-size="10.5" text-anchor="end">varchar(2)</text>
+<rect x="841" y="454" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="467" fill="#1d1d1b">pendiente</text>
+<text x="1064" y="467" fill="#77706a" font-size="10.5" text-anchor="end">bool</text>
+<text x="850" y="486" fill="#1d1d1b">cerrada</text>
+<text x="1064" y="486" fill="#77706a" font-size="10.5" text-anchor="end">bool</text>
+<rect x="841" y="492" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="505" fill="#1d1d1b">creada_en</text>
+<text x="1064" y="505" fill="#77706a" font-size="10.5" text-anchor="end">datetime</text>
+<text x="850" y="524" fill="#1d1d1b">actualizada_en</text>
+<text x="1064" y="524" fill="#77706a" font-size="10.5" text-anchor="end">datetime</text>
+</g>
+<g><rect x="840" y="540" width="270" height="169" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 546 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="850" y="560" fill="#fff" font-weight="700" font-size="13">mensaje_consulta</text>
+<text x="1100" y="560" fill="#fff" font-size="11" text-anchor="end" opacity=".85">MensajeConsulta</text>
+<text x="850" y="584" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1064" y="584" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="584" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="841" y="590" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="603" fill="#1d1d1b">consulta_id</text>
+<text x="1064" y="603" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="603" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="850" y="622" fill="#1d1d1b">autor_id<tspan fill="#77706a">?</tspan></text>
+<text x="1064" y="622" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="622" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<rect x="841" y="628" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="641" fill="#1d1d1b">texto</text>
+<text x="1064" y="641" fill="#77706a" font-size="10.5" text-anchor="end">text</text>
+<text x="850" y="660" fill="#1d1d1b">de_personal</text>
+<text x="1064" y="660" fill="#77706a" font-size="10.5" text-anchor="end">bool</text>
+<rect x="841" y="666" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="679" fill="#1d1d1b">enviado_en</text>
+<text x="1064" y="679" fill="#77706a" font-size="10.5" text-anchor="end">datetime</text>
+<text x="850" y="698" fill="#1d1d1b">correo_enviado</text>
+<text x="1064" y="698" fill="#77706a" font-size="10.5" text-anchor="end">bool</text>
+</g>
+<text x="40" y="765" fill="#77706a" font-size="11.5">PK clave primaria · FK clave foránea · UQ única · «?» admite nulo (relación opcional)</text>
+<text x="40" y="781" fill="#77706a" font-size="11.5">Pata de gallo = muchos · doble barra = uno · cabecera gris = tabla de otro diagrama (solo claves) · cabecera clara = tabla intermedia (muchos a muchos)</text>
+</svg>

@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2. Modelo de datos · Documento técnico de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Documento técnico · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el documento</label>
+    <input id="buscar" type="search" placeholder="Buscar en el documento…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-arquitectura.html">1. Arquitectura</a></li><li><a href="02-modelo-de-datos.html" aria-current="page">2. Modelo de datos</a></li><li><a href="03-instalacion.html">3. Instalación en otro servidor</a></li><li><a href="04-diccionario-de-datos.html">4. Diccionario de datos</a></li><li><a href="05-desarrollo.html">5. Desarrollo</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Documento técnico</a> › 2. Modelo de datos</p>
+    <article><h1 id="2-modelo-de-datos">2. Modelo de datos</h1>
+<p>La base de datos (MySQL 8.4, <code>utf8mb4_unicode_ci</code>) tiene
+22 tablas: 16 entidades de Doctrine y 6 tablas intermedias de relaciones
+muchos a muchos. El esquema lo definen las entidades de
+<code>src/Entity</code> y lo crean las migraciones de
+<code>migrations/</code>; el detalle de cada columna está en el <a
+href="04-diccionario-de-datos.html">capítulo 4</a>.</p>
+<h2 id="21-diagrama-entidad-relación">2.1 Diagrama entidad-relación<a class="ancla" href="#21-diagrama-entidad-relación" aria-label="Enlace a esta sección">#</a></h2>
+<p>Los diagramas se generan desde las entidades con
+<code>scripts/generar-diagrama-er.py</code>, así que siempre
+corresponden al código. Las versiones vectoriales (SVG) están en
+<code>docs/tecnico/img/</code>.</p>
+<p><strong>Cómo leerlos.</strong> Cada caja es una tabla, con sus
+columnas, tipo y claves (PK primaria, FK foránea, UQ única). Un «?»
+indica que la columna admite nulo; en una clave foránea, que la relación
+es opcional. Las líneas unen la clave foránea (lado «muchos», pata de
+gallo) con la clave primaria de la tabla referida (lado «uno», doble
+barra). Las cabeceras claras son tablas intermedias y las grises, tablas
+de otro diagrama que se muestran solo con sus claves.</p>
+<h3 id="vista-general">Vista general<a class="ancla" href="#vista-general" aria-label="Enlace a esta sección">#</a></h3>
+<p>Todas las tablas, solo con sus claves.</p>
+<figure>
+<img src="../img/er-general.png"
+alt="Vista general del modelo de datos" />
+<figcaption aria-hidden="true">Vista general del modelo de
+datos</figcaption>
+</figure>
+<h3 id="guías-y-su-contenido">Guías y su contenido<a class="ancla" href="#guías-y-su-contenido" aria-label="Enlace a esta sección">#</a></h3>
+<p>Una <strong>guía</strong> tiene <strong>pestañas</strong>; cada
+pestaña, <strong>secciones</strong>; cada sección,
+<strong>bloques</strong>. Las guías se relacionan con el
+<strong>usuario</strong> responsable, los coeditores y los lectores
+asignados, y con sus materias.</p>
+<figure>
+<img src="../img/er-guias.png"
+alt="Guías, pestañas, secciones y bloques" />
+<figcaption aria-hidden="true">Guías, pestañas, secciones y
+bloques</figcaption>
+</figure>
+<h3 id="recursos-bibliográficos-y-sugerencias">Recursos bibliográficos y
+sugerencias</h3>
+<p>La lista A-Z (<strong>recurso</strong>) con sus
+<strong>autores</strong> (en orden, por <code>recurso_autor</code>),
+<strong>editorial</strong>, <strong>país</strong> y materias. Una
+<strong>sugerencia</strong> del público, al aprobarse, queda enlazada al
+recurso que creó.</p>
+<figure>
+<img src="../img/er-recursos.png"
+alt="Recursos, autores, editoriales y sugerencias" />
+<figcaption aria-hidden="true">Recursos, autores, editoriales y
+sugerencias</figcaption>
+</figure>
+<h3 id="personas-consultas-y-configuración">Personas, consultas y
+configuración</h3>
+<p>El personal (<strong>usuario</strong>) con su
+<strong>departamento</strong> y materias de especialidad; las
+<strong>consultas</strong> que recibe y sus <strong>mensajes</strong>; y
+los <strong>ajustes</strong> del sitio (tabla sin relaciones).</p>
+<figure>
+<img src="../img/er-personas.png" alt="Usuarios, consultas y ajustes" />
+<figcaption aria-hidden="true">Usuarios, consultas y
+ajustes</figcaption>
+</figure>
+<h2 id="22-reglas-del-modelo">2.2 Reglas del modelo<a class="ancla" href="#22-reglas-del-modelo" aria-label="Enlace a esta sección">#</a></h2>
+<h3 id="guías">Guías<a class="ancla" href="#guías" aria-label="Enlace a esta sección">#</a></h3>
+<ul>
+<li><code>guia.slug</code> es único y forma la dirección pública
+<code>/{idioma}/guias/{slug}</code>. <code>pestana.slug</code> se
+calcula del título y no se repite dentro de la guía (lo controla la
+entidad, no un índice).</li>
+<li><code>guia.estado</code>: <code>borrador</code> o
+<code>publicada</code> (<code>publicada_en</code> guarda la primera
+publicación). <code>guia.visibilidad</code>: <code>publica</code> o
+<code>restringida</code>; las restringidas solo las ven
+<code>guia_lector</code>, el responsable, los coeditores y los
+administradores (<code>GuiaVoter</code>).</li>
+<li>Autorreferencias de <code>guia</code>: <code>traduccion_id</code>
+(la misma guía en el otro idioma; se mantiene en ambos sentidos) y
+<code>principal_id</code> (subguía de otra guía; el formulario impide
+ciclos).</li>
+<li><code>guia.comun = 1</code> marca una guía de contenido común: no se
+publica y todo su contenido es reutilizable.</li>
+<li><code>pestana.padre_id</code> permite subpestañas de un nivel. Una
+pestaña con <code>enlace</code> no tiene contenido: lleva a esa
+URL.</li>
+<li><code>posicion</code> ordena pestañas, secciones y bloques dentro de
+su contenedor.</li>
+<li>Al eliminar una guía se borran en cascada sus pestañas, secciones y
+bloques (clave foránea <code>ON DELETE CASCADE</code>).</li>
+</ul>
+<h3 id="contenido-compartido-vínculos">Contenido compartido
+(vínculos)</h3>
+<p><code>pestana.origen_id</code> y <code>bloque.origen_id</code>
+convierten una pestaña o un bloque en un <strong>vínculo</strong> a otro
+de otra guía: el vínculo no guarda contenido propio y muestra el del
+original (<code>App\Servicio\ContenidoCompartido</code>). Si se borra el
+original, se borran sus vínculos (cascada); el panel avisa antes y
+ofrece «Convertir en copia propia». Solo se ofrecen para vincular los
+elementos con <code>compartible = 1</code> y todos los de una guía
+común.</p>
+<h3 id="recursos-y-materias">Recursos y materias<a class="ancla" href="#recursos-y-materias" aria-label="Enlace a esta sección">#</a></h3>
+<ul>
+<li><code>recurso.url</code> guarda la dirección original; si
+<code>requiere_proxy = 1</code>, el enlace público se arma con la
+plantilla <code>PROXY_URL</code>
+(<code>App\Servicio\ProxyAccesum</code>). La importación quita el
+prefijo del proxy si viene incluido.</li>
+<li><code>recurso.letra</code> se calcula del título y alimenta el
+índice A-Z.</li>
+<li>Los libros y revistas agregados en los bloques Libros y Revistas se
+incorporan solos como recursos (el ítem del bloque guarda el
+<code>id</code> del recurso en
+<code>contenido.items[].recurso</code>).</li>
+<li><strong>Materias:</strong> las 334 categorías ASJC de Scopus son
+filas de <code>materia</code> con <code>codigo_asjc</code> (únicas, no
+se eliminan; las crea la migración <code>Version20261119150000</code> y
+<code>app:materias-asjc</code>). Las materias propias tienen
+<code>codigo_asjc = NULL</code> y se clasifican en una o más categorías
+en <code>materia.asjc</code> (lista JSON de códigos). Al filtrar por una
+categoría se incluyen las materias propias clasificadas en ella.
+Homologar o eliminar una materia propia reasigna sus relaciones
+(<code>HomologadorMaterias</code>).</li>
+</ul>
+<h3 id="personas-y-consultas">Personas y consultas<a class="ancla" href="#personas-y-consultas" aria-label="Enlace a esta sección">#</a></h3>
+<ul>
+<li><code>usuario.email</code> es único y es el identificador para
+entrar. <code>password</code> es nulo si la persona entra solo por LDAP
+(<code>ldap_usuario</code>) o Google (<code>google_id</code>, que se
+completa en el primer acceso con el correo registrado).</li>
+<li>Dar de baja = <code>activo = 0</code>; no se borran filas, para
+conservar la autoría.</li>
+<li>El panel no borra usuarios. Si se borrara una fila a mano, sus guías
+quedarían sin responsable (<code>SET NULL</code>) y sus consultas se
+borrarían (cascada).</li>
+<li><code>consulta.token</code> es un valor aleatorio de 64 caracteres
+que da acceso a la conversación sin cuenta.</li>
+</ul>
+<h3 id="ajustes">Ajustes<a class="ancla" href="#ajustes" aria-label="Enlace a esta sección">#</a></h3>
+<p><code>ajuste</code> es una tabla clave-valor (<code>clave</code> es
+la PK) con los datos de Apariencia e Integraciones. Si
+<code>cifrado = 1</code>, <code>valor</code> está cifrado con sodium
+usando una clave derivada de <code>APP_SECRET</code>: al restaurar en un
+servidor con otro <code>APP_SECRET</code>, esos valores se descartan
+(<code>scripts/restaurar.sh</code> los borra) y hay que volver a
+escribirlos.</p>
+<h2 id="23-contenido-de-los-bloques-bloquecontenido">2.3 Contenido de
+los bloques (<code>bloque.contenido</code>)</h2>
+<p><code>bloque.contenido</code> es JSON y su forma depende de
+<code>bloque.tipo</code>. Lo arma
+<code>GuiaController::contenido()</code> al guardar y lo lee
+<code>App\Servicio\BloquesGuia</code> al mostrar.</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Contenido</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>texto</code></td>
+<td><code>{"html": "&lt;p&gt;…&lt;/p&gt;"}</code> (HTML saneado)</td>
+</tr>
+<tr class="even">
+<td><code>recursos</code></td>
+<td><code>{"ids": [12, 5, …], "descripcion": true, "orden": "manual"\|"titulo"}</code>
+(ids de <code>recurso</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>perfil</code></td>
+<td><code>{"usuario": 3}</code> (id de <code>usuario</code>)</td>
+</tr>
+<tr class="even">
+<td><code>video</code></td>
+<td><code>{"url": "https://youtu.be/…", "descripcion": "…"}</code></td>
+</tr>
+<tr class="odd">
+<td><code>busqueda</code></td>
+<td><code>{"texto": "…", "tipo": "todos"\|"libros"\|"tesis"\|"articulos"\|"revistas", "materias": [ids], "otras": false}</code>
+(buscador del catálogo)</td>
+</tr>
+<tr class="even">
+<td><code>enlaces</code></td>
+<td><code>{"items": [{"titulo", "url", "descripcion", "en_recursos": bool, "recurso": id\|null}]}</code></td>
+</tr>
+<tr class="odd">
+<td><code>libros</code></td>
+<td><code>{"presentacion": "cuadricula"\|"carrusel"\|"lista", "columnas": 0\|2…6, "por_pagina": 0\|5\|10\|15\|20, "orden": "manual"\|"titulo", "items": [{"recurso", "titulo", "autor", "isbn", "doi", "editorial", "anio", "enlace", "formato", "registro" (Primo), "mms" (Alma)}]}</code></td>
+</tr>
+<tr class="even">
+<td><code>revistas</code></td>
+<td>Igual que <code>libros</code>, con <code>issn</code> y
+<code>eissn</code> en vez de autor, ISBN y DOI</td>
+</tr>
+<tr class="odd">
+<td><code>diapositivas</code></td>
+<td><code>{"items": [{"imagen": "archivo.webp", "titulo", "enlace"}]}</code>
+(imágenes en <code>public/uploads/guias</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Ejemplo de un bloque <code>recursos</code> ordenado
+alfabéticamente:</p>
+<pre class="json"><code>{&quot;ids&quot;: [41, 7, 19], &quot;descripcion&quot;: true, &quot;orden&quot;: &quot;titulo&quot;}</code></pre>
+<h2 id="24-archivos-fuera-de-la-base-de-datos">2.4 Archivos fuera de la
+base de datos</h2>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 53%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Carpeta</th>
+<th>Contenido</th>
+<th>Columna que lo nombra</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>public/uploads/personal</code></td>
+<td>Fotos del personal</td>
+<td><code>usuario.foto</code></td>
+</tr>
+<tr class="even">
+<td><code>public/uploads/guias</code></td>
+<td>Banners, íconos y diapositivas de las guías</td>
+<td><code>guia.banner</code>, <code>guia.icono</code>,
+<code>bloque.contenido</code></td>
+</tr>
+<tr class="odd">
+<td><code>public/uploads/sitio</code></td>
+<td>Logo e imagen de portada</td>
+<td><code>ajuste</code> (<code>LOGO</code>,
+<code>IMAGEN_PORTADA</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><code>scripts/respaldar.sh</code> respalda la base y estas carpetas
+juntas.</p>
+<h2 id="25-migraciones">2.5 Migraciones<a class="ancla" href="#25-migraciones" aria-label="Enlace a esta sección">#</a></h2>
+<p>Cada cambio de esquema es una migración en <code>migrations/</code>
+(<code>VersionAAAAMMDDhhmmss.php</code>), aplicada en orden por
+<code>doctrine:migrations:migrate</code>. Para cambiar el modelo:</p>
+<ol type="1">
+<li>Modifica la entidad en <code>src/Entity</code>.</li>
+<li>Genera la migración:
+<code>php bin/console doctrine:migrations:diff</code> (con MySQL 8.4) y
+revísala; si hace falta mover datos, agrégalo a mano en
+<code>up()</code>.</li>
+<li>Aplica: <code>php bin/console doctrine:migrations:migrate</code> y
+verifica con <code>doctrine:schema:validate</code>.</li>
+<li>Regenera los diagramas y el diccionario:
+<code>python3 scripts/generar-diagrama-er.py</code>.</li>
+</ol>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="01-arquitectura.html"><small>← Anterior</small>1. Arquitectura</a><a class="siguiente" href="03-instalacion.html"><small>Siguiente →</small>3. Instalación en otro servidor</a></nav>
+    <footer class="pie">Bibliotecas UCN · Documento técnico generado el 19-11-2026 a partir de <code>docs/tecnico</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a href="#21-diagrama-entidad-relación"
+id="toc-21-diagrama-entidad-relación">2.1 Diagrama entidad-relación</a>
+<ul>
+<li><a href="#vista-general" id="toc-vista-general">Vista
+general</a></li>
+<li><a href="#guías-y-su-contenido" id="toc-guías-y-su-contenido">Guías
+y su contenido</a></li>
+<li><a href="#recursos-bibliográficos-y-sugerencias"
+id="toc-recursos-bibliográficos-y-sugerencias">Recursos bibliográficos y
+sugerencias</a></li>
+<li><a href="#personas-consultas-y-configuración"
+id="toc-personas-consultas-y-configuración">Personas, consultas y
+configuración</a></li>
+</ul></li>
+<li><a href="#22-reglas-del-modelo" id="toc-22-reglas-del-modelo">2.2
+Reglas del modelo</a>
+<ul>
+<li><a href="#guías" id="toc-guías">Guías</a></li>
+<li><a href="#contenido-compartido-vínculos"
+id="toc-contenido-compartido-vínculos">Contenido compartido
+(vínculos)</a></li>
+<li><a href="#recursos-y-materias" id="toc-recursos-y-materias">Recursos
+y materias</a></li>
+<li><a href="#personas-y-consultas"
+id="toc-personas-y-consultas">Personas y consultas</a></li>
+<li><a href="#ajustes" id="toc-ajustes">Ajustes</a></li>
+</ul></li>
+<li><a href="#23-contenido-de-los-bloques-bloquecontenido"
+id="toc-23-contenido-de-los-bloques-bloquecontenido">2.3 Contenido de
+los bloques (<code>bloque.contenido</code>)</a></li>
+<li><a href="#24-archivos-fuera-de-la-base-de-datos"
+id="toc-24-archivos-fuera-de-la-base-de-datos">2.4 Archivos fuera de la
+base de datos</a></li>
+<li><a href="#25-migraciones" id="toc-25-migraciones">2.5
+Migraciones</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>
