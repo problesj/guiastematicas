@@ -1,0 +1,370 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2010" height="844" viewBox="0 0 2010 844" font-family="DejaVu Sans, Segoe UI, Arial, sans-serif" font-size="12">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="40" y="48" font-size="20" font-weight="700" fill="#9a602c">Vista general (solo claves)</text>
+<path d="M440.0 139.5 L376.0 139.5 L376.0 120.5 L310.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M426 139.5 L440 132.5 M426 139.5 L440 139.5 M426 139.5 L440 146.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M421 132.5 V146.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M320 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M325 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M710.0 249.5 L726.0 249.5 L726.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M724 249.5 L710 242.5 M724 249.5 L710 249.5 M724 249.5 L710 256.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M729 242.5 V256.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M710.0 359.5 L734.0 359.5 L734.0 230.5 L710.0 230.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M724 359.5 L710 352.5 M724 359.5 L710 359.5 M724 359.5 L710 366.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M729 352.5 V366.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 223.5 V237.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 223.5 V237.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M710.0 378.5 L742.0 378.5 L742.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M724 378.5 L710 371.5 M724 378.5 L710 378.5 M724 378.5 L710 385.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M729 371.5 V385.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M440.0 609.5 L384.0 609.5 L384.0 680.5 L310.0 680.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M426 609.5 L440 602.5 M426 609.5 L440 609.5 M426 609.5 L440 616.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M421 602.5 V616.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M320 673.5 V687.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M325 673.5 V687.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M440.0 739.5 L392.0 739.5 L392.0 680.5 L310.0 680.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M426 739.5 L440 732.5 M426 739.5 L440 739.5 M426 739.5 L440 746.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M421 732.5 V746.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M320 673.5 V687.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M325 673.5 V687.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1110.0 120.5 L1200.0 120.5 L1200.0 120.5 L1240.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1124 120.5 L1110 113.5 M1124 120.5 L1110 120.5 M1124 120.5 L1110 127.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1129 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1230 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1225 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M840.0 139.5 L776.0 139.5 L776.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M826 139.5 L840 132.5 M826 139.5 L840 139.5 M826 139.5 L840 146.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M821 132.5 V146.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1110.0 220.5 L1192.0 220.5 L1192.0 120.5 L1240.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1124 220.5 L1110 213.5 M1124 220.5 L1110 220.5 M1124 220.5 L1110 227.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1129 213.5 V227.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1230 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1225 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M840.0 239.5 L784.0 239.5 L784.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M826 239.5 L840 232.5 M826 239.5 L840 239.5 M826 239.5 L840 246.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M821 232.5 V246.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M840.0 320.5 L792.0 320.5 L792.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M826 320.5 L840 313.5 M826 320.5 L840 320.5 M826 320.5 L840 327.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M821 313.5 V327.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1110.0 339.5 L1600.0 339.5 L1600.0 570.5 L1640.0 570.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1124 339.5 L1110 332.5 M1124 339.5 L1110 339.5 M1124 339.5 L1110 346.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1129 332.5 V346.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1630 563.5 V577.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1625 563.5 V577.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M840.0 449.5 L800.0 449.5 L800.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M826 449.5 L840 442.5 M826 449.5 L840 449.5 M826 449.5 L840 456.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M821 442.5 V456.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1110.0 468.5 L1184.0 468.5 L1184.0 420.5 L1240.0 420.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1124 468.5 L1110 461.5 M1124 468.5 L1110 468.5 M1124 468.5 L1110 475.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1129 461.5 V475.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1230 413.5 V427.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1225 413.5 V427.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1110.0 609.5 L1176.0 609.5 L1176.0 420.5 L1240.0 420.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1124 609.5 L1110 602.5 M1124 609.5 L1110 609.5 M1124 609.5 L1110 616.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1129 602.5 V616.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1230 413.5 V427.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1225 413.5 V427.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M840.0 628.5 L808.0 628.5 L808.0 590.5 L710.0 590.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M826 628.5 L840 621.5 M826 628.5 L840 628.5 M826 628.5 L840 635.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M821 621.5 V635.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 583.5 V597.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 583.5 V597.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1510.0 139.5 L1526.0 139.5 L1526.0 120.5 L1510.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1524 139.5 L1510 132.5 M1524 139.5 L1510 139.5 M1524 139.5 L1510 146.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1529 132.5 V146.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1520 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1525 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1240.0 158.5 L816.0 158.5 L816.0 120.5 L710.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1226 158.5 L1240 151.5 M1226 158.5 L1240 158.5 M1226 158.5 L1240 165.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1221 151.5 V165.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1510.0 177.5 L1534.0 177.5 L1534.0 120.5 L1510.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1524 177.5 L1510 170.5 M1524 177.5 L1510 177.5 M1524 177.5 L1510 184.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1529 170.5 V184.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1520 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1525 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1240.0 280.5 L1176.0 280.5 L1176.0 430.5 L1110.0 430.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1226 280.5 L1240 273.5 M1226 280.5 L1240 280.5 M1226 280.5 L1240 287.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1221 273.5 V287.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1120 423.5 V437.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1125 423.5 V437.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1510.0 299.5 L1592.0 299.5 L1592.0 570.5 L1640.0 570.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1524 299.5 L1510 292.5 M1524 299.5 L1510 299.5 M1524 299.5 L1510 306.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1529 292.5 V306.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1630 563.5 V577.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1625 563.5 V577.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1240.0 439.5 L1180.0 439.5 L1180.0 720.5 L710.0 720.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1226 439.5 L1240 432.5 M1226 439.5 L1240 439.5 M1226 439.5 L1240 446.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1221 432.5 V446.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M720 713.5 V727.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M725 713.5 V727.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1640.0 139.5 L1576.0 139.5 L1576.0 120.5 L1510.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1626 139.5 L1640 132.5 M1626 139.5 L1640 139.5 M1626 139.5 L1640 146.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1621 132.5 V146.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1520 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1525 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1910.0 158.5 L1926.0 158.5 L1926.0 120.5 L1910.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1924 158.5 L1910 151.5 M1924 158.5 L1910 158.5 M1924 158.5 L1910 165.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1929 151.5 V165.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1920 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1925 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1910.0 177.5 L1934.0 177.5 L1934.0 120.5 L1910.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1924 177.5 L1910 170.5 M1924 177.5 L1910 177.5 M1924 177.5 L1910 184.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1929 170.5 V184.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1920 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1925 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1910.0 269.5 L1942.0 269.5 L1942.0 120.5 L1910.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1924 269.5 L1910 262.5 M1924 269.5 L1910 269.5 M1924 269.5 L1910 276.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1929 262.5 V276.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1920 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1925 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1910.0 369.5 L1950.0 369.5 L1950.0 250.5 L1910.0 250.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1924 369.5 L1910 362.5 M1924 369.5 L1910 369.5 M1924 369.5 L1910 376.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1929 362.5 V376.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1920 243.5 V257.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1925 243.5 V257.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1910.0 388.5 L1958.0 388.5 L1958.0 350.5 L1910.0 350.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1924 388.5 L1910 381.5 M1924 388.5 L1910 388.5 M1924 388.5 L1910 395.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1929 381.5 V395.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1920 343.5 V357.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1925 343.5 V357.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1640.0 460.5 L1584.0 460.5 L1584.0 120.5 L1510.0 120.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1626 460.5 L1640 453.5 M1626 460.5 L1640 460.5 M1626 460.5 L1640 467.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1621 453.5 V467.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1520 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1525 113.5 V127.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1910.0 479.5 L1966.0 479.5 L1966.0 570.5 L1910.0 570.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1924 479.5 L1910 472.5 M1924 479.5 L1910 479.5 M1924 479.5 L1910 486.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1929 472.5 V486.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1920 563.5 V577.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1925 563.5 V577.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1640.0 660.5 L1592.0 660.5 L1592.0 420.5 L1510.0 420.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1626 660.5 L1640 653.5 M1626 660.5 L1640 660.5 M1626 660.5 L1640 667.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1621 653.5 V667.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1520 413.5 V427.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1525 413.5 V427.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1910.0 679.5 L1974.0 679.5 L1974.0 570.5 L1910.0 570.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/>
+<path d="M1924 679.5 L1910 672.5 M1924 679.5 L1910 679.5 M1924 679.5 L1910 686.5" stroke="#7a6a5a" stroke-width="1.4" fill="none"/><path d="M1929 672.5 V686.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<path d="M1920 563.5 V577.5" stroke="#7a6a5a" stroke-width="1.4"/><path d="M1925 563.5 V577.5" stroke="#7a6a5a" stroke-width="1.4"/>
+<g><rect x="40" y="80" width="270" height="55" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M40 86 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="50" y="100" fill="#fff" font-weight="700" font-size="13">departamento</text>
+<text x="300" y="100" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Departamento</text>
+<text x="50" y="124" fill="#1d1d1b" font-weight="700">id</text>
+<text x="264" y="124" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="302" y="124" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+</g>
+<g><rect x="40" y="210" width="270" height="55" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M40 216 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="50" y="230" fill="#fff" font-weight="700" font-size="13">ajuste</text>
+<text x="300" y="230" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Ajuste</text>
+<text x="50" y="254" fill="#1d1d1b" font-weight="700">clave</text>
+<text x="264" y="254" fill="#77706a" font-size="10.5" text-anchor="end">varchar(60)</text>
+<text x="302" y="254" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+</g>
+<g><rect x="40" y="640" width="270" height="55" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M40 646 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="50" y="660" fill="#fff" font-weight="700" font-size="13">pais</text>
+<text x="300" y="660" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Pais</text>
+<text x="50" y="684" fill="#1d1d1b" font-weight="700">id</text>
+<text x="264" y="684" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="302" y="684" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+</g>
+<g><rect x="440" y="80" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M440 86 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="450" y="100" fill="#fff" font-weight="700" font-size="13">usuario</text>
+<text x="700" y="100" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Usuario</text>
+<text x="450" y="124" fill="#1d1d1b" font-weight="700">id</text>
+<text x="664" y="124" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="124" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="441" y="130" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="143" fill="#1d1d1b">departamento_id<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="143" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="143" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="440" y="190" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M440 196 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="450" y="210" fill="#fff" font-weight="700" font-size="13">consulta</text>
+<text x="700" y="210" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Consulta</text>
+<text x="450" y="234" fill="#1d1d1b" font-weight="700">id</text>
+<text x="664" y="234" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="234" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="441" y="240" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="253" fill="#1d1d1b">bibliotecario_id</text>
+<text x="664" y="253" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="253" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="440" y="300" width="270" height="93" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M440 306 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="450" y="320" fill="#fff" font-weight="700" font-size="13">mensaje_consulta</text>
+<text x="700" y="320" fill="#fff" font-size="11" text-anchor="end" opacity=".85">MensajeConsulta</text>
+<text x="450" y="344" fill="#1d1d1b" font-weight="700">id</text>
+<text x="664" y="344" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="344" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="441" y="350" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="363" fill="#1d1d1b">consulta_id</text>
+<text x="664" y="363" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="363" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="450" y="382" fill="#1d1d1b">autor_id<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="382" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="382" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="440" y="550" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M440 556 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="450" y="570" fill="#fff" font-weight="700" font-size="13">autor</text>
+<text x="700" y="570" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Autor</text>
+<text x="450" y="594" fill="#1d1d1b" font-weight="700">id</text>
+<text x="664" y="594" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="594" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="441" y="600" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="613" fill="#1d1d1b">pais_id<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="613" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="613" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="440" y="680" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M440 686 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="450" y="700" fill="#fff" font-weight="700" font-size="13">editorial</text>
+<text x="700" y="700" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Editorial</text>
+<text x="450" y="724" fill="#1d1d1b" font-weight="700">id</text>
+<text x="664" y="724" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="724" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="441" y="730" width="268" height="19" fill="#faf6f1"/>
+<text x="450" y="743" fill="#1d1d1b">pais_id<tspan fill="#77706a">?</tspan></text>
+<text x="664" y="743" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="702" y="743" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="840" y="80" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 86 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#c49a6c"/>
+<text x="850" y="100" fill="#fff" font-weight="700" font-size="13">guia_coeditor</text>
+<text x="850" y="124" fill="#1d1d1b" font-weight="700">guia_id</text>
+<text x="1064" y="124" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="124" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+<rect x="841" y="130" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="143" fill="#1d1d1b" font-weight="700">usuario_id</text>
+<text x="1064" y="143" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="143" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+</g>
+<g><rect x="840" y="180" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 186 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#c49a6c"/>
+<text x="850" y="200" fill="#fff" font-weight="700" font-size="13">guia_lector</text>
+<text x="850" y="224" fill="#1d1d1b" font-weight="700">guia_id</text>
+<text x="1064" y="224" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="224" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+<rect x="841" y="230" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="243" fill="#1d1d1b" font-weight="700">usuario_id</text>
+<text x="1064" y="243" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="243" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+</g>
+<g><rect x="840" y="280" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 286 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#c49a6c"/>
+<text x="850" y="300" fill="#fff" font-weight="700" font-size="13">usuario_materia</text>
+<text x="850" y="324" fill="#1d1d1b" font-weight="700">usuario_id</text>
+<text x="1064" y="324" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="324" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+<rect x="841" y="330" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="343" fill="#1d1d1b" font-weight="700">materia_id</text>
+<text x="1064" y="343" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="343" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+</g>
+<g><rect x="840" y="390" width="270" height="93" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 396 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="850" y="410" fill="#fff" font-weight="700" font-size="13">sugerencia</text>
+<text x="1100" y="410" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Sugerencia</text>
+<text x="850" y="434" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1064" y="434" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="434" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="841" y="440" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="453" fill="#1d1d1b">decidida_por_id<tspan fill="#77706a">?</tspan></text>
+<text x="1064" y="453" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="453" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="850" y="472" fill="#1d1d1b">recurso_id<tspan fill="#77706a">?</tspan></text>
+<text x="1064" y="472" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="472" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="840" y="550" width="270" height="93" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M840 556 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="850" y="570" fill="#fff" font-weight="700" font-size="13">recurso_autor</text>
+<text x="1100" y="570" fill="#fff" font-size="11" text-anchor="end" opacity=".85">RecursoAutor</text>
+<text x="850" y="594" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1064" y="594" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="594" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="841" y="600" width="268" height="19" fill="#faf6f1"/>
+<text x="850" y="613" fill="#1d1d1b">recurso_id</text>
+<text x="1064" y="613" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="613" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="850" y="632" fill="#1d1d1b">autor_id</text>
+<text x="1064" y="632" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1102" y="632" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="1240" y="80" width="270" height="112" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1240 86 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="1250" y="100" fill="#fff" font-weight="700" font-size="13">guia</text>
+<text x="1500" y="100" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Guia</text>
+<text x="1250" y="124" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1464" y="124" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1502" y="124" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="1241" y="130" width="268" height="19" fill="#faf6f1"/>
+<text x="1250" y="143" fill="#1d1d1b">traduccion_id<tspan fill="#77706a">?</tspan></text>
+<text x="1464" y="143" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1502" y="143" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="1250" y="162" fill="#1d1d1b">responsable_id<tspan fill="#77706a">?</tspan></text>
+<text x="1464" y="162" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1502" y="162" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<rect x="1241" y="168" width="268" height="19" fill="#faf6f1"/>
+<text x="1250" y="181" fill="#1d1d1b">principal_id<tspan fill="#77706a">?</tspan></text>
+<text x="1464" y="181" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1502" y="181" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="1240" y="240" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1240 246 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#c49a6c"/>
+<text x="1250" y="260" fill="#fff" font-weight="700" font-size="13">sugerencia_materia</text>
+<text x="1250" y="284" fill="#1d1d1b" font-weight="700">sugerencia_id</text>
+<text x="1464" y="284" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1502" y="284" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+<rect x="1241" y="290" width="268" height="19" fill="#faf6f1"/>
+<text x="1250" y="303" fill="#1d1d1b" font-weight="700">materia_id</text>
+<text x="1464" y="303" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1502" y="303" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+</g>
+<g><rect x="1240" y="380" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1240 386 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="1250" y="400" fill="#fff" font-weight="700" font-size="13">recurso</text>
+<text x="1500" y="400" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Recurso</text>
+<text x="1250" y="424" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1464" y="424" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1502" y="424" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="1241" y="430" width="268" height="19" fill="#faf6f1"/>
+<text x="1250" y="443" fill="#1d1d1b">editorial_id<tspan fill="#77706a">?</tspan></text>
+<text x="1464" y="443" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1502" y="443" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="1640" y="80" width="270" height="112" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1640 86 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="1650" y="100" fill="#fff" font-weight="700" font-size="13">pestana</text>
+<text x="1900" y="100" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Pestana</text>
+<text x="1650" y="124" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1864" y="124" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="124" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="1641" y="130" width="268" height="19" fill="#faf6f1"/>
+<text x="1650" y="143" fill="#1d1d1b">guia_id</text>
+<text x="1864" y="143" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="143" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="1650" y="162" fill="#1d1d1b">padre_id<tspan fill="#77706a">?</tspan></text>
+<text x="1864" y="162" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="162" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<rect x="1641" y="168" width="268" height="19" fill="#faf6f1"/>
+<text x="1650" y="181" fill="#1d1d1b">origen_id<tspan fill="#77706a">?</tspan></text>
+<text x="1864" y="181" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="181" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="1640" y="210" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1640 216 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="1650" y="230" fill="#fff" font-weight="700" font-size="13">seccion</text>
+<text x="1900" y="230" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Seccion</text>
+<text x="1650" y="254" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1864" y="254" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="254" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="1641" y="260" width="268" height="19" fill="#faf6f1"/>
+<text x="1650" y="273" fill="#1d1d1b">pestana_id</text>
+<text x="1864" y="273" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="273" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="1640" y="310" width="270" height="93" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1640 316 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="1650" y="330" fill="#fff" font-weight="700" font-size="13">bloque</text>
+<text x="1900" y="330" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Bloque</text>
+<text x="1650" y="354" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1864" y="354" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="354" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+<rect x="1641" y="360" width="268" height="19" fill="#faf6f1"/>
+<text x="1650" y="373" fill="#1d1d1b">seccion_id</text>
+<text x="1864" y="373" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="373" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+<text x="1650" y="392" fill="#1d1d1b">origen_id<tspan fill="#77706a">?</tspan></text>
+<text x="1864" y="392" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="392" fill="#2f6f8f" font-size="10" font-weight="700" text-anchor="end">FK</text>
+</g>
+<g><rect x="1640" y="420" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1640 426 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#c49a6c"/>
+<text x="1650" y="440" fill="#fff" font-weight="700" font-size="13">guia_materia</text>
+<text x="1650" y="464" fill="#1d1d1b" font-weight="700">guia_id</text>
+<text x="1864" y="464" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="464" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+<rect x="1641" y="470" width="268" height="19" fill="#faf6f1"/>
+<text x="1650" y="483" fill="#1d1d1b" font-weight="700">materia_id</text>
+<text x="1864" y="483" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="483" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+</g>
+<g><rect x="1640" y="530" width="270" height="55" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1640 536 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#9a602c"/>
+<text x="1650" y="550" fill="#fff" font-weight="700" font-size="13">materia</text>
+<text x="1900" y="550" fill="#fff" font-size="11" text-anchor="end" opacity=".85">Materia</text>
+<text x="1650" y="574" fill="#1d1d1b" font-weight="700">id</text>
+<text x="1864" y="574" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="574" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK</text>
+</g>
+<g><rect x="1640" y="620" width="270" height="74" rx="6" fill="#fff" stroke="#c9b49c" stroke-width="1.2"/>
+<path d="M1640 626 a6 6 0 0 1 6 -6 h258 a6 6 0 0 1 6 6 v24 h-270 z" fill="#c49a6c"/>
+<text x="1650" y="640" fill="#fff" font-weight="700" font-size="13">recurso_materia</text>
+<text x="1650" y="664" fill="#1d1d1b" font-weight="700">recurso_id</text>
+<text x="1864" y="664" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="664" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+<rect x="1641" y="670" width="268" height="19" fill="#faf6f1"/>
+<text x="1650" y="683" fill="#1d1d1b" font-weight="700">materia_id</text>
+<text x="1864" y="683" fill="#77706a" font-size="10.5" text-anchor="end">int</text>
+<text x="1902" y="683" fill="#9a602c" font-size="10" font-weight="700" text-anchor="end">PK FK</text>
+</g>
+<text x="40" y="810" fill="#77706a" font-size="11.5">PK clave primaria · FK clave foránea · UQ única · «?» admite nulo (relación opcional)</text>
+<text x="40" y="826" fill="#77706a" font-size="11.5">Pata de gallo = muchos · doble barra = uno · cabecera gris = tabla de otro diagrama (solo claves) · cabecera clara = tabla intermedia (muchos a muchos)</text>
+</svg>

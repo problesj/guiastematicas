@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inicio · Documento técnico de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Documento técnico · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el documento</label>
+    <input id="buscar" type="search" placeholder="Buscar en el documento…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html" aria-current="page">Inicio</a></li><li><a href="01-arquitectura.html">1. Arquitectura</a></li><li><a href="02-modelo-de-datos.html">2. Modelo de datos</a></li><li><a href="03-instalacion.html">3. Instalación en otro servidor</a></li><li><a href="04-diccionario-de-datos.html">4. Diccionario de datos</a></li><li><a href="05-desarrollo.html">5. Desarrollo</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Documento técnico</a></p>
+    <article><h1 id="documento-técnico--guías-temáticas-de-bibliotecas-ucn">Documento
+técnico · Guías temáticas de Bibliotecas UCN</h1>
+<p>Documentación para desarrolladores y encargados de sistemas: cómo
+está construida la plataforma, su base de datos y cómo instalarla en
+otro servidor. El manual para el personal de la biblioteca está en <a
+href="../../manual/html/index.html">docs/manual</a>.</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Capítulo</th>
+<th>Contenido</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="01-arquitectura.html">1. Arquitectura</a></td>
+<td>Tecnologías, componentes, estructura del código, seguridad e
+integraciones</td>
+</tr>
+<tr class="even">
+<td><a href="02-modelo-de-datos.html">2. Modelo de datos</a></td>
+<td>Diagramas entidad-relación, reglas del modelo y contenido de los
+bloques</td>
+</tr>
+<tr class="odd">
+<td><a href="03-instalacion.html">3. Instalación en otro
+servidor</a></td>
+<td>Requisitos, instalación en un paso o paso a paso, configuración,
+traspaso de datos, actualizaciones y respaldos</td>
+</tr>
+<tr class="even">
+<td><a href="04-diccionario-de-datos.html">4. Diccionario de
+datos</a></td>
+<td>Todas las tablas y columnas (generado desde las entidades)</td>
+</tr>
+<tr class="odd">
+<td><a href="05-desarrollo.html">5. Desarrollo</a></td>
+<td>Entorno local, pruebas, integración continua y cómo hacer
+cambios</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Formatos.</strong> Markdown (esta carpeta, se ve con
+diagramas en GitHub), HTML estilo wiki (esta versión) y Word (<a
+href="../Documento-tecnico-Guias-tematicas-UCN.docx">Documento-tecnico-Guias-tematicas-UCN.docx</a>).
+Se regeneran con:</p>
+<pre><code>python3 scripts/generar-diagrama-er.py     # diagramas ER (SVG y PNG) y capítulo 4
+python3 scripts/generar-manual.py tecnico  # HTML y Word</code></pre>
+<p>Versión del documento: noviembre de 2026 (rama <code>main</code>, 22
+tablas, 18 migraciones).</p>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><span></span><a class="siguiente" href="01-arquitectura.html"><small>Siguiente →</small>1. Arquitectura</a></nav>
+    <footer class="pie">Bibliotecas UCN · Documento técnico generado el 19-11-2026 a partir de <code>docs/tecnico</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"></aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

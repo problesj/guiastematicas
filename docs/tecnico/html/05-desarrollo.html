@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5. Desarrollo · Documento técnico de Guías temáticas UCN</title>
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<header class="barra">
+  <button class="barra__menu" aria-controls="lateral" aria-expanded="false">☰ <span>Menú</span></button>
+  <a class="barra__marca" href="index.html">Documento técnico · Guías temáticas <small>Bibliotecas UCN</small></a>
+  <form class="buscador" role="search" onsubmit="return false">
+    <label for="buscar" class="oculto">Buscar en el documento</label>
+    <input id="buscar" type="search" placeholder="Buscar en el documento…" autocomplete="off">
+    <div id="resultados" class="buscador__resultados" hidden></div>
+  </form>
+</header>
+<div class="cuerpo">
+  <nav id="lateral" class="lateral" aria-label="Capítulos">
+    <p class="lateral__titulo">Capítulos</p>
+    <ul><li><a href="index.html">Inicio</a></li><li><a href="01-arquitectura.html">1. Arquitectura</a></li><li><a href="02-modelo-de-datos.html">2. Modelo de datos</a></li><li><a href="03-instalacion.html">3. Instalación en otro servidor</a></li><li><a href="04-diccionario-de-datos.html">4. Diccionario de datos</a></li><li><a href="05-desarrollo.html" aria-current="page">5. Desarrollo</a></li></ul>
+  </nav>
+  <main class="contenido">
+    <p class="migas"><a href="index.html">Documento técnico</a> › 5. Desarrollo</p>
+    <article><h1 id="5-desarrollo">5. Desarrollo</h1>
+<h2 id="51-entorno-local-con-docker">5.1 Entorno local con Docker<a class="ancla" href="#51-entorno-local-con-docker" aria-label="Enlace a esta sección">#</a></h2>
+<p>Requisitos: Git y Docker con Compose.</p>
+<pre class="bash"><code>git clone https://github.com/problesj/guiastematicas.git &amp;&amp; cd guiastematicas
+docker compose up -d --build
+docker compose exec app composer install
+docker compose exec app chown -R www-data:www-data var
+docker compose exec app php bin/console doctrine:migrations:migrate --no-interaction
+# Datos de ejemplo (solo desarrollo)
+docker compose exec app php bin/console doctrine:fixtures:load --no-interaction</code></pre>
+<ul>
+<li>Sitio: http://localhost:8080 (y <code>/salud</code>). MySQL en
+<code>127.0.0.1:3306</code>, base, usuario y contraseña
+<code>guias</code>.</li>
+<li><code>compose.yaml</code> levanta <code>app</code> (imagen
+<code>docker/php/Dockerfile</code>: Apache 2.4 + PHP 8.5 con las mismas
+extensiones que el servidor) y <code>db</code> (MySQL 8.4). El código se
+monta como volumen: los cambios se ven al recargar.</li>
+<li>Los datos de ejemplo (<code>src/DataFixtures/AppFixtures.php</code>)
+crean departamentos, materias, recursos, guías y cuentas con la
+contraseña <code>guias-desarrollo</code>: <code>admin@ucn.cl</code>
+(administrador), <code>editora1@ucn.cl</code>,
+<code>editor2@ucn.cl</code>, <code>editora3@ucn.cl</code> (editores),
+<code>colaborador@ucn.cl</code> (colaborador) y
+<code>lectora@ucn.cl</code> (lector). <strong>Nunca</strong> se cargan
+en un servidor.</li>
+<li>Para probar integraciones, crea <code>.env.local</code> (no se sube
+al repositorio) con las claves de prueba.</li>
+</ul>
+<p>Sin Docker basta PHP 8.5 con las extensiones del capítulo 1, Composer
+y MySQL 8.4 (o SQLite para pruebas rápidas): <code>symfony serve</code>
+o <code>php -S 127.0.0.1:8000 -t public</code>.</p>
+<h2 id="52-pruebas">5.2 Pruebas<a class="ancla" href="#52-pruebas" aria-label="Enlace a esta sección">#</a></h2>
+<pre class="bash"><code>docker compose exec app php bin/phpunit</code></pre>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Carpeta de <code>tests/</code></th>
+<th>Qué prueba</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Admin/</code>, <code>Panel/</code>, <code>Guias/</code>,
+<code>Recursos/</code>, <code>Personal/</code>, <code>Seguridad/</code>,
+<code>Lti/</code>, <code>Controller/</code></td>
+<td>Pruebas funcionales: piden páginas con el cliente HTTP de Symfony y
+revisan respuestas, permisos y datos guardados</td>
+</tr>
+<tr class="even">
+<td><code>Unidad/</code></td>
+<td>Clases sin base de datos: ASJC, autores, lectura de bibliografía,
+paginación, proxy, recursos, videos</td>
+</tr>
+<tr class="odd">
+<td><code>Comando/</code></td>
+<td>Comandos de consola</td>
+</tr>
+<tr class="even">
+<td><code>CreaDatosTrait.php</code></td>
+<td>Ayudas para crear usuarios, guías, materias y recursos en cada
+prueba</td>
+</tr>
+<tr class="odd">
+<td><code>CatalogoFalso.php</code></td>
+<td>Sustituye Primo/Alma por respuestas fijas: las pruebas no salen a
+internet</td>
+</tr>
+</tbody>
+</table>
+<p>Las pruebas usan la base <code>guias_test</code> (Doctrine agrega
+<code>_test</code>). Cada prueba crea los datos que necesita.</p>
+<p>Antes de subir un cambio, ejecuta también las revisiones de
+sintaxis:</p>
+<pre class="bash"><code>php bin/console lint:yaml config translations --parse-tags
+php bin/console lint:twig templates
+php bin/console lint:container
+php bin/console doctrine:schema:validate</code></pre>
+<h2 id="53-integración-continua">5.3 Integración continua<a class="ancla" href="#53-integración-continua" aria-label="Enlace a esta sección">#</a></h2>
+<p><code>.github/workflows/ci.yml</code> corre en cada pull request y en
+cada cambio de <code>main</code>, con PHP 8.5 y un servicio MySQL
+8.4:</p>
+<ol type="1">
+<li><code>composer install</code></li>
+<li>Revisión de sintaxis de YAML, Twig y del contenedor de
+servicios</li>
+<li>Migraciones desde cero, <code>doctrine:schema:validate</code> y
+verificación de que quedan las 334 materias ASJC</li>
+<li>PHPUnit</li>
+<li><code>composer audit</code> (vulnerabilidades conocidas en las
+dependencias)</li>
+</ol>
+<p>Un pull request se fusiona solo con la integración continua en
+verde.</p>
+<h2 id="54-flujo-de-trabajo">5.4 Flujo de trabajo<a class="ancla" href="#54-flujo-de-trabajo" aria-label="Enlace a esta sección">#</a></h2>
+<ol type="1">
+<li>Crea una rama desde <code>main</code>
+(<code>git switch -c mejora-x</code>).</li>
+<li>Haz el cambio con sus pruebas. Si cambia el esquema, agrega la
+migración (capítulo 2.5).</li>
+<li>Corre las pruebas y las revisiones de sintaxis.</li>
+<li>Abre un pull request; cuando la integración continua está en verde,
+se fusiona con <em>squash</em>.</li>
+<li>Despliega en el servidor de pruebas (<code>desplegar.sh main</code>)
+y, cuando se aprueba, en piloto y producción.</li>
+<li>Si cambia lo que ve el personal, actualiza el manual
+(<code>docs/manual</code>) y regenéralo con
+<code>python3 scripts/generar-manual.py</code>; si cambia el modelo,
+regenera este documento (ver README).</li>
+</ol>
+<h2 id="55-convenciones-del-código">5.5 Convenciones del código<a class="ancla" href="#55-convenciones-del-código" aria-label="Enlace a esta sección">#</a></h2>
+<ul>
+<li><strong>Idioma:</strong> el código propio (clases, métodos,
+variables, rutas, plantillas) está en <strong>español</strong>; los
+textos de la interfaz van en <code>translations/messages.es.yaml</code>
+y <code>messages.en.yaml</code> (nunca escritos en las plantillas).</li>
+<li><strong>Controladores</strong> delgados con atributos
+<code>#[Route]</code>; la lógica va en <code>src/Servicio</code>.
+Permisos con <code>#[IsGranted]</code> o
+<code>denyAccessUnlessGranted()</code> y los voters.</li>
+<li><strong>Formularios</strong> de Symfony con validación en la entidad
+o en el formulario; CSRF siempre activo.</li>
+<li><strong>JavaScript</strong> en controladores Stimulus
+(<code>assets/controllers/*_controller.js</code>), sin compilación. Las
+librerías se agregan con
+<code>php bin/console importmap:require &lt;paquete&gt;</code> y se
+descargan al desplegar; el navegador nunca las pide a un CDN.</li>
+<li><strong>Alertas y confirmaciones</strong> con SweetAlert2
+(controlador <code>confirmar</code>), con los botones en el idioma de la
+página.</li>
+<li><strong>Acciones de las tablas</strong> del panel como botones con
+ícono y texto emergente: función Twig <code>icono()</code>
+(<code>App\Twig\IconosAccion</code>).</li>
+<li><strong>Accesibilidad</strong> WCAG 2.1 AA: etiquetas en los campos,
+contraste validado (también en Apariencia), navegación con teclado.</li>
+<li><strong>Secretos</strong>: nunca en el repositorio. Van en
+<code>.env.local</code> del servidor o en el panel (cifrados).</li>
+</ul>
+<h2 id="56-agregar-un-tipo-de-bloque-ejemplo">5.6 Agregar un tipo de
+bloque (ejemplo)</h2>
+<ol type="1">
+<li>Agrega el caso a <code>App\Enum\TipoBloque</code> (valor en
+minúsculas) y su nombre en las traducciones.</li>
+<li>Define los campos del formulario en <code>App\Form\BloqueType</code>
+según el tipo.</li>
+<li>Convierte lo enviado a JSON en
+<code>GuiaController::contenido()</code> (y valida lo que
+corresponda).</li>
+<li>Prepara los datos para mostrar en
+<code>App\Servicio\BloquesGuia</code>.</li>
+<li>Crea la plantilla
+<code>templates/guias/bloques/_&lt;tipo&gt;.html.twig</code> (sitio,
+vista previa e incrustación la reutilizan).</li>
+<li>Agrega pruebas en <code>tests/Guias/</code>. No hace falta
+migración: el contenido vive en <code>bloque.contenido</code>.</li>
+</ol>
+<h2 id="57-regenerar-la-documentación">5.7 Regenerar la
+documentación</h2>
+<pre class="bash"><code>python3 scripts/generar-manual.py           # manual de uso (docs/manual): HTML y Word
+python3 scripts/generar-diagrama-er.py      # diagramas ER y diccionario de datos (docs/tecnico)
+python3 scripts/generar-manual.py tecnico   # este documento: HTML y Word</code></pre>
+<p>Necesitan pandoc 3, python-docx y Pillow; los diagramas, además, PHP
+con las dependencias instaladas y Node con Playwright para los PNG (sin
+Node se generan solo los SVG). Las capturas del manual se toman con
+Playwright sobre el sitio con los datos de ejemplo.</p>
+</article>
+    <nav class="paginacion" aria-label="Capítulos anterior y siguiente"><a class="anterior" href="04-diccionario-de-datos.html"><small>← Anterior</small>4. Diccionario de datos</a></nav>
+    <footer class="pie">Bibliotecas UCN · Documento técnico generado el 19-11-2026 a partir de <code>docs/tecnico</code>.</footer>
+  </main>
+  <aside class="indice" aria-label="En esta página"><p>En esta página</p><ul>
+<li><a href="#51-entorno-local-con-docker"
+id="toc-51-entorno-local-con-docker">5.1 Entorno local con
+Docker</a></li>
+<li><a href="#52-pruebas" id="toc-52-pruebas">5.2 Pruebas</a></li>
+<li><a href="#53-integración-continua"
+id="toc-53-integración-continua">5.3 Integración continua</a></li>
+<li><a href="#54-flujo-de-trabajo" id="toc-54-flujo-de-trabajo">5.4
+Flujo de trabajo</a></li>
+<li><a href="#55-convenciones-del-código"
+id="toc-55-convenciones-del-código">5.5 Convenciones del código</a></li>
+<li><a href="#56-agregar-un-tipo-de-bloque-ejemplo"
+id="toc-56-agregar-un-tipo-de-bloque-ejemplo">5.6 Agregar un tipo de
+bloque (ejemplo)</a></li>
+<li><a href="#57-regenerar-la-documentación"
+id="toc-57-regenerar-la-documentación">5.7 Regenerar la
+documentación</a></li>
+</ul></li>
+</ul>
+</aside>
+</div>
+<script src="busqueda.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>
