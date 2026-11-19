@@ -17,6 +17,7 @@
 
     <form method="post" class="formulario formulario--angosto"
           data-controller="confirmar" data-action="submit->confirmar#preguntar"
+          data-confirmar-peligro-value="true" data-confirmar-boton-value="{{ 'materia.homologar'|trans }}"
           data-confirmar-mensaje-value="{{ 'materia.homologar_confirmar'|trans({'%materia%': materia.nombre}) }}">
         <input type="hidden" name="_token" value="{{ csrf_token('homologar-materia-' ~ materia.id) }}">
         <div class="campo">

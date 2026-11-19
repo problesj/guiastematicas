@@ -2,6 +2,7 @@
    y aviso (texto que se agrega a la pregunta de confirmación). #}
 <form method="post" action="{{ path(ruta, {id: id}|merge(extra_ruta ?? {})) }}" class="en-linea"
       data-controller="confirmar" data-action="submit->confirmar#preguntar"
+      data-confirmar-peligro-value="true" data-confirmar-boton-value="{{ 'formulario.eliminar'|trans }}"
       data-confirmar-mensaje-value="{{ 'formulario.confirmar_eliminar'|trans({'%nombre%': nombre}) }}{{ aviso is defined and aviso ? ' ' ~ aviso }}">
     <input type="hidden" name="_token" value="{{ csrf_token(token) }}">
     <button type="submit" class="accion accion--peligro" data-tooltip="{{ 'formulario.eliminar'|trans }}">{{ icono('eliminar') }}<span class="solo-lectores">{{ 'formulario.eliminar'|trans }} {{ nombre }}</span></button>
