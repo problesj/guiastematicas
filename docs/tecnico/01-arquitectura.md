@@ -123,8 +123,10 @@ Para ver todas: `php bin/console debug:router`.
   en la tabla `ajuste` cifradas con sodium (XSalsa20-Poly1305) con una clave derivada de `APP_SECRET`. Nunca se
   muestran en el panel.
 - **Archivos subidos**: se validan tipo y tamaño, se renombran, y Apache no ejecuta PHP en `public/uploads`.
-- **Cabeceras**: `X-Content-Type-Options`, `Referrer-Policy` y `X-Frame-Options` (salvo en `/incrustar`, que envía
-  `frame-ancestors *` para poder mostrarse en otras webs).
+- **Cabeceras** (`App\EventSubscriber\CabecerasSeguridadSubscriber`, repetidas en Apache): `Content-Security-Policy`
+  (`object-src 'none'; base-uri 'self'; frame-ancestors 'self'`), `X-Frame-Options`, `X-Content-Type-Options`,
+  `Referrer-Policy` y `Permissions-Policy`; por HTTPS, además `Strict-Transport-Security`. Los bloques incrustables y
+  las páginas de Moodle envían su propia CSP para poder mostrarse dentro de otros sitios.
 
 ## 1.6 Comandos de consola propios
 

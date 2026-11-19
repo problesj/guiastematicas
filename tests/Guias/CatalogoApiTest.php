@@ -169,6 +169,7 @@ final class CatalogoApiTest extends WebTestCase
         $crawler = $this->cliente->request('GET', '/es/incrustar/bloque/'.$bloque->getId());
         self::assertResponseIsSuccessful();
         self::assertSame('frame-ancestors *', $this->cliente->getResponse()->headers->get('Content-Security-Policy'));
+        self::assertFalse($this->cliente->getResponse()->headers->has('X-Frame-Options'));
         self::assertSame('_blank', $crawler->filter('base')->attr('target'));
         self::assertSelectorTextContains('h2.bloque__titulo', 'Normas');
         self::assertSame('https://www.inn.cl', $crawler->filter('.bloque__enlaces a')->attr('href'));

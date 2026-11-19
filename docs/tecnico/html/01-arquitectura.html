@@ -425,10 +425,15 @@ repositorio) o en la tabla <code>ajuste</code> cifradas con sodium
 Nunca se muestran en el panel.</li>
 <li><strong>Archivos subidos</strong>: se validan tipo y tamaño, se
 renombran, y Apache no ejecuta PHP en <code>public/uploads</code>.</li>
-<li><strong>Cabeceras</strong>: <code>X-Content-Type-Options</code>,
-<code>Referrer-Policy</code> y <code>X-Frame-Options</code> (salvo en
-<code>/incrustar</code>, que envía <code>frame-ancestors *</code> para
-poder mostrarse en otras webs).</li>
+<li><strong>Cabeceras</strong>
+(<code>App\EventSubscriber\CabecerasSeguridadSubscriber</code>,
+repetidas en Apache): <code>Content-Security-Policy</code>
+(<code>object-src 'none'; base-uri 'self'; frame-ancestors 'self'</code>),
+<code>X-Frame-Options</code>, <code>X-Content-Type-Options</code>,
+<code>Referrer-Policy</code> y <code>Permissions-Policy</code>; por
+HTTPS, además <code>Strict-Transport-Security</code>. Los bloques
+incrustables y las páginas de Moodle envían su propia CSP para poder
+mostrarse dentro de otros sitios.</li>
 </ul>
 <h2 id="16-comandos-de-consola-propios">1.6 Comandos de consola
 propios</h2>

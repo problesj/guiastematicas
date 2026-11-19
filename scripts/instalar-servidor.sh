@@ -19,11 +19,20 @@ cat > /etc/php/8.5/fpm/conf.d/90-guias.ini <<'INI'
 upload_max_filesize = 16M
 post_max_size = 16M
 memory_limit = 512M
+expose_php = Off
 INI
 systemctl restart php8.5-fpm
 
 # Apache con PHP-FPM
 a2enmod proxy_fcgi setenvif rewrite headers ssl
+# Sin versión de Apache en las cabeceras ni en las páginas de error; sin listado de carpetas.
+cat > /etc/apache2/conf-available/guias-seguridad.conf <<'CONF'
+ServerTokens Prod
+ServerSignature Off
+TraceEnable Off
+CONF
+a2enconf guias-seguridad
+a2dismod -f autoindex status || true
 a2enconf php8.5-fpm
 cp "$(dirname "$0")/../deploy/apache/guias.conf" /etc/apache2/sites-available/guias.conf
 a2dissite 000-default || true

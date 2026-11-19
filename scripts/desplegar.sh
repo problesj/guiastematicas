@@ -5,6 +5,8 @@
 set -euo pipefail
 
 RAMA="${1:-main}"
+# Archivos nuevos sin escritura para otros usuarios del servidor (algunos agentes remotos corren con umask 000).
+umask 022
 if [[ $EUID -ne 0 ]]; then
     echo "Ejecutar como root: sudo bash $0 $RAMA" >&2
     exit 1
@@ -49,6 +51,8 @@ php bin/console app:incorporar-libros --no-interaction
 
 # Fotos del personal (se respaldan con scripts/respaldar.sh).
 install -d public/uploads/personal public/uploads/guias public/uploads/sitio
+# Nadie más que root modifica el código; www-data solo escribe en var/, public/assets y public/uploads.
+chmod -R go-w "$APP_DIR"
 chown -R www-data:www-data var public/assets public/uploads
 systemctl reload php8.5-fpm
 
